@@ -11,7 +11,8 @@
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keyup", (event) => {
-    if (event.key.startsWith("Arrow") || event.key === "Shift") scheduleSelection();
+    const key = typeof event.key === "string" ? event.key : "";
+    if (key.startsWith("Arrow") || key === "Shift") scheduleSelection();
   }, true);
   document.addEventListener("select", scheduleSelection, true);
   document.addEventListener("pointerdown", handleOutsidePointerDown, true);
