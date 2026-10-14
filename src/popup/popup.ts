@@ -1,11 +1,14 @@
-const extensionApi = globalThis.browser ?? globalThis.chrome;
-const listElement = document.querySelector("#records");
-const emptyElement = document.querySelector("#empty");
-const counterElement = document.querySelector("#counter");
-const clearButton = document.querySelector("#clear");
-const jsonButton = document.querySelector("#export-json");
-const csvButton = document.querySelector("#export-csv");
-let records = [];
+import browser from "webextension-polyfill";
+import {errorMessage, type RecordsResponse, type TranslationRecord} from "../types";
+
+const extensionApi = browser;
+const listElement = document.querySelector<HTMLOListElement>("#records")!;
+const emptyElement = document.querySelector<HTMLElement>("#empty")!;
+const counterElement = document.querySelector<HTMLElement>("#counter")!;
+const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
+const jsonButton = document.querySelector<HTMLButtonElement>("#export-json")!;
+const csvButton = document.querySelector<HTMLButtonElement>("#export-csv")!;
+let records: TranslationRecord[] = [];
 
 document.addEventListener("DOMContentLoaded", loadRecords);
 clearButton.addEventListener("click", clearRecords);
@@ -14,12 +17,12 @@ csvButton.addEventListener("click", () => exportFile("csv"));
 
 async function loadRecords() {
   try {
-    const result = await extensionApi.runtime.sendMessage({ type: "get-records" });
+    const result = await extensionApi.runtime.sendMessage({ type: "get-records" }) as RecordsResponse;
     if (!result?.ok) throw new Error(result?.error || "Не удалось загрузить записи");
-    records = result.records;
+    records = result.records || [];
     render();
   } catch (error) {
-    showNotice(error?.message || "Ошибка загрузки");
+    showNotice(errorMessage(error, "Ошибка загрузки"));
   }
 }
 
@@ -32,7 +35,7 @@ function render() {
   csvButton.disabled = records.length === 0;
 }
 
-function createRecordElement(record) {
+function createRecordElement(record: TranslationRecord) {
   const item = document.createElement("li");
   item.className = "record";
 
@@ -67,20 +70,21 @@ function createRecordElement(record) {
 async function clearRecords() {
   if (!records.length || !confirm("Удалить все сохранённые переводы?")) return;
   try {
-    const result = await extensionApi.runtime.sendMessage({ type: "clear-records" });
+    const result = await extensionApi.runtime.sendMessage({ type: "clear-records" }) as RecordsResponse;
     if (!result?.ok) throw new Error(result?.error || "Не удалось очистить список");
     records = [];
     render();
     showNotice("Список очищен");
   } catch (error) {
-    showNotice(error?.message || "Ошибка очистки");
+    showNotice(errorMessage(error, "Ошибка очистки"));
   }
 }
 
-function exportFile(format) {
+function exportFile(format: "json" | "csv") {
   if (!records.length) return;
   const isJson = format === "json";
-  const content = isJson ? JSON.stringify(records, null, 2) : toCsv(records);
+  const exportRecords = records.map(toExportRecord);
+  const content = isJson ? JSON.stringify(exportRecords, null, 2) : toCsv(exportRecords);
   const mime = isJson ? "application/json" : "text/csv";
   const blob = new Blob([isJson ? content : `\uFEFF${content}`], { type: `${mime};charset=utf-8` });
   const url = URL.createObjectURL(blob);
@@ -92,25 +96,41 @@ function exportFile(format) {
   showNotice(`Файл ${format.toUpperCase()} подготовлен`);
 }
 
-function toCsv(items) {
-  const columns = ["text", "sentence", "translation", "sourceLanguage", "pageTitle", "pageUrl", "createdAt"];
+function toExportRecord(record: TranslationRecord): TranslationRecord {
+  return {
+    contextTranslation: record.contextTranslation,
+    createdAt: record.createdAt,
+    pageTitle: record.pageTitle,
+    pageUrl: record.pageUrl,
+    sentence: record.sentence,
+    text: record.text,
+    translation: record.translation,
+    translations: record.translations
+  };
+}
+
+function toCsv(items: TranslationRecord[]) {
+  const columns: (keyof TranslationRecord)[] = [
+    "contextTranslation", "createdAt", "pageTitle", "pageUrl",
+    "sentence", "text", "translation", "translations"
+  ];
   return [columns, ...items.map((item) => columns.map((column) => item[column] ?? ""))]
-    .map((row) => row.map(csvCell).join(","))
+    .map((row) => row.map((value) => csvCell(Array.isArray(value) ? JSON.stringify(value) : value)).join(","))
     .join("\r\n");
 }
 
-function csvCell(value) {
+function csvCell(value: unknown) {
   return `"${String(value).replace(/"/g, '""')}"`;
 }
 
-function textElement(tag, className, text) {
+function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text: string) {
   const element = document.createElement(tag);
   if (className) element.className = className;
   element.textContent = text || "—";
   return element;
 }
 
-function pluralize(count) {
+function pluralize(count: number) {
   const mod10 = count % 10;
   const mod100 = count % 100;
   const word = mod10 === 1 && mod100 !== 11
@@ -121,14 +141,14 @@ function pluralize(count) {
   return `${count} ${word}`;
 }
 
-function formatDate(value) {
+function formatDate(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? ""
     : new Intl.DateTimeFormat("ru", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(date);
 }
 
-function hostname(value) {
+function hostname(value: string) {
   try { return new URL(value).hostname; } catch (_error) { return "Источник"; }
 }
 
@@ -136,9 +156,9 @@ function dateStamp() {
   return new Date().toISOString().slice(0, 10);
 }
 
-let noticeTimer;
-function showNotice(message) {
-  const notice = document.querySelector("#notice");
+let noticeTimer: ReturnType<typeof setTimeout> | undefined;
+function showNotice(message: string) {
+  const notice = document.querySelector<HTMLElement>("#notice")!;
   notice.textContent = message;
   notice.classList.add("visible");
   clearTimeout(noticeTimer);
