@@ -4,8 +4,8 @@ const MAX_RECORDS = 5000;
 const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
-const CONTEXT_START = "\uE000";
-const CONTEXT_END = "\uE001";
+const CONTEXT_START = "<b>";
+const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
 
 extensionApi.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -110,7 +110,8 @@ async function translateToRussian(text, sentence) {
 async function translateWordToRussian(word, sentence) {
   const forms = englishWordForms(word);
   const markedContext = buildMarkedContext(sentence, word);
-  const [results, contextResult, dictionaryTranslations] = await Promise.all([
+  const collocation = buildContextCollocation(sentence, word);
+  const [results, contextResult, dictionaryTranslations, collocationTranslation] = await Promise.all([
     Promise.all(forms.map(async (form) => {
       try {
         return await translateChunk(form);
@@ -119,7 +120,8 @@ async function translateWordToRussian(word, sentence) {
       }
     })),
     markedContext ? translateContext(markedContext).catch(() => null) : null,
-    fetchWiktionaryTranslations(word)
+    fetchWiktionaryTranslations(word),
+    collocation ? translateCollocation(collocation).catch(() => null) : null
   ]);
   const successful = results.filter(Boolean);
   if (!successful.length && !contextResult?.selectedTranslation) {
@@ -127,6 +129,10 @@ async function translateWordToRussian(word, sentence) {
   }
 
   const likelyPartOfSpeech = inferPartOfSpeech(word, sentence, dictionaryTranslations);
+  const markedSelection = contextResult?.selectedTranslation
+    && !isNeighborTranslation(contextResult.selectedTranslation, collocationTranslation?.neighbor)
+    ? contextResult.selectedTranslation
+    : null;
   const rankedDictionary = dictionaryTranslations
     .map((entry) => ({
       ...entry,
@@ -140,8 +146,10 @@ async function translateWordToRussian(word, sentence) {
     dictionaryTranslations.length ? [result.text] : (result.alternatives || [result.text])
   ));
   const alternatives = uniqueRussianTranslations([
-    contextResult?.selectedTranslation,
     ...contextualDictionary.map((entry) => entry.text),
+    collocationTranslation?.selected,
+    collocationTranslation?.phrase,
+    markedSelection,
     ...machineTranslations,
     ...otherDictionary.map((entry) => entry.text)
   ], word).slice(0, 6);
@@ -245,14 +253,10 @@ function commonPrefixLength(left, right) {
 async function translateContext(markedContext) {
   const result = await translateChunk(markedContext);
   const translated = result.text;
-  const start = translated.indexOf(CONTEXT_START);
-  const end = translated.indexOf(CONTEXT_END, start + 1);
-  const selectedTranslation = start >= 0 && end > start
-    ? translated.slice(start + CONTEXT_START.length, end).trim()
-    : null;
+  const selectedTranslation = translated.match(/<b(?:\s[^>]*)?>(.*?)<\/b>/i)?.[1]?.trim() || null;
   return {
     selectedTranslation,
-    fullTranslation: translated.replaceAll(CONTEXT_START, "").replaceAll(CONTEXT_END, "").trim()
+    fullTranslation: translated.replace(/<\/?b(?:\s[^>]*)?>/gi, "").trim()
   };
 }
 
@@ -267,6 +271,79 @@ function buildMarkedContext(sentence, word) {
   const snippet = context.slice(left, right);
   const localIndex = index - left;
   return `${snippet.slice(0, localIndex)}${CONTEXT_START}${snippet.slice(localIndex, localIndex + word.length)}${CONTEXT_END}${snippet.slice(localIndex + word.length)}`;
+}
+
+function buildContextCollocation(sentence, word) {
+  const words = String(sentence ?? "").match(/[A-Za-z][A-Za-z'-]*/g) || [];
+  const index = words.findIndex((item) => item.toLocaleLowerCase("en") === word.toLocaleLowerCase("en"));
+  if (index < 0) return null;
+  const stopWords = new Set([
+    "a", "an", "the", "and", "or", "but", "of", "to", "in", "on", "at", "for", "from",
+    "with", "by", "as", "is", "are", "was", "were", "be", "been", "being", "that", "which",
+    "who", "whom", "whose", "this", "these", "those", "it", "its"
+  ]);
+  const previous = words[index - 1];
+  const next = words[index + 1];
+
+  if (next && !stopWords.has(next.toLocaleLowerCase("en"))) {
+    return { phrase: `${word} ${next}`, neighbor: next, targetAtStart: true };
+  }
+  if (previous && !stopWords.has(previous.toLocaleLowerCase("en"))) {
+    return { phrase: `${previous} ${word}`, neighbor: previous, targetAtStart: false };
+  }
+  return null;
+}
+
+async function translateCollocation(collocation) {
+  const [phraseResult, neighborResult] = await Promise.all([
+    translateChunk(collocation.phrase),
+    translateChunk(collocation.neighbor)
+  ]);
+  const phraseWords = phraseResult.text.match(/[А-Яа-яЁё-]+/gu) || [];
+  const neighborWords = neighborResult.text.match(/[А-Яа-яЁё-]+/gu) || [];
+  if (!phraseWords.length || phraseWords.length <= neighborWords.length) return null;
+
+  const remaining = [...phraseWords];
+  for (const neighborWord of neighborWords) {
+    const relatedIndex = remaining.findIndex((phraseWord) => russianWordsRelated(phraseWord, neighborWord));
+    if (relatedIndex >= 0) remaining.splice(relatedIndex, 1);
+  }
+
+  const selectedWords = remaining.length < phraseWords.length
+    ? remaining
+    : collocation.targetAtStart
+      ? phraseWords.slice(0, phraseWords.length - neighborWords.length)
+      : phraseWords.slice(neighborWords.length);
+  return {
+    selected: selectedWords.join(" "),
+    phrase: phraseWords.join(" "),
+    neighbor: neighborWords.join(" ")
+  };
+}
+
+function isNeighborTranslation(value, neighbor) {
+  if (!value || !neighbor) return false;
+  const selectedWords = value.match(/[А-Яа-яЁё-]+/gu) || [];
+  const neighborWords = neighbor.match(/[А-Яа-яЁё-]+/gu) || [];
+  return selectedWords.length > 0
+    && selectedWords.every((selected) => neighborWords.some((item) => russianWordsRelated(selected, item)));
+}
+
+function russianWordsRelated(left, right) {
+  const first = left.toLocaleLowerCase("ru");
+  const second = right.toLocaleLowerCase("ru");
+  if (commonPrefixLength(first, second) >= 3) return true;
+  const firstSkeleton = russianConsonantSkeleton(first);
+  const secondSkeleton = russianConsonantSkeleton(second);
+  return firstSkeleton.length >= 2
+    && secondSkeleton.length >= 2
+    && (firstSkeleton.startsWith(secondSkeleton) || secondSkeleton.startsWith(firstSkeleton));
+}
+
+function russianConsonantSkeleton(value) {
+  return value
+    .replace(/[аеёиоуыэюяьъй]/gu, "")
+    .replace(/(.)\1+/gu, "$1");
 }
 
 async function getTranscription(text) {
@@ -449,10 +526,42 @@ function uniqueRussianTranslations(values, sourceWord, maxWords = 3) {
     const translation = cleanTranslationCandidate(value);
     const key = translation.toLocaleLowerCase("ru");
     const wordCount = translation.split(/\s+/).length;
-    if (!translation || key === source || wordCount > maxWords || !/[А-Яа-яЁё]/u.test(translation) || seen.has(key)) return false;
+    const looksLikeNoisyTransliteration = /^[a-z]/.test(sourceWord)
+      && /^[А-ЯЁ][а-яё-]+$/u.test(translation)
+      && editDistance(transliterateRussian(translation), source) <= 1;
+    if (!translation || key === source || wordCount > maxWords || looksLikeNoisyTransliteration
+      || !/[А-Яа-яЁё]/u.test(translation) || seen.has(key)) return false;
     seen.add(key);
     return true;
   }).map(cleanTranslationCandidate);
+}
+
+function transliterateRussian(value) {
+  const letters = {
+    а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z",
+    и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r",
+    с: "s", т: "t", у: "u", ф: "f", х: "h", ц: "ts", ч: "ch", ш: "sh", щ: "sh",
+    ы: "y", э: "e", ю: "yu", я: "ya", ь: "", ъ: ""
+  };
+  return [...value.toLocaleLowerCase("ru")].map((letter) => letters[letter] ?? letter).join("");
+}
+
+function editDistance(left, right) {
+  const row = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
+    let diagonal = row[0];
+    row[0] = leftIndex;
+    for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
+      const previous = row[rightIndex];
+      row[rightIndex] = Math.min(
+        row[rightIndex] + 1,
+        row[rightIndex - 1] + 1,
+        diagonal + (left[leftIndex - 1] === right[rightIndex - 1] ? 0 : 1)
+      );
+      diagonal = previous;
+    }
+  }
+  return row[right.length];
 }
 
 function cleanTranslationCandidate(value) {

@@ -325,7 +325,7 @@
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
       .translation { min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
-      .translation-option { color: #172033; font-size: 16px; font-weight: 400; }
+      .translation-option { overflow-x: auto; color: #172033; font-size: 16px; font-weight: 400; white-space: nowrap; scrollbar-width: thin; }
       .translation-option + .translation-option { margin-top: 2px; }
       .context-translation { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
       .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
