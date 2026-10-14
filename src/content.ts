@@ -1,8 +1,10 @@
 import browser from "webextension-polyfill";
 import {
   errorMessage,
+  type RecordsResponse,
   type SpeechAudioChunk,
   type SpeechAudioResponse,
+  type TranslationRecord,
   type TranslateResponse
 } from "./types";
 
@@ -239,10 +241,98 @@ import {
   function renderResult(result: TranslateResponse & {translation: string}) {
     renderTranslations(result);
     const status = shadow.querySelector<HTMLElement>(".status");
-    status.textContent = "✓";
-    status.classList.remove("pending");
-    status.setAttribute("aria-label", "Сохранено");
-    status.title = result.warning || "Сохранено";
+    if (result.saved === false) {
+      status.remove();
+    } else {
+      status.textContent = "✓";
+      status.classList.remove("pending");
+      status.setAttribute("aria-label", "Сохранено");
+      status.title = result.warning || "Сохранено";
+    }
+    if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
+  }
+
+  function showStorageLimitNotice(pendingRecord?: TranslationRecord) {
+    if (!shadow || shadow.querySelector(".storage-limit")) return;
+    const card = shadow.querySelector<HTMLElement>(".card");
+    if (!card) return;
+
+    const notice = document.createElement("div");
+    notice.className = "storage-limit";
+    const message = document.createElement("div");
+    message.className = "storage-limit-message";
+    message.textContent = "Достигнут лимит в 5 переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.";
+    const actions = document.createElement("div");
+    actions.className = "storage-limit-actions";
+    const exportButton = document.createElement("button");
+    exportButton.className = "storage-limit-export";
+    exportButton.type = "button";
+    exportButton.textContent = "Скачать и очистить";
+    exportButton.addEventListener("click", () => (
+      void exportAndClearRecords(exportButton, notice, pendingRecord)
+    ));
+    const laterButton = document.createElement("button");
+    laterButton.className = "storage-limit-later";
+    laterButton.type = "button";
+    laterButton.textContent = "Позже";
+    laterButton.addEventListener("click", () => {
+      notice.remove();
+      if (selectionRect) positionModal(selectionRect);
+    });
+    actions.append(exportButton, laterButton);
+    notice.append(message, actions);
+    card.append(notice);
+    if (selectionRect) positionModal(selectionRect);
+  }
+
+  async function exportAndClearRecords(
+    button: HTMLButtonElement,
+    notice: HTMLElement,
+    pendingRecord?: TranslationRecord
+  ) {
+    button.disabled = true;
+    try {
+      const recordsResult = await extensionApi.runtime.sendMessage({ type: "get-records" }) as RecordsResponse;
+      if (!recordsResult?.ok) throw new Error(recordsResult?.error || "Не удалось загрузить записи");
+      const records = recordsResult.records || [];
+      const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `context-translations-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      const clearResult = await extensionApi.runtime.sendMessage(pendingRecord
+        ? { type: "clear-and-save-record", payload: { record: pendingRecord } }
+        : { type: "clear-records" }) as RecordsResponse;
+      if (!clearResult?.ok) throw new Error(clearResult?.error || "Не удалось очистить хранилище");
+      if (pendingRecord) {
+        const card = shadow?.querySelector<HTMLElement>(".card");
+        if (card && !card.querySelector(".status")) {
+          const status = document.createElement("div");
+          status.className = "status";
+          status.textContent = "✓";
+          status.setAttribute("role", "status");
+          status.setAttribute("aria-label", "Сохранено");
+          status.title = "Сохранено";
+          card.append(status);
+        }
+      }
+      notice.replaceChildren(document.createTextNode(pendingRecord
+        ? "Хранилище очищено, текущий перевод сохранён"
+        : "Переводы скачаны, хранилище очищено"));
+      if (selectionRect) positionModal(selectionRect);
+      setTimeout(() => {
+        notice.remove();
+        if (selectionRect) positionModal(selectionRect);
+      }, 2200);
+    } catch (error) {
+      button.disabled = false;
+      button.title = errorMessage(error, "Ошибка экспорта");
+      const message = notice.querySelector<HTMLElement>(".storage-limit-message");
+      if (message) message.textContent = errorMessage(error, "Не удалось скачать переводы");
+    }
   }
 
   function renderTranslations(result: TranslateResponse & {translation: string}) {
@@ -685,6 +775,12 @@ import {
       .card.long .translation-option { overflow-x: visible; white-space: normal; }
       .translation-option + .translation-option { margin-top: 2px; }
       .context-translation { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
+      .storage-limit { margin-top: 10px; padding: 10px; border: 1px solid #f2cf8d; border-radius: 10px; background: #fff8e8; color: #5f4515; font-size: 12px; line-height: 1.4; }
+      .storage-limit-actions { display: flex; gap: 7px; margin-top: 8px; }
+      .storage-limit-actions button { padding: 7px 10px; border: 0; border-radius: 8px; cursor: pointer; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .storage-limit-export { background: #2457d6; color: #fff; }
+      .storage-limit-export:disabled { cursor: default; opacity: .55; }
+      .storage-limit-later { background: #ece7dc; color: #5f5748; }
       .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
       .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }

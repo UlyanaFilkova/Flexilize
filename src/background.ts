@@ -59,6 +59,12 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
+  if (message?.type === "clear-and-save-record") {
+    return clearAndSaveRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
   if (message?.type === "clear-records") {
     return clearRecords()
       .then(() => ({ ok: true }))
@@ -101,7 +107,7 @@ async function handleSelection(payload: TranslatePayload) {
     translations: translationResult.alternatives
   };
 
-  await saveRecord(record);
+  const storageResult = await saveRecord(record);
 
   return {
     ok: true,
@@ -109,7 +115,9 @@ async function handleSelection(payload: TranslatePayload) {
     translations: translationResult.alternatives || [translationResult.text],
     contextTranslation: translationResult.contextTranslation || null,
     sourceLanguage: "en",
-    saved: true,
+    saved: storageResult.saved,
+    storageLimitReached: storageResult.limitReached,
+    pendingRecord: storageResult.saved ? undefined : record,
     warning: translationResult.warning ?? null
   };
 }
@@ -733,9 +741,16 @@ async function saveRecord(record: TranslationRecord) {
     && records[0].sentence === record.sentence
     && Date.now() - new Date(records[0].createdAt).getTime() < 3000;
 
-  if (!duplicate) records.unshift(record);
-  if (records.length > MAX_RECORDS) records.length = MAX_RECORDS;
+  if (duplicate) {
+    return { saved: true, limitReached: records.length >= MAX_RECORDS };
+  }
+  if (records.length >= MAX_RECORDS) {
+    return { saved: false, limitReached: true };
+  }
+
+  records.unshift(record);
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+  return { saved: true, limitReached: records.length >= MAX_RECORDS };
 }
 
 async function getRecords(): Promise<TranslationRecord[]> {
@@ -809,6 +824,18 @@ async function restoreRecord(payload: {index?: unknown; record?: unknown}) {
   records.splice(index, 0, record);
   if (records.length > MAX_RECORDS) records.length = MAX_RECORDS;
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+}
+
+async function clearAndSaveRecord(payload: {record?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  if (!payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось сохранить текущий перевод");
+  }
+  const record = normalizeStoredRecord(payload.record);
+  if (!record.createdAt || !record.text || !record.translation) {
+    throw new Error("Текущая запись повреждена");
+  }
+  await extensionApi.storage.local.set({ [RECORDS_KEY]: [record] });
 }
 
 function normalizeText(value, maxLength) {
