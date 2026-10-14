@@ -63,6 +63,7 @@ async function handleSelection(payload) {
   return {
     ok: true,
     translation: translationResult.text,
+    translations: translationResult.alternatives || [translationResult.text],
     sourceLanguage: "en",
     saved: true,
     warning: translationResult.warning ?? null
@@ -82,6 +83,10 @@ async function handleTranscription(payload) {
 }
 
 async function translateToRussian(text) {
+  if (/^[A-Za-z][A-Za-z'-]*$/.test(text)) {
+    return translateWordToRussian(text);
+  }
+
   const chunks = splitByUtf8Bytes(text, 450);
   const translatedChunks = [];
   let warning = null;
@@ -92,7 +97,32 @@ async function translateToRussian(text) {
     warning ||= result.warning;
   }
 
-  return { text: translatedChunks.join(" "), warning };
+  const translation = translatedChunks.join(" ");
+  return { text: translation, alternatives: [translation], warning };
+}
+
+async function translateWordToRussian(word) {
+  const forms = englishWordForms(word);
+  const results = await Promise.all(forms.map(async (form) => {
+    try {
+      return await translateChunk(form);
+    } catch (_error) {
+      return null;
+    }
+  }));
+  const successful = results.filter(Boolean);
+  if (!successful.length) throw new Error("Сервис перевода временно недоступен");
+
+  const alternatives = uniqueRussianTranslations(
+    successful.flatMap((result) => result.alternatives || [result.text]),
+    word
+  ).slice(0, 5);
+  const primary = alternatives[0] || successful[0].text;
+  return {
+    text: primary,
+    alternatives: alternatives.length ? alternatives : [primary],
+    warning: successful.find((result) => result.warning)?.warning || null
+  };
 }
 
 async function getTranscription(text) {
@@ -142,8 +172,13 @@ async function translateChunk(text) {
   const data = await response.json();
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
   if (!translated) throw new Error("Сервис перевода вернул пустой результат");
+  const alternatives = [
+    translated,
+    ...(Array.isArray(data?.matches) ? data.matches.map((match) => match?.translation) : [])
+  ].map((value) => decodeHtmlEntities(String(value ?? "")).trim()).filter(Boolean);
   return {
     text: translated,
+    alternatives,
     warning: Number(data?.responseStatus) === 200 ? null : "Перевод может быть неточным"
   };
 }
@@ -183,9 +218,88 @@ async function fetchWithTimeout(url, timeoutMs) {
 }
 
 function formatPhonetic(value) {
-  const phonetic = String(value ?? "").trim();
+  let phonetic = String(value ?? "").trim();
   if (!phonetic) return null;
+  if (isArpabet(phonetic)) phonetic = arpabetToIpa(phonetic);
   return /^[\/[].*[\/\]]$/.test(phonetic) ? phonetic : `/${phonetic}/`;
+}
+
+function isArpabet(value) {
+  const tokens = value.trim().split(/\s+/);
+  return tokens.length > 0 && tokens.every((token) => /^[A-Z]{1,3}[012]?$/.test(token));
+}
+
+function arpabetToIpa(value) {
+  const phonemes = {
+    AA: "ɑ", AE: "æ", AH: "ʌ", AO: "ɔ", AW: "aʊ", AY: "aɪ",
+    B: "b", CH: "tʃ", D: "d", DH: "ð", EH: "ɛ", ER: "ɝ", EY: "eɪ",
+    F: "f", G: "ɡ", HH: "h", IH: "ɪ", IY: "i", JH: "dʒ", K: "k",
+    L: "l", M: "m", N: "n", NG: "ŋ", OW: "oʊ", OY: "ɔɪ", P: "p",
+    R: "ɹ", S: "s", SH: "ʃ", T: "t", TH: "θ", UH: "ʊ", UW: "u",
+    V: "v", W: "w", Y: "j", Z: "z", ZH: "ʒ"
+  };
+  const vowels = new Set(["AA", "AE", "AH", "AO", "AW", "AY", "EH", "ER", "EY", "IH", "IY", "OW", "OY", "UH", "UW"]);
+  const output = [];
+  let lastVowelIndex = -1;
+
+  for (const token of value.trim().split(/\s+/)) {
+    const match = token.match(/^([A-Z]+)([012])?$/);
+    if (!match || !phonemes[match[1]]) continue;
+    const [, code, stress] = match;
+
+    if (vowels.has(code) && (stress === "1" || stress === "2")) {
+      const stressIndex = lastVowelIndex >= 0 ? lastVowelIndex + 1 : 0;
+      output.splice(stressIndex, 0, stress === "1" ? "ˈ" : "ˌ");
+      if (lastVowelIndex >= stressIndex) lastVowelIndex += 1;
+    }
+
+    let symbol = phonemes[code];
+    if (code === "AH" && stress === "0") symbol = "ə";
+    if (code === "ER" && stress === "0") symbol = "ɚ";
+    output.push(symbol);
+    if (vowels.has(code)) lastVowelIndex = output.length - 1;
+  }
+  return output.join("");
+}
+
+function englishWordForms(word) {
+  const value = word.toLocaleLowerCase("en");
+  const forms = new Set([value]);
+
+  if (value.endsWith("ied") && value.length > 4) forms.add(`${value.slice(0, -3)}y`);
+  if (value.endsWith("ed") && value.length > 3) {
+    const stem = value.slice(0, -2);
+    forms.add(stem);
+    forms.add(value.slice(0, -1));
+    if (stem.at(-1) === stem.at(-2)) forms.add(stem.slice(0, -1));
+  }
+  if (value.endsWith("ing") && value.length > 5) {
+    const stem = value.slice(0, -3);
+    forms.add(stem);
+    forms.add(`${stem}e`);
+    if (stem.at(-1) === stem.at(-2)) forms.add(stem.slice(0, -1));
+  }
+  if (value.endsWith("ies") && value.length > 4) forms.add(`${value.slice(0, -3)}y`);
+  if (value.endsWith("es") && value.length > 3) {
+    forms.add(value.slice(0, -2));
+    forms.add(value.slice(0, -1));
+  } else if (value.endsWith("s") && !value.endsWith("ss") && value.length > 3) {
+    forms.add(value.slice(0, -1));
+  }
+
+  return [...forms].slice(0, 4);
+}
+
+function uniqueRussianTranslations(values, sourceWord) {
+  const source = sourceWord.toLocaleLowerCase("en");
+  const seen = new Set();
+  return values.filter((value) => {
+    const translation = normalizeText(value, 500);
+    const key = translation.toLocaleLowerCase("ru");
+    if (!translation || key === source || !/[А-Яа-яЁё]/u.test(translation) || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map((value) => normalizeText(value, 500));
 }
 
 async function settleWithin(promise, timeoutMs, fallback) {
