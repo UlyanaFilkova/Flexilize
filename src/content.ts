@@ -22,6 +22,8 @@ import {errorMessage, type TranslateResponse} from "./types";
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
   let availableVoices: SpeechSynthesisVoice[] = [];
   let selectionRect: DOMRect | null = null;
+  let speechRun = 0;
+  let speechProgressFrame: number | null = null;
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keyup", (event) => {
@@ -170,6 +172,7 @@ import {errorMessage, type TranslateResponse} from "./types";
     removeModal();
     selectionRect = rect;
     const isLongSelection = text.length > 160 || text.split(/\s+/).length > 24;
+    const showSpeechProgress = wordCount(text) > 10;
     host = document.createElement("div");
     host.id = HOST_ID;
     host.style.cssText = "all:initial;position:fixed;z-index:2147483647;top:0;left:0";
@@ -184,15 +187,40 @@ import {errorMessage, type TranslateResponse} from "./types";
           <div class="transcription skeleton short"></div>
           <button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>
         </div>
+        ${showSpeechProgress ? `
+          <div class="speech-progress-row">
+            <input class="speech-progress" type="range" min="0" max="${text.length}" value="0"
+              aria-label="Позиция озвучки" title="Позиция озвучки">
+          </div>` : ""}
         <div class="divider"></div>
         <div class="translation skeleton"></div>
         <div class="status pending" role="status" aria-label="Обработка" title="Обработка">⏳</div>
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
-    shadow.querySelector<HTMLButtonElement>(".speak").addEventListener("click", (event) => {
+    const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
+    const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
+    speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
-      speak(text, event.currentTarget as HTMLButtonElement);
+      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        stopSpeaking(speakButton);
+        return;
+      }
+      const requestedPosition = progress ? Number(progress.value) : 0;
+      speak(text, speakButton, requestedPosition >= text.length ? 0 : requestedPosition);
+    });
+    progress?.addEventListener("input", () => {
+      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        stopSpeaking(speakButton);
+      }
+    });
+    progress?.addEventListener("change", () => {
+      const requestedPosition = Number(progress.value);
+      if (requestedPosition >= text.length) {
+        stopSpeaking(speakButton);
+        return;
+      }
+      speak(text, speakButton, requestedPosition);
     });
     positionModal(rect);
   }
@@ -279,13 +307,19 @@ import {errorMessage, type TranslateResponse} from "./types";
     shadow.querySelector(".status")?.remove();
   }
 
-  function speak(text, button: HTMLButtonElement) {
+  function speak(text, button: HTMLButtonElement, requestedPosition = 0) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
       showError("Озвучка не поддерживается этим браузером");
       return;
     }
+    const progress = shadow?.querySelector<HTMLInputElement>(".speech-progress") || null;
+    const startPosition = nearestWordStart(text, requestedPosition);
+    const spokenText = text.slice(startPosition).trimStart();
+    const leadingWhitespace = text.slice(startPosition).length - spokenText.length;
+    const actualStart = startPosition + leadingWhitespace;
+    const ownSpeechRun = ++speechRun;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(spokenText);
     const locale = "en-US";
     const voice = chooseVoice(locale);
     utterance.lang = voice?.lang || locale;
@@ -293,17 +327,83 @@ import {errorMessage, type TranslateResponse} from "./types";
     utterance.rate = 0.92;
     utterance.pitch = 1;
     utterance.onstart = () => {
+      if (ownSpeechRun !== speechRun) return;
       button.textContent = "■";
       button.title = "Остановить озвучку";
       button.setAttribute("aria-label", "Остановить озвучку");
+      if (progress) {
+        progress.value = String(actualStart);
+        animateSpeechProgress(progress, text, spokenText, actualStart, ownSpeechRun);
+      }
     };
-    utterance.onend = () => resetSpeakButton(button);
-    utterance.onerror = (event) => {
+    utterance.onboundary = (event) => {
+      if (ownSpeechRun !== speechRun || !progress) return;
+      progress.value = String(Math.max(
+        Number(progress.value),
+        Math.min(text.length, actualStart + event.charIndex)
+      ));
+    };
+    utterance.onend = () => {
+      if (ownSpeechRun !== speechRun) return;
+      stopSpeechProgressAnimation();
+      if (progress) progress.value = String(text.length);
       resetSpeakButton(button);
+    };
+    utterance.onerror = (event) => {
+      if (ownSpeechRun !== speechRun) return;
+      stopSpeechProgressAnimation();
+      resetSpeakButton(button);
+      if (event.error === "canceled" || event.error === "interrupted") return;
       button.title = `Ошибка озвучки: ${event.error}`;
       console.warn(`[Context Translator] Speech synthesis error: ${event.error}`);
     };
     window.speechSynthesis.speak(utterance);
+  }
+
+  function stopSpeaking(button?: HTMLButtonElement) {
+    speechRun += 1;
+    stopSpeechProgressAnimation();
+    window.speechSynthesis.cancel();
+    if (button) resetSpeakButton(button);
+  }
+
+  function animateSpeechProgress(
+    progress: HTMLInputElement,
+    fullText: string,
+    spokenText: string,
+    startPosition: number,
+    ownSpeechRun: number
+  ) {
+    stopSpeechProgressAnimation();
+    const startedAt = performance.now();
+    const estimatedDuration = estimateSpeechDuration(spokenText);
+    const remainingCharacters = fullText.length - startPosition;
+
+    const update = (now: number) => {
+      if (ownSpeechRun !== speechRun) return;
+      const fraction = Math.min(0.98, (now - startedAt) / estimatedDuration);
+      const estimatedPosition = startPosition + Math.floor(remainingCharacters * fraction);
+      progress.value = String(Math.max(Number(progress.value), estimatedPosition));
+      speechProgressFrame = requestAnimationFrame(update);
+    };
+    speechProgressFrame = requestAnimationFrame(update);
+  }
+
+  function stopSpeechProgressAnimation() {
+    if (speechProgressFrame === null) return;
+    cancelAnimationFrame(speechProgressFrame);
+    speechProgressFrame = null;
+  }
+
+  function estimateSpeechDuration(value: string) {
+    const wordsPerMinute = 165 * 0.92;
+    return Math.max(1200, (wordCount(value) / wordsPerMinute) * 60_000);
+  }
+
+  function nearestWordStart(text: string, requestedPosition: number) {
+    let position = Math.max(0, Math.min(Math.floor(requestedPosition), text.length));
+    while (position > 0 && /[A-Za-z'-]/.test(text[position - 1])) position -= 1;
+    return position;
   }
 
   function resetSpeakButton(button: HTMLButtonElement) {
@@ -381,7 +481,7 @@ import {errorMessage, type TranslateResponse} from "./types";
     host = null;
     shadow = null;
     selectionRect = null;
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    if ("speechSynthesis" in window) stopSpeaking();
   }
 
   function clean(value) {
@@ -390,6 +490,10 @@ import {errorMessage, type TranslateResponse} from "./types";
 
   function isSingleEnglishWord(value) {
     return /^[A-Za-z][A-Za-z'-]*$/.test(value);
+  }
+
+  function wordCount(value: string) {
+    return value.trim() ? value.trim().split(/\s+/).length : 0;
   }
 
   function isInvalidatedContextError(error) {
@@ -410,6 +514,8 @@ import {errorMessage, type TranslateResponse} from "./types";
       .card.long .source { max-height: min(22vh,180px); line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
+      .speech-progress-row { display: flex; align-items: center; margin-top: 6px; padding: 0 2px; }
+      .speech-progress { width: 100%; height: 16px; margin: 0; accent-color: #2457d6; cursor: pointer; }
       .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
