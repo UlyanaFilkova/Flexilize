@@ -47,6 +47,18 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
+  if (message?.type === "delete-record") {
+    return deleteRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "restore-record") {
+    return restoreRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
   if (message?.type === "clear-records") {
     return clearRecords()
       .then(() => ({ ok: true }))
@@ -754,6 +766,49 @@ function normalizeStoredRecord(value): TranslationRecord {
 async function clearRecords() {
   if (!extensionApi?.storage?.local) return;
   await extensionApi.storage.local.set({ [RECORDS_KEY]: [] });
+}
+
+async function deleteRecord(payload: {createdAt?: unknown; sentence?: unknown; text?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  const createdAt = normalizeText(payload?.createdAt, 100);
+  const sentence = normalizeText(payload?.sentence, 3000);
+  const text = normalizeText(payload?.text, 1000);
+  if (!createdAt || !text) throw new Error("Не удалось определить запись");
+
+  const records = await getRecords();
+  const recordIndex = records.findIndex((record) => (
+    record.createdAt === createdAt
+    && record.text === text
+    && record.sentence === sentence
+  ));
+  if (recordIndex < 0) throw new Error("Запись уже удалена");
+  records.splice(recordIndex, 1);
+  await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+}
+
+async function restoreRecord(payload: {index?: unknown; record?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  if (!payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось восстановить запись");
+  }
+
+  const record = normalizeStoredRecord(payload.record);
+  if (!record.createdAt || !record.text) throw new Error("Запись повреждена");
+  const records = await getRecords();
+  const alreadyRestored = records.some((item) => (
+    item.createdAt === record.createdAt
+    && item.text === record.text
+    && item.sentence === record.sentence
+  ));
+  if (alreadyRestored) return;
+
+  const requestedIndex = Number(payload.index);
+  const index = Number.isInteger(requestedIndex)
+    ? Math.max(0, Math.min(requestedIndex, records.length))
+    : 0;
+  records.splice(index, 0, record);
+  if (records.length > MAX_RECORDS) records.length = MAX_RECORDS;
+  await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
 }
 
 function normalizeText(value, maxLength) {
