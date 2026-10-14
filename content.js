@@ -152,9 +152,9 @@
       <section class="card" role="dialog" aria-label="Перевод выделенного текста">
         <div class="top">
           <div class="source"></div>
+          <div class="transcription skeleton short"></div>
           <button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>
         </div>
-        <div class="transcription skeleton short"></div>
         <div class="divider"></div>
         <div class="translation skeleton"></div>
         <div class="status pending" role="status" aria-label="Обработка" title="Обработка">⏳</div>
@@ -175,16 +175,16 @@
     const alternatives = Array.isArray(result.translations) && result.translations.length
       ? result.translations
       : [result.translation];
-    alternatives.forEach((value, index) => {
+    alternatives.forEach((value) => {
       const item = document.createElement("div");
-      item.className = index === 0 ? "translation-option primary" : "translation-option";
+      item.className = "translation-option";
       item.textContent = value;
       translation.append(item);
     });
     if (result.contextTranslation) {
       const context = document.createElement("div");
       context.className = "context-translation";
-      context.textContent = `В контексте: ${result.contextTranslation}`;
+      context.textContent = result.contextTranslation;
       translation.append(context);
     }
     const status = shadow.querySelector(".status");
@@ -273,7 +273,7 @@
 
   function positionModal(rect) {
     const card = shadow.querySelector(".card");
-    const width = Math.min(360, window.innerWidth - 24);
+    const width = Math.min(420, window.innerWidth - 24);
     const preferredLeft = rect.left + rect.width / 2 - width / 2;
     const left = Math.max(12, Math.min(preferredLeft, window.innerWidth - width - 12));
     card.style.width = `${width}px`;
@@ -316,23 +316,23 @@
   function modalStyles() {
     return `
       :host { color-scheme: light; }
-      .card { position: fixed; box-sizing: border-box; padding: 17px 18px 28px; border: 1px solid rgba(15,23,42,.09); border-radius: 16px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-      .top { display: flex; align-items: flex-start; gap: 12px; }
-      .source { flex: 1; max-height: 88px; overflow: auto; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; }
-      .speak { flex: 0 0 34px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 13px; transition: background .15s, transform .15s; }
+      .card { position: fixed; box-sizing: border-box; padding: 12px 14px 22px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .top { display: flex; align-items: center; gap: 9px; }
+      .source { flex: 1 1 auto; min-width: 0; max-height: 64px; overflow: auto; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; }
+      .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
-      .transcription { min-height: 20px; margin-top: 5px; color: #58677d; font-family: Georgia,serif; }
+      .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
-      .divider { height: 1px; margin: 12px 0; background: #e9edf3; }
-      .translation { min-height: 21px; color: #172033; font-size: 15px; overflow-wrap: anywhere; }
-      .translation-option + .translation-option { margin-top: 4px; color: #536176; font-size: 13px; }
-      .translation-option.primary { font-weight: 600; }
-      .context-translation { margin-top: 9px; padding-top: 8px; border-top: 1px solid #edf0f4; color: #718096; font-size: 12px; font-style: italic; }
+      .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
+      .translation { min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+      .translation-option { color: #172033; font-size: 16px; font-weight: 400; }
+      .translation-option + .translation-option { margin-top: 2px; }
+      .context-translation { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
       .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
       .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }
       .skeleton { border-radius: 5px; background: linear-gradient(90deg,#eef1f5 25%,#f7f8fa 50%,#eef1f5 75%); background-size: 200% 100%; color: transparent; animation: shimmer 1.2s infinite; }
-      .skeleton.short { width: 42%; }
+      .skeleton.short { width: 96px; flex-basis: 96px; }
       @keyframes shimmer { to { background-position: -200% 0; } }
     `;
   }
