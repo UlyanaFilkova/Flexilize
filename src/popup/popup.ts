@@ -7,13 +7,12 @@ const emptyElement = document.querySelector<HTMLElement>("#empty")!;
 const counterElement = document.querySelector<HTMLElement>("#counter")!;
 const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
 const jsonButton = document.querySelector<HTMLButtonElement>("#export-json")!;
-const csvButton = document.querySelector<HTMLButtonElement>("#export-csv")!;
 let records: TranslationRecord[] = [];
 
+clearButton.append(createTrashIcon());
 document.addEventListener("DOMContentLoaded", loadRecords);
 clearButton.addEventListener("click", clearRecords);
-jsonButton.addEventListener("click", () => exportFile("json"));
-csvButton.addEventListener("click", () => exportFile("csv"));
+jsonButton.addEventListener("click", exportJson);
 
 async function loadRecords() {
   try {
@@ -32,7 +31,6 @@ function render() {
   counterElement.textContent = pluralize(records.length);
   clearButton.disabled = records.length === 0;
   jsonButton.disabled = records.length === 0;
-  csvButton.disabled = records.length === 0;
 }
 
 function createRecordElement(record: TranslationRecord) {
@@ -162,20 +160,18 @@ async function clearRecords() {
   }
 }
 
-function exportFile(format: "json" | "csv") {
+function exportJson() {
   if (!records.length) return;
-  const isJson = format === "json";
   const exportRecords = records.map(toExportRecord);
-  const content = isJson ? JSON.stringify(exportRecords, null, 2) : toCsv(exportRecords);
-  const mime = isJson ? "application/json" : "text/csv";
-  const blob = new Blob([isJson ? content : `\uFEFF${content}`], { type: `${mime};charset=utf-8` });
+  const content = JSON.stringify(exportRecords, null, 2);
+  const blob = new Blob([content], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `context-translations-${dateStamp()}.${format}`;
+  anchor.download = `context-translations-${dateStamp()}.json`;
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  showNotice(`Файл ${format.toUpperCase()} подготовлен`);
+  showNotice("Файл JSON подготовлен");
 }
 
 function toExportRecord(record: TranslationRecord): TranslationRecord {
@@ -189,20 +185,6 @@ function toExportRecord(record: TranslationRecord): TranslationRecord {
     translation: record.translation,
     translations: record.translations
   };
-}
-
-function toCsv(items: TranslationRecord[]) {
-  const columns: (keyof TranslationRecord)[] = [
-    "contextTranslation", "createdAt", "pageTitle", "pageUrl",
-    "sentence", "text", "translation", "translations"
-  ];
-  return [columns, ...items.map((item) => columns.map((column) => item[column] ?? ""))]
-    .map((row) => row.map((value) => csvCell(Array.isArray(value) ? JSON.stringify(value) : value)).join(","))
-    .join("\r\n");
-}
-
-function csvCell(value: unknown) {
-  return `"${String(value).replace(/"/g, '""')}"`;
 }
 
 function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text: string) {
