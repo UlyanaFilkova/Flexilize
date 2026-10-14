@@ -3,7 +3,9 @@ import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from ".
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
+const TRANSLATION_RESULTS_KEY = "translationResultCacheV1";
 const MAX_RECORDS = 5000;
+const MAX_CACHED_TRANSLATIONS = 500;
 const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
@@ -17,6 +19,8 @@ const translationCache = new Map<string, Promise<{
   alternatives: string[]
   warning: string | null
 }>>();
+let translationCacheWrite = Promise.resolve();
+let translationCooldownUntil = 0;
 
 extensionApi.runtime.onMessage.addListener((message: unknown) => {
   if (!isRuntimeMessage(message)) return undefined;
@@ -230,21 +234,28 @@ async function translateToRussian(text: string, sentence: string): Promise<Trans
 }
 
 async function translateWordToRussian(word, sentence) {
-  const forms = englishWordForms(word);
+  // The selected form plus its most likely lemma are enough for the machine
+  // translator. Other variants still come from Wiktionary without spending
+  // the limited translation quota.
+  const forms = englishWordForms(word).slice(0, 2);
   const markedContext = buildMarkedContext(sentence, word);
   const collocation = buildContextCollocation(sentence, word);
-  const [results, contextResult, dictionaryTranslations, collocationTranslation] = await Promise.all([
-    Promise.all(forms.map(async (form) => {
-      try {
-        return await translateChunk(form);
-      } catch (_error) {
-        return null;
-      }
-    })),
+  const [primaryResult, contextResult, dictionaryTranslations] = await Promise.all([
+    translateChunk(forms[0]).catch(() => null),
     markedContext ? translateContext(markedContext).catch(() => null) : null,
-    fetchWiktionaryTranslations(word),
-    collocation ? translateCollocation(collocation).catch(() => null) : null
+    fetchWiktionaryTranslations(word)
   ]);
+  const results = primaryResult ? [primaryResult] : [];
+  if (forms[1] && !isUsefulMachineTranslation(primaryResult, word)) {
+    const lemmaResult = await translateChunk(forms[1]).catch(() => null);
+    if (lemmaResult) results.push(lemmaResult);
+  }
+  // Usually the marked context identifies the correct word directly. The
+  // extra collocation requests are only useful when that marker was lost by
+  // the translation service.
+  const collocationTranslation = !contextResult?.selectedTranslation && collocation
+    ? await translateCollocation(collocation).catch(() => null)
+    : null;
   const successful = results.filter(Boolean);
   if (!successful.length && !contextResult?.selectedTranslation) {
     throw new Error("Сервис перевода временно недоступен");
@@ -282,6 +293,13 @@ async function translateWordToRussian(word, sentence) {
     contextTranslation: contextResult?.fullTranslation || null,
     warning: successful.find((result) => result.warning)?.warning || null
   };
+}
+
+function isUsefulMachineTranslation(result, sourceWord) {
+  const translated = normalizeText(result?.text, 500);
+  return Boolean(translated)
+    && translated.toLocaleLowerCase("en") !== sourceWord.toLocaleLowerCase("en")
+    && /[А-Яа-яЁё]/u.test(translated);
 }
 
 async function fetchWiktionaryTranslations(word) {
@@ -383,16 +401,12 @@ async function translateContext(markedContext) {
 }
 
 function buildMarkedContext(sentence, word) {
-  const context = normalizeText(sentence, 500);
+  const context = normalizeText(sentence, 3000);
   if (!context || context.toLocaleLowerCase("en") === word.toLocaleLowerCase("en")) return null;
   const index = context.toLocaleLowerCase("en").indexOf(word.toLocaleLowerCase("en"));
   if (index < 0) return null;
 
-  const left = Math.max(0, index - 170);
-  const right = Math.min(context.length, index + word.length + 170);
-  const snippet = context.slice(left, right);
-  const localIndex = index - left;
-  return `${snippet.slice(0, localIndex)}${CONTEXT_START}${snippet.slice(localIndex, localIndex + word.length)}${CONTEXT_END}${snippet.slice(localIndex + word.length)}`;
+  return `${context.slice(0, index)}${CONTEXT_START}${context.slice(index, index + word.length)}${CONTEXT_END}${context.slice(index + word.length)}`;
 }
 
 function buildContextCollocation(sentence, word) {
@@ -505,12 +519,15 @@ async function fetchDatamuseTranscription(text) {
 }
 
 async function translateChunk(text) {
-  const cacheKey = normalizeText(text, 1000);
+  const cacheKey = normalizeText(text, 3000);
   const cached = translationCache.get(cacheKey);
   if (cached) return cached;
 
-  const request = requestTranslationChunk(cacheKey);
-  if (translationCache.size >= 250) translationCache.clear();
+  const request = resolveTranslationChunk(cacheKey);
+  if (translationCache.size >= 250) {
+    const oldestKey = translationCache.keys().next().value;
+    if (oldestKey) translationCache.delete(oldestKey);
+  }
   translationCache.set(cacheKey, request);
 
   try {
@@ -521,18 +538,96 @@ async function translateChunk(text) {
   }
 }
 
-async function requestTranslationChunk(text: string) {
-  const query = new URLSearchParams({ q: text, langpair: "en|ru" });
-  const response = await fetchWithTimeout(
-    `https://api.mymemory.translated.net/get?${query}`,
-    TRANSLATION_REQUEST_TIMEOUT_MS
-  );
+async function resolveTranslationChunk(text: string) {
+  const saved = await findSavedTranslation(text);
+  if (saved) return saved;
 
+  const persisted = await getPersistedTranslation(text);
+  if (persisted) return persisted;
+
+  const result = await requestTranslationChunk(text);
+  await persistTranslation(text, result);
+  return result;
+}
+
+async function findSavedTranslation(text: string) {
+  if (/<\/?b(?:\s[^>]*)?>/i.test(text)) return null;
+  const key = normalizeText(text, 1000).toLocaleLowerCase("en");
+  const records = await getRecords();
+  const record = records.find((item) => item.text.toLocaleLowerCase("en") === key);
+  if (!record?.translation) return null;
+  return {
+    text: record.translation,
+    alternatives: record.translations.length ? record.translations : [record.translation],
+    warning: null
+  };
+}
+
+async function getPersistedTranslation(text: string) {
+  if (!extensionApi?.storage?.local) return null;
+  const stored = await extensionApi.storage.local.get(TRANSLATION_RESULTS_KEY);
+  const cache = stored?.[TRANSLATION_RESULTS_KEY];
+  const entry = cache && typeof cache === "object" ? cache[persistentTranslationKey(text)] : null;
+  const translated = normalizeText(entry?.text, 3000);
+  if (!translated) return null;
+  const alternatives = Array.isArray(entry?.alternatives)
+    ? entry.alternatives.map((item) => normalizeText(item, 1000)).filter(Boolean)
+    : [];
+  return {
+    text: translated,
+    alternatives: alternatives.length ? alternatives : [translated],
+    warning: typeof entry?.warning === "string" ? entry.warning : null
+  };
+}
+
+async function persistTranslation(text: string, result: {text: string; alternatives: string[]; warning: string | null}) {
+  if (!extensionApi?.storage?.local) return;
+  translationCacheWrite = translationCacheWrite.then(async () => {
+    const stored = await extensionApi.storage.local.get(TRANSLATION_RESULTS_KEY);
+    const current = stored?.[TRANSLATION_RESULTS_KEY];
+    const cache = current && typeof current === "object" ? { ...current } : {};
+    cache[persistentTranslationKey(text)] = { ...result, cachedAt: Date.now() };
+    const entries = Object.entries(cache);
+    if (entries.length > MAX_CACHED_TRANSLATIONS) {
+      entries
+        .sort((left: any, right: any) => Number(left[1]?.cachedAt || 0) - Number(right[1]?.cachedAt || 0))
+        .slice(0, entries.length - MAX_CACHED_TRANSLATIONS)
+        .forEach(([key]) => delete cache[key]);
+    }
+    await extensionApi.storage.local.set({ [TRANSLATION_RESULTS_KEY]: cache });
+  }).catch(() => undefined);
+  await translationCacheWrite;
+}
+
+async function requestTranslationChunk(text: string) {
+  if (Date.now() < translationCooldownUntil) {
+    return requestFallbackTranslation(text);
+  }
+  const query = new URLSearchParams({ q: text, langpair: "en|ru" });
+  let response;
+  try {
+    response = await fetchWithTimeout(
+      `https://api.mymemory.translated.net/get?${query}`,
+      TRANSLATION_REQUEST_TIMEOUT_MS
+    );
+  } catch (_error) {
+    return requestFallbackTranslation(text);
+  }
+
+  if (response.status === 429) {
+    translationCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
+    return requestFallbackTranslation(text);
+  }
   if (!response.ok) {
-    throw new Error(`Сервис перевода временно недоступен (${response.status})`);
+    return requestFallbackTranslation(text);
   }
 
   const data = await response.json();
+  const responseStatus = Number(data?.responseStatus);
+  if ([403, 429].includes(responseStatus)) {
+    translationCooldownUntil = Date.now() + 15 * 60_000;
+    return requestFallbackTranslation(text);
+  }
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
   if (!translated) throw new Error("Сервис перевода вернул пустой результат");
   const exactMatches = Array.isArray(data?.matches)
@@ -552,6 +647,43 @@ async function requestTranslationChunk(text: string) {
     alternatives,
     warning: Number(data?.responseStatus) === 200 ? null : "Перевод может быть неточным"
   };
+}
+
+async function requestFallbackTranslation(text: string) {
+  try {
+    const query = new URLSearchParams({
+      client: "gtx",
+      dt: "t",
+      q: text,
+      sl: "en",
+      tl: "ru"
+    });
+    query.set("client", "dict-chrome-ex");
+    const response = await fetchWithTimeout(
+      `https://clients5.google.com/translate_a/t?${query}`,
+      TRANSLATION_REQUEST_TIMEOUT_MS
+    );
+    if (!response.ok) throw new Error("fallback unavailable");
+    const data = await response.json();
+    const translated = Array.isArray(data)
+      ? data.map((segment) => typeof segment === "string" ? segment : "").join("").trim()
+      : "";
+    if (!translated) throw new Error("fallback returned an empty translation");
+    return { text: translated, alternatives: [translated], warning: null };
+  } catch (_error) {
+    throw new Error("Сейчас не удалось получить перевод. Проверьте интернет-соединение или попробуйте ещё раз позже.");
+  }
+}
+
+function persistentTranslationKey(text: string) {
+  return `text:${text}`;
+}
+
+function retryDelay(retryAfter: string | null) {
+  const seconds = Number(retryAfter);
+  return Number.isFinite(seconds) && seconds > 0
+    ? Math.min(seconds * 1000, 60 * 60_000)
+    : 5 * 60_000;
 }
 
 async function fetchEnglishPhonetic(word) {
@@ -880,5 +1012,8 @@ function decodeHtmlEntities(value) {
 }
 
 function readableError(error) {
-  return error instanceof Error ? error.message : "Неизвестная ошибка";
+  const message = error instanceof Error ? error.message : "Неизвестная ошибка";
+  return /\b429\b|too many requests|quota|rate.?limit/i.test(message)
+    ? "Перевод временно недоступен. Попробуйте ещё раз немного позже."
+    : message;
 }

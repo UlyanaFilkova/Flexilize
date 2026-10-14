@@ -11,6 +11,7 @@
     "https://api.dictionaryapi.dev/*",
     "https://api.datamuse.com/*",
     "https://en.wiktionary.org/*",
+    "https://clients5.google.com/*",
     "https://translate.google.com/*"
   ],
   "background": {
