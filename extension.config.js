@@ -5,6 +5,14 @@ const systemChrome = process.env.CHROME_BIN
 
 /** @type {import('extension').FileConfig} */
 export default {
+  browser: {
+    chrome: {
+      startingUrl: "https://en.wikipedia.org/wiki/Main_Page"
+    },
+    firefox: {
+      startingUrl: "https://en.wikipedia.org/wiki/Main_Page"
+    }
+  },
   commands: {
     dev: {
       chromiumBinary: systemChrome,
