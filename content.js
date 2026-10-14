@@ -7,6 +7,7 @@
   let currentText = "";
   let requestNumber = 0;
   let selectionTimer = null;
+  let availableVoices = [];
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keyup", (event) => {
@@ -16,6 +17,11 @@
   document.addEventListener("pointerdown", handleOutsidePointerDown, true);
   document.addEventListener("scroll", closeModal, true);
   window.addEventListener("blur", closeModal);
+
+  if ("speechSynthesis" in window) {
+    refreshVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", refreshVoices);
+  }
 
   function scheduleSelection() {
     clearTimeout(selectionTimer);
@@ -49,6 +55,7 @@
       if (ownRequest !== requestNumber || !shadow) return;
       if (!result?.ok) throw new Error(result?.error || "Не удалось выполнить перевод");
       renderResult(result, details.text);
+      void loadTranscription(details.text, ownRequest);
     } catch (error) {
       if (ownRequest === requestNumber) showError(error?.message || "Ошибка перевода");
     }
@@ -150,7 +157,7 @@
         <div class="transcription skeleton short"></div>
         <div class="divider"></div>
         <div class="translation skeleton"></div>
-        <div class="status">Переводим и сохраняем…</div>
+        <div class="status pending" role="status" aria-label="Обработка" title="Обработка">⏳</div>
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
@@ -162,20 +169,38 @@
   }
 
   function renderResult(result, text) {
-    const transcription = shadow.querySelector(".transcription");
     const translation = shadow.querySelector(".translation");
-    transcription.classList.remove("skeleton", "short");
     translation.classList.remove("skeleton");
-    transcription.textContent = result.transcription || "Транскрипция недоступна";
-    transcription.classList.toggle("muted", !result.transcription);
     translation.textContent = result.translation;
     const status = shadow.querySelector(".status");
-    status.textContent = result.warning || (result.saved ? "✓ Сохранено" : "");
-    status.classList.toggle("warning", Boolean(result.warning));
+    status.textContent = "✓";
+    status.classList.remove("pending");
+    status.setAttribute("aria-label", "Сохранено");
+    status.title = result.warning || "Сохранено";
     shadow.querySelector(".speak").onclick = (event) => {
       event.stopPropagation();
-      speak(text, result.sourceLanguage);
+      speak(text);
     };
+  }
+
+  async function loadTranscription(text, ownRequest) {
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "get-transcription",
+        payload: { text }
+      });
+      if (ownRequest !== requestNumber || !shadow) return;
+      renderTranscription(result?.ok ? result.transcription : null);
+    } catch (_error) {
+      if (ownRequest === requestNumber && shadow) renderTranscription(null);
+    }
+  }
+
+  function renderTranscription(value) {
+    const transcription = shadow.querySelector(".transcription");
+    transcription.classList.remove("skeleton", "short");
+    transcription.textContent = value || "Транскрипция недоступна";
+    transcription.classList.toggle("muted", !value);
   }
 
   function showError(message) {
@@ -186,23 +211,49 @@
     translation.classList.remove("skeleton");
     translation.textContent = message;
     translation.classList.add("error");
-    shadow.querySelector(".status").textContent = "Не сохранено";
+    shadow.querySelector(".status")?.remove();
   }
 
-  function speak(text, language = "en") {
+  function speak(text) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
       showError("Озвучка не поддерживается этим браузером");
       return;
     }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = speechLocale(language);
+    const locale = "en-US";
+    const voice = chooseVoice(locale);
+    utterance.lang = voice?.lang || locale;
+    utterance.voice = voice || null;
+    utterance.rate = 0.92;
+    utterance.pitch = 1;
     window.speechSynthesis.speak(utterance);
   }
 
-  function speechLocale(language) {
-    const locales = { en: "en-US", ru: "ru-RU", de: "de-DE", fr: "fr-FR", es: "es-ES", it: "it-IT", uk: "uk-UA" };
-    return locales[language] || language || "en-US";
+  function refreshVoices() {
+    availableVoices = window.speechSynthesis.getVoices();
+  }
+
+  function chooseVoice(locale) {
+    const voices = availableVoices.length
+      ? availableVoices
+      : window.speechSynthesis.getVoices();
+    const exactLocale = locale.toLocaleLowerCase();
+    const baseLanguage = exactLocale.split("-")[0];
+
+    return voices
+      .filter((voice) => voice.lang.toLocaleLowerCase().split("-")[0] === baseLanguage)
+      .sort((left, right) => voiceScore(right, exactLocale) - voiceScore(left, exactLocale))[0] || null;
+  }
+
+  function voiceScore(voice, exactLocale) {
+    const name = voice.name.toLocaleLowerCase();
+    let score = voice.lang.toLocaleLowerCase() === exactLocale ? 40 : 0;
+    if (/google|microsoft.*(online|natural)|natural|enhanced|premium|siri/.test(name)) score += 35;
+    if (!voice.localService) score += 20;
+    if (voice.default) score += 5;
+    if (/espeak|festival|pico/.test(name)) score -= 50;
+    return score;
   }
 
   function positionModal(rect) {
@@ -250,7 +301,7 @@
   function modalStyles() {
     return `
       :host { color-scheme: light; }
-      .card { position: fixed; box-sizing: border-box; padding: 17px 18px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 16px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .card { position: fixed; box-sizing: border-box; padding: 17px 18px 28px; border: 1px solid rgba(15,23,42,.09); border-radius: 16px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .top { display: flex; align-items: flex-start; gap: 12px; }
       .source { flex: 1; max-height: 88px; overflow: auto; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; }
       .speak { flex: 0 0 34px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 13px; transition: background .15s, transform .15s; }
@@ -259,8 +310,8 @@
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 12px 0; background: #e9edf3; }
       .translation { min-height: 21px; color: #172033; font-size: 15px; overflow-wrap: anywhere; }
-      .status { margin-top: 10px; color: #6c7a90; font-size: 11px; }
-      .warning { color: #9a6700; }
+      .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
+      .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }
       .skeleton { border-radius: 5px; background: linear-gradient(90deg,#eef1f5 25%,#f7f8fa 50%,#eef1f5 75%); background-size: 200% 100%; color: transparent; animation: shimmer 1.2s infinite; }
       .skeleton.short { width: 42%; }

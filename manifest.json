@@ -6,7 +6,8 @@
   "permissions": ["storage", "unlimitedStorage"],
   "host_permissions": [
     "https://api.mymemory.translated.net/*",
-    "https://api.dictionaryapi.dev/*"
+    "https://api.dictionaryapi.dev/*",
+    "https://api.datamuse.com/*"
   ],
   "background": {
     "service_worker": "background.js"
