@@ -7,13 +7,12 @@ const emptyElement = document.querySelector<HTMLElement>("#empty")!;
 const counterElement = document.querySelector<HTMLElement>("#counter")!;
 const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
 const jsonButton = document.querySelector<HTMLButtonElement>("#export-json")!;
-const csvButton = document.querySelector<HTMLButtonElement>("#export-csv")!;
 let records: TranslationRecord[] = [];
 
+clearButton.append(createTrashIcon());
 document.addEventListener("DOMContentLoaded", loadRecords);
 clearButton.addEventListener("click", clearRecords);
-jsonButton.addEventListener("click", () => exportFile("json"));
-csvButton.addEventListener("click", () => exportFile("csv"));
+jsonButton.addEventListener("click", exportJson);
 
 async function loadRecords() {
   try {
@@ -32,7 +31,6 @@ function render() {
   counterElement.textContent = pluralize(records.length);
   clearButton.disabled = records.length === 0;
   jsonButton.disabled = records.length === 0;
-  csvButton.disabled = records.length === 0;
 }
 
 function createRecordElement(record: TranslationRecord) {
@@ -63,8 +61,90 @@ function createRecordElement(record: TranslationRecord) {
     meta.append(link);
   }
 
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "delete-record";
+  deleteButton.type = "button";
+  deleteButton.append(createTrashIcon());
+  deleteButton.title = "Удалить запись";
+  deleteButton.setAttribute("aria-label", `Удалить перевод «${record.text}»`);
+  deleteButton.addEventListener("click", () => void deleteRecord(record, deleteButton));
+  meta.append(deleteButton);
+
   item.append(pair, sentence, meta);
   return item;
+}
+
+async function deleteRecord(record: TranslationRecord, button: HTMLButtonElement) {
+  const recordIndex = records.indexOf(record);
+  button.disabled = true;
+  try {
+    const result = await extensionApi.runtime.sendMessage({
+      type: "delete-record",
+      payload: {
+        createdAt: record.createdAt,
+        sentence: record.sentence,
+        text: record.text
+      }
+    }) as RecordsResponse;
+    if (!result?.ok) throw new Error(result?.error || "Не удалось удалить запись");
+    records = records.filter((item) => item !== record);
+    render();
+    showUndoNotice(record, recordIndex);
+  } catch (error) {
+    button.disabled = false;
+    showNotice(errorMessage(error, "Ошибка удаления"));
+  }
+}
+
+function showUndoNotice(record: TranslationRecord, recordIndex: number) {
+  const notice = document.querySelector<HTMLElement>("#notice")!;
+  const message = document.createElement("span");
+  message.textContent = "Запись удалена";
+  const undoButton = document.createElement("button");
+  undoButton.className = "undo-button";
+  undoButton.type = "button";
+  undoButton.textContent = "Отменить";
+  undoButton.addEventListener("click", async () => {
+    undoButton.disabled = true;
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "restore-record",
+        payload: { index: recordIndex, record }
+      }) as RecordsResponse;
+      if (!result?.ok) throw new Error(result?.error || "Не удалось восстановить запись");
+      const index = Math.max(0, Math.min(recordIndex, records.length));
+      records.splice(index, 0, record);
+      render();
+      showNotice("Запись восстановлена");
+    } catch (error) {
+      undoButton.disabled = false;
+      showNotice(errorMessage(error, "Ошибка восстановления"));
+    }
+  });
+  notice.replaceChildren(message, undoButton);
+  notice.classList.add("visible");
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => notice.classList.remove("visible"), 6000);
+}
+
+function createTrashIcon() {
+  const namespace = "http://www.w3.org/2000/svg";
+  const icon = document.createElementNS(namespace, "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  const paths = [
+    "M3 6h18",
+    "M8 6V4h8v2",
+    "M19 6l-1 14H6L5 6",
+    "M10 11v5",
+    "M14 11v5"
+  ];
+  paths.forEach((data) => {
+    const path = document.createElementNS(namespace, "path");
+    path.setAttribute("d", data);
+    icon.append(path);
+  });
+  return icon;
 }
 
 async function clearRecords() {
@@ -80,20 +160,18 @@ async function clearRecords() {
   }
 }
 
-function exportFile(format: "json" | "csv") {
+function exportJson() {
   if (!records.length) return;
-  const isJson = format === "json";
   const exportRecords = records.map(toExportRecord);
-  const content = isJson ? JSON.stringify(exportRecords, null, 2) : toCsv(exportRecords);
-  const mime = isJson ? "application/json" : "text/csv";
-  const blob = new Blob([isJson ? content : `\uFEFF${content}`], { type: `${mime};charset=utf-8` });
+  const content = JSON.stringify(exportRecords, null, 2);
+  const blob = new Blob([content], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `context-translations-${dateStamp()}.${format}`;
+  anchor.download = `context-translations-${dateStamp()}.json`;
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  showNotice(`Файл ${format.toUpperCase()} подготовлен`);
+  showNotice("Файл JSON подготовлен");
 }
 
 function toExportRecord(record: TranslationRecord): TranslationRecord {
@@ -107,20 +185,6 @@ function toExportRecord(record: TranslationRecord): TranslationRecord {
     translation: record.translation,
     translations: record.translations
   };
-}
-
-function toCsv(items: TranslationRecord[]) {
-  const columns: (keyof TranslationRecord)[] = [
-    "contextTranslation", "createdAt", "pageTitle", "pageUrl",
-    "sentence", "text", "translation", "translations"
-  ];
-  return [columns, ...items.map((item) => columns.map((column) => item[column] ?? ""))]
-    .map((row) => row.map((value) => csvCell(Array.isArray(value) ? JSON.stringify(value) : value)).join(","))
-    .join("\r\n");
-}
-
-function csvCell(value: unknown) {
-  return `"${String(value).replace(/"/g, '""')}"`;
 }
 
 function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text: string) {
@@ -159,7 +223,7 @@ function dateStamp() {
 let noticeTimer: ReturnType<typeof setTimeout> | undefined;
 function showNotice(message: string) {
   const notice = document.querySelector<HTMLElement>("#notice")!;
-  notice.textContent = message;
+  notice.replaceChildren(document.createTextNode(message));
   notice.classList.add("visible");
   clearTimeout(noticeTimer);
   noticeTimer = setTimeout(() => notice.classList.remove("visible"), 2200);

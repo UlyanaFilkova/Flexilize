@@ -1,5 +1,12 @@
 import browser from "webextension-polyfill";
-import {errorMessage, type TranslateResponse} from "./types";
+import {
+  errorMessage,
+  type RecordsResponse,
+  type SpeechAudioChunk,
+  type SpeechAudioResponse,
+  type TranslationRecord,
+  type TranslateResponse
+} from "./types";
 
 (() => {
   const extensionApi = browser;
@@ -24,6 +31,12 @@ import {errorMessage, type TranslateResponse} from "./types";
   let selectionRect: DOMRect | null = null;
   let speechRun = 0;
   let speechProgressFrame: number | null = null;
+  let speechLoading = false;
+  let audioContext: AudioContext | null = null;
+  let remoteSpeech: {
+    context: AudioContext
+    sources: AudioBufferSourceNode[]
+  } | null = null;
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keyup", (event) => {
@@ -202,7 +215,7 @@ import {errorMessage, type TranslateResponse} from "./types";
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
-      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      if (isSpeechActive()) {
         stopSpeaking(speakButton);
         return;
       }
@@ -210,7 +223,7 @@ import {errorMessage, type TranslateResponse} from "./types";
       speak(text, speakButton, requestedPosition >= text.length ? 0 : requestedPosition);
     });
     progress?.addEventListener("input", () => {
-      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      if (isSpeechActive()) {
         stopSpeaking(speakButton);
       }
     });
@@ -228,10 +241,98 @@ import {errorMessage, type TranslateResponse} from "./types";
   function renderResult(result: TranslateResponse & {translation: string}) {
     renderTranslations(result);
     const status = shadow.querySelector<HTMLElement>(".status");
-    status.textContent = "✓";
-    status.classList.remove("pending");
-    status.setAttribute("aria-label", "Сохранено");
-    status.title = result.warning || "Сохранено";
+    if (result.saved === false) {
+      status.remove();
+    } else {
+      status.textContent = "✓";
+      status.classList.remove("pending");
+      status.setAttribute("aria-label", "Сохранено");
+      status.title = result.warning || "Сохранено";
+    }
+    if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
+  }
+
+  function showStorageLimitNotice(pendingRecord?: TranslationRecord) {
+    if (!shadow || shadow.querySelector(".storage-limit")) return;
+    const card = shadow.querySelector<HTMLElement>(".card");
+    if (!card) return;
+
+    const notice = document.createElement("div");
+    notice.className = "storage-limit";
+    const message = document.createElement("div");
+    message.className = "storage-limit-message";
+    message.textContent = "Достигнут лимит в 5 переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.";
+    const actions = document.createElement("div");
+    actions.className = "storage-limit-actions";
+    const exportButton = document.createElement("button");
+    exportButton.className = "storage-limit-export";
+    exportButton.type = "button";
+    exportButton.textContent = "Скачать и очистить";
+    exportButton.addEventListener("click", () => (
+      void exportAndClearRecords(exportButton, notice, pendingRecord)
+    ));
+    const laterButton = document.createElement("button");
+    laterButton.className = "storage-limit-later";
+    laterButton.type = "button";
+    laterButton.textContent = "Позже";
+    laterButton.addEventListener("click", () => {
+      notice.remove();
+      if (selectionRect) positionModal(selectionRect);
+    });
+    actions.append(exportButton, laterButton);
+    notice.append(message, actions);
+    card.append(notice);
+    if (selectionRect) positionModal(selectionRect);
+  }
+
+  async function exportAndClearRecords(
+    button: HTMLButtonElement,
+    notice: HTMLElement,
+    pendingRecord?: TranslationRecord
+  ) {
+    button.disabled = true;
+    try {
+      const recordsResult = await extensionApi.runtime.sendMessage({ type: "get-records" }) as RecordsResponse;
+      if (!recordsResult?.ok) throw new Error(recordsResult?.error || "Не удалось загрузить записи");
+      const records = recordsResult.records || [];
+      const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `context-translations-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      const clearResult = await extensionApi.runtime.sendMessage(pendingRecord
+        ? { type: "clear-and-save-record", payload: { record: pendingRecord } }
+        : { type: "clear-records" }) as RecordsResponse;
+      if (!clearResult?.ok) throw new Error(clearResult?.error || "Не удалось очистить хранилище");
+      if (pendingRecord) {
+        const card = shadow?.querySelector<HTMLElement>(".card");
+        if (card && !card.querySelector(".status")) {
+          const status = document.createElement("div");
+          status.className = "status";
+          status.textContent = "✓";
+          status.setAttribute("role", "status");
+          status.setAttribute("aria-label", "Сохранено");
+          status.title = "Сохранено";
+          card.append(status);
+        }
+      }
+      notice.replaceChildren(document.createTextNode(pendingRecord
+        ? "Хранилище очищено, текущий перевод сохранён"
+        : "Переводы скачаны, хранилище очищено"));
+      if (selectionRect) positionModal(selectionRect);
+      setTimeout(() => {
+        notice.remove();
+        if (selectionRect) positionModal(selectionRect);
+      }, 2200);
+    } catch (error) {
+      button.disabled = false;
+      button.title = errorMessage(error, "Ошибка экспорта");
+      const message = notice.querySelector<HTMLElement>(".storage-limit-message");
+      if (message) message.textContent = errorMessage(error, "Не удалось скачать переводы");
+    }
   }
 
   function renderTranslations(result: TranslateResponse & {translation: string}) {
@@ -307,7 +408,15 @@ import {errorMessage, type TranslateResponse} from "./types";
     shadow.querySelector(".status")?.remove();
   }
 
-  function speak(text, button: HTMLButtonElement, requestedPosition = 0) {
+  function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
+    if (isFirefox()) {
+      void speakWithRemoteVoice(text, button, requestedPosition);
+      return;
+    }
+    speakWithBrowserVoice(text, button, requestedPosition);
+  }
+
+  function speakWithBrowserVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
       showError("Озвучка не поддерживается этим браузером");
       return;
@@ -362,9 +471,150 @@ import {errorMessage, type TranslateResponse} from "./types";
 
   function stopSpeaking(button?: HTMLButtonElement) {
     speechRun += 1;
+    speechLoading = false;
     stopSpeechProgressAnimation();
+    stopRemoteSpeech();
     window.speechSynthesis.cancel();
     if (button) resetSpeakButton(button);
+  }
+
+  async function speakWithRemoteVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
+    const startPosition = nearestWordStart(text, requestedPosition);
+    const spokenText = text.slice(startPosition).trimStart();
+    const leadingWhitespace = text.slice(startPosition).length - spokenText.length;
+    const actualStart = startPosition + leadingWhitespace;
+    const progress = shadow?.querySelector<HTMLInputElement>(".speech-progress") || null;
+    const context = getAudioContext();
+    const ownSpeechRun = ++speechRun;
+
+    stopRemoteSpeech();
+    window.speechSynthesis.cancel();
+    speechLoading = true;
+    button.textContent = "■";
+    button.title = "Остановить озвучку";
+    button.setAttribute("aria-label", "Остановить озвучку");
+    if (progress) progress.value = String(actualStart);
+
+    // Calling resume directly from the click handler keeps Firefox's autoplay
+    // permission while the audio itself is being downloaded.
+    void context.resume();
+
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "get-speech-audio",
+        payload: { text: spokenText }
+      }) as SpeechAudioResponse;
+      if (ownSpeechRun !== speechRun) return;
+      if (!result?.ok || !result.chunks?.length) {
+        throw new Error(result?.error || "Не удалось загрузить озвучку");
+      }
+
+      const decoded = await Promise.all(result.chunks.map(async (chunk) => ({
+        buffer: await context.decodeAudioData(base64ToArrayBuffer(chunk.audio)),
+        chunk
+      })));
+      if (ownSpeechRun !== speechRun) return;
+
+      await context.resume();
+      const sources: AudioBufferSourceNode[] = [];
+      const schedule: Array<{
+        chunk: SpeechAudioChunk
+        startTime: number
+        endTime: number
+      }> = [];
+      let scheduledTime = context.currentTime + 0.04;
+
+      decoded.forEach(({buffer, chunk}) => {
+        const source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        source.start(scheduledTime);
+        sources.push(source);
+        schedule.push({ chunk, startTime: scheduledTime, endTime: scheduledTime + buffer.duration });
+        scheduledTime += buffer.duration;
+      });
+
+      speechLoading = false;
+      remoteSpeech = { context, sources };
+      const lastSource = sources.at(-1);
+      if (lastSource) {
+        lastSource.onended = () => {
+          if (ownSpeechRun !== speechRun) return;
+          stopSpeechProgressAnimation();
+          remoteSpeech = null;
+          if (progress) progress.value = String(text.length);
+          resetSpeakButton(button);
+        };
+      }
+      animateRemoteSpeechProgress(progress, text, actualStart, schedule, ownSpeechRun);
+    } catch (error) {
+      if (ownSpeechRun !== speechRun) return;
+      speechLoading = false;
+      resetSpeakButton(button);
+      console.warn(`[Context Translator] Remote speech synthesis failed: ${errorMessage(error, "unknown error")}`);
+      // Firefox can still provide a local voice when the network TTS is unavailable.
+      speakWithBrowserVoice(text, button, requestedPosition);
+    }
+  }
+
+  function animateRemoteSpeechProgress(
+    progress: HTMLInputElement | null,
+    fullText: string,
+    startPosition: number,
+    schedule: Array<{chunk: SpeechAudioChunk; startTime: number; endTime: number}>,
+    ownSpeechRun: number
+  ) {
+    if (!progress) return;
+    stopSpeechProgressAnimation();
+
+    const update = () => {
+      if (ownSpeechRun !== speechRun || !remoteSpeech) return;
+      const now = remoteSpeech.context.currentTime;
+      const current = schedule.find((item) => now >= item.startTime && now < item.endTime);
+      if (current) {
+        const fraction = (now - current.startTime) / (current.endTime - current.startTime);
+        const chunkPosition = current.chunk.start
+          + Math.floor((current.chunk.end - current.chunk.start) * fraction);
+        progress.value = String(Math.min(fullText.length, startPosition + chunkPosition));
+      }
+      speechProgressFrame = requestAnimationFrame(update);
+    };
+    speechProgressFrame = requestAnimationFrame(update);
+  }
+
+  function getAudioContext() {
+    audioContext ||= new AudioContext();
+    return audioContext;
+  }
+
+  function stopRemoteSpeech() {
+    if (!remoteSpeech) return;
+    remoteSpeech.sources.forEach((source) => {
+      source.onended = null;
+      try {
+        source.stop();
+      } catch (_error) {
+        // A source that has already ended cannot be stopped again.
+      }
+      source.disconnect();
+    });
+    remoteSpeech = null;
+  }
+
+  function base64ToArrayBuffer(value: string) {
+    const binary = atob(value);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    return bytes.buffer;
+  }
+
+  function isSpeechActive() {
+    return speechLoading || Boolean(remoteSpeech)
+      || window.speechSynthesis.speaking || window.speechSynthesis.pending;
+  }
+
+  function isFirefox() {
+    return navigator.userAgent.includes("Firefox/");
   }
 
   function animateSpeechProgress(
@@ -525,6 +775,12 @@ import {errorMessage, type TranslateResponse} from "./types";
       .card.long .translation-option { overflow-x: visible; white-space: normal; }
       .translation-option + .translation-option { margin-top: 2px; }
       .context-translation { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
+      .storage-limit { margin-top: 10px; padding: 10px; border: 1px solid #f2cf8d; border-radius: 10px; background: #fff8e8; color: #5f4515; font-size: 12px; line-height: 1.4; }
+      .storage-limit-actions { display: flex; gap: 7px; margin-top: 8px; }
+      .storage-limit-actions button { padding: 7px 10px; border: 0; border-radius: 8px; cursor: pointer; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .storage-limit-export { background: #2457d6; color: #fff; }
+      .storage-limit-export:disabled { cursor: default; opacity: .55; }
+      .storage-limit-later { background: #ece7dc; color: #5f5748; }
       .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
       .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }

@@ -10,7 +10,8 @@
     "https://api.mymemory.translated.net/*",
     "https://api.dictionaryapi.dev/*",
     "https://api.datamuse.com/*",
-    "https://en.wiktionary.org/*"
+    "https://en.wiktionary.org/*",
+    "https://translate.google.com/*"
   ],
   "background": {
     "chromium:service_worker": "background.ts",

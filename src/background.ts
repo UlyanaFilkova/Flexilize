@@ -8,6 +8,7 @@ const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
 const TRANSLATION_REQUEST_TIMEOUT_MS = 4500;
+const SPEECH_REQUEST_TIMEOUT_MS = 8000;
 const CONTEXT_START = "<b>";
 const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
@@ -35,9 +36,32 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
+  if (message?.type === "get-speech-audio") {
+    return handleSpeechAudio(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
   if (message?.type === "get-records") {
     return getRecords()
       .then((records) => ({ ok: true, records }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "delete-record") {
+    return deleteRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "restore-record") {
+    return restoreRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "clear-and-save-record") {
+    return clearAndSaveRecord(message.payload)
+      .then(() => ({ ok: true }))
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
@@ -83,7 +107,7 @@ async function handleSelection(payload: TranslatePayload) {
     translations: translationResult.alternatives
   };
 
-  await saveRecord(record);
+  const storageResult = await saveRecord(record);
 
   return {
     ok: true,
@@ -91,7 +115,9 @@ async function handleSelection(payload: TranslatePayload) {
     translations: translationResult.alternatives || [translationResult.text],
     contextTranslation: translationResult.contextTranslation || null,
     sourceLanguage: "en",
-    saved: true,
+    saved: storageResult.saved,
+    storageLimitReached: storageResult.limitReached,
+    pendingRecord: storageResult.saved ? undefined : record,
     warning: translationResult.warning ?? null
   };
 }
@@ -106,6 +132,75 @@ async function handleTranscription(payload: {text?: unknown}) {
     null
   );
   return { ok: true, transcription };
+}
+
+async function handleSpeechAudio(payload: {text?: unknown}) {
+  const text = normalizeText(payload?.text, 1000);
+  if (!text) throw new Error("Не удалось прочитать текст для озвучки");
+
+  const chunks = splitSpeechText(text, 180);
+  const audioChunks = await Promise.all(chunks.map(async (chunk) => {
+    const query = new URLSearchParams({
+      client: "tw-ob",
+      ie: "UTF-8",
+      q: chunk.text,
+      tl: "en-US"
+    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), SPEECH_REQUEST_TIMEOUT_MS);
+    try {
+      const response = await fetch(`https://translate.google.com/translate_tts?${query}`, {
+        signal: controller.signal,
+        headers: { Accept: "audio/mpeg" }
+      });
+      if (!response.ok) throw new Error(`TTS вернул код ${response.status}`);
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      return {
+        audio: bytesToBase64(bytes),
+        end: chunk.end,
+        mimeType: response.headers.get("content-type")?.split(";")[0] || "audio/mpeg",
+        start: chunk.start
+      };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }));
+
+  return { ok: true, chunks: audioChunks };
+}
+
+function splitSpeechText(text: string, maxLength: number) {
+  const chunks: Array<{text: string; start: number; end: number}> = [];
+  let position = 0;
+
+  while (position < text.length) {
+    while (/\s/.test(text[position] || "")) position += 1;
+    if (position >= text.length) break;
+
+    let end = Math.min(text.length, position + maxLength);
+    if (end < text.length) {
+      const candidate = text.slice(position, end);
+      const sentenceBreak = Math.max(candidate.lastIndexOf(". "), candidate.lastIndexOf("! "), candidate.lastIndexOf("? "));
+      const wordBreak = candidate.lastIndexOf(" ");
+      const breakAt = sentenceBreak >= Math.floor(maxLength * 0.45) ? sentenceBreak + 1 : wordBreak;
+      if (breakAt > 0) end = position + breakAt;
+    }
+
+    const chunkText = text.slice(position, end).trim();
+    if (chunkText) chunks.push({ text: chunkText, start: position, end });
+    position = end;
+  }
+
+  return chunks;
+}
+
+function bytesToBase64(bytes: Uint8Array) {
+  let binary = "";
+  const blockSize = 0x8000;
+  for (let index = 0; index < bytes.length; index += blockSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + blockSize));
+  }
+  return btoa(binary);
 }
 
 interface TranslationResult {
@@ -646,9 +741,16 @@ async function saveRecord(record: TranslationRecord) {
     && records[0].sentence === record.sentence
     && Date.now() - new Date(records[0].createdAt).getTime() < 3000;
 
-  if (!duplicate) records.unshift(record);
-  if (records.length > MAX_RECORDS) records.length = MAX_RECORDS;
+  if (duplicate) {
+    return { saved: true, limitReached: records.length >= MAX_RECORDS };
+  }
+  if (records.length >= MAX_RECORDS) {
+    return { saved: false, limitReached: true };
+  }
+
+  records.unshift(record);
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+  return { saved: true, limitReached: records.length >= MAX_RECORDS };
 }
 
 async function getRecords(): Promise<TranslationRecord[]> {
@@ -679,6 +781,61 @@ function normalizeStoredRecord(value): TranslationRecord {
 async function clearRecords() {
   if (!extensionApi?.storage?.local) return;
   await extensionApi.storage.local.set({ [RECORDS_KEY]: [] });
+}
+
+async function deleteRecord(payload: {createdAt?: unknown; sentence?: unknown; text?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  const createdAt = normalizeText(payload?.createdAt, 100);
+  const sentence = normalizeText(payload?.sentence, 3000);
+  const text = normalizeText(payload?.text, 1000);
+  if (!createdAt || !text) throw new Error("Не удалось определить запись");
+
+  const records = await getRecords();
+  const recordIndex = records.findIndex((record) => (
+    record.createdAt === createdAt
+    && record.text === text
+    && record.sentence === sentence
+  ));
+  if (recordIndex < 0) throw new Error("Запись уже удалена");
+  records.splice(recordIndex, 1);
+  await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+}
+
+async function restoreRecord(payload: {index?: unknown; record?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  if (!payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось восстановить запись");
+  }
+
+  const record = normalizeStoredRecord(payload.record);
+  if (!record.createdAt || !record.text) throw new Error("Запись повреждена");
+  const records = await getRecords();
+  const alreadyRestored = records.some((item) => (
+    item.createdAt === record.createdAt
+    && item.text === record.text
+    && item.sentence === record.sentence
+  ));
+  if (alreadyRestored) return;
+
+  const requestedIndex = Number(payload.index);
+  const index = Number.isInteger(requestedIndex)
+    ? Math.max(0, Math.min(requestedIndex, records.length))
+    : 0;
+  records.splice(index, 0, record);
+  if (records.length > MAX_RECORDS) records.length = MAX_RECORDS;
+  await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+}
+
+async function clearAndSaveRecord(payload: {record?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  if (!payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось сохранить текущий перевод");
+  }
+  const record = normalizeStoredRecord(payload.record);
+  if (!record.createdAt || !record.text || !record.translation) {
+    throw new Error("Текущая запись повреждена");
+  }
+  await extensionApi.storage.local.set({ [RECORDS_KEY]: [record] });
 }
 
 function normalizeText(value, maxLength) {
