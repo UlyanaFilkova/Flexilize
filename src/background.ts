@@ -1,46 +1,68 @@
-const extensionApi = globalThis.browser ?? globalThis.chrome;
+import browser from "webextension-polyfill";
+import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from "./types";
+
+const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
 const MAX_RECORDS = 5000;
 const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
+const TRANSLATION_REQUEST_TIMEOUT_MS = 4500;
 const CONTEXT_START = "<b>";
 const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
+const translationCache = new Map<string, Promise<{
+  text: string
+  alternatives: string[]
+  warning: string | null
+}>>();
 
-extensionApi.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+extensionApi.runtime.onMessage.addListener((message: unknown) => {
+  if (!isRuntimeMessage(message)) return undefined;
+
   if (message?.type === "translate-selection") {
-    handleSelection(message.payload)
-      .then(sendResponse)
-      .catch((error) => sendResponse({ ok: false, error: readableError(error) }));
-    return true;
+    return handleSelection(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "translate-preview") {
+    return handleTranslationPreview(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
   if (message?.type === "get-transcription") {
-    handleTranscription(message.payload)
-      .then(sendResponse)
-      .catch((error) => sendResponse({ ok: false, error: readableError(error) }));
-    return true;
+    return handleTranscription(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
   if (message?.type === "get-records") {
-    getRecords()
-      .then((records) => sendResponse({ ok: true, records }))
-      .catch((error) => sendResponse({ ok: false, error: readableError(error) }));
-    return true;
+    return getRecords()
+      .then((records) => ({ ok: true, records }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
   if (message?.type === "clear-records") {
-    clearRecords()
-      .then(() => sendResponse({ ok: true }))
-      .catch((error) => sendResponse({ ok: false, error: readableError(error) }));
-    return true;
+    return clearRecords()
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
   }
-
-  return false;
 });
 
-async function handleSelection(payload) {
+async function handleTranslationPreview(payload: {text?: unknown}) {
+  const text = normalizeText(payload?.text, 1000);
+  if (!text) throw new Error("Не удалось прочитать выделенный текст");
+
+  const result = await translateChunk(text);
+  return {
+    ok: true,
+    translation: result.text,
+    translations: result.alternatives,
+    sourceLanguage: "en" as const,
+    warning: result.warning
+  };
+}
+
+async function handleSelection(payload: TranslatePayload) {
   const text = normalizeText(payload?.text, 1000);
   const sentence = normalizeText(payload?.sentence, 3000);
 
@@ -50,17 +72,15 @@ async function handleSelection(payload) {
 
   const translationResult = await translateToRussian(text, sentence);
 
-  const record = {
-    id: createId(),
-    text,
-    sentence: sentence || text,
-    translation: translationResult.text,
-    translations: translationResult.alternatives,
+  const record: TranslationRecord = {
     contextTranslation: translationResult.contextTranslation || null,
-    sourceLanguage: "en",
+    createdAt: new Date().toISOString(),
     pageTitle: normalizeText(payload?.pageTitle, 500),
     pageUrl: normalizeUrl(payload?.pageUrl),
-    createdAt: new Date().toISOString()
+    sentence: sentence || text,
+    text,
+    translation: translationResult.text,
+    translations: translationResult.alternatives
   };
 
   await saveRecord(record);
@@ -76,7 +96,7 @@ async function handleSelection(payload) {
   };
 }
 
-async function handleTranscription(payload) {
+async function handleTranscription(payload: {text?: unknown}) {
   const text = normalizeText(payload?.text, 500);
   if (!text) return { ok: true, transcription: null };
 
@@ -88,7 +108,14 @@ async function handleTranscription(payload) {
   return { ok: true, transcription };
 }
 
-async function translateToRussian(text, sentence) {
+interface TranslationResult {
+  text: string
+  alternatives: string[]
+  contextTranslation?: string | null
+  warning: string | null
+}
+
+async function translateToRussian(text: string, sentence: string): Promise<TranslationResult> {
   if (/^[A-Za-z][A-Za-z'-]*$/.test(text)) {
     return translateWordToRussian(text, sentence);
   }
@@ -346,7 +373,7 @@ function russianConsonantSkeleton(value) {
     .replace(/(.)\1+/gu, "$1");
 }
 
-async function getTranscription(text) {
+async function getTranscription(text: string): Promise<string | null> {
   const words = text.match(/[A-Za-z][A-Za-z'-]*/g);
   if (!words?.length || words.length > 30) return null;
 
@@ -354,7 +381,9 @@ async function getTranscription(text) {
   if (phraseTranscription) return phraseTranscription;
 
   const uniqueWords = [...new Set(words.map((word) => word.toLocaleLowerCase("en")))];
-  const entries = await Promise.all(uniqueWords.map(async (word) => [word, await fetchEnglishPhonetic(word)]));
+  const entries = await Promise.all(uniqueWords.map(async (word): Promise<[string, string | null]> => (
+    [word, await fetchEnglishPhonetic(word)]
+  )));
   const phoneticsByWord = new Map(entries);
   const phonetics = words.map((word) => phoneticsByWord.get(word.toLocaleLowerCase("en")) || null);
   return phonetics.some(Boolean)
@@ -381,10 +410,28 @@ async function fetchDatamuseTranscription(text) {
 }
 
 async function translateChunk(text) {
+  const cacheKey = normalizeText(text, 1000);
+  const cached = translationCache.get(cacheKey);
+  if (cached) return cached;
+
+  const request = requestTranslationChunk(cacheKey);
+  if (translationCache.size >= 250) translationCache.clear();
+  translationCache.set(cacheKey, request);
+
+  try {
+    return await request;
+  } catch (error) {
+    translationCache.delete(cacheKey);
+    throw error;
+  }
+}
+
+async function requestTranslationChunk(text: string) {
   const query = new URLSearchParams({ q: text, langpair: "en|ru" });
-  const response = await fetch(`https://api.mymemory.translated.net/get?${query}`, {
-    headers: { Accept: "application/json" }
-  });
+  const response = await fetchWithTimeout(
+    `https://api.mymemory.translated.net/get?${query}`,
+    TRANSLATION_REQUEST_TIMEOUT_MS
+  );
 
   if (!response.ok) {
     throw new Error(`Сервис перевода временно недоступен (${response.status})`);
@@ -588,7 +635,7 @@ async function settleWithin(promise, timeoutMs, fallback) {
   }
 }
 
-async function saveRecord(record) {
+async function saveRecord(record: TranslationRecord) {
   if (!extensionApi?.storage?.local) {
     throw new Error("Локальное хранилище недоступно");
   }
@@ -604,10 +651,29 @@ async function saveRecord(record) {
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
 }
 
-async function getRecords() {
+async function getRecords(): Promise<TranslationRecord[]> {
   if (!extensionApi?.storage?.local) return [];
   const stored = await extensionApi.storage.local.get(RECORDS_KEY);
-  return Array.isArray(stored?.[RECORDS_KEY]) ? stored[RECORDS_KEY] : [];
+  return Array.isArray(stored?.[RECORDS_KEY])
+    ? stored[RECORDS_KEY].map(normalizeStoredRecord)
+    : [];
+}
+
+function normalizeStoredRecord(value): TranslationRecord {
+  const translation = normalizeText(value?.translation, 3000);
+  const translations = Array.isArray(value?.translations)
+    ? value.translations.map((item) => normalizeText(item, 1000)).filter(Boolean)
+    : [];
+  return {
+    contextTranslation: normalizeText(value?.contextTranslation, 3000) || null,
+    createdAt: normalizeText(value?.createdAt, 100) || new Date(0).toISOString(),
+    pageTitle: normalizeText(value?.pageTitle ?? value?.pageTitle, 500),
+    pageUrl: normalizeUrl(value?.pageUrl),
+    sentence: normalizeText(value?.sentence, 3000),
+    text: normalizeText(value?.text, 1000),
+    translation,
+    translations: translations.length ? translations : (translation ? [translation] : [])
+  };
 }
 
 async function clearRecords() {
@@ -654,11 +720,6 @@ function decodeHtmlEntities(value) {
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
-}
-
-function createId() {
-  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function readableError(error) {
