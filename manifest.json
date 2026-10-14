@@ -7,7 +7,8 @@
   "host_permissions": [
     "https://api.mymemory.translated.net/*",
     "https://api.dictionaryapi.dev/*",
-    "https://api.datamuse.com/*"
+    "https://api.datamuse.com/*",
+    "https://en.wiktionary.org/*"
   ],
   "background": {
     "service_worker": "background.js"

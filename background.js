@@ -3,6 +3,9 @@ const RECORDS_KEY = "translationRecords";
 const MAX_RECORDS = 5000;
 const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
+const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
+const CONTEXT_START = "\uE000";
+const CONTEXT_END = "\uE001";
 const transcriptionCache = new Map();
 
 extensionApi.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -45,13 +48,15 @@ async function handleSelection(payload) {
     throw new Error("Не удалось прочитать выделенный текст");
   }
 
-  const translationResult = await translateToRussian(text);
+  const translationResult = await translateToRussian(text, sentence);
 
   const record = {
     id: createId(),
     text,
     sentence: sentence || text,
     translation: translationResult.text,
+    translations: translationResult.alternatives,
+    contextTranslation: translationResult.contextTranslation || null,
     sourceLanguage: "en",
     pageTitle: normalizeText(payload?.pageTitle, 500),
     pageUrl: normalizeUrl(payload?.pageUrl),
@@ -64,6 +69,7 @@ async function handleSelection(payload) {
     ok: true,
     translation: translationResult.text,
     translations: translationResult.alternatives || [translationResult.text],
+    contextTranslation: translationResult.contextTranslation || null,
     sourceLanguage: "en",
     saved: true,
     warning: translationResult.warning ?? null
@@ -82,9 +88,9 @@ async function handleTranscription(payload) {
   return { ok: true, transcription };
 }
 
-async function translateToRussian(text) {
+async function translateToRussian(text, sentence) {
   if (/^[A-Za-z][A-Za-z'-]*$/.test(text)) {
-    return translateWordToRussian(text);
+    return translateWordToRussian(text, sentence);
   }
 
   const chunks = splitByUtf8Bytes(text, 450);
@@ -101,28 +107,166 @@ async function translateToRussian(text) {
   return { text: translation, alternatives: [translation], warning };
 }
 
-async function translateWordToRussian(word) {
+async function translateWordToRussian(word, sentence) {
   const forms = englishWordForms(word);
-  const results = await Promise.all(forms.map(async (form) => {
-    try {
-      return await translateChunk(form);
-    } catch (_error) {
-      return null;
-    }
-  }));
+  const markedContext = buildMarkedContext(sentence, word);
+  const [results, contextResult, dictionaryTranslations] = await Promise.all([
+    Promise.all(forms.map(async (form) => {
+      try {
+        return await translateChunk(form);
+      } catch (_error) {
+        return null;
+      }
+    })),
+    markedContext ? translateContext(markedContext).catch(() => null) : null,
+    fetchWiktionaryTranslations(word)
+  ]);
   const successful = results.filter(Boolean);
-  if (!successful.length) throw new Error("Сервис перевода временно недоступен");
+  if (!successful.length && !contextResult?.selectedTranslation) {
+    throw new Error("Сервис перевода временно недоступен");
+  }
 
-  const alternatives = uniqueRussianTranslations(
-    successful.flatMap((result) => result.alternatives || [result.text]),
-    word
-  ).slice(0, 5);
-  const primary = alternatives[0] || successful[0].text;
+  const likelyPartOfSpeech = inferPartOfSpeech(word, sentence, dictionaryTranslations);
+  const rankedDictionary = dictionaryTranslations
+    .map((entry) => ({
+      ...entry,
+      score: contextMatchScore(entry.text, contextResult?.fullTranslation)
+        + (entry.partOfSpeech === likelyPartOfSpeech ? 25 : 0)
+    }))
+    .sort((left, right) => right.score - left.score);
+  const contextualDictionary = rankedDictionary.filter((entry) => entry.score >= 100);
+  const otherDictionary = rankedDictionary.filter((entry) => entry.score < 100);
+  const machineTranslations = successful.flatMap((result) => (
+    dictionaryTranslations.length ? [result.text] : (result.alternatives || [result.text])
+  ));
+  const alternatives = uniqueRussianTranslations([
+    contextResult?.selectedTranslation,
+    ...contextualDictionary.map((entry) => entry.text),
+    ...machineTranslations,
+    ...otherDictionary.map((entry) => entry.text)
+  ], word).slice(0, 6);
+  const primary = alternatives[0] || successful[0]?.text || word;
   return {
     text: primary,
     alternatives: alternatives.length ? alternatives : [primary],
+    contextTranslation: contextResult?.fullTranslation || null,
     warning: successful.find((result) => result.warning)?.warning || null
   };
+}
+
+async function fetchWiktionaryTranslations(word) {
+  try {
+    const query = new URLSearchParams({
+      action: "query",
+      prop: "revisions",
+      rvprop: "content",
+      rvslots: "main",
+      titles: word.toLocaleLowerCase("en"),
+      format: "json",
+      formatversion: "2",
+      origin: "*"
+    });
+    const response = await fetchWithTimeout(
+      `https://en.wiktionary.org/w/api.php?${query}`,
+      WIKTIONARY_REQUEST_TIMEOUT_MS
+    );
+    if (!response.ok) return [];
+    const data = await response.json();
+    const wikitext = data?.query?.pages?.[0]?.revisions?.[0]?.slots?.main?.content;
+    return typeof wikitext === "string" ? parseWiktionaryRussianTranslations(wikitext) : [];
+  } catch (_error) {
+    return [];
+  }
+}
+
+function parseWiktionaryRussianTranslations(wikitext) {
+  const englishStart = wikitext.search(/^==English==\s*$/m);
+  if (englishStart < 0) return [];
+  const afterEnglish = wikitext.slice(englishStart + "==English==".length);
+  const nextLanguage = afterEnglish.search(/^==[^=].*==\s*$/m);
+  const english = nextLanguage >= 0 ? afterEnglish.slice(0, nextLanguage) : afterEnglish;
+  const headings = [...english.matchAll(/^===(Adjective|Adverb|Noun|Verb)===\s*$/gim)];
+  const translations = [];
+
+  headings.forEach((heading, index) => {
+    const section = english.slice(heading.index, headings[index + 1]?.index ?? english.length);
+    const templatePattern = /{{(?:t|t\+|t-check|t\+check|tt|tt\+|tt-check)\|ru\|([^|}]+)/gi;
+    for (const match of section.matchAll(templatePattern)) {
+      const text = cleanWiktionaryTerm(match[1]);
+      if (text) translations.push({ text, partOfSpeech: heading[1].toLocaleLowerCase("en") });
+    }
+  });
+  return translations;
+}
+
+function cleanWiktionaryTerm(value) {
+  return String(value ?? "")
+    .replace(/\[\[|\]\]/g, "")
+    .normalize("NFD")
+    .replace(/\u0301/g, "")
+    .normalize("NFC")
+    .trim();
+}
+
+function inferPartOfSpeech(word, sentence, translations) {
+  const available = new Set(translations.map((entry) => entry.partOfSpeech));
+  const words = String(sentence ?? "").match(/[A-Za-z][A-Za-z'-]*/g) || [];
+  const index = words.findIndex((item) => item.toLocaleLowerCase("en") === word.toLocaleLowerCase("en"));
+  const previous = words[index - 1]?.toLocaleLowerCase("en");
+  const next = words[index + 1]?.toLocaleLowerCase("en");
+  const determiners = new Set(["a", "an", "the", "this", "that", "these", "those", "my", "your", "his", "her", "its", "our", "their"]);
+  const linkingVerbs = new Set(["am", "is", "are", "was", "were", "be", "been", "being", "seem", "seems", "feel", "feels", "look", "looks"]);
+
+  if (available.has("verb") && previous === "to") return "verb";
+  if (available.has("adjective") && linkingVerbs.has(previous) && !next) return "adjective";
+  if (available.has("adjective") && next && !linkingVerbs.has(previous)) return "adjective";
+  if (available.has("verb") && linkingVerbs.has(previous)) return "verb";
+  if (available.has("noun") && determiners.has(previous)) return "noun";
+  if (available.has("adverb") && (!next || word.toLocaleLowerCase("en").endsWith("ly"))) return "adverb";
+  return null;
+}
+
+function contextMatchScore(translation, translatedContext) {
+  if (!translation || !translatedContext) return 0;
+  const contextWords = translatedContext.toLocaleLowerCase("ru").match(/[А-Яа-яЁё]+/gu) || [];
+  const translationWords = translation.toLocaleLowerCase("ru").match(/[А-Яа-яЁё]+/gu) || [];
+  return translationWords.some((candidate) => contextWords.some((contextWord) => (
+    commonPrefixLength(candidate, contextWord) >= Math.min(7, candidate.length, contextWord.length)
+    && commonPrefixLength(candidate, contextWord) >= 5
+  ))) ? 100 : 0;
+}
+
+function commonPrefixLength(left, right) {
+  let length = 0;
+  while (length < left.length && length < right.length && left[length] === right[length]) length += 1;
+  return length;
+}
+
+async function translateContext(markedContext) {
+  const result = await translateChunk(markedContext);
+  const translated = result.text;
+  const start = translated.indexOf(CONTEXT_START);
+  const end = translated.indexOf(CONTEXT_END, start + 1);
+  const selectedTranslation = start >= 0 && end > start
+    ? translated.slice(start + CONTEXT_START.length, end).trim()
+    : null;
+  return {
+    selectedTranslation,
+    fullTranslation: translated.replaceAll(CONTEXT_START, "").replaceAll(CONTEXT_END, "").trim()
+  };
+}
+
+function buildMarkedContext(sentence, word) {
+  const context = normalizeText(sentence, 500);
+  if (!context || context.toLocaleLowerCase("en") === word.toLocaleLowerCase("en")) return null;
+  const index = context.toLocaleLowerCase("en").indexOf(word.toLocaleLowerCase("en"));
+  if (index < 0) return null;
+
+  const left = Math.max(0, index - 170);
+  const right = Math.min(context.length, index + word.length + 170);
+  const snippet = context.slice(left, right);
+  const localIndex = index - left;
+  return `${snippet.slice(0, localIndex)}${CONTEXT_START}${snippet.slice(localIndex, localIndex + word.length)}${CONTEXT_END}${snippet.slice(localIndex + word.length)}`;
 }
 
 async function getTranscription(text) {
@@ -172,9 +316,17 @@ async function translateChunk(text) {
   const data = await response.json();
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
   if (!translated) throw new Error("Сервис перевода вернул пустой результат");
+  const exactMatches = Array.isArray(data?.matches)
+    ? data.matches.filter((match) => {
+      const segment = normalizeText(match?.segment, 1000).toLocaleLowerCase("en");
+      const requested = normalizeText(text, 1000).toLocaleLowerCase("en");
+      const score = Number(match?.match);
+      return segment === requested && (!Number.isFinite(score) || score >= 0.7);
+    })
+    : [];
   const alternatives = [
     translated,
-    ...(Array.isArray(data?.matches) ? data.matches.map((match) => match?.translation) : [])
+    ...exactMatches.map((match) => match?.translation)
   ].map((value) => decodeHtmlEntities(String(value ?? "")).trim()).filter(Boolean);
   return {
     text: translated,
@@ -290,16 +442,27 @@ function englishWordForms(word) {
   return [...forms].slice(0, 4);
 }
 
-function uniqueRussianTranslations(values, sourceWord) {
+function uniqueRussianTranslations(values, sourceWord, maxWords = 3) {
   const source = sourceWord.toLocaleLowerCase("en");
   const seen = new Set();
   return values.filter((value) => {
-    const translation = normalizeText(value, 500);
+    const translation = cleanTranslationCandidate(value);
     const key = translation.toLocaleLowerCase("ru");
-    if (!translation || key === source || !/[А-Яа-яЁё]/u.test(translation) || seen.has(key)) return false;
+    const wordCount = translation.split(/\s+/).length;
+    if (!translation || key === source || wordCount > maxWords || !/[А-Яа-яЁё]/u.test(translation) || seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).map((value) => normalizeText(value, 500));
+  }).map(cleanTranslationCandidate);
+}
+
+function cleanTranslationCandidate(value) {
+  let translation = normalizeText(value, 500);
+  if (!translation || /[{}]|\|\s*gender\s*\(/i.test(translation)) return "";
+  const letters = translation.replace(/[^А-Яа-яЁё]/gu, "");
+  if (letters.length > 1 && letters === letters.toLocaleUpperCase("ru")) {
+    translation = translation.toLocaleLowerCase("ru");
+  }
+  return translation;
 }
 
 async function settleWithin(promise, timeoutMs, fallback) {

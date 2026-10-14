@@ -181,6 +181,12 @@
       item.textContent = value;
       translation.append(item);
     });
+    if (result.contextTranslation) {
+      const context = document.createElement("div");
+      context.className = "context-translation";
+      context.textContent = `В контексте: ${result.contextTranslation}`;
+      translation.append(context);
+    }
     const status = shadow.querySelector(".status");
     status.textContent = "✓";
     status.classList.remove("pending");
@@ -321,6 +327,7 @@
       .translation { min-height: 21px; color: #172033; font-size: 15px; overflow-wrap: anywhere; }
       .translation-option + .translation-option { margin-top: 4px; color: #536176; font-size: 13px; }
       .translation-option.primary { font-weight: 600; }
+      .context-translation { margin-top: 9px; padding-top: 8px; border-top: 1px solid #edf0f4; color: #718096; font-size: 12px; font-style: italic; }
       .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
       .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }
