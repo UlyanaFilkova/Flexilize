@@ -1,7 +1,35 @@
+# Dependencies
 node_modules/
-.idea/
-dist/
-*.log
 
-# Extension.js local session state
-.extension-js
+# Production builds and browser packages
+dist/
+web-ext-artifacts/
+*.zip
+
+# Tool caches
+.cache/
+.extension-js/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.turbo/
+.vite/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
