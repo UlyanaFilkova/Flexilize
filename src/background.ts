@@ -73,16 +73,14 @@ async function handleSelection(payload: TranslatePayload) {
   const translationResult = await translateToRussian(text, sentence);
 
   const record: TranslationRecord = {
-    id: createId(),
-    text,
-    sentence: sentence || text,
-    translation: translationResult.text,
-    translations: translationResult.alternatives,
     contextTranslation: translationResult.contextTranslation || null,
-    sourceLanguage: "en",
+    createdAt: new Date().toISOString(),
     pageTitle: normalizeText(payload?.pageTitle, 500),
     pageUrl: normalizeUrl(payload?.pageUrl),
-    createdAt: new Date().toISOString()
+    sentence: sentence || text,
+    text,
+    translation: translationResult.text,
+    translations: translationResult.alternatives
   };
 
   await saveRecord(record);
@@ -656,7 +654,26 @@ async function saveRecord(record: TranslationRecord) {
 async function getRecords(): Promise<TranslationRecord[]> {
   if (!extensionApi?.storage?.local) return [];
   const stored = await extensionApi.storage.local.get(RECORDS_KEY);
-  return Array.isArray(stored?.[RECORDS_KEY]) ? stored[RECORDS_KEY] : [];
+  return Array.isArray(stored?.[RECORDS_KEY])
+    ? stored[RECORDS_KEY].map(normalizeStoredRecord)
+    : [];
+}
+
+function normalizeStoredRecord(value): TranslationRecord {
+  const translation = normalizeText(value?.translation, 3000);
+  const translations = Array.isArray(value?.translations)
+    ? value.translations.map((item) => normalizeText(item, 1000)).filter(Boolean)
+    : [];
+  return {
+    contextTranslation: normalizeText(value?.contextTranslation, 3000) || null,
+    createdAt: normalizeText(value?.createdAt, 100) || new Date(0).toISOString(),
+    pageTitle: normalizeText(value?.pageTitle ?? value?.pageTitle, 500),
+    pageUrl: normalizeUrl(value?.pageUrl),
+    sentence: normalizeText(value?.sentence, 3000),
+    text: normalizeText(value?.text, 1000),
+    translation,
+    translations: translations.length ? translations : (translation ? [translation] : [])
+  };
 }
 
 async function clearRecords() {
@@ -703,11 +720,6 @@ function decodeHtmlEntities(value) {
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
-}
-
-function createId() {
-  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function readableError(error) {

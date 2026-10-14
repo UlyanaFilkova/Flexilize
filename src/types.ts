@@ -1,14 +1,12 @@
 export interface TranslationRecord {
-  id: string
-  text: string
-  sentence: string
-  translation: string
-  translations?: string[]
-  contextTranslation?: string | null
-  sourceLanguage: "en"
+  contextTranslation: string | null
+  createdAt: string
   pageTitle: string
   pageUrl: string
-  createdAt: string
+  sentence: string
+  text: string
+  translation: string
+  translations: string[]
 }
 
 export interface TranslatePayload {

@@ -83,7 +83,8 @@ async function clearRecords() {
 function exportFile(format: "json" | "csv") {
   if (!records.length) return;
   const isJson = format === "json";
-  const content = isJson ? JSON.stringify(records, null, 2) : toCsv(records);
+  const exportRecords = records.map(toExportRecord);
+  const content = isJson ? JSON.stringify(exportRecords, null, 2) : toCsv(exportRecords);
   const mime = isJson ? "application/json" : "text/csv";
   const blob = new Blob([isJson ? content : `\uFEFF${content}`], { type: `${mime};charset=utf-8` });
   const url = URL.createObjectURL(blob);
@@ -95,10 +96,26 @@ function exportFile(format: "json" | "csv") {
   showNotice(`Файл ${format.toUpperCase()} подготовлен`);
 }
 
+function toExportRecord(record: TranslationRecord): TranslationRecord {
+  return {
+    contextTranslation: record.contextTranslation,
+    createdAt: record.createdAt,
+    pageTitle: record.pageTitle,
+    pageUrl: record.pageUrl,
+    sentence: record.sentence,
+    text: record.text,
+    translation: record.translation,
+    translations: record.translations
+  };
+}
+
 function toCsv(items: TranslationRecord[]) {
-  const columns = ["text", "sentence", "translation", "sourceLanguage", "pageTitle", "pageUrl", "createdAt"];
+  const columns: (keyof TranslationRecord)[] = [
+    "contextTranslation", "createdAt", "pageTitle", "pageUrl",
+    "sentence", "text", "translation", "translations"
+  ];
   return [columns, ...items.map((item) => columns.map((column) => item[column] ?? ""))]
-    .map((row) => row.map(csvCell).join(","))
+    .map((row) => row.map((value) => csvCell(Array.isArray(value) ? JSON.stringify(value) : value)).join(","))
     .join("\r\n");
 }
 
