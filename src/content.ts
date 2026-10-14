@@ -1,5 +1,10 @@
 import browser from "webextension-polyfill";
-import {errorMessage, type TranslateResponse} from "./types";
+import {
+  errorMessage,
+  type SpeechAudioChunk,
+  type SpeechAudioResponse,
+  type TranslateResponse
+} from "./types";
 
 (() => {
   const extensionApi = browser;
@@ -24,6 +29,12 @@ import {errorMessage, type TranslateResponse} from "./types";
   let selectionRect: DOMRect | null = null;
   let speechRun = 0;
   let speechProgressFrame: number | null = null;
+  let speechLoading = false;
+  let audioContext: AudioContext | null = null;
+  let remoteSpeech: {
+    context: AudioContext
+    sources: AudioBufferSourceNode[]
+  } | null = null;
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keyup", (event) => {
@@ -202,7 +213,7 @@ import {errorMessage, type TranslateResponse} from "./types";
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
-      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      if (isSpeechActive()) {
         stopSpeaking(speakButton);
         return;
       }
@@ -210,7 +221,7 @@ import {errorMessage, type TranslateResponse} from "./types";
       speak(text, speakButton, requestedPosition >= text.length ? 0 : requestedPosition);
     });
     progress?.addEventListener("input", () => {
-      if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+      if (isSpeechActive()) {
         stopSpeaking(speakButton);
       }
     });
@@ -307,7 +318,15 @@ import {errorMessage, type TranslateResponse} from "./types";
     shadow.querySelector(".status")?.remove();
   }
 
-  function speak(text, button: HTMLButtonElement, requestedPosition = 0) {
+  function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
+    if (isFirefox()) {
+      void speakWithRemoteVoice(text, button, requestedPosition);
+      return;
+    }
+    speakWithBrowserVoice(text, button, requestedPosition);
+  }
+
+  function speakWithBrowserVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
       showError("Озвучка не поддерживается этим браузером");
       return;
@@ -362,9 +381,150 @@ import {errorMessage, type TranslateResponse} from "./types";
 
   function stopSpeaking(button?: HTMLButtonElement) {
     speechRun += 1;
+    speechLoading = false;
     stopSpeechProgressAnimation();
+    stopRemoteSpeech();
     window.speechSynthesis.cancel();
     if (button) resetSpeakButton(button);
+  }
+
+  async function speakWithRemoteVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
+    const startPosition = nearestWordStart(text, requestedPosition);
+    const spokenText = text.slice(startPosition).trimStart();
+    const leadingWhitespace = text.slice(startPosition).length - spokenText.length;
+    const actualStart = startPosition + leadingWhitespace;
+    const progress = shadow?.querySelector<HTMLInputElement>(".speech-progress") || null;
+    const context = getAudioContext();
+    const ownSpeechRun = ++speechRun;
+
+    stopRemoteSpeech();
+    window.speechSynthesis.cancel();
+    speechLoading = true;
+    button.textContent = "■";
+    button.title = "Остановить озвучку";
+    button.setAttribute("aria-label", "Остановить озвучку");
+    if (progress) progress.value = String(actualStart);
+
+    // Calling resume directly from the click handler keeps Firefox's autoplay
+    // permission while the audio itself is being downloaded.
+    void context.resume();
+
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "get-speech-audio",
+        payload: { text: spokenText }
+      }) as SpeechAudioResponse;
+      if (ownSpeechRun !== speechRun) return;
+      if (!result?.ok || !result.chunks?.length) {
+        throw new Error(result?.error || "Не удалось загрузить озвучку");
+      }
+
+      const decoded = await Promise.all(result.chunks.map(async (chunk) => ({
+        buffer: await context.decodeAudioData(base64ToArrayBuffer(chunk.audio)),
+        chunk
+      })));
+      if (ownSpeechRun !== speechRun) return;
+
+      await context.resume();
+      const sources: AudioBufferSourceNode[] = [];
+      const schedule: Array<{
+        chunk: SpeechAudioChunk
+        startTime: number
+        endTime: number
+      }> = [];
+      let scheduledTime = context.currentTime + 0.04;
+
+      decoded.forEach(({buffer, chunk}) => {
+        const source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        source.start(scheduledTime);
+        sources.push(source);
+        schedule.push({ chunk, startTime: scheduledTime, endTime: scheduledTime + buffer.duration });
+        scheduledTime += buffer.duration;
+      });
+
+      speechLoading = false;
+      remoteSpeech = { context, sources };
+      const lastSource = sources.at(-1);
+      if (lastSource) {
+        lastSource.onended = () => {
+          if (ownSpeechRun !== speechRun) return;
+          stopSpeechProgressAnimation();
+          remoteSpeech = null;
+          if (progress) progress.value = String(text.length);
+          resetSpeakButton(button);
+        };
+      }
+      animateRemoteSpeechProgress(progress, text, actualStart, schedule, ownSpeechRun);
+    } catch (error) {
+      if (ownSpeechRun !== speechRun) return;
+      speechLoading = false;
+      resetSpeakButton(button);
+      console.warn(`[Context Translator] Remote speech synthesis failed: ${errorMessage(error, "unknown error")}`);
+      // Firefox can still provide a local voice when the network TTS is unavailable.
+      speakWithBrowserVoice(text, button, requestedPosition);
+    }
+  }
+
+  function animateRemoteSpeechProgress(
+    progress: HTMLInputElement | null,
+    fullText: string,
+    startPosition: number,
+    schedule: Array<{chunk: SpeechAudioChunk; startTime: number; endTime: number}>,
+    ownSpeechRun: number
+  ) {
+    if (!progress) return;
+    stopSpeechProgressAnimation();
+
+    const update = () => {
+      if (ownSpeechRun !== speechRun || !remoteSpeech) return;
+      const now = remoteSpeech.context.currentTime;
+      const current = schedule.find((item) => now >= item.startTime && now < item.endTime);
+      if (current) {
+        const fraction = (now - current.startTime) / (current.endTime - current.startTime);
+        const chunkPosition = current.chunk.start
+          + Math.floor((current.chunk.end - current.chunk.start) * fraction);
+        progress.value = String(Math.min(fullText.length, startPosition + chunkPosition));
+      }
+      speechProgressFrame = requestAnimationFrame(update);
+    };
+    speechProgressFrame = requestAnimationFrame(update);
+  }
+
+  function getAudioContext() {
+    audioContext ||= new AudioContext();
+    return audioContext;
+  }
+
+  function stopRemoteSpeech() {
+    if (!remoteSpeech) return;
+    remoteSpeech.sources.forEach((source) => {
+      source.onended = null;
+      try {
+        source.stop();
+      } catch (_error) {
+        // A source that has already ended cannot be stopped again.
+      }
+      source.disconnect();
+    });
+    remoteSpeech = null;
+  }
+
+  function base64ToArrayBuffer(value: string) {
+    const binary = atob(value);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    return bytes.buffer;
+  }
+
+  function isSpeechActive() {
+    return speechLoading || Boolean(remoteSpeech)
+      || window.speechSynthesis.speaking || window.speechSynthesis.pending;
+  }
+
+  function isFirefox() {
+    return navigator.userAgent.includes("Firefox/");
   }
 
   function animateSpeechProgress(

@@ -8,6 +8,7 @@ const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
 const TRANSLATION_REQUEST_TIMEOUT_MS = 4500;
+const SPEECH_REQUEST_TIMEOUT_MS = 8000;
 const CONTEXT_START = "<b>";
 const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
@@ -32,6 +33,11 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
 
   if (message?.type === "get-transcription") {
     return handleTranscription(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "get-speech-audio") {
+    return handleSpeechAudio(message.payload)
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
@@ -106,6 +112,75 @@ async function handleTranscription(payload: {text?: unknown}) {
     null
   );
   return { ok: true, transcription };
+}
+
+async function handleSpeechAudio(payload: {text?: unknown}) {
+  const text = normalizeText(payload?.text, 1000);
+  if (!text) throw new Error("Не удалось прочитать текст для озвучки");
+
+  const chunks = splitSpeechText(text, 180);
+  const audioChunks = await Promise.all(chunks.map(async (chunk) => {
+    const query = new URLSearchParams({
+      client: "tw-ob",
+      ie: "UTF-8",
+      q: chunk.text,
+      tl: "en-US"
+    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), SPEECH_REQUEST_TIMEOUT_MS);
+    try {
+      const response = await fetch(`https://translate.google.com/translate_tts?${query}`, {
+        signal: controller.signal,
+        headers: { Accept: "audio/mpeg" }
+      });
+      if (!response.ok) throw new Error(`TTS вернул код ${response.status}`);
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      return {
+        audio: bytesToBase64(bytes),
+        end: chunk.end,
+        mimeType: response.headers.get("content-type")?.split(";")[0] || "audio/mpeg",
+        start: chunk.start
+      };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }));
+
+  return { ok: true, chunks: audioChunks };
+}
+
+function splitSpeechText(text: string, maxLength: number) {
+  const chunks: Array<{text: string; start: number; end: number}> = [];
+  let position = 0;
+
+  while (position < text.length) {
+    while (/\s/.test(text[position] || "")) position += 1;
+    if (position >= text.length) break;
+
+    let end = Math.min(text.length, position + maxLength);
+    if (end < text.length) {
+      const candidate = text.slice(position, end);
+      const sentenceBreak = Math.max(candidate.lastIndexOf(". "), candidate.lastIndexOf("! "), candidate.lastIndexOf("? "));
+      const wordBreak = candidate.lastIndexOf(" ");
+      const breakAt = sentenceBreak >= Math.floor(maxLength * 0.45) ? sentenceBreak + 1 : wordBreak;
+      if (breakAt > 0) end = position + breakAt;
+    }
+
+    const chunkText = text.slice(position, end).trim();
+    if (chunkText) chunks.push({ text: chunkText, start: position, end });
+    position = end;
+  }
+
+  return chunks;
+}
+
+function bytesToBase64(bytes: Uint8Array) {
+  let binary = "";
+  const blockSize = 0x8000;
+  for (let index = 0; index < bytes.length; index += blockSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + blockSize));
+  }
+  return btoa(binary);
 }
 
 interface TranslationResult {
