@@ -1,13 +1,26 @@
+import browser from "webextension-polyfill";
+import {errorMessage, type TranslateResponse} from "./types";
+
 (() => {
-  const extensionApi = globalThis.browser ?? globalThis.chrome;
+  const extensionApi = browser;
   const HOST_ID = "context-translator-extension-host";
+  const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
+  const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
-  let host = null;
-  let shadow = null;
+
+  // Extension.js reloads the extension context during development, but DOM
+  // created by the previous content-script instance can survive that reload.
+  // Remove its inert modal before installing the new instance.
+  document.getElementById(HOST_ID)?.remove();
+  document.documentElement.setAttribute(INSTANCE_ATTRIBUTE, instanceId);
+
+  let host: HTMLDivElement | null = null;
+  let shadow: ShadowRoot | null = null;
   let currentText = "";
   let requestNumber = 0;
-  let selectionTimer = null;
-  let availableVoices = [];
+  let completedTranslationRequest = 0;
+  let selectionTimer: ReturnType<typeof setTimeout> | undefined;
+  let availableVoices: SpeechSynthesisVoice[] = [];
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keyup", (event) => {
@@ -25,17 +38,23 @@
   }
 
   function scheduleSelection() {
+    if (!isCurrentInstance()) return;
     clearTimeout(selectionTimer);
-    selectionTimer = setTimeout(processSelection, 120);
+    selectionTimer = setTimeout(processSelection, 60);
   }
 
   async function processSelection() {
+    if (!isCurrentInstance()) return;
     const details = readSelection();
     if (!details || details.text === currentText) return;
 
     currentText = details.text;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
+    if (!isSingleEnglishWord(details.text)) {
+      void loadTranslationPreview(details.text, ownRequest);
+    }
+    void loadTranscription(details.text, ownRequest);
 
     if (!extensionApi?.runtime?.sendMessage) {
       showError("API расширения недоступно на этой странице");
@@ -51,14 +70,19 @@
           pageTitle: document.title,
           pageUrl: location.href
         }
-      });
+      }) as TranslateResponse;
 
       if (ownRequest !== requestNumber || !shadow) return;
-      if (!result?.ok) throw new Error(result?.error || "Не удалось выполнить перевод");
-      renderResult(result, details.text);
-      void loadTranscription(details.text, ownRequest);
+      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить перевод");
+      completedTranslationRequest = ownRequest;
+      renderResult(result as TranslateResponse & {translation: string});
     } catch (error) {
-      if (ownRequest === requestNumber) showError(error?.message || "Ошибка перевода");
+      if (ownRequest !== requestNumber) return;
+      if (isInvalidatedContextError(error)) {
+        closeModal();
+        return;
+      }
+      showError(errorMessage(error, "Ошибка перевода"));
     }
   }
 
@@ -138,6 +162,7 @@
   }
 
   function showModal(rect, text) {
+    if (!isCurrentInstance()) return;
     // Replacing a modal is part of the current request. Calling closeModal()
     // here used to increment requestNumber, so every response was immediately
     // treated as stale and renderResult() was never reached.
@@ -162,14 +187,23 @@
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
-    shadow.querySelector(".speak").addEventListener("click", (event) => {
+    shadow.querySelector<HTMLButtonElement>(".speak").addEventListener("click", (event) => {
       event.stopPropagation();
-      speak(text);
+      speak(text, event.currentTarget as HTMLButtonElement);
     });
     positionModal(rect);
   }
 
-  function renderResult(result, text) {
+  function renderResult(result: TranslateResponse & {translation: string}) {
+    renderTranslations(result);
+    const status = shadow.querySelector<HTMLElement>(".status");
+    status.textContent = "✓";
+    status.classList.remove("pending");
+    status.setAttribute("aria-label", "Сохранено");
+    status.title = result.warning || "Сохранено";
+  }
+
+  function renderTranslations(result: TranslateResponse & {translation: string}) {
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
     translation.replaceChildren();
@@ -188,15 +222,21 @@
       context.textContent = result.contextTranslation;
       translation.append(context);
     }
-    const status = shadow.querySelector(".status");
-    status.textContent = "✓";
-    status.classList.remove("pending");
-    status.setAttribute("aria-label", "Сохранено");
-    status.title = result.warning || "Сохранено";
-    shadow.querySelector(".speak").onclick = (event) => {
-      event.stopPropagation();
-      speak(text);
-    };
+  }
+
+  async function loadTranslationPreview(text, ownRequest) {
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "translate-preview",
+        payload: { text }
+      }) as TranslateResponse;
+      if (ownRequest !== requestNumber || completedTranslationRequest === ownRequest
+        || !shadow || !result?.ok || !result.translation) return;
+      renderTranslations(result as TranslateResponse & {translation: string});
+    } catch (_error) {
+      if (isInvalidatedContextError(_error)) closeModal();
+      // The full contextual request below remains the source of other errors for the UI.
+    }
   }
 
   async function loadTranscription(text, ownRequest) {
@@ -204,11 +244,16 @@
       const result = await extensionApi.runtime.sendMessage({
         type: "get-transcription",
         payload: { text }
-      });
+      }) as TranslateResponse;
       if (ownRequest !== requestNumber || !shadow) return;
       renderTranscription(result?.ok ? result.transcription : null);
     } catch (_error) {
-      if (ownRequest === requestNumber && shadow) renderTranscription(null);
+      if (ownRequest !== requestNumber) return;
+      if (isInvalidatedContextError(_error)) {
+        closeModal();
+        return;
+      }
+      if (shadow) renderTranscription(null);
     }
   }
 
@@ -230,7 +275,7 @@
     shadow.querySelector(".status")?.remove();
   }
 
-  function speak(text) {
+  function speak(text, button: HTMLButtonElement) {
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
       showError("Озвучка не поддерживается этим браузером");
       return;
@@ -243,7 +288,24 @@
     utterance.voice = voice || null;
     utterance.rate = 0.92;
     utterance.pitch = 1;
+    utterance.onstart = () => {
+      button.textContent = "■";
+      button.title = "Остановить озвучку";
+      button.setAttribute("aria-label", "Остановить озвучку");
+    };
+    utterance.onend = () => resetSpeakButton(button);
+    utterance.onerror = (event) => {
+      resetSpeakButton(button);
+      button.title = `Ошибка озвучки: ${event.error}`;
+      console.warn(`[Context Translator] Speech synthesis error: ${event.error}`);
+    };
     window.speechSynthesis.speak(utterance);
+  }
+
+  function resetSpeakButton(button: HTMLButtonElement) {
+    button.textContent = "▶";
+    button.title = "Озвучить";
+    button.setAttribute("aria-label", "Озвучить выделенный текст");
   }
 
   function refreshVoices() {
@@ -273,7 +335,7 @@
   }
 
   function positionModal(rect) {
-    const card = shadow.querySelector(".card");
+    const card = shadow.querySelector<HTMLElement>(".card");
     const width = Math.min(420, window.innerWidth - 24);
     const preferredLeft = rect.left + rect.width / 2 - width / 2;
     const left = Math.max(12, Math.min(preferredLeft, window.innerWidth - width - 12));
@@ -292,12 +354,19 @@
   }
 
   function handleOutsidePointerDown(event) {
+    if (!isCurrentInstance()) return;
     if (!host) return;
     const path = event.composedPath();
     if (!path.includes(host)) closeModal();
   }
 
   function closeModal() {
+    if (!isCurrentInstance()) {
+      host?.remove();
+      host = null;
+      shadow = null;
+      return;
+    }
     requestNumber += 1;
     currentText = "";
     removeModal();
@@ -312,6 +381,18 @@
 
   function clean(value) {
     return String(value ?? "").replace(/\s+/g, " ").trim();
+  }
+
+  function isSingleEnglishWord(value) {
+    return /^[A-Za-z][A-Za-z'-]*$/.test(value);
+  }
+
+  function isInvalidatedContextError(error) {
+    return /extension context invalidated/i.test(errorMessage(error, ""));
+  }
+
+  function isCurrentInstance() {
+    return document.documentElement.getAttribute(INSTANCE_ATTRIBUTE) === instanceId;
   }
 
   function modalStyles() {

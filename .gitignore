@@ -2,3 +2,6 @@ node_modules/
 .idea/
 dist/
 *.log
+
+# Extension.js local session state
+.extension-js
