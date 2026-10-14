@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Сохранённые переводы</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Мои переводы</h1>
+      <p id="counter">Загрузка…</p>
+    </div>
+    <button id="clear" class="icon-button" type="button" title="Очистить список" aria-label="Очистить список">⌫</button>
+  </header>
+
+  <main>
+    <div id="empty" hidden>
+      <div class="empty-icon">Aa</div>
+      <strong>Пока пусто</strong>
+      <span>Выделите текст на любой странице — перевод появится здесь.</span>
+    </div>
+    <ol id="records"></ol>
+  </main>
+
+  <footer>
+    <button id="export-json" type="button">Скачать JSON</button>
+    <button id="export-csv" class="secondary" type="button">CSV</button>
+  </footer>
+  <div id="notice" role="status" aria-live="polite"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
