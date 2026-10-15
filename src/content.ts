@@ -195,7 +195,7 @@ import {
 
     shadow.innerHTML = `
       <style>${modalStyles()}</style>
-      <section class="card${isLongSelection ? " long" : ""}" role="dialog" aria-label="Перевод выделенного текста">
+      <section class="card${isLongSelection ? " long" : ""}${showSpeechProgress ? " speech-seekable" : ""}" role="dialog" aria-label="Перевод выделенного текста">
         <div class="top">
           <div class="source"></div>
           <div class="transcription skeleton short"></div>
@@ -771,6 +771,7 @@ import {
       .speech-progress-row { display: flex; align-items: center; margin-top: 6px; padding: 0 2px; }
       .speech-progress { width: 100%; height: 16px; margin: 0; accent-color: #2457d6; cursor: pointer; }
       .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+      .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
       .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
