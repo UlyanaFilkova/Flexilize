@@ -874,10 +874,10 @@ async function saveRecord(record: TranslationRecord) {
   }
 
   const records = await getRecords();
-  const duplicate = records[0]
-    && records[0].text === record.text
-    && records[0].sentence === record.sentence
-    && Date.now() - new Date(records[0].createdAt).getTime() < 3000;
+  const duplicate = records.some((savedRecord) => (
+    savedRecord.text === record.text
+    && savedRecord.sentence === record.sentence
+  ));
 
   if (duplicate) {
     return { saved: true, limitReached: records.length >= MAX_RECORDS };
