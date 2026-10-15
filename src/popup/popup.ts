@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import {exportTranslationRecords, type ExportFormat} from "../export";
 import {errorMessage, type RecordsResponse, type TranslationRecord} from "../types";
 
 const extensionApi = browser;
@@ -6,13 +7,15 @@ const listElement = document.querySelector<HTMLOListElement>("#records")!;
 const emptyElement = document.querySelector<HTMLElement>("#empty")!;
 const counterElement = document.querySelector<HTMLElement>("#counter")!;
 const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
-const jsonButton = document.querySelector<HTMLButtonElement>("#export-json")!;
+const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
+const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
 
 clearButton.append(createTrashIcon());
 document.addEventListener("DOMContentLoaded", loadRecords);
 clearButton.addEventListener("click", clearRecords);
-jsonButton.addEventListener("click", exportJson);
+exportButton.addEventListener("click", () => void exportRecords());
+formatSelect.addEventListener("change", updateExportButton);
 
 async function loadRecords() {
   try {
@@ -30,7 +33,8 @@ function render() {
   emptyElement.hidden = records.length > 0;
   counterElement.textContent = pluralize(records.length);
   clearButton.disabled = records.length === 0;
-  jsonButton.disabled = records.length === 0;
+  exportButton.disabled = records.length === 0;
+  formatSelect.disabled = records.length === 0;
 }
 
 function createRecordElement(record: TranslationRecord) {
@@ -160,31 +164,20 @@ async function clearRecords() {
   }
 }
 
-function exportJson() {
+async function exportRecords() {
   if (!records.length) return;
-  const exportRecords = records.map(toExportRecord);
-  const content = JSON.stringify(exportRecords, null, 2);
-  const blob = new Blob([content], { type: "application/json;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = `context-translations-${dateStamp()}.json`;
-  anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  showNotice("Файл JSON подготовлен");
-}
-
-function toExportRecord(record: TranslationRecord): TranslationRecord {
-  return {
-    contextTranslation: record.contextTranslation,
-    createdAt: record.createdAt,
-    pageTitle: record.pageTitle,
-    pageUrl: record.pageUrl,
-    sentence: record.sentence,
-    text: record.text,
-    translation: record.translation,
-    translations: record.translations
-  };
+  const format = formatSelect.value as ExportFormat;
+  exportButton.disabled = true;
+  formatSelect.disabled = true;
+  try {
+    await exportTranslationRecords(records, format);
+    showNotice(`Файл ${formatLabel(format)} подготовлен`);
+  } catch (error) {
+    showNotice(errorMessage(error, "Не удалось подготовить файл"));
+  } finally {
+    exportButton.disabled = false;
+    formatSelect.disabled = false;
+  }
 }
 
 function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text: string) {
@@ -216,8 +209,15 @@ function hostname(value: string) {
   try { return new URL(value).hostname; } catch (_error) { return "Источник"; }
 }
 
-function dateStamp() {
-  return new Date().toISOString().slice(0, 10);
+function updateExportButton() {
+  exportButton.textContent = `Скачать ${formatLabel(formatSelect.value as ExportFormat)}`;
+}
+
+function formatLabel(format: ExportFormat) {
+  if (format === "markdown") return "Markdown";
+  if (format === "anki-csv") return "Anki CSV";
+  if (format === "anki-tsv") return "Anki TSV";
+  return format.toUpperCase();
 }
 
 let noticeTimer: ReturnType<typeof setTimeout> | undefined;

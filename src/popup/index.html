@@ -25,7 +25,22 @@
   </main>
 
   <footer>
-    <button id="export-json" type="button">Скачать JSON</button>
+    <label class="format-picker">
+      <span>Формат экспорта</span>
+      <select id="export-format" aria-label="Формат экспорта">
+        <option value="json">JSON</option>
+        <option value="pdf">PDF</option>
+        <option value="txt">TXT</option>
+        <option value="csv">CSV</option>
+        <option value="tsv">TSV</option>
+        <option value="anki-csv">Anki CSV</option>
+        <option value="anki-tsv">Anki TSV</option>
+        <option value="xlsx">XLSX</option>
+        <option value="markdown">Markdown</option>
+        <option value="html">HTML</option>
+      </select>
+    </label>
+    <button id="export" type="button">Скачать JSON</button>
   </footer>
   <div id="notice" role="status" aria-live="polite"></div>
   <script type="module" src="popup.ts"></script>
