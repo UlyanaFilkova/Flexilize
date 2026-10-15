@@ -21,6 +21,7 @@ export interface TranslatePayload {
 export type RuntimeMessage =
   | {type: "translate-selection"; payload: TranslatePayload}
   | {type: "translate-preview"; payload: {text?: unknown}}
+  | {type: "detect-language"; payload: {text?: unknown}}
   | {type: "get-transcription"; payload: {text?: unknown}}
   | {type: "get-speech-audio"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-records"}
@@ -64,7 +65,7 @@ export interface SpeechAudioResponse {
 
 export function isRuntimeMessage(value: unknown): value is RuntimeMessage {
   if (!value || typeof value !== "object" || !("type" in value)) return false
-  return ["translate-selection", "translate-preview", "get-transcription", "get-speech-audio", "get-records", "delete-record", "restore-record", "clear-and-save-record", "clear-records"]
+  return ["translate-selection", "translate-preview", "detect-language", "get-transcription", "get-speech-audio", "get-records", "delete-record", "restore-record", "clear-and-save-record", "clear-records"]
     .includes(String(value.type))
 }
 

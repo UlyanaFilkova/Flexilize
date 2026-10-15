@@ -68,6 +68,7 @@ import {
     currentText = details.text;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
+    void loadDetectedLanguage(details.text, ownRequest);
     if (!isSingleWord(details.text)) {
       void loadTranslationPreview(details.text, ownRequest);
     }
@@ -213,6 +214,7 @@ import {
     shadow.querySelector(".source").textContent = text;
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
+    speakButton.disabled = true;
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
       if (isSpeechActive()) {
@@ -239,7 +241,7 @@ import {
   }
 
   function renderResult(result: TranslateResponse & {translation: string}) {
-    currentSourceLanguage = result.sourceLanguage || currentSourceLanguage;
+    setSpeechLanguage(result.sourceLanguage);
     renderTranslations(result);
     renderTranscription(result.transcription);
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
@@ -346,11 +348,34 @@ import {
       }) as TranslateResponse;
       if (ownRequest !== requestNumber || completedTranslationRequest === ownRequest
         || !shadow || !result?.ok || !result.translation) return;
-      currentSourceLanguage = result.sourceLanguage || currentSourceLanguage;
+      setSpeechLanguage(result.sourceLanguage);
       renderTranslations(result as TranslateResponse & {translation: string});
     } catch (_error) {
       if (isInvalidatedContextError(_error)) closeModal();
       // The full contextual request below remains the source of other errors for the UI.
+    }
+  }
+
+  async function loadDetectedLanguage(text: string, ownRequest: number) {
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "detect-language",
+        payload: { text }
+      }) as TranslateResponse;
+      if (ownRequest !== requestNumber || !shadow || !result?.ok) return;
+      setSpeechLanguage(result.sourceLanguage);
+    } catch (_error) {
+      if (isInvalidatedContextError(_error)) closeModal();
+      // The translation response can still provide the language and enable speech.
+    }
+  }
+
+  function setSpeechLanguage(language?: string) {
+    if (language) currentSourceLanguage = language;
+    const button = shadow?.querySelector<HTMLButtonElement>(".speak");
+    if (button && language) {
+      button.disabled = false;
+      button.title = `Озвучить (${language})`;
     }
   }
 
@@ -372,11 +397,7 @@ import {
   }
 
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
-    if (isFirefox()) {
-      void speakWithRemoteVoice(text, button, requestedPosition);
-      return;
-    }
-    speakWithBrowserVoice(text, button, requestedPosition);
+    void speakWithRemoteVoice(text, button, requestedPosition);
   }
 
   function speakWithBrowserVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
@@ -458,7 +479,7 @@ import {
     button.setAttribute("aria-label", "Остановить озвучку");
     if (progress) progress.value = String(actualStart);
 
-    // Calling resume directly from the click handler keeps Firefox's autoplay
+    // Calling resume directly from the click handler keeps the browser's autoplay
     // permission while the audio itself is being downloaded.
     void context.resume();
 
@@ -515,7 +536,7 @@ import {
       speechLoading = false;
       resetSpeakButton(button);
       console.warn(`[Context Translator] Remote speech synthesis failed: ${errorMessage(error, "unknown error")}`);
-      // Firefox can still provide a local voice when the network TTS is unavailable.
+      // A matching local voice remains available when network TTS is unavailable.
       speakWithBrowserVoice(text, button, requestedPosition);
     }
   }
@@ -576,10 +597,6 @@ import {
       || window.speechSynthesis.speaking || window.speechSynthesis.pending;
   }
 
-  function isFirefox() {
-    return navigator.userAgent.includes("Firefox/");
-  }
-
   function animateSpeechProgress(
     progress: HTMLInputElement,
     fullText: string,
@@ -626,7 +643,7 @@ import {
 
   function resetSpeakButton(button: HTMLButtonElement) {
     button.textContent = "▶";
-    button.title = "Озвучить";
+    button.title = `Озвучить (${currentSourceLanguage})`;
     button.setAttribute("aria-label", "Озвучить выделенный текст");
   }
 
@@ -735,6 +752,7 @@ import {
       .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
+      .speak:disabled { cursor: wait; opacity: .55; transform: none; }
       .speech-progress-row { display: flex; align-items: center; margin-top: 6px; padding: 0 2px; }
       .speech-progress { width: 100%; height: 16px; margin: 0; accent-color: #2457d6; cursor: pointer; }
       .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }

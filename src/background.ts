@@ -14,6 +14,7 @@ const SPEECH_REQUEST_TIMEOUT_MS = 8000;
 const CONTEXT_START = "<b>";
 const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
+const languageDetectionCache = new Map<string, Promise<string>>();
 const translationCache = new Map<string, Promise<{
   text: string
   alternatives: string[]
@@ -32,6 +33,11 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
 
   if (message?.type === "translate-preview") {
     return handleTranslationPreview(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "detect-language") {
+    return handleLanguageDetection(message.payload)
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
@@ -91,6 +97,12 @@ async function handleTranslationPreview(payload: {text?: unknown}) {
   };
 }
 
+async function handleLanguageDetection(payload: {text?: unknown}) {
+  const text = normalizeText(payload?.text, 1000);
+  if (!text) throw new Error("Не удалось прочитать выделенный текст");
+  return { ok: true, sourceLanguage: await detectSourceLanguage(text) };
+}
+
 async function handleSelection(payload: TranslatePayload) {
   const text = normalizeText(payload?.text, 1000);
   const sentence = normalizeText(payload?.sentence, 3000);
@@ -102,7 +114,7 @@ async function handleSelection(payload: TranslatePayload) {
   const sourceLanguage = await detectSourceLanguage(text);
   const [translationResult, transcription] = await Promise.all([
     translateToRussian(text, sentence, sourceLanguage),
-    sourceLanguage === "en"
+    isEnglishLanguage(sourceLanguage) || isEnglishTranscriptionCandidate(text)
       ? settleWithin(getTranscription(text), TRANSCRIPTION_TIMEOUT_MS, null)
       : null
   ]);
@@ -229,7 +241,7 @@ async function translateToRussian(text: string, sentence: string, sourceLanguage
   if (sourceLanguage === "ru") {
     return { text, alternatives: [text], contextTranslation: sentence || text, warning: null };
   }
-  if (sourceLanguage === "en" && /^[A-Za-z][A-Za-z'-]*$/.test(text)) {
+  if (isEnglishLanguage(sourceLanguage) && /^[A-Za-z][A-Za-z'-]*$/.test(text)) {
     return translateWordToRussian(text, sentence);
   }
   if (isShortSourceFragment(text)) {
@@ -520,15 +532,20 @@ function russianConsonantSkeleton(value) {
 }
 
 async function getTranscription(text: string): Promise<string | null> {
-  const words = text.match(/[A-Za-z][A-Za-z'-]*/g);
+  const words = text.match(/[A-Za-z][A-Za-z'’ʼ-]*/g);
   if (!words?.length || words.length > 30) return null;
 
-  const uniqueWords = [...new Set(words.map((word) => word.toLocaleLowerCase("en")))];
-  const entries = await Promise.all(uniqueWords.map(async (word): Promise<[string, string | null]> => (
-    [word, await fetchDatamuseTranscription(word) || await fetchEnglishPhonetic(word)]
-  )));
+  const normalizedWords = words.map((word) => word.replace(/[’ʼ]/g, "'").toLocaleLowerCase("en"));
+  const uniqueWords = [...new Set(normalizedWords)];
+  const entries = await Promise.all(uniqueWords.map(async (word): Promise<[string, string | null]> => {
+    const [datamuse, dictionary] = await Promise.all([
+      fetchDatamuseTranscription(word),
+      fetchEnglishPhonetic(word)
+    ]);
+    return [word, datamuse || dictionary];
+  }));
   const phoneticsByWord = new Map(entries);
-  const phonetics = words.map((word) => phoneticsByWord.get(word.toLocaleLowerCase("en")) || null);
+  const phonetics = normalizedWords.map((word) => phoneticsByWord.get(word) || null);
   return phonetics.some(Boolean)
     ? `/${phonetics.map((phonetic, index) => (
       phonetic ? stripPhoneticDelimiters(phonetic) : words[index]
@@ -1039,6 +1056,24 @@ function normalizeText(value, maxLength) {
 }
 
 async function detectSourceLanguage(text: string) {
+  const key = normalizeText(text, 1000);
+  const cached = languageDetectionCache.get(key);
+  if (cached) return cached;
+  const detection = resolveSourceLanguage(key);
+  if (languageDetectionCache.size >= 250) {
+    const oldestKey = languageDetectionCache.keys().next().value;
+    if (oldestKey) languageDetectionCache.delete(oldestKey);
+  }
+  languageDetectionCache.set(key, detection);
+  try {
+    return await detection;
+  } catch (error) {
+    languageDetectionCache.delete(key);
+    throw error;
+  }
+}
+
+async function resolveSourceLanguage(text: string) {
   try {
     const result = await extensionApi.i18n.detectLanguage(text);
     const candidates = [...(result?.languages || [])]
@@ -1060,6 +1095,16 @@ function normalizeLanguageCode(value: unknown) {
   const [base, ...subtags] = raw.split("-");
   const aliases = { iw: "he", in: "id", ji: "yi" };
   return [aliases[base] || base, ...subtags].join("-");
+}
+
+function isEnglishLanguage(language: string) {
+  return normalizeLanguageCode(language).split("-")[0] === "en";
+}
+
+function isEnglishTranscriptionCandidate(text: string) {
+  const words = text.match(/[A-Za-z][A-Za-z'’ʼ-]*/g) || [];
+  return words.length > 0
+    && text.replace(/[A-Za-z'’ʼ\-\s.!?,;:()[\]{}“”„…]/g, "").length === 0;
 }
 
 function detectLanguageByScript(text: string) {
