@@ -223,6 +223,9 @@ async function translateToRussian(text: string, sentence: string): Promise<Trans
   if (/^[A-Za-z][A-Za-z'-]*$/.test(text)) {
     return translateWordToRussian(text, sentence);
   }
+  if (isShortEnglishPhrase(text)) {
+    return translatePhraseToRussian(text, sentence);
+  }
 
   const chunks = splitByUtf8Bytes(text, 450);
   const translatedChunks = [];
@@ -236,6 +239,24 @@ async function translateToRussian(text: string, sentence: string): Promise<Trans
 
   const translation = translatedChunks.join(" ");
   return { text: translation, alternatives: [translation], warning };
+}
+
+function isShortEnglishPhrase(text: string) {
+  return /^[A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){1,2}[.!?,;:]?$/.test(text);
+}
+
+async function translatePhraseToRussian(phrase: string, sentence: string): Promise<TranslationResult> {
+  const markedContext = buildMarkedContext(sentence, phrase);
+  const [phraseResult, contextResult] = await Promise.all([
+    translateChunk(phrase),
+    markedContext ? translateContext(markedContext).catch(() => null) : null
+  ]);
+  return {
+    text: phraseResult.text,
+    alternatives: phraseResult.alternatives.length ? phraseResult.alternatives : [phraseResult.text],
+    contextTranslation: contextResult?.fullTranslation || null,
+    warning: phraseResult.warning
+  };
 }
 
 async function translateWordToRussian(word, sentence) {
