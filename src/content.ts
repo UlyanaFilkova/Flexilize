@@ -14,6 +14,23 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
+  const SOURCE_LANGUAGES = [
+    ["af", "Afrikaans"], ["sq", "Shqip"], ["ar", "العربية"], ["hy", "Հայերեն"],
+    ["az", "Azərbaycan dili"], ["eu", "Euskara"], ["be", "Беларуская"], ["bn", "বাংলা"],
+    ["bg", "Български"], ["ca", "Català"], ["zh-CN", "简体中文"], ["zh-TW", "繁體中文"],
+    ["hr", "Hrvatski"], ["cs", "Čeština"], ["da", "Dansk"], ["nl", "Nederlands"],
+    ["en", "English"], ["et", "Eesti"], ["fi", "Suomi"], ["fr", "Français"],
+    ["ka", "ქართული"], ["de", "Deutsch"], ["el", "Ελληνικά"], ["he", "עברית"],
+    ["hi", "हिन्दी"], ["hu", "Magyar"], ["is", "Íslenska"], ["id", "Bahasa Indonesia"],
+    ["ga", "Gaeilge"], ["it", "Italiano"], ["ja", "日本語"], ["kk", "Қазақша"],
+    ["ko", "한국어"], ["lv", "Latviešu"], ["lt", "Lietuvių"], ["mk", "Македонски"],
+    ["ms", "Bahasa Melayu"], ["mt", "Malti"], ["no", "Norsk"], ["fa", "فارسی"],
+    ["pl", "Polski"], ["pt", "Português"], ["ro", "Română"], ["ru", "Русский"],
+    ["sr", "Српски"], ["sk", "Slovenčina"], ["sl", "Slovenščina"], ["es", "Español"],
+    ["sw", "Kiswahili"], ["sv", "Svenska"], ["th", "ไทย"], ["tr", "Türkçe"],
+    ["uk", "Українська"], ["ur", "اردو"], ["uz", "O‘zbekcha"], ["vi", "Tiếng Việt"],
+    ["cy", "Cymraeg"]
+  ] as const;
 
   // Extension.js reloads the extension context during development, but DOM
   // created by the previous content-script instance can survive that reload.
@@ -24,6 +41,10 @@ import {
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
   let currentText = "";
+  let currentSentence = "";
+  let currentSourceLanguage = "en";
+  let manuallySelectedLanguage = "";
+  let languageInputDirty = false;
   let requestNumber = 0;
   let completedTranslationRequest = 0;
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
@@ -65,10 +86,12 @@ import {
     if (!details || details.text === currentText) return;
 
     currentText = details.text;
+    currentSentence = details.sentence;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
-    if (!isSingleEnglishWord(details.text)) {
-      void loadTranslationPreview(details.text, ownRequest);
+    void loadDetectedLanguage(details.text, details.sentence, ownRequest);
+    if (!isSingleWord(details.text)) {
+      void loadTranslationPreview(details.text, details.sentence, ownRequest);
     }
     if (!extensionApi?.runtime?.sendMessage) {
       showError("API расширения недоступно на этой странице");
@@ -181,6 +204,9 @@ import {
     // here used to increment requestNumber, so every response was immediately
     // treated as stale and renderResult() was never reached.
     removeModal();
+    currentSourceLanguage = "en";
+    manuallySelectedLanguage = "";
+    languageInputDirty = false;
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
@@ -205,12 +231,27 @@ import {
               aria-label="Позиция озвучки" title="Позиция озвучки">
           </div>` : ""}
         <div class="divider"></div>
+        <div class="translation-language">
+          <label for="${HOST_ID}-language">Перевод с:</label>
+          <div class="language-combobox">
+            <input class="source-language" id="${HOST_ID}-language" placeholder="Определяется…"
+              role="combobox" aria-label="Язык оригинала" aria-autocomplete="list"
+              aria-controls="${HOST_ID}-languages" aria-expanded="false" autocomplete="off" spellcheck="false">
+            <button class="language-clear" type="button" aria-label="Очистить язык" title="Очистить">×</button>
+            <button class="language-toggle" type="button" aria-label="Показать все языки" title="Показать все языки">⌄</button>
+            <div class="language-options" id="${HOST_ID}-languages" role="listbox" hidden></div>
+          </div>
+        </div>
         <div class="translation skeleton"></div>
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
+    const languageInput = shadow.querySelector<HTMLInputElement>(".source-language");
+    const languageClear = shadow.querySelector<HTMLButtonElement>(".language-clear");
+    const languageToggle = shadow.querySelector<HTMLButtonElement>(".language-toggle");
+    speakButton.disabled = true;
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
       if (isSpeechActive()) {
@@ -233,10 +274,168 @@ import {
       }
       speak(text, speakButton, requestedPosition);
     });
+    languageInput?.addEventListener("input", () => {
+      languageInputDirty = true;
+      updateLanguageClearButton();
+      openLanguageList(false);
+    });
+    languageInput?.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeLanguageList();
+        return;
+      }
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        openLanguageList(!languageInput.value);
+        shadow?.querySelector<HTMLButtonElement>(".language-option")?.focus();
+        return;
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commitLanguageSelection(languageInput.value);
+      }
+    });
+    languageClear?.addEventListener("click", () => {
+      if (!languageInput) return;
+      languageInput.value = "";
+      languageInputDirty = true;
+      updateLanguageClearButton();
+      languageInput.focus();
+      openLanguageList(true);
+    });
+    languageToggle?.addEventListener("click", () => {
+      if (!languageInput) return;
+      languageInput.focus();
+      openLanguageList(true);
+    });
+    shadow.querySelector<HTMLElement>(".language-combobox")?.addEventListener("focusout", () => {
+      setTimeout(() => {
+        const active = shadow?.activeElement;
+        const combobox = shadow?.querySelector<HTMLElement>(".language-combobox");
+        if (!active || !combobox?.contains(active)) closeLanguageList();
+      }, 0);
+    });
+    updateLanguageClearButton();
     positionModal(rect);
   }
 
+  function languageCodeForInput(value: string) {
+    const normalized = clean(value).toLocaleLowerCase("ru");
+    if (!normalized) return "";
+    const match = SOURCE_LANGUAGES.find(([code, name]) => (
+      code.toLocaleLowerCase() === normalized
+      || name.toLocaleLowerCase() === normalized
+      || localizedLanguageName(code).toLocaleLowerCase("ru") === normalized
+    ));
+    return match?.[0] || "";
+  }
+
+  function commitLanguageSelection(value: string) {
+    const language = languageCodeForInput(value);
+    if (!language) return;
+    const input = shadow?.querySelector<HTMLInputElement>(".source-language");
+    if (input) input.value = languageName(language);
+    languageInputDirty = false;
+    updateLanguageClearButton();
+    closeLanguageList();
+    if (manuallySelectedLanguage === language) return;
+    manuallySelectedLanguage = language;
+    void reloadTranslation(language);
+  }
+
+  function openLanguageList(showAll: boolean) {
+    if (!shadow) return;
+    const input = shadow.querySelector<HTMLInputElement>(".source-language");
+    const list = shadow.querySelector<HTMLElement>(".language-options");
+    if (!input || !list) return;
+    const filter = showAll ? "" : clean(input.value).toLocaleLowerCase();
+    const matches = SOURCE_LANGUAGES
+      .filter(([code, name]) => !filter || [
+        code, name, localizedLanguageName(code)
+      ].some((candidate) => candidate.toLocaleLowerCase().includes(filter)))
+      .sort((left, right) => languageName(left[0]).localeCompare(languageName(right[0]), "ru"));
+    list.replaceChildren();
+    matches.forEach(([code, name]) => {
+      const option = document.createElement("button");
+      option.className = "language-option";
+      option.type = "button";
+      option.role = "option";
+      option.textContent = languageName(code);
+      option.addEventListener("click", () => commitLanguageSelection(code));
+      option.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeLanguageList();
+          input.focus();
+        }
+      });
+      list.append(option);
+    });
+    list.hidden = false;
+    shadow.querySelector(".card")?.classList.add("language-open");
+    input.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(() => {
+      if (list.hidden) return;
+      const controlRect = input.getBoundingClientRect();
+      const listHeight = list.getBoundingClientRect().height;
+      list.classList.toggle("above", controlRect.bottom + 4 + listHeight > window.innerHeight - 12
+        && controlRect.top - 4 - listHeight >= 12);
+    });
+  }
+
+  function closeLanguageList() {
+    const input = shadow?.querySelector<HTMLInputElement>(".source-language");
+    const list = shadow?.querySelector<HTMLElement>(".language-options");
+    if (list) list.hidden = true;
+    shadow?.querySelector(".card")?.classList.remove("language-open");
+    input?.setAttribute("aria-expanded", "false");
+  }
+
+  function updateLanguageClearButton() {
+    const input = shadow?.querySelector<HTMLInputElement>(".source-language");
+    const button = shadow?.querySelector<HTMLButtonElement>(".language-clear");
+    if (button) button.hidden = !input?.value;
+  }
+
+  async function reloadTranslation(sourceLanguage: string) {
+    if (!shadow || !currentText) return;
+    const ownRequest = ++requestNumber;
+    completedTranslationRequest = 0;
+    const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
+    stopSpeaking(speakButton || undefined);
+    if (speakButton) speakButton.disabled = true;
+    const translation = shadow.querySelector<HTMLElement>(".translation");
+    translation?.replaceChildren();
+    translation?.classList.remove("error");
+    translation?.classList.add("skeleton");
+    const transcription = shadow.querySelector<HTMLElement>(".transcription");
+    transcription?.classList.remove("muted");
+    transcription?.classList.add("skeleton", "short");
+    if (transcription) transcription.textContent = "";
+
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "translate-selection",
+        payload: {
+          text: currentText,
+          sentence: currentSentence,
+          pageTitle: document.title,
+          pageUrl: location.href,
+          sourceLanguage
+        }
+      }) as TranslateResponse;
+      if (ownRequest !== requestNumber || !shadow) return;
+      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить перевод");
+      completedTranslationRequest = ownRequest;
+      renderResult(result as TranslateResponse & {translation: string});
+    } catch (error) {
+      if (ownRequest !== requestNumber) return;
+      if (isInvalidatedContextError(error)) return closeModal();
+      showError(errorMessage(error, "Ошибка перевода"));
+    }
+  }
+
   function renderResult(result: TranslateResponse & {translation: string}) {
+    setSpeechLanguage(result.sourceLanguage);
     renderTranslations(result);
     renderTranscription(result.transcription);
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
@@ -335,14 +534,15 @@ import {
     if (selectionRect) positionModal(selectionRect);
   }
 
-  async function loadTranslationPreview(text, ownRequest) {
+  async function loadTranslationPreview(text, sentence, ownRequest) {
     try {
       const result = await extensionApi.runtime.sendMessage({
         type: "translate-preview",
-        payload: { text }
+        payload: { sentence, text }
       }) as TranslateResponse;
       if (ownRequest !== requestNumber || completedTranslationRequest === ownRequest
         || !shadow || !result?.ok || !result.translation) return;
+      setSpeechLanguage(result.sourceLanguage);
       renderTranslations(result as TranslateResponse & {translation: string});
     } catch (_error) {
       if (isInvalidatedContextError(_error)) closeModal();
@@ -350,8 +550,56 @@ import {
     }
   }
 
+  async function loadDetectedLanguage(text: string, sentence: string, ownRequest: number) {
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "detect-language",
+        payload: { sentence, text }
+      }) as TranslateResponse;
+      if (ownRequest !== requestNumber || !shadow || !result?.ok) return;
+      setSpeechLanguage(result.sourceLanguage);
+    } catch (_error) {
+      if (isInvalidatedContextError(_error)) closeModal();
+      // The translation response can still provide the language and enable speech.
+    }
+  }
+
+  function setSpeechLanguage(language?: string) {
+    if (language) currentSourceLanguage = language;
+    const languageElement = shadow?.querySelector<HTMLInputElement>(".source-language");
+    if (languageElement && language && !languageInputDirty) {
+      languageElement.value = languageName(language);
+      languageElement.title = `Код языка: ${language}`;
+      updateLanguageClearButton();
+    }
+    const button = shadow?.querySelector<HTMLButtonElement>(".speak");
+    if (button && language) {
+      button.disabled = false;
+      button.title = `Озвучить (${language})`;
+    }
+  }
+
+  function languageName(language: string) {
+    return localizedLanguageName(language);
+  }
+
+  function localizedLanguageName(language: string) {
+    const normalized = String(language || "").replace(/_/g, "-").toLocaleLowerCase();
+    let name = "";
+    try {
+      name = new Intl.DisplayNames(["ru"], { type: "language" }).of(normalized) || "";
+    } catch (_error) {
+      // The language code is still useful in browsers without Intl.DisplayNames.
+    }
+    const readableName = name
+      ? `${name.charAt(0).toLocaleUpperCase("ru")}${name.slice(1)}`
+      : normalized.toLocaleUpperCase();
+    return readableName;
+  }
+
   function renderTranscription(value) {
-    const transcription = shadow.querySelector(".transcription");
+    const transcription = shadow?.querySelector<HTMLElement>(".transcription");
+    if (!transcription) return;
     transcription.classList.remove("skeleton", "short");
     transcription.textContent = value || "Транскрипция недоступна";
     transcription.classList.toggle("muted", !value);
@@ -359,8 +607,7 @@ import {
 
   function showError(message) {
     if (!shadow) return;
-    shadow.querySelector(".transcription")?.remove();
-    shadow.querySelector(".divider")?.remove();
+    renderTranscription(null);
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
     translation.textContent = message;
@@ -368,11 +615,7 @@ import {
   }
 
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
-    if (isFirefox()) {
-      void speakWithRemoteVoice(text, button, requestedPosition);
-      return;
-    }
-    speakWithBrowserVoice(text, button, requestedPosition);
+    void speakWithRemoteVoice(text, button, requestedPosition);
   }
 
   function speakWithBrowserVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
@@ -388,7 +631,7 @@ import {
     const ownSpeechRun = ++speechRun;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(spokenText);
-    const locale = "en-US";
+    const locale = speechLocale(currentSourceLanguage);
     const voice = chooseVoice(locale);
     utterance.lang = voice?.lang || locale;
     utterance.voice = voice || null;
@@ -454,14 +697,14 @@ import {
     button.setAttribute("aria-label", "Остановить озвучку");
     if (progress) progress.value = String(actualStart);
 
-    // Calling resume directly from the click handler keeps Firefox's autoplay
+    // Calling resume directly from the click handler keeps the browser's autoplay
     // permission while the audio itself is being downloaded.
     void context.resume();
 
     try {
       const result = await extensionApi.runtime.sendMessage({
         type: "get-speech-audio",
-        payload: { text: spokenText }
+        payload: { language: currentSourceLanguage, text: spokenText }
       }) as SpeechAudioResponse;
       if (ownSpeechRun !== speechRun) return;
       if (!result?.ok || !result.chunks?.length) {
@@ -511,7 +754,7 @@ import {
       speechLoading = false;
       resetSpeakButton(button);
       console.warn(`[Context Translator] Remote speech synthesis failed: ${errorMessage(error, "unknown error")}`);
-      // Firefox can still provide a local voice when the network TTS is unavailable.
+      // A matching local voice remains available when network TTS is unavailable.
       speakWithBrowserVoice(text, button, requestedPosition);
     }
   }
@@ -572,10 +815,6 @@ import {
       || window.speechSynthesis.speaking || window.speechSynthesis.pending;
   }
 
-  function isFirefox() {
-    return navigator.userAgent.includes("Firefox/");
-  }
-
   function animateSpeechProgress(
     progress: HTMLInputElement,
     fullText: string,
@@ -611,13 +850,18 @@ import {
 
   function nearestWordStart(text: string, requestedPosition: number) {
     let position = Math.max(0, Math.min(Math.floor(requestedPosition), text.length));
-    while (position > 0 && /[A-Za-z'-]/.test(text[position - 1])) position -= 1;
+    while (position > 0 && /[\p{L}\p{M}'’ʼ-]/u.test(text[position - 1])) position -= 1;
     return position;
+  }
+
+  function speechLocale(language: string) {
+    const normalized = String(language || "en").replace(/_/g, "-");
+    return normalized.toLocaleLowerCase() === "en" ? "en-US" : normalized;
   }
 
   function resetSpeakButton(button: HTMLButtonElement) {
     button.textContent = "▶";
-    button.title = "Озвучить";
+    button.title = `Озвучить (${currentSourceLanguage})`;
     button.setAttribute("aria-label", "Озвучить выделенный текст");
   }
 
@@ -651,7 +895,7 @@ import {
     const card = shadow.querySelector<HTMLElement>(".card");
     const preferredWidth = card.classList.contains("long")
       ? 760
-      : isSingleEnglishWord(currentText) ? 420 : 620;
+      : isSingleWord(currentText) ? 420 : 620;
     const width = Math.min(preferredWidth, window.innerWidth - 24);
     const preferredLeft = rect.left + rect.width / 2 - width / 2;
     const left = Math.max(12, Math.min(preferredLeft, window.innerWidth - width - 12));
@@ -700,8 +944,8 @@ import {
     return String(value ?? "").replace(/\s+/g, " ").trim();
   }
 
-  function isSingleEnglishWord(value) {
-    return /^[A-Za-z][A-Za-z'-]*$/.test(value);
+  function isSingleWord(value) {
+    return /^[\p{L}\p{M}]+(?:['’ʼ-][\p{L}\p{M}]+)*$/u.test(value);
   }
 
   function wordCount(value: string) {
@@ -721,17 +965,33 @@ import {
       :host { color-scheme: light; }
       .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
+      .card.long.language-open { overflow: visible; }
       .top { display: flex; align-items: center; gap: 9px; }
       .source { flex: 1 1 auto; min-width: 0; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
+      .speak:disabled { cursor: wait; opacity: .55; transform: none; }
       .speech-progress-row { display: flex; align-items: center; margin-top: 6px; padding: 0 2px; }
       .speech-progress { width: 100%; height: 16px; margin: 0; accent-color: #2457d6; cursor: pointer; }
       .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
       .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
+      .translation-language { position: relative; z-index: 2; display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-bottom: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
+      .language-combobox { position: relative; width: 190px; }
+      .source-language { box-sizing: border-box; width: 100%; height: 30px; padding: 0 50px 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
+      .source-language:focus { border-color: #7aa2ef; box-shadow: 0 0 0 3px rgba(36,87,214,.12); background: #fff; }
+      .language-clear, .language-toggle { position: absolute; top: 1px; display: grid; width: 24px; height: 28px; padding: 0; place-items: center; border: 0; background: transparent; color: #7b8799; cursor: pointer; font: 16px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .language-clear { right: 25px; font-size: 18px; }
+      .language-toggle { right: 1px; padding-bottom: 4px; font-size: 17px; }
+      .language-clear:hover, .language-toggle:hover { color: #2457d6; }
+      .language-clear[hidden] { display: none; }
+      .language-options { position: absolute; top: calc(100% + 4px); right: 0; box-sizing: border-box; width: 100%; max-height: 220px; padding: 4px; overflow-x: hidden; overflow-y: auto; border: 1px solid #dce3ed; border-radius: 9px; background: #fff; box-shadow: 0 10px 28px rgba(15,23,42,.18); }
+      .language-options.above { top: auto; bottom: calc(100% + 4px); }
+      .language-options[hidden] { display: none; }
+      .language-option { display: block; width: 100%; padding: 7px 8px; border: 0; border-radius: 6px; background: transparent; color: #344259; cursor: pointer; font: 500 12px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-align: left; }
+      .language-option:hover, .language-option:focus { outline: none; background: #edf3ff; color: #2457d6; }
       .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
       .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }

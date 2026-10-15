@@ -4,6 +4,7 @@ export interface TranslationRecord {
   pageTitle: string
   pageUrl: string
   sentence: string
+  sourceLanguage: string
   text: string
   transcription: string | null
   translation: string
@@ -15,13 +16,15 @@ export interface TranslatePayload {
   sentence?: unknown
   pageTitle?: unknown
   pageUrl?: unknown
+  sourceLanguage?: unknown
 }
 
 export type RuntimeMessage =
   | {type: "translate-selection"; payload: TranslatePayload}
-  | {type: "translate-preview"; payload: {text?: unknown}}
-  | {type: "get-transcription"; payload: {text?: unknown}}
-  | {type: "get-speech-audio"; payload: {text?: unknown}}
+  | {type: "translate-preview"; payload: {sentence?: unknown; sourceLanguage?: unknown; text?: unknown}}
+  | {type: "detect-language"; payload: {sentence?: unknown; text?: unknown}}
+  | {type: "get-transcription"; payload: {language?: unknown; text?: unknown}}
+  | {type: "get-speech-audio"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-records"}
   | {type: "delete-record"; payload: {createdAt?: unknown; sentence?: unknown; text?: unknown}}
   | {type: "restore-record"; payload: {index?: unknown; record?: unknown}}
@@ -34,7 +37,7 @@ export interface TranslateResponse {
   translations?: string[]
   contextTranslation?: string | null
   transcription?: string | null
-  sourceLanguage?: "en"
+  sourceLanguage?: string
   saved?: boolean
   storageLimitReached?: boolean
   pendingRecord?: TranslationRecord
@@ -63,7 +66,7 @@ export interface SpeechAudioResponse {
 
 export function isRuntimeMessage(value: unknown): value is RuntimeMessage {
   if (!value || typeof value !== "object" || !("type" in value)) return false
-  return ["translate-selection", "translate-preview", "get-transcription", "get-speech-audio", "get-records", "delete-record", "restore-record", "clear-and-save-record", "clear-records"]
+  return ["translate-selection", "translate-preview", "detect-language", "get-transcription", "get-speech-audio", "get-records", "delete-record", "restore-record", "clear-and-save-record", "clear-records"]
     .includes(String(value.type))
 }
 

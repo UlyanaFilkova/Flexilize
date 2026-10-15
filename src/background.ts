@@ -10,10 +10,28 @@ const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
 const TRANSLATION_REQUEST_TIMEOUT_MS = 4500;
+const LANGUAGE_DETECTION_TIMEOUT_MS = 4500;
 const SPEECH_REQUEST_TIMEOUT_MS = 8000;
 const CONTEXT_START = "<b>";
 const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
+const languageDetectionCache = new Map<string, Promise<string>>();
+const LANGUAGE_LABELS = new Map([
+  ["английский", "en"], ["арабский", "ar"], ["армянский", "hy"],
+  ["белорусский", "be"], ["болгарский", "bg"], ["венгерский", "hu"],
+  ["вьетнамский", "vi"], ["голландский", "nl"], ["греческий", "el"],
+  ["грузинский", "ka"], ["датский", "da"], ["иврит", "he"],
+  ["индонезийский", "id"], ["испанский", "es"], ["итальянский", "it"],
+  ["казахский", "kk"], ["китайский", "zh"], ["корейский", "ko"],
+  ["латышский", "lv"], ["литовский", "lt"], ["немецкий", "de"],
+  ["нидерландский", "nl"], ["норвежский", "no"], ["персидский", "fa"],
+  ["польский", "pl"], ["португальский", "pt"], ["румынский", "ro"],
+  ["русский", "ru"], ["сербский", "sr"], ["словацкий", "sk"],
+  ["словенский", "sl"], ["тайский", "th"], ["турецкий", "tr"],
+  ["украинский", "uk"], ["финский", "fi"], ["французский", "fr"],
+  ["хинди", "hi"], ["хорватский", "hr"], ["чешский", "cs"],
+  ["шведский", "sv"], ["эстонский", "et"], ["японский", "ja"]
+]);
 const translationCache = new Map<string, Promise<{
   text: string
   alternatives: string[]
@@ -32,6 +50,11 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
 
   if (message?.type === "translate-preview") {
     return handleTranslationPreview(message.payload)
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
+  if (message?.type === "detect-language") {
+    return handleLanguageDetection(message.payload)
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
@@ -76,18 +99,28 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
   }
 });
 
-async function handleTranslationPreview(payload: {text?: unknown}) {
+async function handleTranslationPreview(payload: {sentence?: unknown; sourceLanguage?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 1000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
 
-  const result = await translateChunk(text);
+  const sentence = normalizeText(payload?.sentence, 3000);
+  const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
+    || await detectSelectionLanguage(text, sentence);
+  const result = await translateChunk(text, sourceLanguage);
   return {
     ok: true,
     translation: result.text,
     translations: result.alternatives,
-    sourceLanguage: "en" as const,
+    sourceLanguage,
     warning: result.warning
   };
+}
+
+async function handleLanguageDetection(payload: {sentence?: unknown; text?: unknown}) {
+  const text = normalizeText(payload?.text, 1000);
+  if (!text) throw new Error("Не удалось прочитать выделенный текст");
+  const sentence = normalizeText(payload?.sentence, 3000);
+  return { ok: true, sourceLanguage: await detectSelectionLanguage(text, sentence) };
 }
 
 async function handleSelection(payload: TranslatePayload) {
@@ -98,9 +131,11 @@ async function handleSelection(payload: TranslatePayload) {
     throw new Error("Не удалось прочитать выделенный текст");
   }
 
+  const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
+    || await detectSelectionLanguage(text, sentence);
   const [translationResult, transcription] = await Promise.all([
-    translateToRussian(text, sentence),
-    settleWithin(getTranscription(text), TRANSCRIPTION_TIMEOUT_MS, null)
+    translateToRussian(text, sentence, sourceLanguage),
+    settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
   ]);
 
   const record: TranslationRecord = {
@@ -109,6 +144,7 @@ async function handleSelection(payload: TranslatePayload) {
     pageTitle: normalizeText(payload?.pageTitle, 500),
     pageUrl: normalizeUrl(payload?.pageUrl),
     sentence: sentence || text,
+    sourceLanguage,
     text,
     transcription,
     translation: translationResult.text,
@@ -123,7 +159,7 @@ async function handleSelection(payload: TranslatePayload) {
     translations: translationResult.alternatives || [translationResult.text],
     contextTranslation: translationResult.contextTranslation || null,
     transcription,
-    sourceLanguage: "en",
+    sourceLanguage,
     saved: storageResult.saved,
     storageLimitReached: storageResult.limitReached,
     pendingRecord: storageResult.saved ? undefined : record,
@@ -131,21 +167,23 @@ async function handleSelection(payload: TranslatePayload) {
   };
 }
 
-async function handleTranscription(payload: {text?: unknown}) {
+async function handleTranscription(payload: {language?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 500);
   if (!text) return { ok: true, transcription: null };
+  const language = normalizeLanguageCode(payload?.language) || await detectSourceLanguage(text);
 
   const transcription = await settleWithin(
-    getTranscription(text),
+    getTranscription(text, language),
     TRANSCRIPTION_TIMEOUT_MS,
     null
   );
   return { ok: true, transcription };
 }
 
-async function handleSpeechAudio(payload: {text?: unknown}) {
+async function handleSpeechAudio(payload: {language?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 1000);
   if (!text) throw new Error("Не удалось прочитать текст для озвучки");
+  const language = normalizeLanguageCode(payload?.language) || await detectSourceLanguage(text);
 
   const chunks = splitSpeechText(text, 180);
   const audioChunks = await Promise.all(chunks.map(async (chunk) => {
@@ -153,7 +191,7 @@ async function handleSpeechAudio(payload: {text?: unknown}) {
       client: "tw-ob",
       ie: "UTF-8",
       q: chunk.text,
-      tl: "en-US"
+      tl: language
     });
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), SPEECH_REQUEST_TIMEOUT_MS);
@@ -219,12 +257,15 @@ interface TranslationResult {
   warning: string | null
 }
 
-async function translateToRussian(text: string, sentence: string): Promise<TranslationResult> {
-  if (/^[A-Za-z][A-Za-z'-]*$/.test(text)) {
+async function translateToRussian(text: string, sentence: string, sourceLanguage: string): Promise<TranslationResult> {
+  if (sourceLanguage === "ru") {
+    return { text, alternatives: [text], contextTranslation: sentence || text, warning: null };
+  }
+  if (isEnglishLanguage(sourceLanguage) && /^[A-Za-z][A-Za-z'-]*$/.test(text)) {
     return translateWordToRussian(text, sentence);
   }
-  if (isShortEnglishPhrase(text)) {
-    return translatePhraseToRussian(text, sentence);
+  if (isShortSourceFragment(text)) {
+    return translatePhraseToRussian(text, sentence, sourceLanguage);
   }
 
   const chunks = splitByUtf8Bytes(text, 450);
@@ -232,7 +273,7 @@ async function translateToRussian(text: string, sentence: string): Promise<Trans
   let warning = null;
 
   for (const chunk of chunks) {
-    const result = await translateChunk(chunk);
+    const result = await translateChunk(chunk, sourceLanguage);
     translatedChunks.push(result.text);
     warning ||= result.warning;
   }
@@ -241,15 +282,17 @@ async function translateToRussian(text: string, sentence: string): Promise<Trans
   return { text: translation, alternatives: [translation], warning };
 }
 
-function isShortEnglishPhrase(text: string) {
-  return /^[A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){1,2}[.!?,;:]?$/.test(text);
+function isShortSourceFragment(text: string) {
+  const words = text.match(/[\p{L}\p{M}]+(?:['’ʼ-][\p{L}\p{M}]+)*/gu) || [];
+  return words.length >= 1 && words.length <= 3
+    && text.replace(/[\p{L}\p{M}\p{P}\s]/gu, "").length === 0;
 }
 
-async function translatePhraseToRussian(phrase: string, sentence: string): Promise<TranslationResult> {
+async function translatePhraseToRussian(phrase: string, sentence: string, sourceLanguage: string): Promise<TranslationResult> {
   const markedContext = buildMarkedContext(sentence, phrase);
   const [phraseResult, contextResult] = await Promise.all([
-    translateChunk(phrase),
-    markedContext ? translateContext(markedContext).catch(() => null) : null
+    translateChunk(phrase, sourceLanguage),
+    markedContext ? translateContext(markedContext, sourceLanguage).catch(() => null) : null
   ]);
   return {
     text: phraseResult.text,
@@ -416,8 +459,8 @@ function commonPrefixLength(left, right) {
   return length;
 }
 
-async function translateContext(markedContext) {
-  const result = await translateChunk(markedContext);
+async function translateContext(markedContext, sourceLanguage = "en") {
+  const result = await translateChunk(markedContext, sourceLanguage);
   const translated = result.text;
   const selectedTranslation = translated.match(/<b(?:\s[^>]*)?>(.*?)<\/b>/i)?.[1]?.trim() || null;
   return {
@@ -428,8 +471,8 @@ async function translateContext(markedContext) {
 
 function buildMarkedContext(sentence, word) {
   const context = normalizeText(sentence, 3000);
-  if (!context || context.toLocaleLowerCase("en") === word.toLocaleLowerCase("en")) return null;
-  const index = context.toLocaleLowerCase("en").indexOf(word.toLocaleLowerCase("en"));
+  if (!context || context.toLocaleLowerCase() === word.toLocaleLowerCase()) return null;
+  const index = context.toLocaleLowerCase().indexOf(word.toLocaleLowerCase());
   if (index < 0) return null;
 
   return `${context.slice(0, index)}${CONTEXT_START}${context.slice(index, index + word.length)}${CONTEXT_END}${context.slice(index + word.length)}`;
@@ -508,21 +551,61 @@ function russianConsonantSkeleton(value) {
     .replace(/(.)\1+/gu, "$1");
 }
 
-async function getTranscription(text: string): Promise<string | null> {
-  const words = text.match(/[A-Za-z][A-Za-z'-]*/g);
+async function getTranscription(text: string, language = "en"): Promise<string | null> {
+  if (!isEnglishLanguage(language)) return getGoogleRomanization(text, language);
+  const words = text.match(/[A-Za-z][A-Za-z'’ʼ-]*/g);
   if (!words?.length || words.length > 30) return null;
 
-  const uniqueWords = [...new Set(words.map((word) => word.toLocaleLowerCase("en")))];
-  const entries = await Promise.all(uniqueWords.map(async (word): Promise<[string, string | null]> => (
-    [word, await fetchDatamuseTranscription(word) || await fetchEnglishPhonetic(word)]
-  )));
+  const normalizedWords = words.map((word) => word.replace(/[’ʼ]/g, "'").toLocaleLowerCase("en"));
+  const uniqueWords = [...new Set(normalizedWords)];
+  const entries = await Promise.all(uniqueWords.map(async (word): Promise<[string, string | null]> => {
+    const [datamuse, dictionary] = await Promise.all([
+      fetchDatamuseTranscription(word),
+      fetchEnglishPhonetic(word)
+    ]);
+    return [word, datamuse || dictionary];
+  }));
   const phoneticsByWord = new Map(entries);
-  const phonetics = words.map((word) => phoneticsByWord.get(word.toLocaleLowerCase("en")) || null);
+  const phonetics = normalizedWords.map((word) => phoneticsByWord.get(word) || null);
   return phonetics.some(Boolean)
     ? `/${phonetics.map((phonetic, index) => (
       phonetic ? stripPhoneticDelimiters(phonetic) : words[index]
     )).join(" ")}/`
     : null;
+}
+
+async function getGoogleRomanization(text: string, language: string): Promise<string | null> {
+  const key = `${normalizeLanguageCode(language)}:${normalizeText(text, 500)}`;
+  if (transcriptionCache.has(key)) return transcriptionCache.get(key);
+  try {
+    const query = new URLSearchParams({
+      client: "gtx",
+      dt: "rm",
+      q: text,
+      sl: normalizeLanguageCode(language),
+      tl: "ru"
+    });
+    const response = await fetchWithTimeout(
+      `https://translate.googleapis.com/translate_a/single?${query}`,
+      DICTIONARY_REQUEST_TIMEOUT_MS
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    const segments = Array.isArray(data?.[0]) ? data[0] : [];
+    const romanization = segments
+      .map((segment) => normalizeText(segment?.[3], 1000))
+      .filter(Boolean)
+      .join(" ");
+    const normalizedSource = normalizeText(text, 1000).toLocaleLowerCase();
+    const result = romanization && romanization.toLocaleLowerCase() !== normalizedSource
+      ? romanization
+      : null;
+    if (transcriptionCache.size > 500) transcriptionCache.clear();
+    transcriptionCache.set(key, result);
+    return result;
+  } catch (_error) {
+    return null;
+  }
 }
 
 function stripPhoneticDelimiters(value: string) {
@@ -550,12 +633,14 @@ async function fetchDatamuseTranscription(text) {
   }
 }
 
-async function translateChunk(text) {
-  const cacheKey = normalizeText(text, 3000);
+async function translateChunk(text, sourceLanguage = "en") {
+  const normalizedText = normalizeText(text, 3000);
+  const language = normalizeLanguageCode(sourceLanguage) || "en";
+  const cacheKey = persistentTranslationKey(normalizedText, language);
   const cached = translationCache.get(cacheKey);
   if (cached) return cached;
 
-  const request = resolveTranslationChunk(cacheKey);
+  const request = resolveTranslationChunk(normalizedText, language);
   if (translationCache.size >= 250) {
     const oldestKey = translationCache.keys().next().value;
     if (oldestKey) translationCache.delete(oldestKey);
@@ -570,23 +655,29 @@ async function translateChunk(text) {
   }
 }
 
-async function resolveTranslationChunk(text: string) {
-  const saved = await findSavedTranslation(text);
+async function resolveTranslationChunk(text: string, sourceLanguage: string) {
+  if (sourceLanguage === "ru") {
+    return { text, alternatives: [text], warning: null };
+  }
+  const saved = await findSavedTranslation(text, sourceLanguage);
   if (saved) return saved;
 
-  const persisted = await getPersistedTranslation(text);
+  const persisted = await getPersistedTranslation(text, sourceLanguage);
   if (persisted) return persisted;
 
-  const result = await requestTranslationChunk(text);
-  await persistTranslation(text, result);
+  const result = await requestTranslationChunk(text, sourceLanguage);
+  await persistTranslation(text, sourceLanguage, result);
   return result;
 }
 
-async function findSavedTranslation(text: string) {
+async function findSavedTranslation(text: string, sourceLanguage: string) {
   if (/<\/?b(?:\s[^>]*)?>/i.test(text)) return null;
-  const key = normalizeText(text, 1000).toLocaleLowerCase("en");
+  const key = normalizeText(text, 1000).toLocaleLowerCase();
   const records = await getRecords();
-  const record = records.find((item) => item.text.toLocaleLowerCase("en") === key);
+  const record = records.find((item) => (
+    item.sourceLanguage === sourceLanguage
+    && item.text.toLocaleLowerCase() === key
+  ));
   if (!record?.translation) return null;
   return {
     text: record.translation,
@@ -595,11 +686,11 @@ async function findSavedTranslation(text: string) {
   };
 }
 
-async function getPersistedTranslation(text: string) {
+async function getPersistedTranslation(text: string, sourceLanguage: string) {
   if (!extensionApi?.storage?.local) return null;
   const stored = await extensionApi.storage.local.get(TRANSLATION_RESULTS_KEY);
   const cache = stored?.[TRANSLATION_RESULTS_KEY];
-  const entry = cache && typeof cache === "object" ? cache[persistentTranslationKey(text)] : null;
+  const entry = cache && typeof cache === "object" ? cache[persistentTranslationKey(text, sourceLanguage)] : null;
   const translated = normalizeText(entry?.text, 3000);
   if (!translated) return null;
   const alternatives = Array.isArray(entry?.alternatives)
@@ -612,13 +703,17 @@ async function getPersistedTranslation(text: string) {
   };
 }
 
-async function persistTranslation(text: string, result: {text: string; alternatives: string[]; warning: string | null}) {
+async function persistTranslation(
+  text: string,
+  sourceLanguage: string,
+  result: {text: string; alternatives: string[]; warning: string | null}
+) {
   if (!extensionApi?.storage?.local) return;
   translationCacheWrite = translationCacheWrite.then(async () => {
     const stored = await extensionApi.storage.local.get(TRANSLATION_RESULTS_KEY);
     const current = stored?.[TRANSLATION_RESULTS_KEY];
     const cache = current && typeof current === "object" ? { ...current } : {};
-    cache[persistentTranslationKey(text)] = { ...result, cachedAt: Date.now() };
+    cache[persistentTranslationKey(text, sourceLanguage)] = { ...result, cachedAt: Date.now() };
     const entries = Object.entries(cache);
     if (entries.length > MAX_CACHED_TRANSLATIONS) {
       entries
@@ -631,11 +726,11 @@ async function persistTranslation(text: string, result: {text: string; alternati
   await translationCacheWrite;
 }
 
-async function requestTranslationChunk(text: string) {
+async function requestTranslationChunk(text: string, sourceLanguage: string) {
   if (Date.now() < translationCooldownUntil) {
-    return requestFallbackTranslation(text);
+    return requestFallbackTranslation(text, sourceLanguage);
   }
-  const query = new URLSearchParams({ q: text, langpair: "en|ru" });
+  const query = new URLSearchParams({ q: text, langpair: `${sourceLanguage}|ru` });
   let response;
   try {
     response = await fetchWithTimeout(
@@ -643,29 +738,31 @@ async function requestTranslationChunk(text: string) {
       TRANSLATION_REQUEST_TIMEOUT_MS
     );
   } catch (_error) {
-    return requestFallbackTranslation(text);
+    return requestFallbackTranslation(text, sourceLanguage);
   }
 
   if (response.status === 429) {
     translationCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
-    return requestFallbackTranslation(text);
+    return requestFallbackTranslation(text, sourceLanguage);
   }
   if (!response.ok) {
-    return requestFallbackTranslation(text);
+    return requestFallbackTranslation(text, sourceLanguage);
   }
 
   const data = await response.json();
   const responseStatus = Number(data?.responseStatus);
   if ([403, 429].includes(responseStatus)) {
     translationCooldownUntil = Date.now() + 15 * 60_000;
-    return requestFallbackTranslation(text);
+    return requestFallbackTranslation(text, sourceLanguage);
   }
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
-  if (!translated) throw new Error("Сервис перевода вернул пустой результат");
+  if (!translated || responseStatus >= 400 || /invalid language pair|unsupported language/i.test(translated)) {
+    return requestFallbackTranslation(text, sourceLanguage);
+  }
   const exactMatches = Array.isArray(data?.matches)
     ? data.matches.filter((match) => {
-      const segment = normalizeText(match?.segment, 1000).toLocaleLowerCase("en");
-      const requested = normalizeText(text, 1000).toLocaleLowerCase("en");
+      const segment = normalizeText(match?.segment, 1000).toLocaleLowerCase();
+      const requested = normalizeText(text, 1000).toLocaleLowerCase();
       const score = Number(match?.match);
       return segment === requested && (!Number.isFinite(score) || score >= 0.7);
     })
@@ -681,13 +778,13 @@ async function requestTranslationChunk(text: string) {
   };
 }
 
-async function requestFallbackTranslation(text: string) {
+async function requestFallbackTranslation(text: string, sourceLanguage: string) {
   try {
     const query = new URLSearchParams({
       client: "gtx",
       dt: "t",
       q: text,
-      sl: "en",
+      sl: sourceLanguage,
       tl: "ru"
     });
     query.set("client", "dict-chrome-ex");
@@ -707,8 +804,8 @@ async function requestFallbackTranslation(text: string) {
   }
 }
 
-function persistentTranslationKey(text: string) {
-  return `text:${text}`;
+function persistentTranslationKey(text: string, sourceLanguage: string) {
+  return `${sourceLanguage}:${text}`;
 }
 
 function retryDelay(retryAfter: string | null) {
@@ -903,6 +1000,7 @@ async function saveRecord(record: TranslationRecord) {
   const duplicateIndex = records.findIndex((savedRecord) => (
     savedRecord.text === record.text
     && savedRecord.sentence === record.sentence
+    && savedRecord.sourceLanguage === record.sourceLanguage
   ));
 
   if (duplicateIndex >= 0) {
@@ -940,6 +1038,7 @@ function normalizeStoredRecord(value): TranslationRecord {
     pageTitle: normalizeText(value?.pageTitle ?? value?.pageTitle, 500),
     pageUrl: normalizeUrl(value?.pageUrl),
     sentence: normalizeText(value?.sentence, 3000),
+    sourceLanguage: normalizeLanguageCode(value?.sourceLanguage) || "en",
     text: normalizeText(value?.text, 1000),
     transcription: normalizeText(value?.transcription, 1000) || null,
     translation,
@@ -1009,6 +1108,119 @@ async function clearAndSaveRecord(payload: {record?: unknown}) {
 
 function normalizeText(value, maxLength) {
   return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+}
+
+async function detectSourceLanguage(text: string) {
+  const key = normalizeText(text, 1000);
+  const cached = languageDetectionCache.get(key);
+  if (cached) return cached;
+  const detection = resolveSourceLanguage(key);
+  if (languageDetectionCache.size >= 250) {
+    const oldestKey = languageDetectionCache.keys().next().value;
+    if (oldestKey) languageDetectionCache.delete(oldestKey);
+  }
+  languageDetectionCache.set(key, detection);
+  try {
+    return await detection;
+  } catch (error) {
+    languageDetectionCache.delete(key);
+    throw error;
+  }
+}
+
+async function resolveSourceLanguage(text: string) {
+  const googleLanguage = await detectLanguageWithGoogle(text);
+  if (googleLanguage) return googleLanguage;
+
+  try {
+    const result = await extensionApi.i18n.detectLanguage(text);
+    const candidates = [...(result?.languages || [])]
+      .sort((left, right) => Number(right.percentage || 0) - Number(left.percentage || 0));
+    for (const candidate of candidates) {
+      const language = normalizeLanguageCode(candidate.language);
+      if (language) return language;
+    }
+  } catch (_error) {
+    // Script detection below keeps translation available in browsers where
+    // automatic language detection is missing or rejects a very short input.
+  }
+  return detectLanguageByScript(text) || "en";
+}
+
+async function detectLanguageWithGoogle(text: string) {
+  try {
+    const query = new URLSearchParams({
+      client: "dict-chrome-ex",
+      dt: "t",
+      q: normalizeText(text, 3000),
+      sl: "auto",
+      tl: "ru"
+    });
+    const response = await fetchWithTimeout(
+      `https://clients5.google.com/translate_a/t?${query}`,
+      LANGUAGE_DETECTION_TIMEOUT_MS
+    );
+    if (!response.ok) return "";
+    const data = await response.json();
+    const segments = Array.isArray(data) ? data : [];
+    for (const segment of segments) {
+      const language = normalizeLanguageCode(Array.isArray(segment) ? segment[1] : "");
+      if (language) return language;
+    }
+    return "";
+  } catch (_error) {
+    return "";
+  }
+}
+
+async function detectSelectionLanguage(text: string, sentence: string) {
+  const explicitLanguage = languageFromContextLabel(text, sentence);
+  if (explicitLanguage) return explicitLanguage;
+  const words = text.match(/[\p{L}\p{M}]+(?:['’ʼ-][\p{L}\p{M}]+)*/gu) || [];
+  const sample = words.length === 1 && sentence.length > text.length
+    ? sentence
+    : text;
+  return detectSourceLanguage(sample);
+}
+
+function languageFromContextLabel(text: string, sentence: string) {
+  const selectedIndex = sentence.toLocaleLowerCase().indexOf(text.toLocaleLowerCase());
+  if (selectedIndex <= 0) return "";
+  const prefix = sentence.slice(Math.max(0, selectedIndex - 60), selectedIndex);
+  const label = prefix.match(/([\p{L}-]+(?:\s+язык)?)\s*[:：]\s*$/u)?.[1]
+    ?.toLocaleLowerCase("ru")
+    .replace(/\s+язык$/u, "")
+    .replace(/^по-/u, "");
+  return label ? LANGUAGE_LABELS.get(label) || "" : "";
+}
+
+function normalizeLanguageCode(value: unknown) {
+  const raw = normalizeText(value, 35).replace(/_/g, "-").toLocaleLowerCase();
+  if (!raw || raw === "und" || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/.test(raw)) return "";
+  const [base, ...subtags] = raw.split("-");
+  const aliases = { iw: "he", in: "id", ji: "yi" };
+  return [aliases[base] || base, ...subtags].join("-");
+}
+
+function isEnglishLanguage(language: string) {
+  return normalizeLanguageCode(language).split("-")[0] === "en";
+}
+
+function detectLanguageByScript(text: string) {
+  const scripts: Array<[RegExp, string]> = [
+    [/[぀-ヿ]/u, "ja"],
+    [/[가-힯]/u, "ko"],
+    [/[一-鿿]/u, "zh"],
+    [/[Ͱ-Ͽ]/u, "el"],
+    [/[֐-׿]/u, "he"],
+    [/[؀-ۿ]/u, "ar"],
+    [/[ऀ-ॿ]/u, "hi"],
+    [/[฀-๿]/u, "th"],
+    [/[԰-֏]/u, "hy"],
+    [/[Ⴀ-ჿ]/u, "ka"],
+    [/[Ѐ-ԯ]/u, "ru"]
+  ];
+  return scripts.find(([pattern]) => pattern.test(text))?.[1] || "";
 }
 
 function normalizeUrl(value) {
