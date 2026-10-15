@@ -70,8 +70,6 @@ import {
     if (!isSingleEnglishWord(details.text)) {
       void loadTranslationPreview(details.text, ownRequest);
     }
-    void loadTranscription(details.text, ownRequest);
-
     if (!extensionApi?.runtime?.sendMessage) {
       showError("API расширения недоступно на этой странице");
       return;
@@ -240,6 +238,7 @@ import {
 
   function renderResult(result: TranslateResponse & {translation: string}) {
     renderTranslations(result);
+    renderTranscription(result.transcription);
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
   }
 
@@ -348,24 +347,6 @@ import {
     } catch (_error) {
       if (isInvalidatedContextError(_error)) closeModal();
       // The full contextual request below remains the source of other errors for the UI.
-    }
-  }
-
-  async function loadTranscription(text, ownRequest) {
-    try {
-      const result = await extensionApi.runtime.sendMessage({
-        type: "get-transcription",
-        payload: { text }
-      }) as TranslateResponse;
-      if (ownRequest !== requestNumber || !shadow) return;
-      renderTranscription(result?.ok ? result.transcription : null);
-    } catch (_error) {
-      if (ownRequest !== requestNumber) return;
-      if (isInvalidatedContextError(_error)) {
-        closeModal();
-        return;
-      }
-      if (shadow) renderTranscription(null);
     }
   }
 

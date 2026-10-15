@@ -1,6 +1,10 @@
 import type {TranslationRecord} from "./types";
 import cyrillicFontUrl from "@fontsource/roboto/files/roboto-cyrillic-400-normal.woff";
+import cyrillicBoldFontUrl from "@fontsource/roboto/files/roboto-cyrillic-700-normal.woff";
 import latinFontUrl from "@fontsource/roboto/files/roboto-latin-400-normal.woff";
+import latinBoldFontUrl from "@fontsource/roboto/files/roboto-latin-700-normal.woff";
+import latinExtendedFontUrl from "@fontsource/roboto/files/roboto-latin-ext-400-normal.woff";
+import latinExtendedBoldFontUrl from "@fontsource/roboto/files/roboto-latin-ext-700-normal.woff";
 import fontkit from "@pdf-lib/fontkit";
 import {strToU8, zipSync} from "fflate";
 import {PDFDocument, rgb} from "pdf-lib";
@@ -25,6 +29,7 @@ type ExportColumn = {
 const columns: ExportColumn[] = [
   { header: "createdAt", value: (record) => record.createdAt },
   { header: "text", value: (record) => record.text },
+  { header: "transcription", value: (record) => record.transcription || "" },
   { header: "translation", value: (record) => record.translation },
   { header: "translations", value: (record) => record.translations.join(" | ") },
   { header: "contextTranslation", value: (record) => record.contextTranslation || "" },
@@ -106,7 +111,7 @@ function createAnki(records: TranslationRecord[], delimiter: string) {
   const directives = [
     `#separator:${separator}`,
     "#html:true",
-    "#columns:Front,Back,Context,Source,Created"
+    "#columns:Front,Back,Transcription,Context,ContextTranslation,Source,Created"
   ];
   const rows = records.map((record) => {
     const alternatives = record.translations
@@ -120,7 +125,15 @@ function createAnki(records: TranslationRecord[], delimiter: string) {
     const source = record.pageUrl
       ? `<a href="${escapeAttribute(record.pageUrl)}">${escapeHtml(record.pageTitle || record.pageUrl)}</a>`
       : escapeHtml(record.pageTitle);
-    return [record.text, back, escapeHtml(record.sentence), source, record.createdAt]
+    return [
+      record.text,
+      back,
+      escapeHtml(record.transcription || ""),
+      escapeHtml(record.sentence),
+      escapeHtml(record.contextTranslation || ""),
+      source,
+      record.createdAt
+    ]
       .map((value) => escapeDelimited(value, delimiter)).join(delimiter);
   });
   return [...directives, ...rows].join("\r\n");
@@ -128,10 +141,12 @@ function createAnki(records: TranslationRecord[], delimiter: string) {
 
 function createPlainText(records: TranslationRecord[]) {
   return records.map((record, index) => [
-    `${index + 1}. ${record.text} — ${record.translation}`,
+    `${index + 1}. ${record.text}`,
+    record.translation,
+    record.transcription || "",
     record.translations.length > 1 ? `Варианты: ${record.translations.join(", ")}` : "",
-    record.contextTranslation ? `Контекстный перевод: ${record.contextTranslation}` : "",
     `Контекст: ${record.sentence}`,
+    record.contextTranslation ? `Перевод контекста: ${record.contextTranslation}` : "",
     record.pageTitle || record.pageUrl ? `Источник: ${[record.pageTitle, record.pageUrl].filter(Boolean).join(" — ")}` : "",
     `Сохранено: ${record.createdAt}`
   ].filter(Boolean).join("\n")).join("\n\n");
@@ -145,11 +160,14 @@ function createMarkdown(records: TranslationRecord[]) {
     ""
   ];
   const entries = records.flatMap((record, index) => [
-    `## ${index + 1}. ${escapeMarkdown(record.text)} → ${escapeMarkdown(record.translation)}`,
+    `## ${index + 1}. **${escapeMarkdown(record.text)}**`,
+    "",
+    escapeMarkdown(record.translation),
+    record.transcription ? `*${escapeMarkdown(record.transcription)}*` : "",
     "",
     record.translations.length > 1 ? `**Варианты:** ${record.translations.map(escapeMarkdown).join(", ")}` : "",
-    record.contextTranslation ? `**Контекстный перевод:** ${escapeMarkdown(record.contextTranslation)}` : "",
     `**Контекст:** ${escapeMarkdown(record.sentence)}`,
+    record.contextTranslation ? `**Перевод контекста:** ${escapeMarkdown(record.contextTranslation)}` : "",
     record.pageUrl
       ? `**Источник:** [${escapeMarkdown(record.pageTitle || record.pageUrl)}](${encodeURI(record.pageUrl)})`
       : record.pageTitle ? `**Источник:** ${escapeMarkdown(record.pageTitle)}` : "",
@@ -162,10 +180,12 @@ function createMarkdown(records: TranslationRecord[]) {
 function createHtml(records: TranslationRecord[]) {
   const items = records.map((record) => `
     <article>
-      <h2>${escapeHtml(record.text)} <span>→</span> ${escapeHtml(record.translation)}</h2>
+      <h2 class="term">${escapeHtml(record.text)}</h2>
+      <div class="translation">${escapeHtml(record.translation)}</div>
+      ${record.transcription ? `<div class="transcription">${escapeHtml(record.transcription)}</div>` : ""}
       ${record.translations.length > 1 ? `<p><b>Варианты:</b> ${record.translations.map(escapeHtml).join(", ")}</p>` : ""}
-      ${record.contextTranslation ? `<p><b>Контекстный перевод:</b> ${escapeHtml(record.contextTranslation)}</p>` : ""}
-      <blockquote>${escapeHtml(record.sentence)}</blockquote>
+      <p class="context"><b>Контекст:</b> ${escapeHtml(record.sentence)}</p>
+      ${record.contextTranslation ? `<p class="context-translation"><b>Перевод контекста:</b> ${escapeHtml(record.contextTranslation)}</p>` : ""}
       <footer>
         ${record.pageUrl ? `<a href="${escapeAttribute(record.pageUrl)}">${escapeHtml(record.pageTitle || record.pageUrl)}</a>` : escapeHtml(record.pageTitle)}
         <time>${escapeHtml(record.createdAt)}</time>
@@ -174,24 +194,63 @@ function createHtml(records: TranslationRecord[]) {
   return `<!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>История переводов</title><style>
-body{max-width:900px;margin:40px auto;padding:0 20px;color:#172033;font:15px/1.55 system-ui,sans-serif}h1{margin-bottom:30px}article{padding:20px 0;border-top:1px solid #dce2ea}h2{margin:0 0 12px;font-size:20px}h2 span{color:#8995a8}p{margin:7px 0}blockquote{margin:12px 0;padding:10px 14px;border-left:3px solid #2864dc;background:#f5f7fa;color:#536177}footer{display:flex;justify-content:space-between;gap:20px;color:#79869a;font-size:12px}a{color:#2457c5}time{white-space:nowrap}@media print{body{margin:0}article{break-inside:avoid}}
+body{max-width:900px;margin:40px auto;padding:0 20px;color:#172033;font:15px/1.55 system-ui,sans-serif}h1{margin-bottom:30px}article{padding:20px 0;border-top:1px solid #dce2ea}.term{margin:0;color:#2457c5;font-size:21px;font-weight:750}.translation{margin-top:3px;font-size:18px}.transcription{margin-top:3px;color:#65738a;font-family:Georgia,serif}.context{margin-top:14px}.context-translation{color:#536177}p{margin:7px 0}footer{display:flex;justify-content:space-between;gap:20px;margin-top:12px;color:#79869a;font-size:12px}a{color:#2457c5}time{white-space:nowrap}@media print{body{margin:0}article{break-inside:avoid}}
 </style></head><body><h1>История переводов</h1>${items}</body></html>`;
 }
 
 async function exportPdf(records: TranslationRecord[], filename: string) {
-  const [latinResponse, cyrillicResponse] = await Promise.all([
+  const [
+    latinResponse,
+    cyrillicResponse,
+    latinBoldResponse,
+    cyrillicBoldResponse,
+    latinExtendedResponse,
+    latinExtendedBoldResponse
+  ] = await Promise.all([
     fetch(latinFontUrl),
-    fetch(cyrillicFontUrl)
+    fetch(cyrillicFontUrl),
+    fetch(latinBoldFontUrl),
+    fetch(cyrillicBoldFontUrl),
+    fetch(latinExtendedFontUrl),
+    fetch(latinExtendedBoldFontUrl)
   ]);
-  if (!latinResponse.ok || !cyrillicResponse.ok) throw new Error("Не удалось загрузить шрифт PDF");
+  const fontResponses = [
+    latinResponse,
+    cyrillicResponse,
+    latinBoldResponse,
+    cyrillicBoldResponse,
+    latinExtendedResponse,
+    latinExtendedBoldResponse
+  ];
+  if (!fontResponses.every((response) => response.ok)) {
+    throw new Error("Не удалось загрузить шрифт PDF");
+  }
 
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
-  const [latinFont, cyrillicFont] = await Promise.all([
+  const [
+    latinFont,
+    cyrillicFont,
+    latinBoldFont,
+    cyrillicBoldFont,
+    latinExtendedFont,
+    latinExtendedBoldFont
+  ] = await Promise.all([
     pdf.embedFont(await latinResponse.arrayBuffer(), { subset: true }),
-    pdf.embedFont(await cyrillicResponse.arrayBuffer(), { subset: true })
+    pdf.embedFont(await cyrillicResponse.arrayBuffer(), { subset: true }),
+    pdf.embedFont(await latinBoldResponse.arrayBuffer(), { subset: true }),
+    pdf.embedFont(await cyrillicBoldResponse.arrayBuffer(), { subset: true }),
+    pdf.embedFont(await latinExtendedResponse.arrayBuffer(), { subset: true }),
+    pdf.embedFont(await latinExtendedBoldResponse.arrayBuffer(), { subset: true })
   ]);
-  const fonts = { latin: latinFont, cyrillic: cyrillicFont };
+  const fonts = {
+    latin: latinFont,
+    cyrillic: cyrillicFont,
+    latinBold: latinBoldFont,
+    cyrillicBold: cyrillicBoldFont,
+    latinExtended: latinExtendedFont,
+    latinExtendedBold: latinExtendedBoldFont
+  };
   const pageSize: [number, number] = [595.28, 841.89];
   const margin = 42;
   const maxWidth = pageSize[0] - margin * 2;
@@ -202,11 +261,11 @@ async function exportPdf(records: TranslationRecord[], filename: string) {
     page = pdf.addPage(pageSize);
     y = pageSize[1] - margin;
   };
-  const paragraph = (text: string, size: number, color, spacing = 5) => {
+  const paragraph = (text: string, size: number, color, spacing = 5, bold = false) => {
     const lineHeight = size * 1.35;
-    for (const line of wrapPdfText(text || "—", maxWidth, size, fonts)) {
+    for (const line of wrapPdfText(text || "—", maxWidth, size, fonts, bold)) {
       if (y - lineHeight < margin) newPage();
-      drawPdfText(page, line, margin, y - size, size, color, fonts);
+      drawPdfText(page, line, margin, y - size, size, color, fonts, bold);
       y -= lineHeight;
     }
     y -= spacing;
@@ -216,14 +275,18 @@ async function exportPdf(records: TranslationRecord[], filename: string) {
   paragraph(`Записей: ${records.length}`, 10, rgb(0.41, 0.46, 0.55), 12);
   records.forEach((record, index) => {
     if (y < margin + 90) newPage();
-    paragraph(`${index + 1}. ${record.text} -> ${record.translation}`, 13, rgb(0.14, 0.34, 0.77), 3);
+    paragraph(`${index + 1}. ${record.text}`, 14, rgb(0.14, 0.34, 0.77), 2, true);
+    paragraph(record.translation, 12, rgb(0.09, 0.13, 0.2), 2);
+    if (record.transcription) {
+      paragraph(record.transcription, 10, rgb(0.4, 0.45, 0.54), 3);
+    }
     if (record.translations.length > 1) {
       paragraph(`Варианты: ${record.translations.join(", ")}`, 9, rgb(0.18, 0.22, 0.3), 2);
     }
-    if (record.contextTranslation) {
-      paragraph(`Контекстный перевод: ${record.contextTranslation}`, 9, rgb(0.18, 0.22, 0.3), 2);
-    }
     paragraph(`Контекст: ${record.sentence}`, 9, rgb(0.33, 0.38, 0.47), 3);
+    if (record.contextTranslation) {
+      paragraph(`Перевод контекста: ${record.contextTranslation}`, 9, rgb(0.18, 0.22, 0.3), 3);
+    }
     paragraph([record.pageTitle, record.pageUrl, record.createdAt].filter(Boolean).join(" | "), 8, rgb(0.48, 0.53, 0.61), 10);
   });
 
@@ -251,7 +314,7 @@ async function exportXlsx(records: TranslationRecord[], filename: string) {
     "xl/workbook.xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Переводы" sheetId="1" r:id="rId1"/></sheets></workbook>`,
     "xl/_rels/workbook.xml.rels": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
     "xl/styles.xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF2864DC"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`,
-    "xl/worksheets/sheet1.xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1:H${lastRow}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="24" customWidth="1"/><col min="2" max="4" width="24" customWidth="1"/><col min="5" max="6" width="45" customWidth="1"/><col min="7" max="8" width="28" customWidth="1"/></cols><sheetData>${rows}</sheetData><autoFilter ref="A1:H${lastRow}"/></worksheet>`
+    "xl/worksheets/sheet1.xml": `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1:I${lastRow}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="24" customWidth="1"/><col min="2" max="5" width="24" customWidth="1"/><col min="6" max="7" width="45" customWidth="1"/><col min="8" max="9" width="28" customWidth="1"/></cols><sheetData>${rows}</sheetData><autoFilter ref="A1:I${lastRow}"/></worksheet>`
   };
   const archive = zipSync(Object.fromEntries(
     Object.entries(files).map(([path, content]) => [path, strToU8(content)])
@@ -261,7 +324,7 @@ async function exportXlsx(records: TranslationRecord[], filename: string) {
   }), filename);
 }
 
-function wrapPdfText(text: string, maxWidth: number, size: number, fonts) {
+function wrapPdfText(text: string, maxWidth: number, size: number, fonts, bold = false) {
   const characters = [...String(text ?? "").replace(/\s+/g, " ").trim()];
   if (!characters.length) return [""];
   const lines: string[] = [];
@@ -269,7 +332,7 @@ function wrapPdfText(text: string, maxWidth: number, size: number, fonts) {
   let lastSpace = -1;
   for (const character of characters) {
     const candidate = line + character;
-    if (measurePdfText(candidate, size, fonts) <= maxWidth || !line) {
+    if (measurePdfText(candidate, size, fonts, bold) <= maxWidth || !line) {
       line = candidate;
       if (character === " ") lastSpace = line.length - 1;
       continue;
@@ -287,24 +350,28 @@ function wrapPdfText(text: string, maxWidth: number, size: number, fonts) {
   return lines;
 }
 
-function measurePdfText(text: string, size: number, fonts) {
-  return pdfTextRuns(text, fonts).reduce((width, run) => (
+function measurePdfText(text: string, size: number, fonts, bold = false) {
+  return pdfTextRuns(text, fonts, bold).reduce((width, run) => (
     width + run.font.widthOfTextAtSize(run.text, size)
   ), 0);
 }
 
-function drawPdfText(page, text: string, x: number, y: number, size: number, color, fonts) {
+function drawPdfText(page, text: string, x: number, y: number, size: number, color, fonts, bold = false) {
   let position = x;
-  pdfTextRuns(text, fonts).forEach((run) => {
+  pdfTextRuns(text, fonts, bold).forEach((run) => {
     page.drawText(run.text, { x: position, y, size, font: run.font, color });
     position += run.font.widthOfTextAtSize(run.text, size);
   });
 }
 
-function pdfTextRuns(text: string, fonts) {
+function pdfTextRuns(text: string, fonts, bold = false) {
   const runs: Array<{text: string; font: typeof fonts.latin}> = [];
   [...text].forEach((character) => {
-    const font = /[\u0400-\u052f]/u.test(character) ? fonts.cyrillic : fonts.latin;
+    const isCyrillic = /[\u0400-\u052f]/u.test(character);
+    const isExtendedLatin = /[\u0100-\u036f]/u.test(character);
+    const font = bold
+      ? (isCyrillic ? fonts.cyrillicBold : isExtendedLatin ? fonts.latinExtendedBold : fonts.latinBold)
+      : (isCyrillic ? fonts.cyrillic : isExtendedLatin ? fonts.latinExtended : fonts.latin);
     const lastRun = runs.at(-1);
     if (lastRun?.font === font) lastRun.text += character;
     else runs.push({ text: character, font });
@@ -361,6 +428,7 @@ function toExportRecord(record: TranslationRecord): TranslationRecord {
     pageUrl: record.pageUrl,
     sentence: record.sentence,
     text: record.text,
+    transcription: record.transcription,
     translation: record.translation,
     translations: record.translations
   };

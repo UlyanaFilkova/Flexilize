@@ -98,7 +98,10 @@ async function handleSelection(payload: TranslatePayload) {
     throw new Error("Не удалось прочитать выделенный текст");
   }
 
-  const translationResult = await translateToRussian(text, sentence);
+  const [translationResult, transcription] = await Promise.all([
+    translateToRussian(text, sentence),
+    settleWithin(getTranscription(text), TRANSCRIPTION_TIMEOUT_MS, null)
+  ]);
 
   const record: TranslationRecord = {
     contextTranslation: translationResult.contextTranslation || null,
@@ -107,6 +110,7 @@ async function handleSelection(payload: TranslatePayload) {
     pageUrl: normalizeUrl(payload?.pageUrl),
     sentence: sentence || text,
     text,
+    transcription,
     translation: translationResult.text,
     translations: translationResult.alternatives
   };
@@ -118,6 +122,7 @@ async function handleSelection(payload: TranslatePayload) {
     translation: translationResult.text,
     translations: translationResult.alternatives || [translationResult.text],
     contextTranslation: translationResult.contextTranslation || null,
+    transcription,
     sourceLanguage: "en",
     saved: storageResult.saved,
     storageLimitReached: storageResult.limitReached,
@@ -874,12 +879,16 @@ async function saveRecord(record: TranslationRecord) {
   }
 
   const records = await getRecords();
-  const duplicate = records.some((savedRecord) => (
+  const duplicateIndex = records.findIndex((savedRecord) => (
     savedRecord.text === record.text
     && savedRecord.sentence === record.sentence
   ));
 
-  if (duplicate) {
+  if (duplicateIndex >= 0) {
+    if (!records[duplicateIndex].transcription && record.transcription) {
+      records[duplicateIndex] = { ...records[duplicateIndex], transcription: record.transcription };
+      await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+    }
     return { saved: true, limitReached: records.length >= MAX_RECORDS };
   }
   if (records.length >= MAX_RECORDS) {
@@ -911,6 +920,7 @@ function normalizeStoredRecord(value): TranslationRecord {
     pageUrl: normalizeUrl(value?.pageUrl),
     sentence: normalizeText(value?.sentence, 3000),
     text: normalizeText(value?.text, 1000),
+    transcription: normalizeText(value?.transcription, 1000) || null,
     translation,
     translations: translations.length ? translations : (translation ? [translation] : [])
   };

@@ -5,6 +5,7 @@ export interface TranslationRecord {
   pageUrl: string
   sentence: string
   text: string
+  transcription: string | null
   translation: string
   translations: string[]
 }

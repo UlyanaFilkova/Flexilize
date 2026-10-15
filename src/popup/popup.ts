@@ -49,6 +49,9 @@ function createRecordElement(record: TranslationRecord) {
     textElement("span", "translated", record.translation)
   );
 
+  const transcription = record.transcription
+    ? textElement("div", "record-transcription", record.transcription)
+    : null;
   const sentence = textElement("div", "sentence", record.sentence);
   const meta = document.createElement("div");
   meta.className = "meta";
@@ -74,7 +77,9 @@ function createRecordElement(record: TranslationRecord) {
   deleteButton.addEventListener("click", () => void deleteRecord(record, deleteButton));
   meta.append(deleteButton);
 
-  item.append(pair, sentence, meta);
+  item.append(pair);
+  if (transcription) item.append(transcription);
+  item.append(sentence, meta);
   return item;
 }
 

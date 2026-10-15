@@ -16,6 +16,7 @@ ol { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
 .original { font-weight: 650; overflow-wrap: anywhere; }
 .arrow { color: #9aa4b3; }
 .translated { color: #2457c5; text-align: right; overflow-wrap: anywhere; }
+.record-transcription { margin-top: 7px; color: #65738a; font: 12px/1.35 Georgia,serif; }
 .sentence { margin-top: 8px; color: #68768b; font-size: 11px; line-height: 1.4; }
 .meta { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px; margin-top: 7px; color: #a0a8b5; font-size: 10px; }
 .source-link { grid-column: 2; overflow: hidden; color: inherit; text-align: right; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; }
