@@ -14,12 +14,22 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
-  const SOURCE_LANGUAGE_CODES = [
-    "af", "sq", "ar", "hy", "az", "eu", "be", "bn", "bg", "ca", "zh-CN", "zh-TW",
-    "hr", "cs", "da", "nl", "en", "et", "fi", "fr", "ka", "de", "el", "he", "hi",
-    "hu", "is", "id", "ga", "it", "ja", "kk", "ko", "lv", "lt", "mk", "ms", "mt",
-    "no", "fa", "pl", "pt", "ro", "ru", "sr", "sk", "sl", "es", "sw", "sv", "th",
-    "tr", "uk", "ur", "uz", "vi", "cy"
+  const SOURCE_LANGUAGES = [
+    ["af", "Afrikaans"], ["sq", "Shqip"], ["ar", "العربية"], ["hy", "Հայերեն"],
+    ["az", "Azərbaycan dili"], ["eu", "Euskara"], ["be", "Беларуская"], ["bn", "বাংলা"],
+    ["bg", "Български"], ["ca", "Català"], ["zh-CN", "简体中文"], ["zh-TW", "繁體中文"],
+    ["hr", "Hrvatski"], ["cs", "Čeština"], ["da", "Dansk"], ["nl", "Nederlands"],
+    ["en", "English"], ["et", "Eesti"], ["fi", "Suomi"], ["fr", "Français"],
+    ["ka", "ქართული"], ["de", "Deutsch"], ["el", "Ελληνικά"], ["he", "עברית"],
+    ["hi", "हिन्दी"], ["hu", "Magyar"], ["is", "Íslenska"], ["id", "Bahasa Indonesia"],
+    ["ga", "Gaeilge"], ["it", "Italiano"], ["ja", "日本語"], ["kk", "Қазақша"],
+    ["ko", "한국어"], ["lv", "Latviešu"], ["lt", "Lietuvių"], ["mk", "Македонски"],
+    ["ms", "Bahasa Melayu"], ["mt", "Malti"], ["no", "Norsk"], ["fa", "فارسی"],
+    ["pl", "Polski"], ["pt", "Português"], ["ro", "Română"], ["ru", "Русский"],
+    ["sr", "Српски"], ["sk", "Slovenčina"], ["sl", "Slovenščina"], ["es", "Español"],
+    ["sw", "Kiswahili"], ["sv", "Svenska"], ["th", "ไทย"], ["tr", "Türkçe"],
+    ["uk", "Українська"], ["ur", "اردو"], ["uz", "O‘zbekcha"], ["vi", "Tiếng Việt"],
+    ["cy", "Cymraeg"]
   ] as const;
 
   // Extension.js reloads the extension context during development, but DOM
@@ -34,6 +44,7 @@ import {
   let currentSentence = "";
   let currentSourceLanguage = "en";
   let manuallySelectedLanguage = "";
+  let languageInputDirty = false;
   let requestNumber = 0;
   let completedTranslationRequest = 0;
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
@@ -195,6 +206,7 @@ import {
     removeModal();
     currentSourceLanguage = "en";
     manuallySelectedLanguage = "";
+    languageInputDirty = false;
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
@@ -221,9 +233,14 @@ import {
         <div class="divider"></div>
         <div class="translation-language">
           <label for="${HOST_ID}-language">Перевод с:</label>
-          <input class="source-language" id="${HOST_ID}-language" list="${HOST_ID}-languages"
-            placeholder="Определяется…" aria-label="Язык оригинала" autocomplete="off" spellcheck="false">
-          <datalist id="${HOST_ID}-languages"></datalist>
+          <div class="language-combobox">
+            <input class="source-language" id="${HOST_ID}-language" placeholder="Определяется…"
+              role="combobox" aria-label="Язык оригинала" aria-autocomplete="list"
+              aria-controls="${HOST_ID}-languages" aria-expanded="false" autocomplete="off" spellcheck="false">
+            <button class="language-clear" type="button" aria-label="Очистить язык" title="Очистить">×</button>
+            <button class="language-toggle" type="button" aria-label="Показать все языки" title="Показать все языки">⌄</button>
+            <div class="language-options" id="${HOST_ID}-languages" role="listbox" hidden></div>
+          </div>
         </div>
         <div class="translation skeleton"></div>
       </section>`;
@@ -232,12 +249,8 @@ import {
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
     const languageInput = shadow.querySelector<HTMLInputElement>(".source-language");
-    const languageList = shadow.querySelector<HTMLDataListElement>(`#${HOST_ID}-languages`);
-    SOURCE_LANGUAGE_CODES.forEach((code) => {
-      const option = document.createElement("option");
-      option.value = languageName(code);
-      languageList?.append(option);
-    });
+    const languageClear = shadow.querySelector<HTMLButtonElement>(".language-clear");
+    const languageToggle = shadow.querySelector<HTMLButtonElement>(".language-toggle");
     speakButton.disabled = true;
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -261,39 +274,126 @@ import {
       }
       speak(text, speakButton, requestedPosition);
     });
-    languageInput?.addEventListener("focus", () => languageInput.select());
-    languageInput?.addEventListener("change", () => commitLanguageSelection(languageInput));
-    languageInput?.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter") return;
-      event.preventDefault();
-      commitLanguageSelection(languageInput);
-      languageInput.blur();
+    languageInput?.addEventListener("input", () => {
+      languageInputDirty = true;
+      updateLanguageClearButton();
+      openLanguageList(false);
     });
-    languageInput?.addEventListener("blur", () => {
-      if (!languageCodeForInput(languageInput.value)) {
-        languageInput.value = languageName(currentSourceLanguage);
+    languageInput?.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeLanguageList();
+        return;
+      }
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        openLanguageList(!languageInput.value);
+        shadow?.querySelector<HTMLButtonElement>(".language-option")?.focus();
+        return;
+      }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commitLanguageSelection(languageInput.value);
       }
     });
+    languageClear?.addEventListener("click", () => {
+      if (!languageInput) return;
+      languageInput.value = "";
+      languageInputDirty = true;
+      updateLanguageClearButton();
+      languageInput.focus();
+      openLanguageList(true);
+    });
+    languageToggle?.addEventListener("click", () => {
+      if (!languageInput) return;
+      languageInput.focus();
+      openLanguageList(true);
+    });
+    shadow.querySelector<HTMLElement>(".language-combobox")?.addEventListener("focusout", () => {
+      setTimeout(() => {
+        const active = shadow?.activeElement;
+        const combobox = shadow?.querySelector<HTMLElement>(".language-combobox");
+        if (!active || !combobox?.contains(active)) closeLanguageList();
+      }, 0);
+    });
+    updateLanguageClearButton();
     positionModal(rect);
   }
 
   function languageCodeForInput(value: string) {
     const normalized = clean(value).toLocaleLowerCase("ru");
     if (!normalized) return "";
-    const code = SOURCE_LANGUAGE_CODES.find((candidate) => (
-      candidate.toLocaleLowerCase() === normalized
-      || languageName(candidate).toLocaleLowerCase("ru") === normalized
+    const match = SOURCE_LANGUAGES.find(([code, name]) => (
+      code.toLocaleLowerCase() === normalized
+      || name.toLocaleLowerCase() === normalized
+      || localizedLanguageName(code).toLocaleLowerCase("ru") === normalized
     ));
-    return code || "";
+    return match?.[0] || "";
   }
 
-  function commitLanguageSelection(input: HTMLInputElement) {
-    const language = languageCodeForInput(input.value);
+  function commitLanguageSelection(value: string) {
+    const language = languageCodeForInput(value);
     if (!language) return;
-    input.value = languageName(language);
+    const input = shadow?.querySelector<HTMLInputElement>(".source-language");
+    if (input) input.value = languageName(language);
+    languageInputDirty = false;
+    updateLanguageClearButton();
+    closeLanguageList();
     if (manuallySelectedLanguage === language) return;
     manuallySelectedLanguage = language;
     void reloadTranslation(language);
+  }
+
+  function openLanguageList(showAll: boolean) {
+    if (!shadow) return;
+    const input = shadow.querySelector<HTMLInputElement>(".source-language");
+    const list = shadow.querySelector<HTMLElement>(".language-options");
+    if (!input || !list) return;
+    const filter = showAll ? "" : clean(input.value).toLocaleLowerCase();
+    const matches = SOURCE_LANGUAGES
+      .filter(([code, name]) => !filter || [
+        code, name, localizedLanguageName(code)
+      ].some((candidate) => candidate.toLocaleLowerCase().includes(filter)))
+      .sort((left, right) => languageName(left[0]).localeCompare(languageName(right[0]), "ru"));
+    list.replaceChildren();
+    matches.forEach(([code, name]) => {
+      const option = document.createElement("button");
+      option.className = "language-option";
+      option.type = "button";
+      option.role = "option";
+      option.textContent = languageName(code);
+      option.addEventListener("click", () => commitLanguageSelection(code));
+      option.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeLanguageList();
+          input.focus();
+        }
+      });
+      list.append(option);
+    });
+    list.hidden = false;
+    shadow.querySelector(".card")?.classList.add("language-open");
+    input.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(() => {
+      if (list.hidden) return;
+      const controlRect = input.getBoundingClientRect();
+      const listHeight = list.getBoundingClientRect().height;
+      list.classList.toggle("above", controlRect.bottom + 4 + listHeight > window.innerHeight - 12
+        && controlRect.top - 4 - listHeight >= 12);
+    });
+  }
+
+  function closeLanguageList() {
+    const input = shadow?.querySelector<HTMLInputElement>(".source-language");
+    const list = shadow?.querySelector<HTMLElement>(".language-options");
+    if (list) list.hidden = true;
+    shadow?.querySelector(".card")?.classList.remove("language-open");
+    input?.setAttribute("aria-expanded", "false");
+  }
+
+  function updateLanguageClearButton() {
+    const input = shadow?.querySelector<HTMLInputElement>(".source-language");
+    const button = shadow?.querySelector<HTMLButtonElement>(".language-clear");
+    if (button) button.hidden = !input?.value;
   }
 
   async function reloadTranslation(sourceLanguage: string) {
@@ -467,9 +567,10 @@ import {
   function setSpeechLanguage(language?: string) {
     if (language) currentSourceLanguage = language;
     const languageElement = shadow?.querySelector<HTMLInputElement>(".source-language");
-    if (languageElement && language) {
+    if (languageElement && language && !languageInputDirty) {
       languageElement.value = languageName(language);
       languageElement.title = `Код языка: ${language}`;
+      updateLanguageClearButton();
     }
     const button = shadow?.querySelector<HTMLButtonElement>(".speak");
     if (button && language) {
@@ -479,6 +580,10 @@ import {
   }
 
   function languageName(language: string) {
+    return localizedLanguageName(language);
+  }
+
+  function localizedLanguageName(language: string) {
     const normalized = String(language || "").replace(/_/g, "-").toLocaleLowerCase();
     let name = "";
     try {
@@ -860,6 +965,7 @@ import {
       :host { color-scheme: light; }
       .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
+      .card.long.language-open { overflow: visible; }
       .top { display: flex; align-items: center; gap: 9px; }
       .source { flex: 1 1 auto; min-width: 0; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
@@ -872,9 +978,20 @@ import {
       .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
-      .translation-language { display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-bottom: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
-      .source-language { box-sizing: border-box; width: 178px; height: 30px; padding: 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
+      .translation-language { position: relative; z-index: 2; display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-bottom: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
+      .language-combobox { position: relative; width: 190px; }
+      .source-language { box-sizing: border-box; width: 100%; height: 30px; padding: 0 50px 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
       .source-language:focus { border-color: #7aa2ef; box-shadow: 0 0 0 3px rgba(36,87,214,.12); background: #fff; }
+      .language-clear, .language-toggle { position: absolute; top: 1px; display: grid; width: 24px; height: 28px; padding: 0; place-items: center; border: 0; background: transparent; color: #7b8799; cursor: pointer; font: 16px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .language-clear { right: 25px; font-size: 18px; }
+      .language-toggle { right: 1px; padding-bottom: 4px; font-size: 17px; }
+      .language-clear:hover, .language-toggle:hover { color: #2457d6; }
+      .language-clear[hidden] { display: none; }
+      .language-options { position: absolute; top: calc(100% + 4px); right: 0; box-sizing: border-box; width: 100%; max-height: 220px; padding: 4px; overflow-x: hidden; overflow-y: auto; border: 1px solid #dce3ed; border-radius: 9px; background: #fff; box-shadow: 0 10px 28px rgba(15,23,42,.18); }
+      .language-options.above { top: auto; bottom: calc(100% + 4px); }
+      .language-options[hidden] { display: none; }
+      .language-option { display: block; width: 100%; padding: 7px 8px; border: 0; border-radius: 6px; background: transparent; color: #344259; cursor: pointer; font: 500 12px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-align: left; }
+      .language-option:hover, .language-option:focus { outline: none; background: #edf3ff; color: #2457d6; }
       .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
       .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }
