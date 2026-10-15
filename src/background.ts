@@ -486,18 +486,24 @@ async function getTranscription(text: string): Promise<string | null> {
   const words = text.match(/[A-Za-z][A-Za-z'-]*/g);
   if (!words?.length || words.length > 30) return null;
 
-  const phraseTranscription = await fetchDatamuseTranscription(words.join(" "));
-  if (phraseTranscription) return phraseTranscription;
-
   const uniqueWords = [...new Set(words.map((word) => word.toLocaleLowerCase("en")))];
   const entries = await Promise.all(uniqueWords.map(async (word): Promise<[string, string | null]> => (
-    [word, await fetchEnglishPhonetic(word)]
+    [word, await fetchDatamuseTranscription(word) || await fetchEnglishPhonetic(word)]
   )));
   const phoneticsByWord = new Map(entries);
   const phonetics = words.map((word) => phoneticsByWord.get(word.toLocaleLowerCase("en")) || null);
   return phonetics.some(Boolean)
-    ? phonetics.map((phonetic, index) => phonetic || words[index]).join(" ")
+    ? `/${phonetics.map((phonetic, index) => (
+      phonetic ? stripPhoneticDelimiters(phonetic) : words[index]
+    )).join(" ")}/`
     : null;
+}
+
+function stripPhoneticDelimiters(value: string) {
+  const phonetic = value.trim();
+  const hasMatchingDelimiters = (phonetic.startsWith("/") && phonetic.endsWith("/"))
+    || (phonetic.startsWith("[") && phonetic.endsWith("]"));
+  return hasMatchingDelimiters ? phonetic.slice(1, -1).trim() : phonetic;
 }
 
 async function fetchDatamuseTranscription(text) {

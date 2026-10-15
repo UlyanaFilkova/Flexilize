@@ -184,7 +184,8 @@ import {
     // treated as stale and renderResult() was never reached.
     removeModal();
     selectionRect = rect;
-    const isLongSelection = text.length > 160 || text.split(/\s+/).length > 24;
+    const selectionWordCount = wordCount(text);
+    const isLongSelection = text.length > 320 || selectionWordCount > 48;
     const showSpeechProgress = wordCount(text) > 10;
     host = document.createElement("div");
     host.id = HOST_ID;
@@ -194,7 +195,7 @@ import {
 
     shadow.innerHTML = `
       <style>${modalStyles()}</style>
-      <section class="card${isLongSelection ? " long" : ""}" role="dialog" aria-label="Перевод выделенного текста">
+      <section class="card${isLongSelection ? " long" : ""}${showSpeechProgress ? " speech-seekable" : ""}" role="dialog" aria-label="Перевод выделенного текста">
         <div class="top">
           <div class="source"></div>
           <div class="transcription skeleton short"></div>
@@ -207,7 +208,6 @@ import {
           </div>` : ""}
         <div class="divider"></div>
         <div class="translation skeleton"></div>
-        <div class="status pending" role="status" aria-label="Обработка" title="Обработка">⏳</div>
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
@@ -240,15 +240,6 @@ import {
 
   function renderResult(result: TranslateResponse & {translation: string}) {
     renderTranslations(result);
-    const status = shadow.querySelector<HTMLElement>(".status");
-    if (result.saved === false) {
-      status.remove();
-    } else {
-      status.textContent = "✓";
-      status.classList.remove("pending");
-      status.setAttribute("aria-label", "Сохранено");
-      status.title = result.warning || "Сохранено";
-    }
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
   }
 
@@ -307,18 +298,6 @@ import {
         ? { type: "clear-and-save-record", payload: { record: pendingRecord } }
         : { type: "clear-records" }) as RecordsResponse;
       if (!clearResult?.ok) throw new Error(clearResult?.error || "Не удалось очистить хранилище");
-      if (pendingRecord) {
-        const card = shadow?.querySelector<HTMLElement>(".card");
-        if (card && !card.querySelector(".status")) {
-          const status = document.createElement("div");
-          status.className = "status";
-          status.textContent = "✓";
-          status.setAttribute("role", "status");
-          status.setAttribute("aria-label", "Сохранено");
-          status.title = "Сохранено";
-          card.append(status);
-        }
-      }
       notice.replaceChildren(document.createTextNode(pendingRecord
         ? "Хранилище очищено, текущий перевод сохранён"
         : "Переводы скачаны, хранилище очищено"));
@@ -405,7 +384,6 @@ import {
     translation.classList.remove("skeleton");
     translation.textContent = message;
     translation.classList.add("error");
-    shadow.querySelector(".status")?.remove();
   }
 
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
@@ -690,7 +668,10 @@ import {
 
   function positionModal(rect) {
     const card = shadow.querySelector<HTMLElement>(".card");
-    const width = Math.min(card.classList.contains("long") ? 760 : 420, window.innerWidth - 24);
+    const preferredWidth = card.classList.contains("long")
+      ? 760
+      : isSingleEnglishWord(currentText) ? 420 : 620;
+    const width = Math.min(preferredWidth, window.innerWidth - 24);
     const preferredLeft = rect.left + rect.width / 2 - width / 2;
     const left = Math.max(12, Math.min(preferredLeft, window.innerWidth - width - 12));
     card.style.width = `${width}px`;
@@ -757,22 +738,22 @@ import {
   function modalStyles() {
     return `
       :host { color-scheme: light; }
-      .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px 22px; overflow: hidden; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-      .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); flex-direction: column; }
+      .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
       .top { display: flex; align-items: center; gap: 9px; }
-      .source { flex: 1 1 auto; min-width: 0; max-height: 64px; overflow: auto; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; }
-      .card.long .source { max-height: min(22vh,180px); line-height: 1.45; }
+      .source { flex: 1 1 auto; min-width: 0; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; white-space: normal !important; }
+      .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
       .speech-progress-row { display: flex; align-items: center; margin-top: 6px; padding: 0 2px; }
       .speech-progress { width: 100%; height: 16px; margin: 0; accent-color: #2457d6; cursor: pointer; }
       .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+      .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
-      .translation { min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
-      .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-y: auto; }
-      .translation-option { overflow-x: auto; color: #172033; font-size: 16px; font-weight: 400; white-space: nowrap; scrollbar-width: thin; }
-      .card.long .translation-option { overflow-x: visible; white-space: normal; }
+      .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
+      .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
+      .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }
       .translation-option + .translation-option { margin-top: 2px; }
       .context-translation { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
       .storage-limit { margin-top: 10px; padding: 10px; border: 1px solid #f2cf8d; border-radius: 10px; background: #fff8e8; color: #5f4515; font-size: 12px; line-height: 1.4; }
@@ -781,8 +762,6 @@ import {
       .storage-limit-export { background: #2457d6; color: #fff; }
       .storage-limit-export:disabled { cursor: default; opacity: .55; }
       .storage-limit-later { background: #ece7dc; color: #5f5748; }
-      .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
-      .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }
       .skeleton { border-radius: 5px; background: linear-gradient(90deg,#eef1f5 25%,#f7f8fa 50%,#eef1f5 75%); background-size: 200% 100%; color: transparent; animation: shimmer 1.2s infinite; }
       .skeleton.short { width: 96px; flex-basis: 96px; }
