@@ -99,12 +99,13 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
   }
 });
 
-async function handleTranslationPreview(payload: {sentence?: unknown; text?: unknown}) {
+async function handleTranslationPreview(payload: {sentence?: unknown; sourceLanguage?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 1000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
 
   const sentence = normalizeText(payload?.sentence, 3000);
-  const sourceLanguage = await detectSelectionLanguage(text, sentence);
+  const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
+    || await detectSelectionLanguage(text, sentence);
   const result = await translateChunk(text, sourceLanguage);
   return {
     ok: true,
@@ -130,7 +131,8 @@ async function handleSelection(payload: TranslatePayload) {
     throw new Error("Не удалось прочитать выделенный текст");
   }
 
-  const sourceLanguage = await detectSelectionLanguage(text, sentence);
+  const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
+    || await detectSelectionLanguage(text, sentence);
   const [translationResult, transcription] = await Promise.all([
     translateToRussian(text, sentence, sourceLanguage),
     settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)

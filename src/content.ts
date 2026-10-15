@@ -14,6 +14,13 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
+  const SOURCE_LANGUAGE_CODES = [
+    "af", "sq", "ar", "hy", "az", "eu", "be", "bn", "bg", "ca", "zh-CN", "zh-TW",
+    "hr", "cs", "da", "nl", "en", "et", "fi", "fr", "ka", "de", "el", "he", "hi",
+    "hu", "is", "id", "ga", "it", "ja", "kk", "ko", "lv", "lt", "mk", "ms", "mt",
+    "no", "fa", "pl", "pt", "ro", "ru", "sr", "sk", "sl", "es", "sw", "sv", "th",
+    "tr", "uk", "ur", "uz", "vi", "cy"
+  ] as const;
 
   // Extension.js reloads the extension context during development, but DOM
   // created by the previous content-script instance can survive that reload.
@@ -24,7 +31,9 @@ import {
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
   let currentText = "";
+  let currentSentence = "";
   let currentSourceLanguage = "en";
+  let manuallySelectedLanguage = "";
   let requestNumber = 0;
   let completedTranslationRequest = 0;
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
@@ -66,6 +75,7 @@ import {
     if (!details || details.text === currentText) return;
 
     currentText = details.text;
+    currentSentence = details.sentence;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
     void loadDetectedLanguage(details.text, details.sentence, ownRequest);
@@ -184,6 +194,7 @@ import {
     // treated as stale and renderResult() was never reached.
     removeModal();
     currentSourceLanguage = "en";
+    manuallySelectedLanguage = "";
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
@@ -209,8 +220,10 @@ import {
           </div>` : ""}
         <div class="divider"></div>
         <div class="translation-language">
-          <span>Перевод с:</span>
-          <strong class="source-language" aria-live="polite">определяется…</strong>
+          <label for="${HOST_ID}-language">Перевод с:</label>
+          <input class="source-language" id="${HOST_ID}-language" list="${HOST_ID}-languages"
+            placeholder="Определяется…" aria-label="Язык оригинала" autocomplete="off" spellcheck="false">
+          <datalist id="${HOST_ID}-languages"></datalist>
         </div>
         <div class="translation skeleton"></div>
       </section>`;
@@ -218,6 +231,13 @@ import {
     shadow.querySelector(".source").textContent = text;
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
+    const languageInput = shadow.querySelector<HTMLInputElement>(".source-language");
+    const languageList = shadow.querySelector<HTMLDataListElement>(`#${HOST_ID}-languages`);
+    SOURCE_LANGUAGE_CODES.forEach((code) => {
+      const option = document.createElement("option");
+      option.value = languageName(code);
+      languageList?.append(option);
+    });
     speakButton.disabled = true;
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -241,7 +261,77 @@ import {
       }
       speak(text, speakButton, requestedPosition);
     });
+    languageInput?.addEventListener("focus", () => languageInput.select());
+    languageInput?.addEventListener("change", () => commitLanguageSelection(languageInput));
+    languageInput?.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      commitLanguageSelection(languageInput);
+      languageInput.blur();
+    });
+    languageInput?.addEventListener("blur", () => {
+      if (!languageCodeForInput(languageInput.value)) {
+        languageInput.value = languageName(currentSourceLanguage);
+      }
+    });
     positionModal(rect);
+  }
+
+  function languageCodeForInput(value: string) {
+    const normalized = clean(value).toLocaleLowerCase("ru");
+    if (!normalized) return "";
+    const code = SOURCE_LANGUAGE_CODES.find((candidate) => (
+      candidate.toLocaleLowerCase() === normalized
+      || languageName(candidate).toLocaleLowerCase("ru") === normalized
+    ));
+    return code || "";
+  }
+
+  function commitLanguageSelection(input: HTMLInputElement) {
+    const language = languageCodeForInput(input.value);
+    if (!language) return;
+    input.value = languageName(language);
+    if (manuallySelectedLanguage === language) return;
+    manuallySelectedLanguage = language;
+    void reloadTranslation(language);
+  }
+
+  async function reloadTranslation(sourceLanguage: string) {
+    if (!shadow || !currentText) return;
+    const ownRequest = ++requestNumber;
+    completedTranslationRequest = 0;
+    const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
+    stopSpeaking(speakButton || undefined);
+    if (speakButton) speakButton.disabled = true;
+    const translation = shadow.querySelector<HTMLElement>(".translation");
+    translation?.replaceChildren();
+    translation?.classList.remove("error");
+    translation?.classList.add("skeleton");
+    const transcription = shadow.querySelector<HTMLElement>(".transcription");
+    transcription?.classList.remove("muted");
+    transcription?.classList.add("skeleton", "short");
+    if (transcription) transcription.textContent = "";
+
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "translate-selection",
+        payload: {
+          text: currentText,
+          sentence: currentSentence,
+          pageTitle: document.title,
+          pageUrl: location.href,
+          sourceLanguage
+        }
+      }) as TranslateResponse;
+      if (ownRequest !== requestNumber || !shadow) return;
+      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить перевод");
+      completedTranslationRequest = ownRequest;
+      renderResult(result as TranslateResponse & {translation: string});
+    } catch (error) {
+      if (ownRequest !== requestNumber) return;
+      if (isInvalidatedContextError(error)) return closeModal();
+      showError(errorMessage(error, "Ошибка перевода"));
+    }
   }
 
   function renderResult(result: TranslateResponse & {translation: string}) {
@@ -376,9 +466,9 @@ import {
 
   function setSpeechLanguage(language?: string) {
     if (language) currentSourceLanguage = language;
-    const languageElement = shadow?.querySelector<HTMLElement>(".source-language");
+    const languageElement = shadow?.querySelector<HTMLInputElement>(".source-language");
     if (languageElement && language) {
-      languageElement.textContent = displayLanguage(language);
+      languageElement.value = languageName(language);
       languageElement.title = `Код языка: ${language}`;
     }
     const button = shadow?.querySelector<HTMLButtonElement>(".speak");
@@ -388,7 +478,7 @@ import {
     }
   }
 
-  function displayLanguage(language: string) {
+  function languageName(language: string) {
     const normalized = String(language || "").replace(/_/g, "-").toLocaleLowerCase();
     let name = "";
     try {
@@ -399,11 +489,12 @@ import {
     const readableName = name
       ? `${name.charAt(0).toLocaleUpperCase("ru")}${name.slice(1)}`
       : normalized.toLocaleUpperCase();
-    return `${readableName} (${normalized})`;
+    return readableName;
   }
 
   function renderTranscription(value) {
-    const transcription = shadow.querySelector(".transcription");
+    const transcription = shadow?.querySelector<HTMLElement>(".transcription");
+    if (!transcription) return;
     transcription.classList.remove("skeleton", "short");
     transcription.textContent = value || "Транскрипция недоступна";
     transcription.classList.toggle("muted", !value);
@@ -411,8 +502,7 @@ import {
 
   function showError(message) {
     if (!shadow) return;
-    shadow.querySelector(".transcription")?.remove();
-    shadow.querySelector(".divider")?.remove();
+    renderTranscription(null);
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
     translation.textContent = message;
@@ -782,8 +872,9 @@ import {
       .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
-      .translation-language { display: flex; align-items: baseline; gap: 4px; margin-bottom: 5px; color: #8994a5; font-size: 11px; line-height: 1.25; }
-      .source-language { min-width: 0; color: #526078; font-weight: 600; }
+      .translation-language { display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-bottom: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
+      .source-language { box-sizing: border-box; width: 178px; height: 30px; padding: 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
+      .source-language:focus { border-color: #7aa2ef; box-shadow: 0 0 0 3px rgba(36,87,214,.12); background: #fff; }
       .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
       .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }

@@ -16,11 +16,12 @@ export interface TranslatePayload {
   sentence?: unknown
   pageTitle?: unknown
   pageUrl?: unknown
+  sourceLanguage?: unknown
 }
 
 export type RuntimeMessage =
   | {type: "translate-selection"; payload: TranslatePayload}
-  | {type: "translate-preview"; payload: {sentence?: unknown; text?: unknown}}
+  | {type: "translate-preview"; payload: {sentence?: unknown; sourceLanguage?: unknown; text?: unknown}}
   | {type: "detect-language"; payload: {sentence?: unknown; text?: unknown}}
   | {type: "get-transcription"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-speech-audio"; payload: {language?: unknown; text?: unknown}}
