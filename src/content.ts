@@ -24,6 +24,7 @@ import {
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
   let currentText = "";
+  let currentSourceLanguage = "en";
   let requestNumber = 0;
   let completedTranslationRequest = 0;
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
@@ -67,7 +68,7 @@ import {
     currentText = details.text;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
-    if (!isSingleEnglishWord(details.text)) {
+    if (!isSingleWord(details.text)) {
       void loadTranslationPreview(details.text, ownRequest);
     }
     if (!extensionApi?.runtime?.sendMessage) {
@@ -181,6 +182,7 @@ import {
     // here used to increment requestNumber, so every response was immediately
     // treated as stale and renderResult() was never reached.
     removeModal();
+    currentSourceLanguage = "en";
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
@@ -237,6 +239,7 @@ import {
   }
 
   function renderResult(result: TranslateResponse & {translation: string}) {
+    currentSourceLanguage = result.sourceLanguage || currentSourceLanguage;
     renderTranslations(result);
     renderTranscription(result.transcription);
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
@@ -343,6 +346,7 @@ import {
       }) as TranslateResponse;
       if (ownRequest !== requestNumber || completedTranslationRequest === ownRequest
         || !shadow || !result?.ok || !result.translation) return;
+      currentSourceLanguage = result.sourceLanguage || currentSourceLanguage;
       renderTranslations(result as TranslateResponse & {translation: string});
     } catch (_error) {
       if (isInvalidatedContextError(_error)) closeModal();
@@ -388,7 +392,7 @@ import {
     const ownSpeechRun = ++speechRun;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(spokenText);
-    const locale = "en-US";
+    const locale = speechLocale(currentSourceLanguage);
     const voice = chooseVoice(locale);
     utterance.lang = voice?.lang || locale;
     utterance.voice = voice || null;
@@ -461,7 +465,7 @@ import {
     try {
       const result = await extensionApi.runtime.sendMessage({
         type: "get-speech-audio",
-        payload: { text: spokenText }
+        payload: { language: currentSourceLanguage, text: spokenText }
       }) as SpeechAudioResponse;
       if (ownSpeechRun !== speechRun) return;
       if (!result?.ok || !result.chunks?.length) {
@@ -611,8 +615,13 @@ import {
 
   function nearestWordStart(text: string, requestedPosition: number) {
     let position = Math.max(0, Math.min(Math.floor(requestedPosition), text.length));
-    while (position > 0 && /[A-Za-z'-]/.test(text[position - 1])) position -= 1;
+    while (position > 0 && /[\p{L}\p{M}'’ʼ-]/u.test(text[position - 1])) position -= 1;
     return position;
+  }
+
+  function speechLocale(language: string) {
+    const normalized = String(language || "en").replace(/_/g, "-");
+    return normalized.toLocaleLowerCase() === "en" ? "en-US" : normalized;
   }
 
   function resetSpeakButton(button: HTMLButtonElement) {
@@ -651,7 +660,7 @@ import {
     const card = shadow.querySelector<HTMLElement>(".card");
     const preferredWidth = card.classList.contains("long")
       ? 760
-      : isSingleEnglishWord(currentText) ? 420 : 620;
+      : isSingleWord(currentText) ? 420 : 620;
     const width = Math.min(preferredWidth, window.innerWidth - 24);
     const preferredLeft = rect.left + rect.width / 2 - width / 2;
     const left = Math.max(12, Math.min(preferredLeft, window.innerWidth - width - 12));
@@ -700,8 +709,8 @@ import {
     return String(value ?? "").replace(/\s+/g, " ").trim();
   }
 
-  function isSingleEnglishWord(value) {
-    return /^[A-Za-z][A-Za-z'-]*$/.test(value);
+  function isSingleWord(value) {
+    return /^[\p{L}\p{M}]+(?:['’ʼ-][\p{L}\p{M}]+)*$/u.test(value);
   }
 
   function wordCount(value: string) {

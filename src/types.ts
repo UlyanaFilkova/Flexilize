@@ -4,6 +4,7 @@ export interface TranslationRecord {
   pageTitle: string
   pageUrl: string
   sentence: string
+  sourceLanguage: string
   text: string
   transcription: string | null
   translation: string
@@ -21,7 +22,7 @@ export type RuntimeMessage =
   | {type: "translate-selection"; payload: TranslatePayload}
   | {type: "translate-preview"; payload: {text?: unknown}}
   | {type: "get-transcription"; payload: {text?: unknown}}
-  | {type: "get-speech-audio"; payload: {text?: unknown}}
+  | {type: "get-speech-audio"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-records"}
   | {type: "delete-record"; payload: {createdAt?: unknown; sentence?: unknown; text?: unknown}}
   | {type: "restore-record"; payload: {index?: unknown; record?: unknown}}
@@ -34,7 +35,7 @@ export interface TranslateResponse {
   translations?: string[]
   contextTranslation?: string | null
   transcription?: string | null
-  sourceLanguage?: "en"
+  sourceLanguage?: string
   saved?: boolean
   storageLimitReached?: boolean
   pendingRecord?: TranslationRecord
