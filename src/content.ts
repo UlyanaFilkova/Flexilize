@@ -208,7 +208,6 @@ import {
           </div>` : ""}
         <div class="divider"></div>
         <div class="translation skeleton"></div>
-        <div class="status pending" role="status" aria-label="Обработка" title="Обработка">⏳</div>
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
@@ -241,15 +240,6 @@ import {
 
   function renderResult(result: TranslateResponse & {translation: string}) {
     renderTranslations(result);
-    const status = shadow.querySelector<HTMLElement>(".status");
-    if (result.saved === false) {
-      status.remove();
-    } else {
-      status.textContent = "✓";
-      status.classList.remove("pending");
-      status.setAttribute("aria-label", "Сохранено");
-      status.title = result.warning || "Сохранено";
-    }
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
   }
 
@@ -308,18 +298,6 @@ import {
         ? { type: "clear-and-save-record", payload: { record: pendingRecord } }
         : { type: "clear-records" }) as RecordsResponse;
       if (!clearResult?.ok) throw new Error(clearResult?.error || "Не удалось очистить хранилище");
-      if (pendingRecord) {
-        const card = shadow?.querySelector<HTMLElement>(".card");
-        if (card && !card.querySelector(".status")) {
-          const status = document.createElement("div");
-          status.className = "status";
-          status.textContent = "✓";
-          status.setAttribute("role", "status");
-          status.setAttribute("aria-label", "Сохранено");
-          status.title = "Сохранено";
-          card.append(status);
-        }
-      }
       notice.replaceChildren(document.createTextNode(pendingRecord
         ? "Хранилище очищено, текущий перевод сохранён"
         : "Переводы скачаны, хранилище очищено"));
@@ -406,7 +384,6 @@ import {
     translation.classList.remove("skeleton");
     translation.textContent = message;
     translation.classList.add("error");
-    shadow.querySelector(".status")?.remove();
   }
 
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
@@ -761,7 +738,7 @@ import {
   function modalStyles() {
     return `
       :host { color-scheme: light; }
-      .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px 22px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
       .top { display: flex; align-items: center; gap: 9px; }
       .source { flex: 1 1 auto; min-width: 0; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; white-space: normal !important; }
@@ -785,8 +762,6 @@ import {
       .storage-limit-export { background: #2457d6; color: #fff; }
       .storage-limit-export:disabled { cursor: default; opacity: .55; }
       .storage-limit-later { background: #ece7dc; color: #5f5748; }
-      .status { position: absolute; right: 14px; bottom: 8px; color: #27864a; font-size: 16px; font-weight: 700; line-height: 1; }
-      .status.pending { color: #7b8798; font-size: 13px; font-weight: 400; }
       .error { color: #b42318; }
       .skeleton { border-radius: 5px; background: linear-gradient(90deg,#eef1f5 25%,#f7f8fa 50%,#eef1f5 75%); background-size: 200% 100%; color: transparent; animation: shimmer 1.2s infinite; }
       .skeleton.short { width: 96px; flex-basis: 96px; }
