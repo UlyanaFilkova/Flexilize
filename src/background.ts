@@ -10,11 +10,28 @@ const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
 const TRANSLATION_REQUEST_TIMEOUT_MS = 4500;
+const LANGUAGE_DETECTION_TIMEOUT_MS = 4500;
 const SPEECH_REQUEST_TIMEOUT_MS = 8000;
 const CONTEXT_START = "<b>";
 const CONTEXT_END = "</b>";
 const transcriptionCache = new Map();
 const languageDetectionCache = new Map<string, Promise<string>>();
+const LANGUAGE_LABELS = new Map([
+  ["английский", "en"], ["арабский", "ar"], ["армянский", "hy"],
+  ["белорусский", "be"], ["болгарский", "bg"], ["венгерский", "hu"],
+  ["вьетнамский", "vi"], ["голландский", "nl"], ["греческий", "el"],
+  ["грузинский", "ka"], ["датский", "da"], ["иврит", "he"],
+  ["индонезийский", "id"], ["испанский", "es"], ["итальянский", "it"],
+  ["казахский", "kk"], ["китайский", "zh"], ["корейский", "ko"],
+  ["латышский", "lv"], ["литовский", "lt"], ["немецкий", "de"],
+  ["нидерландский", "nl"], ["норвежский", "no"], ["персидский", "fa"],
+  ["польский", "pl"], ["португальский", "pt"], ["румынский", "ro"],
+  ["русский", "ru"], ["сербский", "sr"], ["словацкий", "sk"],
+  ["словенский", "sl"], ["тайский", "th"], ["турецкий", "tr"],
+  ["украинский", "uk"], ["финский", "fi"], ["французский", "fr"],
+  ["хинди", "hi"], ["хорватский", "hr"], ["чешский", "cs"],
+  ["шведский", "sv"], ["эстонский", "et"], ["японский", "ja"]
+]);
 const translationCache = new Map<string, Promise<{
   text: string
   alternatives: string[]
@@ -82,11 +99,12 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
   }
 });
 
-async function handleTranslationPreview(payload: {text?: unknown}) {
+async function handleTranslationPreview(payload: {sentence?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 1000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
 
-  const sourceLanguage = await detectSourceLanguage(text);
+  const sentence = normalizeText(payload?.sentence, 3000);
+  const sourceLanguage = await detectSelectionLanguage(text, sentence);
   const result = await translateChunk(text, sourceLanguage);
   return {
     ok: true,
@@ -97,10 +115,11 @@ async function handleTranslationPreview(payload: {text?: unknown}) {
   };
 }
 
-async function handleLanguageDetection(payload: {text?: unknown}) {
+async function handleLanguageDetection(payload: {sentence?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 1000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
-  return { ok: true, sourceLanguage: await detectSourceLanguage(text) };
+  const sentence = normalizeText(payload?.sentence, 3000);
+  return { ok: true, sourceLanguage: await detectSelectionLanguage(text, sentence) };
 }
 
 async function handleSelection(payload: TranslatePayload) {
@@ -111,12 +130,10 @@ async function handleSelection(payload: TranslatePayload) {
     throw new Error("Не удалось прочитать выделенный текст");
   }
 
-  const sourceLanguage = await detectSourceLanguage(text);
+  const sourceLanguage = await detectSelectionLanguage(text, sentence);
   const [translationResult, transcription] = await Promise.all([
     translateToRussian(text, sentence, sourceLanguage),
-    isEnglishLanguage(sourceLanguage) || isEnglishTranscriptionCandidate(text)
-      ? settleWithin(getTranscription(text), TRANSCRIPTION_TIMEOUT_MS, null)
-      : null
+    settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
   ]);
 
   const record: TranslationRecord = {
@@ -148,12 +165,13 @@ async function handleSelection(payload: TranslatePayload) {
   };
 }
 
-async function handleTranscription(payload: {text?: unknown}) {
+async function handleTranscription(payload: {language?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 500);
   if (!text) return { ok: true, transcription: null };
+  const language = normalizeLanguageCode(payload?.language) || await detectSourceLanguage(text);
 
   const transcription = await settleWithin(
-    getTranscription(text),
+    getTranscription(text, language),
     TRANSCRIPTION_TIMEOUT_MS,
     null
   );
@@ -531,7 +549,8 @@ function russianConsonantSkeleton(value) {
     .replace(/(.)\1+/gu, "$1");
 }
 
-async function getTranscription(text: string): Promise<string | null> {
+async function getTranscription(text: string, language = "en"): Promise<string | null> {
+  if (!isEnglishLanguage(language)) return getGoogleRomanization(text, language);
   const words = text.match(/[A-Za-z][A-Za-z'’ʼ-]*/g);
   if (!words?.length || words.length > 30) return null;
 
@@ -551,6 +570,40 @@ async function getTranscription(text: string): Promise<string | null> {
       phonetic ? stripPhoneticDelimiters(phonetic) : words[index]
     )).join(" ")}/`
     : null;
+}
+
+async function getGoogleRomanization(text: string, language: string): Promise<string | null> {
+  const key = `${normalizeLanguageCode(language)}:${normalizeText(text, 500)}`;
+  if (transcriptionCache.has(key)) return transcriptionCache.get(key);
+  try {
+    const query = new URLSearchParams({
+      client: "gtx",
+      dt: "rm",
+      q: text,
+      sl: normalizeLanguageCode(language),
+      tl: "ru"
+    });
+    const response = await fetchWithTimeout(
+      `https://translate.googleapis.com/translate_a/single?${query}`,
+      DICTIONARY_REQUEST_TIMEOUT_MS
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    const segments = Array.isArray(data?.[0]) ? data[0] : [];
+    const romanization = segments
+      .map((segment) => normalizeText(segment?.[3], 1000))
+      .filter(Boolean)
+      .join(" ");
+    const normalizedSource = normalizeText(text, 1000).toLocaleLowerCase();
+    const result = romanization && romanization.toLocaleLowerCase() !== normalizedSource
+      ? romanization
+      : null;
+    if (transcriptionCache.size > 500) transcriptionCache.clear();
+    transcriptionCache.set(key, result);
+    return result;
+  } catch (_error) {
+    return null;
+  }
 }
 
 function stripPhoneticDelimiters(value: string) {
@@ -1074,6 +1127,9 @@ async function detectSourceLanguage(text: string) {
 }
 
 async function resolveSourceLanguage(text: string) {
+  const googleLanguage = await detectLanguageWithGoogle(text);
+  if (googleLanguage) return googleLanguage;
+
   try {
     const result = await extensionApi.i18n.detectLanguage(text);
     const candidates = [...(result?.languages || [])]
@@ -1089,6 +1145,53 @@ async function resolveSourceLanguage(text: string) {
   return detectLanguageByScript(text) || "en";
 }
 
+async function detectLanguageWithGoogle(text: string) {
+  try {
+    const query = new URLSearchParams({
+      client: "dict-chrome-ex",
+      dt: "t",
+      q: normalizeText(text, 3000),
+      sl: "auto",
+      tl: "ru"
+    });
+    const response = await fetchWithTimeout(
+      `https://clients5.google.com/translate_a/t?${query}`,
+      LANGUAGE_DETECTION_TIMEOUT_MS
+    );
+    if (!response.ok) return "";
+    const data = await response.json();
+    const segments = Array.isArray(data) ? data : [];
+    for (const segment of segments) {
+      const language = normalizeLanguageCode(Array.isArray(segment) ? segment[1] : "");
+      if (language) return language;
+    }
+    return "";
+  } catch (_error) {
+    return "";
+  }
+}
+
+async function detectSelectionLanguage(text: string, sentence: string) {
+  const explicitLanguage = languageFromContextLabel(text, sentence);
+  if (explicitLanguage) return explicitLanguage;
+  const words = text.match(/[\p{L}\p{M}]+(?:['’ʼ-][\p{L}\p{M}]+)*/gu) || [];
+  const sample = words.length === 1 && sentence.length > text.length
+    ? sentence
+    : text;
+  return detectSourceLanguage(sample);
+}
+
+function languageFromContextLabel(text: string, sentence: string) {
+  const selectedIndex = sentence.toLocaleLowerCase().indexOf(text.toLocaleLowerCase());
+  if (selectedIndex <= 0) return "";
+  const prefix = sentence.slice(Math.max(0, selectedIndex - 60), selectedIndex);
+  const label = prefix.match(/([\p{L}-]+(?:\s+язык)?)\s*[:：]\s*$/u)?.[1]
+    ?.toLocaleLowerCase("ru")
+    .replace(/\s+язык$/u, "")
+    .replace(/^по-/u, "");
+  return label ? LANGUAGE_LABELS.get(label) || "" : "";
+}
+
 function normalizeLanguageCode(value: unknown) {
   const raw = normalizeText(value, 35).replace(/_/g, "-").toLocaleLowerCase();
   if (!raw || raw === "und" || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/.test(raw)) return "";
@@ -1099,12 +1202,6 @@ function normalizeLanguageCode(value: unknown) {
 
 function isEnglishLanguage(language: string) {
   return normalizeLanguageCode(language).split("-")[0] === "en";
-}
-
-function isEnglishTranscriptionCandidate(text: string) {
-  const words = text.match(/[A-Za-z][A-Za-z'’ʼ-]*/g) || [];
-  return words.length > 0
-    && text.replace(/[A-Za-z'’ʼ\-\s.!?,;:()[\]{}“”„…]/g, "").length === 0;
 }
 
 function detectLanguageByScript(text: string) {

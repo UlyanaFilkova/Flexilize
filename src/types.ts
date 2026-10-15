@@ -20,9 +20,9 @@ export interface TranslatePayload {
 
 export type RuntimeMessage =
   | {type: "translate-selection"; payload: TranslatePayload}
-  | {type: "translate-preview"; payload: {text?: unknown}}
-  | {type: "detect-language"; payload: {text?: unknown}}
-  | {type: "get-transcription"; payload: {text?: unknown}}
+  | {type: "translate-preview"; payload: {sentence?: unknown; text?: unknown}}
+  | {type: "detect-language"; payload: {sentence?: unknown; text?: unknown}}
+  | {type: "get-transcription"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-speech-audio"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-records"}
   | {type: "delete-record"; payload: {createdAt?: unknown; sentence?: unknown; text?: unknown}}

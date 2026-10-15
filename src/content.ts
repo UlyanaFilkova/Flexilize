@@ -68,9 +68,9 @@ import {
     currentText = details.text;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
-    void loadDetectedLanguage(details.text, ownRequest);
+    void loadDetectedLanguage(details.text, details.sentence, ownRequest);
     if (!isSingleWord(details.text)) {
-      void loadTranslationPreview(details.text, ownRequest);
+      void loadTranslationPreview(details.text, details.sentence, ownRequest);
     }
     if (!extensionApi?.runtime?.sendMessage) {
       showError("API расширения недоступно на этой странице");
@@ -208,6 +208,10 @@ import {
               aria-label="Позиция озвучки" title="Позиция озвучки">
           </div>` : ""}
         <div class="divider"></div>
+        <div class="translation-language">
+          <span>Перевод с:</span>
+          <strong class="source-language" aria-live="polite">определяется…</strong>
+        </div>
         <div class="translation skeleton"></div>
       </section>`;
 
@@ -340,11 +344,11 @@ import {
     if (selectionRect) positionModal(selectionRect);
   }
 
-  async function loadTranslationPreview(text, ownRequest) {
+  async function loadTranslationPreview(text, sentence, ownRequest) {
     try {
       const result = await extensionApi.runtime.sendMessage({
         type: "translate-preview",
-        payload: { text }
+        payload: { sentence, text }
       }) as TranslateResponse;
       if (ownRequest !== requestNumber || completedTranslationRequest === ownRequest
         || !shadow || !result?.ok || !result.translation) return;
@@ -356,11 +360,11 @@ import {
     }
   }
 
-  async function loadDetectedLanguage(text: string, ownRequest: number) {
+  async function loadDetectedLanguage(text: string, sentence: string, ownRequest: number) {
     try {
       const result = await extensionApi.runtime.sendMessage({
         type: "detect-language",
-        payload: { text }
+        payload: { sentence, text }
       }) as TranslateResponse;
       if (ownRequest !== requestNumber || !shadow || !result?.ok) return;
       setSpeechLanguage(result.sourceLanguage);
@@ -372,11 +376,30 @@ import {
 
   function setSpeechLanguage(language?: string) {
     if (language) currentSourceLanguage = language;
+    const languageElement = shadow?.querySelector<HTMLElement>(".source-language");
+    if (languageElement && language) {
+      languageElement.textContent = displayLanguage(language);
+      languageElement.title = `Код языка: ${language}`;
+    }
     const button = shadow?.querySelector<HTMLButtonElement>(".speak");
     if (button && language) {
       button.disabled = false;
       button.title = `Озвучить (${language})`;
     }
+  }
+
+  function displayLanguage(language: string) {
+    const normalized = String(language || "").replace(/_/g, "-").toLocaleLowerCase();
+    let name = "";
+    try {
+      name = new Intl.DisplayNames(["ru"], { type: "language" }).of(normalized) || "";
+    } catch (_error) {
+      // The language code is still useful in browsers without Intl.DisplayNames.
+    }
+    const readableName = name
+      ? `${name.charAt(0).toLocaleUpperCase("ru")}${name.slice(1)}`
+      : normalized.toLocaleUpperCase();
+    return `${readableName} (${normalized})`;
   }
 
   function renderTranscription(value) {
@@ -759,6 +782,8 @@ import {
       .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
+      .translation-language { display: flex; align-items: baseline; gap: 4px; margin-bottom: 5px; color: #8994a5; font-size: 11px; line-height: 1.25; }
+      .source-language { min-width: 0; color: #526078; font-weight: 600; }
       .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
       .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }
