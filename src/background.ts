@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from "./types";
+import {uniqueTranslationForms} from "./translation-variants";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
@@ -80,6 +81,12 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
+  if (message?.type === "update-record") {
+    return updateRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
   if (message?.type === "restore-record") {
     return restoreRecord(message.payload)
       .then(() => ({ ok: true }))
@@ -133,9 +140,14 @@ async function handleSelection(payload: TranslatePayload) {
 
   const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
     || await detectSelectionLanguage(text, sentence);
+  const providedTranscription = payload?.transcriptionLoaded === true
+    ? normalizeText(payload.transcription, 1000) || null
+    : undefined;
   const [translationResult, transcription] = await Promise.all([
     translateToRussian(text, sentence, sourceLanguage),
-    settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
+    providedTranscription !== undefined
+      ? Promise.resolve(providedTranscription)
+      : settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
   ]);
 
   const record: TranslationRecord = {
@@ -268,18 +280,36 @@ async function translateToRussian(text: string, sentence: string, sourceLanguage
     return translatePhraseToRussian(text, sentence, sourceLanguage);
   }
 
-  const chunks = splitByUtf8Bytes(text, 450);
-  const translatedChunks = [];
-  let warning = null;
+  const normalizedSentence = normalizeText(sentence, 3000);
+  const markedContext = buildMarkedContext(normalizedSentence, text);
+  const [selectionResult, markedContextResult] = await Promise.all([
+    translateLongText(text, sourceLanguage),
+    markedContext ? translateContext(markedContext, sourceLanguage).catch(() => null) : null
+  ]);
+  let contextTranslation = markedContextResult?.fullTranslation || selectionResult.text;
+  if (!markedContext && normalizedSentence && normalizedSentence !== normalizeText(text, 3000)) {
+    const contextResult = await translateLongText(normalizedSentence, sourceLanguage).catch(() => null);
+    contextTranslation = contextResult?.text || selectionResult.text;
+  }
+  const contextualTranslation = markedContextResult?.selectedTranslation || selectionResult.text;
+  return {
+    text: contextualTranslation,
+    alternatives: [contextualTranslation],
+    contextTranslation,
+    warning: selectionResult.warning
+  };
+}
 
+async function translateLongText(text: string, sourceLanguage: string) {
+  const chunks = splitByUtf8Bytes(text, 450);
+  const translatedChunks: string[] = [];
+  let warning: string | null = null;
   for (const chunk of chunks) {
     const result = await translateChunk(chunk, sourceLanguage);
     translatedChunks.push(result.text);
     warning ||= result.warning;
   }
-
-  const translation = translatedChunks.join(" ");
-  return { text: translation, alternatives: [translation], warning };
+  return {text: translatedChunks.join(" "), warning};
 }
 
 function isShortSourceFragment(text: string) {
@@ -294,9 +324,13 @@ async function translatePhraseToRussian(phrase: string, sentence: string, source
     translateChunk(phrase, sourceLanguage),
     markedContext ? translateContext(markedContext, sourceLanguage).catch(() => null) : null
   ]);
+  const contextualTranslation = normalizeText(contextResult?.selectedTranslation, 1000);
+  const primaryTranslation = contextualTranslation || phraseResult.text;
   return {
-    text: phraseResult.text,
-    alternatives: phraseResult.alternatives.length ? phraseResult.alternatives : [phraseResult.text],
+    text: primaryTranslation,
+    alternatives: contextualTranslation
+      ? [contextualTranslation]
+      : (phraseResult.alternatives.length ? phraseResult.alternatives : [phraseResult.text]),
     contextTranslation: contextResult?.fullTranslation || null,
     warning: phraseResult.warning
   };
@@ -925,7 +959,7 @@ function englishWordForms(word) {
 function uniqueRussianTranslations(values, sourceWord, maxWords = 3) {
   const source = sourceWord.toLocaleLowerCase("en");
   const seen = new Set();
-  return values.filter((value) => {
+  const translations = values.filter((value) => {
     const translation = cleanTranslationCandidate(value);
     const key = translation.toLocaleLowerCase("ru");
     const wordCount = translation.split(/\s+/).length;
@@ -937,6 +971,7 @@ function uniqueRussianTranslations(values, sourceWord, maxWords = 3) {
     seen.add(key);
     return true;
   }).map(cleanTranslationCandidate);
+  return uniqueTranslationForms(translations);
 }
 
 function transliterateRussian(value) {
@@ -1067,6 +1102,31 @@ async function deleteRecord(payload: {createdAt?: unknown; sentence?: unknown; t
   if (recordIndex < 0) throw new Error("Запись уже удалена");
   records.splice(recordIndex, 1);
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+}
+
+async function updateRecord(payload: {original?: unknown; record?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  if (!payload?.original || typeof payload.original !== "object" || !payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось прочитать запись");
+  }
+
+  const original = payload.original as {createdAt?: unknown; sentence?: unknown; text?: unknown};
+  const createdAt = normalizeText(original.createdAt, 100);
+  const sentence = normalizeText(original.sentence, 3000);
+  const text = normalizeText(original.text, 1000);
+  const records = await getRecords();
+  const recordIndex = records.findIndex((record) => (
+    record.createdAt === createdAt
+    && record.text === text
+    && record.sentence === sentence
+  ));
+  if (recordIndex < 0) throw new Error("Запись не найдена");
+
+  const updated = normalizeStoredRecord(payload.record);
+  if (!updated.text || !updated.translation) throw new Error("Оригинал и перевод не могут быть пустыми");
+  updated.createdAt = records[recordIndex].createdAt;
+  records[recordIndex] = updated;
+  await extensionApi.storage.local.set({[RECORDS_KEY]: records});
 }
 
 async function restoreRecord(payload: {index?: unknown; record?: unknown}) {

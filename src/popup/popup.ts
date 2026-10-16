@@ -1,27 +1,47 @@
 import browser from "webextension-polyfill";
-import {exportTranslationRecords, type ExportFormat} from "../export";
-import {errorMessage, type RecordsResponse, type TranslationRecord} from "../types";
+import type {ExportFormat} from "../export";
+import {
+  clearTranslationRecords,
+  deleteTranslationRecord,
+  downloadTranslationRecords,
+  formatLabel,
+  formatRecordDate,
+  getTranslationRecords,
+  pluralizeRecords,
+  recordHostname,
+  restoreTranslationRecord
+} from "../history";
+import {errorMessage, type TranslationRecord} from "../types";
+import {uniqueTranslationForms} from "../translation-variants";
 
 const extensionApi = browser;
 const listElement = document.querySelector<HTMLOListElement>("#records")!;
 const emptyElement = document.querySelector<HTMLElement>("#empty")!;
 const counterElement = document.querySelector<HTMLElement>("#counter")!;
 const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
+const settingsButton = document.querySelector<HTMLButtonElement>("#settings")!;
+const historyButton = document.querySelector<HTMLButtonElement>("#history")!;
 const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
 
 clearButton.append(createTrashIcon());
+settingsButton.append(createSettingsIcon());
 document.addEventListener("DOMContentLoaded", loadRecords);
 clearButton.addEventListener("click", clearRecords);
+settingsButton.addEventListener("click", () => void extensionApi.runtime.openOptionsPage());
+historyButton.addEventListener("click", () => void openHistory());
 exportButton.addEventListener("click", () => void exportRecords());
 formatSelect.addEventListener("change", updateExportButton);
 
+async function openHistory() {
+  await extensionApi.tabs.create({url: extensionApi.runtime.getURL("options/index.html#history")});
+  window.close();
+}
+
 async function loadRecords() {
   try {
-    const result = await extensionApi.runtime.sendMessage({ type: "get-records" }) as RecordsResponse;
-    if (!result?.ok) throw new Error(result?.error || "Не удалось загрузить записи");
-    records = result.records || [];
+    records = await getTranslationRecords();
     render();
   } catch (error) {
     showNotice(errorMessage(error, "Ошибка загрузки"));
@@ -31,7 +51,7 @@ async function loadRecords() {
 function render() {
   listElement.replaceChildren(...records.map(createRecordElement));
   emptyElement.hidden = records.length > 0;
-  counterElement.textContent = pluralize(records.length);
+  counterElement.textContent = pluralizeRecords(records.length);
   clearButton.disabled = records.length === 0;
   exportButton.disabled = records.length === 0;
   formatSelect.disabled = records.length === 0;
@@ -43,19 +63,19 @@ function createRecordElement(record: TranslationRecord) {
 
   const pair = document.createElement("div");
   pair.className = "pair";
-  pair.append(
-    textElement("span", "original", record.text),
-    textElement("span", "arrow", "→"),
-    textElement("span", "translated", record.translation)
-  );
-
-  const transcription = record.transcription
-    ? textElement("div", "record-transcription", record.transcription)
-    : null;
+  const termLine = document.createElement("div");
+  termLine.className = "term-line";
+  termLine.append(textElement("span", "original", record.text));
+  if (record.transcription) termLine.append(textElement("span", "record-transcription", record.transcription));
+  pair.append(termLine, textElement("span", "translated", record.translation));
+  const alternatives = uniqueTranslationForms([record.translation, ...record.translations]).slice(1);
+  if (alternatives.length) {
+    pair.append(textElement("span", "translation-alternatives", alternatives.join(", ")));
+  }
   const sentence = textElement("div", "sentence", record.sentence);
   const meta = document.createElement("div");
   meta.className = "meta";
-  meta.append(textElement("time", "", formatDate(record.createdAt)));
+  meta.append(textElement("time", "", formatRecordDate(record.createdAt)));
 
   if (record.pageUrl) {
     const link = document.createElement("a");
@@ -63,7 +83,7 @@ function createRecordElement(record: TranslationRecord) {
     link.href = record.pageUrl;
     link.target = "_blank";
     link.rel = "noreferrer";
-    link.textContent = record.pageTitle || hostname(record.pageUrl);
+    link.textContent = record.pageTitle || recordHostname(record.pageUrl);
     link.title = record.pageUrl;
     meta.append(link);
   }
@@ -78,7 +98,6 @@ function createRecordElement(record: TranslationRecord) {
   meta.append(deleteButton);
 
   item.append(pair);
-  if (transcription) item.append(transcription);
   item.append(sentence, meta);
   return item;
 }
@@ -87,15 +106,7 @@ async function deleteRecord(record: TranslationRecord, button: HTMLButtonElement
   const recordIndex = records.indexOf(record);
   button.disabled = true;
   try {
-    const result = await extensionApi.runtime.sendMessage({
-      type: "delete-record",
-      payload: {
-        createdAt: record.createdAt,
-        sentence: record.sentence,
-        text: record.text
-      }
-    }) as RecordsResponse;
-    if (!result?.ok) throw new Error(result?.error || "Не удалось удалить запись");
+    await deleteTranslationRecord(record);
     records = records.filter((item) => item !== record);
     render();
     showUndoNotice(record, recordIndex);
@@ -116,11 +127,7 @@ function showUndoNotice(record: TranslationRecord, recordIndex: number) {
   undoButton.addEventListener("click", async () => {
     undoButton.disabled = true;
     try {
-      const result = await extensionApi.runtime.sendMessage({
-        type: "restore-record",
-        payload: { index: recordIndex, record }
-      }) as RecordsResponse;
-      if (!result?.ok) throw new Error(result?.error || "Не удалось восстановить запись");
+      await restoreTranslationRecord(record, recordIndex);
       const index = Math.max(0, Math.min(recordIndex, records.length));
       records.splice(index, 0, record);
       render();
@@ -156,11 +163,27 @@ function createTrashIcon() {
   return icon;
 }
 
+function createSettingsIcon() {
+  const namespace = "http://www.w3.org/2000/svg";
+  const icon = document.createElementNS(namespace, "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  const paths = [
+    "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z",
+    "M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1.4 1.6H9.55A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.6-1.4V9.55A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1.4-1.6h4.05A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 1.6 1.4v4.05A1.7 1.7 0 0 0 19.4 15Z"
+  ];
+  paths.forEach((data) => {
+    const path = document.createElementNS(namespace, "path");
+    path.setAttribute("d", data);
+    icon.append(path);
+  });
+  return icon;
+}
+
 async function clearRecords() {
   if (!records.length || !confirm("Удалить все сохранённые переводы?")) return;
   try {
-    const result = await extensionApi.runtime.sendMessage({ type: "clear-records" }) as RecordsResponse;
-    if (!result?.ok) throw new Error(result?.error || "Не удалось очистить список");
+    await clearTranslationRecords();
     records = [];
     render();
     showNotice("Список очищен");
@@ -175,7 +198,7 @@ async function exportRecords() {
   exportButton.disabled = true;
   formatSelect.disabled = true;
   try {
-    await exportTranslationRecords(records, format);
+    await downloadTranslationRecords(records, format);
     showNotice(`Файл ${formatLabel(format)} подготовлен`);
   } catch (error) {
     showNotice(errorMessage(error, "Не удалось подготовить файл"));
@@ -192,37 +215,8 @@ function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: s
   return element;
 }
 
-function pluralize(count: number) {
-  const mod10 = count % 10;
-  const mod100 = count % 100;
-  const word = mod10 === 1 && mod100 !== 11
-    ? "запись"
-    : mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)
-      ? "записи"
-      : "записей";
-  return `${count} ${word}`;
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : new Intl.DateTimeFormat("ru", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(date);
-}
-
-function hostname(value: string) {
-  try { return new URL(value).hostname; } catch (_error) { return "Источник"; }
-}
-
 function updateExportButton() {
   exportButton.textContent = `Скачать ${formatLabel(formatSelect.value as ExportFormat)}`;
-}
-
-function formatLabel(format: ExportFormat) {
-  if (format === "markdown") return "Markdown";
-  if (format === "anki-csv") return "Anki CSV";
-  if (format === "anki-tsv") return "Anki TSV";
-  return format.toUpperCase();
 }
 
 let noticeTimer: ReturnType<typeof setTimeout> | undefined;

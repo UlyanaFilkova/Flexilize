@@ -25,6 +25,10 @@
     "chromium:service_worker": "background.ts",
     "firefox:scripts": ["background.ts"]
   },
+  "options_ui": {
+    "page": "options/index.html",
+    "open_in_tab": true
+  },
   "chromium:action": {
     "default_title": "Сохранённые переводы",
     "default_popup": "popup/index.html"
