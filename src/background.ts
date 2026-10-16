@@ -274,18 +274,30 @@ async function translateToRussian(text: string, sentence: string, sourceLanguage
     return translatePhraseToRussian(text, sentence, sourceLanguage);
   }
 
-  const chunks = splitByUtf8Bytes(text, 450);
-  const translatedChunks = [];
-  let warning = null;
+  const selectionResult = await translateLongText(text, sourceLanguage);
+  let contextTranslation = selectionResult.text;
+  if (sentence && normalizeText(sentence, 3000) !== normalizeText(text, 3000)) {
+    const contextResult = await translateLongText(sentence, sourceLanguage).catch(() => null);
+    contextTranslation = contextResult?.text || selectionResult.text;
+  }
+  return {
+    text: selectionResult.text,
+    alternatives: [selectionResult.text],
+    contextTranslation,
+    warning: selectionResult.warning
+  };
+}
 
+async function translateLongText(text: string, sourceLanguage: string) {
+  const chunks = splitByUtf8Bytes(text, 450);
+  const translatedChunks: string[] = [];
+  let warning: string | null = null;
   for (const chunk of chunks) {
     const result = await translateChunk(chunk, sourceLanguage);
     translatedChunks.push(result.text);
     warning ||= result.warning;
   }
-
-  const translation = translatedChunks.join(" ");
-  return { text: translation, alternatives: [translation], warning };
+  return {text: translatedChunks.join(" "), warning};
 }
 
 function isShortSourceFragment(text: string) {

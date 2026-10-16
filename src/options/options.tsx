@@ -60,16 +60,16 @@ function App() {
     return () => window.clearTimeout(timer);
   }, [notice]);
 
-  const openPage = (nextPage: Page) => {
-    setPage(nextPage);
-    if (nextPage === "history") setHistorySection("records");
-    window.history.replaceState(null, "", routeHashes[nextPage]);
-  };
-
   const openHistorySection = (section: HistorySection) => {
     setPage("history");
     setHistorySection(section);
     window.history.replaceState(null, "", routeHashes[section === "records" ? "history" : "export"]);
+  };
+
+  const openSettingsSection = (section: string) => {
+    setPage("settings");
+    setSettingsSection(section);
+    window.history.replaceState(null, "", routeHashes.settings);
   };
 
   const removeRecord = async (record: TranslationRecord) => {
@@ -137,34 +137,26 @@ function App() {
           <span>Context Translator</span>
         </div>
 
-        <nav className="page-switcher" aria-label="Разделы расширения">
-          <button className={page === "settings" ? "active" : ""} type="button" aria-current={page === "settings" ? "page" : undefined} onClick={() => openPage("settings")}>
-            <SettingsIcon /> Настройки
-          </button>
-          <button className={page === "history" ? "active" : ""} type="button" aria-current={page === "history" ? "page" : undefined} onClick={() => openPage("history")}>
-            <HistoryIcon /> История
-          </button>
-        </nav>
       </header>
 
       <div className="workspace">
-        <aside className="sidebar" aria-label={page === "settings" ? "Навигация по настройкам" : "Навигация по истории"}>
-          <div className="sidebar-heading">{page === "settings" ? "Настройки" : "Переводы"}</div>
+        <aside className="sidebar" aria-label="Навигация">
+          <div className="sidebar-heading">Переводы</div>
           <nav>
-            {page === "settings" ? settingsSidebarItems.map((item) => (
-              <button key={item.id} className={settingsSection === item.id ? "active" : ""} type="button" onClick={() => setSettingsSection(item.id)}>
+            <button className={page === "history" && historySection === "records" ? "active" : ""} type="button" onClick={() => openHistorySection("records")}>
+              <HistoryIcon /><span>История</span>
+            </button>
+            <button className={page === "history" && historySection === "export" ? "active" : ""} type="button" onClick={() => openHistorySection("export")}>
+              <DownloadIcon /><span>Экспорт</span>
+            </button>
+          </nav>
+          <div className="sidebar-heading sidebar-section-heading">Настройки</div>
+          <nav>
+            {settingsSidebarItems.map((item) => (
+              <button key={item.id} className={page === "settings" && settingsSection === item.id ? "active" : ""} type="button" onClick={() => openSettingsSection(item.id)}>
                 {item.icon}<span>{item.label}</span>
               </button>
-            )) : (
-              <>
-                <button className={historySection === "records" ? "active" : ""} type="button" onClick={() => openHistorySection("records")}>
-                  <HistoryIcon /><span>История</span>
-                </button>
-                <button className={historySection === "export" ? "active" : ""} type="button" onClick={() => openHistorySection("export")}>
-                  <DownloadIcon /><span>Экспорт</span>
-                </button>
-              </>
-            )}
+            ))}
           </nav>
           <div className="sidebar-footer"><span className="status-dot" aria-hidden="true" />Расширение активно</div>
         </aside>
@@ -176,7 +168,7 @@ function App() {
               <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>
             </>
           ) : historySection === "records" ? (
-            <HistoryView records={records} loading={loading} onClear={clearRecords} onDelete={removeRecord} onUpdate={updateRecord} />
+            <HistoryView records={records} loading={loading} onClear={clearRecords} onDelete={removeRecord} onUpdate={updateRecord} onOpenExport={() => openHistorySection("export")} />
           ) : (
             <ExportView recordsCount={records.length} exporting={exporting} onExport={exportRecords} />
           )}
@@ -197,13 +189,13 @@ function PageHeading({title, description, action}: {title: string; description: 
   return <div className="content-heading-row"><div className="content-heading"><span className="eyebrow">Context Translator</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;
 }
 
-function HistoryView({records, loading, onClear, onDelete, onUpdate}: {records: TranslationRecord[]; loading: boolean; onClear: () => void; onDelete: (record: TranslationRecord) => void; onUpdate: (original: TranslationRecord, updated: TranslationRecord) => Promise<void>}) {
+function HistoryView({records, loading, onClear, onDelete, onUpdate, onOpenExport}: {records: TranslationRecord[]; loading: boolean; onClear: () => void; onDelete: (record: TranslationRecord) => void; onUpdate: (original: TranslationRecord, updated: TranslationRecord) => Promise<void>; onOpenExport: () => void}) {
   return (
     <>
       <PageHeading
         title="История переводов"
         description={loading ? "Загрузка…" : pluralizeRecords(records.length)}
-        action={<button className="clear-history" type="button" disabled={!records.length} onClick={onClear}><TrashIcon />Очистить историю</button>}
+        action={<div className="history-heading-actions"><button className="open-export" type="button" onClick={onOpenExport}><DownloadIcon />Экспорт</button><button className="clear-history" type="button" disabled={!records.length} onClick={onClear}><TrashIcon />Очистить историю</button></div>}
       />
       {!loading && !records.length ? (
         <section className="history-empty"><div className="empty-icon">Aa</div><strong>Пока пусто</strong><span>Выделите текст на любой странице — перевод появится здесь.</span></section>
@@ -218,6 +210,7 @@ function HistoryView({records, loading, onClear, onDelete, onUpdate}: {records: 
 
 function RecordCard({record, onDelete, onUpdate}: {record: TranslationRecord; onDelete: () => void; onUpdate: (updated: TranslationRecord) => Promise<void>}) {
   const [editing, setEditing] = useState(false);
+  const alternatives = record.translations.filter((translation) => translation && translation !== record.translation);
 
   if (editing) {
     return <RecordEditor record={record} onCancel={() => setEditing(false)} onSave={async (updated) => { await onUpdate(updated); setEditing(false); }} />;
@@ -225,8 +218,8 @@ function RecordCard({record, onDelete, onUpdate}: {record: TranslationRecord; on
 
   return (
     <li className="history-record">
-      <div className="record-pair"><span className="record-original">{record.text || "—"}</span><span className="record-translation">{record.translation || "—"}</span></div>
-      {record.transcription && <div className="record-transcription">{record.transcription}</div>}
+      <div className="record-pair"><div className="record-term-line"><span className="record-original">{record.text || "—"}</span>{record.transcription && <span className="record-transcription">{record.transcription}</span>}</div><span className="record-translation">{record.translation || "—"}</span></div>
+      {alternatives.length > 0 && <div className="record-alternatives">{alternatives.join(", ")}</div>}
       <div className="record-sentence">{record.sentence || "—"}</div>
       <div className="record-meta">
         <time>{formatRecordDate(record.createdAt)}</time>
@@ -246,10 +239,12 @@ function RecordEditor({record, onCancel, onSave}: {record: TranslationRecord; on
     translation: record.translation,
     transcription: record.transcription || "",
     sentence: record.sentence,
-    contextTranslation: record.contextTranslation || "",
+    contextTranslation: record.contextTranslation || (record.text.trim().split(/\s+/).length > 3 ? record.translation : ""),
     pageTitle: record.pageTitle,
     pageUrl: record.pageUrl,
-    translations: record.translations.join("\n")
+    translations: record.translations
+      .filter((translation) => translation && translation !== record.translation)
+      .join("\n")
   });
   const [saving, setSaving] = useState(false);
   const change = (field: keyof typeof draft, value: string) => setDraft((current) => ({...current, [field]: value}));
@@ -323,7 +318,6 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 }
 
 function Icon({children}: {children: ReactNode}) { return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>; }
-function SettingsIcon() { return <Icon><path d="M12 15.25A3.25 3.25 0 1 0 12 8.75a3.25 3.25 0 0 0 0 6.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.55v-.1A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.5-1H2.4V9.95h.1A1.7 1.7 0 0 0 4 8.85a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.86-2.86.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1-1.5v-.1h4.05v.1A1.7 1.7 0 0 0 14.55 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19 8.4a1.7 1.7 0 0 0 1.5 1h.1v4.05h-.1A1.7 1.7 0 0 0 19.4 15Z"/></Icon>; }
 function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></Icon>; }
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
 function LanguagesIcon() { return <Icon><path d="M4 5h9M8.5 3v2M6 9c1.6 2.3 3.6 4 6.2 5.1M11.5 5C10.4 9.4 7.9 12.5 4 14.2M14 20l3-8 3 8M15 17.5h4"/></Icon>; }

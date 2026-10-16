@@ -46,7 +46,7 @@ a:focus-visible {
   top: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 76px;
   padding: 0 38px 0 32px;
   border-bottom: 1px solid #e7eaf0;
@@ -87,42 +87,6 @@ a:focus-visible {
   opacity: .82;
 }
 
-.page-switcher {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.page-switcher button {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 42px;
-  padding: 0 16px;
-  border-radius: 12px;
-  background: transparent;
-  color: #6c7687;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background .16s ease, color .16s ease, transform .16s ease;
-}
-
-.page-switcher button:hover {
-  background: #f2f4f8;
-  color: #273245;
-}
-
-.page-switcher button:active {
-  transform: translateY(1px);
-}
-
-.page-switcher button.active {
-  background: #edf2ff;
-  color: #315be8;
-}
-
-.page-switcher svg,
 .sidebar svg {
   width: 19px;
   height: 19px;
@@ -157,6 +121,10 @@ a:focus-visible {
   font-weight: 700;
   letter-spacing: .09em;
   text-transform: uppercase;
+}
+
+.sidebar-section-heading {
+  margin-top: 30px;
 }
 
 .sidebar nav {
@@ -214,7 +182,7 @@ a:focus-visible {
 
 .content {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
   padding: 62px clamp(42px, 6vw, 92px) 80px;
 }
 
@@ -295,7 +263,14 @@ h1 {
   background: #edf2ff;
 }
 
-.clear-history {
+.history-heading-actions {
+  display: flex;
+  flex: none;
+  gap: 9px;
+}
+
+.clear-history,
+.open-export {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -310,6 +285,15 @@ h1 {
   font-weight: 600;
 }
 
+.open-export {
+  background: #edf2ff;
+  color: #315be8;
+}
+
+.open-export:hover {
+  background: #dfe7ff;
+}
+
 .clear-history:hover {
   background: #ffe1e7;
 }
@@ -321,6 +305,7 @@ h1 {
 }
 
 .clear-history svg,
+.open-export svg,
 .history-record button svg,
 .export-grid button > svg {
   width: 17px;
@@ -350,13 +335,20 @@ h1 {
 
 .record-pair {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: center;
-  gap: 16px;
+  gap: 7px;
   font-size: 16px;
 }
 
+.record-term-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px 18px;
+}
+
 .record-original {
+  flex: 0 0 auto;
+  max-width: 100%;
   overflow-wrap: anywhere;
   font-weight: 600;
 }
@@ -365,13 +357,24 @@ h1 {
   overflow-wrap: anywhere;
   color: #315be8;
   font-weight: 500;
-  text-align: right;
+}
+
+.record-alternatives {
+  margin-top: 7px;
+  color: #7b8595;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .record-transcription {
-  margin-top: 9px;
+  flex: none;
+  max-width: 100%;
+  margin-left: auto;
   color: #69758a;
   font: 13px/1.4 Georgia, serif;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .record-sentence {
@@ -392,9 +395,10 @@ h1 {
 }
 
 .record-meta a {
+  justify-self: start;
   overflow: hidden;
   color: inherit;
-  text-align: right;
+  text-align: left;
   text-decoration: none;
   text-overflow: ellipsis;
   white-space: nowrap;

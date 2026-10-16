@@ -62,14 +62,15 @@ function createRecordElement(record: TranslationRecord) {
 
   const pair = document.createElement("div");
   pair.className = "pair";
-  pair.append(
-    textElement("span", "original", record.text),
-    textElement("span", "translated", record.translation)
-  );
-
-  const transcription = record.transcription
-    ? textElement("div", "record-transcription", record.transcription)
-    : null;
+  const termLine = document.createElement("div");
+  termLine.className = "term-line";
+  termLine.append(textElement("span", "original", record.text));
+  if (record.transcription) termLine.append(textElement("span", "record-transcription", record.transcription));
+  pair.append(termLine, textElement("span", "translated", record.translation));
+  const alternatives = record.translations.filter((translation) => translation && translation !== record.translation);
+  if (alternatives.length) {
+    pair.append(textElement("span", "translation-alternatives", alternatives.join(", ")));
+  }
   const sentence = textElement("div", "sentence", record.sentence);
   const meta = document.createElement("div");
   meta.className = "meta";
@@ -96,7 +97,6 @@ function createRecordElement(record: TranslationRecord) {
   meta.append(deleteButton);
 
   item.append(pair);
-  if (transcription) item.append(transcription);
   item.append(sentence, meta);
   return item;
 }
