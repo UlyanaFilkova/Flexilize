@@ -1,5 +1,7 @@
 # Context Translator — кроссбраузерное расширение (Chrome/Edge + Firefox)
 
+[![CI](https://github.com/UlyanaFilkova/Flexilize/actions/workflows/ci.yml/badge.svg)](https://github.com/UlyanaFilkova/Flexilize/actions/workflows/ci.yml)
+
 ### Мгновенный перевод на русский, прослушивание и сохранение фрагментов текста на разных языках.
 
 Расширение автоматически определяет язык выделенного текста на веб-странице, показывает перевод на русский, отдельный контекстный перевод всего предложения или абзаца и озвучку на исходном языке. Для английских фрагментов также загружается IPA-транскрипция. Каждый выделенный фрагмент вместе с языком, транскрипцией, предложением и переводом сразу сохраняется в локальном хранилище расширения, и в любой момент можно скачать все переводы в JSON, PDF, TXT, CSV, TSV, Anki CSV/TSV, XLSX, Markdown или HTML.
@@ -33,6 +35,17 @@ npx extension build --browser=firefox --zip
 
 - `dist/chrome/` и `dist/firefox/` — распакованные сборки;
 - `dist/context-translator-1.1.0-chrome.zip` и `dist/context-translator-1.1.0-firefox.zip` — архивы для установки и публикации.
+
+## Continuous Integration
+
+Workflow `.github/workflows/ci.yml` запускается для каждого pull request, каждого push в `main` и вручную на вкладке Actions. Он устанавливает зависимости через `npm ci`, проверяет TypeScript, собирает версии для Chromium и Firefox и сохраняет обе сборки как артефакт на 14 дней. Firefox-сборка также проверяется `addons-linter` средствами Extension.js.
+
+Тот же набор проверок можно запустить локально:
+
+```bash
+npm ci
+npm run ci
+```
 
 ## Установка
 
