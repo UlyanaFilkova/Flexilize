@@ -273,6 +273,22 @@ function GeneralSettings() {
           </button>
         </div>
       )}
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Автоматическое сохранение</h2>
+          <p>Сохранять каждый выполненный перевод в истории автоматически.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.autoSaveTranslations ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, autoSaveTranslations: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить автоматическое сохранение</span>
+        </label>
+      </div>
       {error && <div className="settings-error" role="alert">{error}</div>}
     </section>
   );
