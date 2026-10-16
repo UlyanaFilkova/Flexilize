@@ -45,12 +45,15 @@ jobs:
       - name: Package Firefox extension
         run: npm run zip:firefox
 
+      - name: Package source code for Mozilla review
+        run: npm run zip:firefox-source
+
       - name: Create or update GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" dist/*-chrome.zip dist/*-firefox.zip --clobber
+            gh release upload "$GITHUB_REF_NAME" dist/*-chrome.zip dist/*-firefox.zip dist/*-source.zip --clobber
           else
-            gh release create "$GITHUB_REF_NAME" dist/*-chrome.zip dist/*-firefox.zip --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+            gh release create "$GITHUB_REF_NAME" dist/*-chrome.zip dist/*-firefox.zip dist/*-source.zip --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
           fi

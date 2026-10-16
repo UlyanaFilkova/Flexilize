@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "context-translator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Контекстный переводчик выделенного текста на русский язык для Chrome и Firefox.",
   "license": "MIT",
   "type": "module",
@@ -17,6 +17,7 @@
     "build:firefox": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox",
     "zip:chrome": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser chrome --zip",
     "zip:firefox": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip",
+    "zip:firefox-source": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip-source",
     "preview": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs preview",
     "typecheck": "bash ./scripts/run-with-project-node.sh node_modules/typescript/bin/tsc --noEmit",
     "ci": "npm run typecheck && npm run build:chrome && npm run build:firefox",

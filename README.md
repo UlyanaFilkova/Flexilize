@@ -34,7 +34,7 @@ npx extension build --browser=firefox --zip
 Результат сборки:
 
 - `dist/chrome/` и `dist/firefox/` — распакованные сборки;
-- `dist/context-translator-1.1.0-chrome.zip` и `dist/context-translator-1.1.0-firefox.zip` — архивы для установки и публикации.
+- `dist/context-translator-1.1.1-chrome.zip` и `dist/context-translator-1.1.1-firefox.zip` — архивы для установки и публикации.
 
 ## Continuous Integration
 
@@ -49,7 +49,7 @@ npm run ci
 
 ## Continuous Delivery
 
-Workflow `.github/workflows/cd.yml` запускается при отправке тега формата `v1.2.3`. Он проверяет совпадение версии тега с `package.json` и `src/manifest.json`, проверяет TypeScript, собирает ZIP для Chrome и Firefox и публикует их в GitHub Release с автоматически сформированным описанием изменений.
+Workflow `.github/workflows/cd.yml` запускается при отправке тега формата `v1.2.3`. Он проверяет совпадение версии тега с `package.json` и `src/manifest.json`, проверяет TypeScript, собирает ZIP для Chrome и Firefox, архив исходного кода для проверки Mozilla и публикует их в GitHub Release с автоматически сформированным описанием изменений.
 
 Для выпуска новой версии обновите одинаковое значение `version` в `package.json` и `src/manifest.json`, влейте изменение в `main`, затем создайте и отправьте тег:
 
@@ -60,6 +60,39 @@ git push origin v1.2.3
 ```
 
 Публикация в Chrome Web Store и Firefox Add-ons в этот workflow не входит: для неё потребуются ключи разработчика соответствующих магазинов.
+
+## Mozilla source-code review build instructions
+
+The submitted Firefox extension is compiled from TypeScript and React source code with Extension.js. No environment variables, credentials, or external services are required during the build.
+
+Build environment used for the submitted package:
+
+- Ubuntu Linux 22.04 x86-64;
+- Node.js 22.19.0, pinned in `.nvmrc`;
+- npm 10.9.3, pinned in `package.json`;
+- dependencies pinned in `package-lock.json` and downloaded from the official npm registry.
+
+Install Node.js with [nvm](https://github.com/nvm-sh/nvm), then install the exact version required by the project:
+
+```bash
+nvm install 22.19.0
+nvm use 22.19.0
+node --version
+npm --version
+```
+
+From the root of the extracted source archive, install the locked dependencies and build the Firefox submission package:
+
+```bash
+npm ci
+npm run zip:firefox
+```
+
+The complete build is performed by the `zip:firefox` script in `package.json`. The resulting extension package is:
+
+```text
+dist/context-translator-1.1.1-firefox.zip
+```
 
 ## Установка
 

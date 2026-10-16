@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
   "chromium:manifest_version": 3,
   "firefox:manifest_version": 2,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "Context Translator",
   "description": "Определяет язык выделенного текста, переводит его на русский, озвучивает и сохраняет контекст.",
   "icons": {
@@ -42,7 +42,7 @@
       "id": "context-translator@flexilize.local",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": ["websiteContent"]
       }
     }
   },
