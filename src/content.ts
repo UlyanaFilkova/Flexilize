@@ -230,10 +230,14 @@ import {
       <style>${modalStyles()}</style>
       <section class="card${isLongSelection ? " long" : ""}${showSpeechProgress ? " speech-seekable" : ""}" role="dialog" aria-label="Перевод выделенного текста">
         <div class="top">
-          <div class="source"></div>
-          <button class="save-translation" type="button" ${activationSettings.autoSaveTranslations ? "hidden" : ""} disabled>Сохранить</button>
-          <div class="transcription skeleton short"></div>
-          <button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>
+          <div class="term-details">
+            <div class="source"></div>
+            <div class="transcription skeleton short${text.length > 42 ? " multiline" : ""}"></div>
+          </div>
+          <div class="top-actions">
+            <button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>
+            <button class="save-translation" type="button" ${activationSettings.autoSaveTranslations ? "hidden" : ""} disabled>Сохранить</button>
+          </div>
         </div>
         ${showSpeechProgress ? `
           <div class="speech-progress-row">
@@ -682,6 +686,7 @@ import {
     const transcription = shadow?.querySelector<HTMLElement>(".transcription");
     if (!transcription) return;
     transcription.classList.remove("skeleton", "short");
+    transcription.classList.toggle("multiline", Boolean(value && (value.length > 42 || currentText.length > 42)));
     transcription.textContent = value || "Транскрипция недоступна";
     transcription.classList.toggle("muted", !value);
   }
@@ -1047,8 +1052,10 @@ import {
       .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
       .card.long.language-open { overflow: visible; }
-      .top { display: flex; align-items: center; gap: 9px; }
-      .source { flex: 1 1 auto; min-width: 0; font-size: 16px; font-weight: 650; overflow-wrap: anywhere; white-space: normal !important; }
+      .top { display: flex; align-items: flex-start; gap: 9px; }
+      .term-details { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; min-width: 0; gap: 9px; }
+      .top-actions { display: flex; flex: none; align-items: center; gap: 9px; }
+      .source { display: flex; flex: 1 1 auto; align-items: center; min-width: 0; min-height: 30px; font-size: 16px; font-weight: 650; line-height: 1.35; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
@@ -1056,6 +1063,8 @@ import {
       .speech-progress-row { display: flex; align-items: center; margin-top: 6px; padding: 0 2px; }
       .speech-progress { width: 100%; height: 16px; margin: 0; accent-color: #2457d6; cursor: pointer; }
       .transcription { flex: 0 1 auto; min-width: 72px; max-width: 48%; min-height: 18px; overflow: hidden; color: #58677d; font: 14px/1.3 Georgia,serif; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+      .transcription.multiline { flex: 1 0 100%; max-width: 100%; min-height: 36px; overflow: visible; text-align: left; text-overflow: clip; white-space: normal; overflow-wrap: anywhere; }
+      .transcription.multiline.short { width: 100%; flex-basis: 100%; }
       .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
