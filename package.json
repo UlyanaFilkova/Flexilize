@@ -19,7 +19,8 @@
     "zip:firefox": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip",
     "preview": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs preview",
     "typecheck": "bash ./scripts/run-with-project-node.sh node_modules/typescript/bin/tsc --noEmit",
-    "ci": "npm run typecheck && npm run build:chrome && npm run build:firefox"
+    "ci": "npm run typecheck && npm run build:chrome && npm run build:firefox",
+    "release:check": "node scripts/check-release-version.mjs"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.3.0",
