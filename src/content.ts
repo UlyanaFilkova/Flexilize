@@ -68,6 +68,9 @@ import {
   } | null = null;
   let activationSettings: ExtensionSettings = defaultSettings;
   let activationSettingsReady = false;
+  let pendingManualRecord: TranslationRecord | null = null;
+  let manualSaveRequested = false;
+  const deferredManualSaveRequests = new Set<number>();
 
   document.addEventListener("mouseup", scheduleSelection, true);
   document.addEventListener("keydown", handleActivationKeydown, true);
@@ -87,6 +90,8 @@ import {
     if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
     activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
     activationSettingsReady = true;
+    const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
+    if (saveButton) saveButton.hidden = activationSettings.autoSaveTranslations;
   });
 
   if ("speechSynthesis" in window) {
@@ -117,7 +122,7 @@ import {
     currentText = details.text;
     currentSentence = details.sentence;
     const ownRequest = ++requestNumber;
-    showModal(details.rect, details.text);
+    showModal(details.rect, details.text, ownRequest);
     if (!extensionApi?.runtime?.sendMessage) {
       showError("API расширения недоступно на этой странице");
       return;
@@ -200,7 +205,7 @@ import {
     return clean(fullText.slice(Math.max(0, index - 220), index + selected.length + 220));
   }
 
-  function showModal(rect, text) {
+  function showModal(rect, text, ownRequest: number) {
     if (!isCurrentInstance()) return;
     // Replacing a modal is part of the current request. Calling closeModal()
     // here used to increment requestNumber, so every response was immediately
@@ -209,6 +214,8 @@ import {
     currentSourceLanguage = "en";
     manuallySelectedLanguage = "";
     languageInputDirty = false;
+    pendingManualRecord = null;
+    manualSaveRequested = false;
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
@@ -224,6 +231,7 @@ import {
       <section class="card${isLongSelection ? " long" : ""}${showSpeechProgress ? " speech-seekable" : ""}" role="dialog" aria-label="Перевод выделенного текста">
         <div class="top">
           <div class="source"></div>
+          <button class="save-translation" type="button" ${activationSettings.autoSaveTranslations ? "hidden" : ""} disabled>Сохранить</button>
           <div class="transcription skeleton short"></div>
           <button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>
         </div>
@@ -253,7 +261,9 @@ import {
     const languageInput = shadow.querySelector<HTMLInputElement>(".source-language");
     const languageClear = shadow.querySelector<HTMLButtonElement>(".language-clear");
     const languageToggle = shadow.querySelector<HTMLButtonElement>(".language-toggle");
+    const saveButton = shadow.querySelector<HTMLButtonElement>(".save-translation");
     speakButton.disabled = true;
+    saveButton?.addEventListener("click", () => requestManualSave(saveButton, ownRequest));
     speakButton.addEventListener("click", (event) => {
       event.stopPropagation();
       if (isSpeechActive()) {
@@ -420,7 +430,58 @@ import {
     setSpeechLanguage(result.sourceLanguage);
     renderTranslations(result);
     renderTranscription(result.transcription);
+    pendingManualRecord = result.pendingRecord || null;
+    const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
+    if (saveButton && !activationSettings.autoSaveTranslations) {
+      if (!manualSaveRequested) {
+        saveButton.disabled = false;
+        saveButton.textContent = result.saved ? "✓ Сохранено" : "Сохранить";
+      }
+    }
     if (result.storageLimitReached) showStorageLimitNotice(result.pendingRecord);
+  }
+
+  function requestManualSave(button: HTMLButtonElement, ownRequest: number) {
+    if (manualSaveRequested) return;
+    manualSaveRequested = true;
+    button.disabled = true;
+    button.textContent = "✓ Сохранено";
+    if (pendingManualRecord) {
+      void persistManualRecord(button, pendingManualRecord, ownRequest);
+    } else {
+      deferredManualSaveRequests.add(ownRequest);
+    }
+  }
+
+  async function persistManualRecord(button: HTMLButtonElement | null, record: TranslationRecord, ownRequest: number) {
+    const hasActiveModal = ownRequest === requestNumber && button && shadow;
+    if (hasActiveModal) pendingManualRecord = null;
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "save-record",
+        payload: {record}
+      }) as TranslateResponse;
+      if (!result?.ok) throw new Error(result?.error || "Не удалось сохранить перевод");
+      if (result.storageLimitReached && !result.saved) {
+        if (hasActiveModal && button) {
+          manualSaveRequested = false;
+          pendingManualRecord = result.pendingRecord || record;
+          button.textContent = "Сохранить";
+          button.disabled = false;
+          showStorageLimitNotice(result.pendingRecord || record);
+        }
+        return;
+      }
+      if (hasActiveModal && button) button.textContent = "✓ Сохранено";
+    } catch (error) {
+      if (hasActiveModal && button) {
+        manualSaveRequested = false;
+        pendingManualRecord = record;
+        button.disabled = false;
+        button.textContent = "Сохранить";
+        button.title = errorMessage(error, "Ошибка сохранения");
+      }
+    }
   }
 
   function showStorageLimitNotice(pendingRecord?: TranslationRecord) {
@@ -530,6 +591,10 @@ import {
       setSpeechLanguage(sourceLanguage);
       renderTranslations(preview as TranslateResponse & {translation: string}, true);
       primaryRendered = true;
+      const saveButton = shadow.querySelector<HTMLButtonElement>(".save-translation");
+      if (saveButton && !activationSettings.autoSaveTranslations && !manualSaveRequested) {
+        saveButton.disabled = false;
+      }
 
       let transcription: string | null | undefined;
       try {
@@ -537,12 +602,14 @@ import {
           type: "get-transcription",
           payload: {language: sourceLanguage, text}
         }) as TranslateResponse;
-        if (ownRequest !== requestNumber || !shadow) return;
+        const requestIsActive = ownRequest === requestNumber && Boolean(shadow);
+        if (!requestIsActive && !deferredManualSaveRequests.has(ownRequest)) return;
         if (transcriptionResult?.ok) transcription = transcriptionResult.transcription;
-        renderTranscription(transcription);
+        if (requestIsActive) renderTranscription(transcription);
       } catch (error) {
         if (isInvalidatedContextError(error)) return closeModal();
-        renderTranscription(null);
+        if (ownRequest === requestNumber && shadow) renderTranscription(null);
+        if (ownRequest !== requestNumber && !deferredManualSaveRequests.has(ownRequest)) return;
       }
 
       const result = await extensionApi.runtime.sendMessage({
@@ -554,13 +621,23 @@ import {
           pageUrl: location.href,
           sourceLanguage,
           transcription,
-          transcriptionLoaded: true
+          transcriptionLoaded: true,
+          save: activationSettings.autoSaveTranslations
         }
       }) as TranslateResponse;
-      if (ownRequest !== requestNumber || !shadow) return;
       if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить контекстный перевод");
-      renderResult(result as TranslateResponse & {translation: string});
+      const shouldSaveManually = deferredManualSaveRequests.delete(ownRequest);
+      const activeButton = ownRequest === requestNumber
+        ? shadow?.querySelector<HTMLButtonElement>(".save-translation") || null
+        : null;
+      if (ownRequest === requestNumber && shadow) {
+        renderResult(result as TranslateResponse & {translation: string});
+      }
+      if (shouldSaveManually && result.pendingRecord) {
+        void persistManualRecord(activeButton, result.pendingRecord, ownRequest);
+      }
     } catch (error) {
+      deferredManualSaveRequests.delete(ownRequest);
       if (ownRequest !== requestNumber) return;
       if (isInvalidatedContextError(error)) return closeModal();
       if (primaryRendered) return;
@@ -983,6 +1060,10 @@ import {
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
       .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
       .translation-language { position: relative; z-index: 2; display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-bottom: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
+      .save-translation { flex: none; min-height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: #2457d6; color: #fff; cursor: pointer; font: 600 11px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .save-translation:hover:not(:disabled) { filter: brightness(.96); }
+      .save-translation:disabled { cursor: default; opacity: .55; }
+      .save-translation[hidden] { display: none; }
       .language-combobox { position: relative; width: 190px; }
       .source-language { box-sizing: border-box; width: 100%; height: 30px; padding: 0 50px 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
       .source-language:focus { border-color: #7aa2ef; box-shadow: 0 0 0 3px rgba(36,87,214,.12); background: #fff; }

@@ -12,11 +12,13 @@ export interface ActivationShortcut {
 }
 
 export interface ExtensionSettings {
+  autoSaveTranslations: boolean
   hotkeyActivationEnabled: boolean
   activationShortcut: ActivationShortcut
 }
 
 export const defaultSettings: ExtensionSettings = {
+  autoSaveTranslations: true,
   hotkeyActivationEnabled: false,
   activationShortcut: {
     alt: false,
@@ -53,6 +55,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     shift: typeof shortcut.shift === "boolean" ? shortcut.shift : defaultSettings.activationShortcut.shift
   };
   return {
+    autoSaveTranslations: settings.autoSaveTranslations !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut
   };

@@ -19,6 +19,7 @@ export interface TranslatePayload {
   sourceLanguage?: unknown
   transcription?: unknown
   transcriptionLoaded?: unknown
+  save?: unknown
 }
 
 export type RuntimeMessage =
@@ -31,6 +32,7 @@ export type RuntimeMessage =
   | {type: "delete-record"; payload: {createdAt?: unknown; sentence?: unknown; text?: unknown}}
   | {type: "update-record"; payload: {original?: unknown; record?: unknown}}
   | {type: "restore-record"; payload: {index?: unknown; record?: unknown}}
+  | {type: "save-record"; payload: {record?: unknown}}
   | {type: "clear-and-save-record"; payload: {record?: unknown}}
   | {type: "clear-records"}
 
@@ -69,7 +71,7 @@ export interface SpeechAudioResponse {
 
 export function isRuntimeMessage(value: unknown): value is RuntimeMessage {
   if (!value || typeof value !== "object" || !("type" in value)) return false
-  return ["translate-selection", "translate-preview", "detect-language", "get-transcription", "get-speech-audio", "get-records", "delete-record", "update-record", "restore-record", "clear-and-save-record", "clear-records"]
+  return ["translate-selection", "translate-preview", "detect-language", "get-transcription", "get-speech-audio", "get-records", "delete-record", "update-record", "restore-record", "save-record", "clear-and-save-record", "clear-records"]
     .includes(String(value.type))
 }
 

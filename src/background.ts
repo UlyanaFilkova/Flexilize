@@ -93,6 +93,17 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
+  if (message?.type === "save-record") {
+    return saveRequestedRecord(message.payload)
+      .then((result) => ({
+        ok: true,
+        saved: result.saved,
+        storageLimitReached: result.limitReached,
+        pendingRecord: result.saved ? undefined : result.record
+      }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
   if (message?.type === "clear-and-save-record") {
     return clearAndSaveRecord(message.payload)
       .then(() => ({ ok: true }))
@@ -163,7 +174,9 @@ async function handleSelection(payload: TranslatePayload) {
     translations: translationResult.alternatives
   };
 
-  const storageResult = await saveRecord(record);
+  const storageResult = payload?.save === false
+    ? {saved: false, limitReached: false}
+    : await saveRecord(record);
 
   return {
     ok: true,
@@ -1052,6 +1065,16 @@ async function saveRecord(record: TranslationRecord) {
   records.unshift(record);
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
   return { saved: true, limitReached: records.length >= MAX_RECORDS };
+}
+
+async function saveRequestedRecord(payload: {record?: unknown}) {
+  if (!payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось прочитать перевод");
+  }
+  const record = normalizeStoredRecord(payload.record);
+  if (!record.text || !record.translation) throw new Error("Перевод повреждён");
+  const result = await saveRecord(record);
+  return {...result, record};
 }
 
 async function getRecords(): Promise<TranslationRecord[]> {
