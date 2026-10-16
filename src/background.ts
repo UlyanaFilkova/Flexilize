@@ -1,11 +1,12 @@
 import browser from "webextension-polyfill";
 import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
+import {getExtensionSettings} from "./settings";
+import {MAX_HISTORY_RECORDS} from "./history-config";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
 const TRANSLATION_RESULTS_KEY = "translationResultCacheV1";
-const MAX_RECORDS = 5000;
 const MAX_CACHED_TRANSLATIONS = 500;
 const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
@@ -39,6 +40,7 @@ const translationCache = new Map<string, Promise<{
   warning: string | null
 }>>();
 let translationCacheWrite = Promise.resolve();
+let recordSaveQueue = Promise.resolve();
 let translationCooldownUntil = 0;
 
 extensionApi.runtime.onMessage.addListener((message: unknown) => {
@@ -1060,12 +1062,21 @@ async function settleWithin(promise, timeoutMs, fallback) {
   }
 }
 
-async function saveRecord(record: TranslationRecord) {
+function saveRecord(record: TranslationRecord) {
+  const pendingSave = recordSaveQueue.then(
+    () => saveRecordNow(record),
+    () => saveRecordNow(record)
+  );
+  recordSaveQueue = pendingSave.then(() => undefined, () => undefined);
+  return pendingSave;
+}
+
+async function saveRecordNow(record: TranslationRecord) {
   if (!extensionApi?.storage?.local) {
     throw new Error("Локальное хранилище недоступно");
   }
 
-  const records = await getRecords();
+  const [records, settings] = await Promise.all([getRecords(), getExtensionSettings()]);
   const duplicateIndex = records.findIndex((savedRecord) => (
     savedRecord.text === record.text
     && savedRecord.sentence === record.sentence
@@ -1078,15 +1089,18 @@ async function saveRecord(record: TranslationRecord) {
       records[duplicateIndex] = { ...records[duplicateIndex], transcription: record.transcription };
       await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
     }
-    return { saved: true, limitReached: records.length >= MAX_RECORDS };
+    return { saved: true, limitReached: !settings.historyRotationEnabled && records.length >= MAX_HISTORY_RECORDS };
   }
-  if (records.length >= MAX_RECORDS) {
+  if (!settings.historyRotationEnabled && records.length >= MAX_HISTORY_RECORDS) {
     return { saved: false, limitReached: true };
   }
 
   records.unshift(record);
+  if (settings.historyRotationEnabled && records.length > MAX_HISTORY_RECORDS) {
+    records.length = MAX_HISTORY_RECORDS;
+  }
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
-  return { saved: true, limitReached: records.length >= MAX_RECORDS };
+  return { saved: true, limitReached: !settings.historyRotationEnabled && records.length >= MAX_HISTORY_RECORDS };
 }
 
 async function saveRequestedRecord(payload: {record?: unknown}) {
@@ -1196,7 +1210,7 @@ async function restoreRecord(payload: {index?: unknown; record?: unknown}) {
     ? Math.max(0, Math.min(requestedIndex, records.length))
     : 0;
   records.splice(index, 0, record);
-  if (records.length > MAX_RECORDS) records.length = MAX_RECORDS;
+  if (records.length > MAX_HISTORY_RECORDS) records.length = MAX_HISTORY_RECORDS;
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
 }
 

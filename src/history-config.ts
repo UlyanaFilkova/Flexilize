@@ -1,0 +1,1 @@
+export const MAX_HISTORY_RECORDS = 5000;
