@@ -245,6 +245,7 @@ import {
               aria-label="Позиция озвучки" title="Позиция озвучки">
           </div>` : ""}
         <div class="divider"></div>
+        <div class="translation skeleton"></div>
         <div class="translation-language">
           <label for="${HOST_ID}-language">Перевод с:</label>
           <div class="language-combobox">
@@ -256,7 +257,6 @@ import {
             <div class="language-options" id="${HOST_ID}-languages" role="listbox" hidden></div>
           </div>
         </div>
-        <div class="translation skeleton"></div>
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
@@ -1067,8 +1067,8 @@ import {
       .transcription.multiline.short { width: 100%; flex-basis: 100%; }
       .card.speech-seekable .transcription { display: none; }
       .muted { font-family: inherit; font-size: 12px; color: #8a96a8; }
-      .divider { height: 1px; margin: 8px 0; background: #e9edf3; }
-      .translation-language { position: relative; z-index: 2; display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-bottom: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
+      .divider { height: 1px; margin: 4px 0; background: #e9edf3; }
+      .translation-language { position: relative; z-index: 2; display: flex; align-items: center; justify-content: flex-end; gap: 7px; margin-top: 7px; color: #8994a5; font-size: 11px; line-height: 1.25; }
       .save-translation { flex: none; min-height: 30px; padding: 0 10px; border: 0; border-radius: 8px; background: #2457d6; color: #fff; cursor: pointer; font: 600 11px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .save-translation:hover:not(:disabled) { filter: brightness(.96); }
       .save-translation:disabled { cursor: default; opacity: .55; }
