@@ -8,6 +8,7 @@ import {
   type TranslateResponse
 } from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
+import {MAX_HISTORY_RECORDS} from "./history-config";
 import {
   defaultSettings,
   getExtensionSettings,
@@ -92,6 +93,7 @@ import {
     activationSettingsReady = true;
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
     if (saveButton) saveButton.hidden = activationSettings.autoSaveTranslations;
+    if (activationSettings.historyRotationEnabled) shadow?.querySelector(".storage-limit")?.remove();
   });
 
   if ("speechSynthesis" in window) {
@@ -497,7 +499,7 @@ import {
     notice.className = "storage-limit";
     const message = document.createElement("div");
     message.className = "storage-limit-message";
-    message.textContent = "Достигнут лимит в 5 переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.";
+    message.textContent = `Достигнут лимит в ${MAX_HISTORY_RECORDS} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.`;
     const actions = document.createElement("div");
     actions.className = "storage-limit-actions";
     const exportButton = document.createElement("button");

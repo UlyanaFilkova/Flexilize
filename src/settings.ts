@@ -13,6 +13,7 @@ export interface ActivationShortcut {
 
 export interface ExtensionSettings {
   autoSaveTranslations: boolean
+  historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
   activationShortcut: ActivationShortcut
   targetLanguage: string
@@ -38,6 +39,7 @@ export const TRANSLATION_LANGUAGES = [
 
 export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
+  historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
   targetLanguage: "ru",
   activationShortcut: {
@@ -76,6 +78,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   };
   return {
     autoSaveTranslations: settings.autoSaveTranslations !== false,
+    historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
     targetLanguage: TRANSLATION_LANGUAGES.some(([code]) => code === settings.targetLanguage)

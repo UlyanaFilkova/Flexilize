@@ -15,6 +15,7 @@ import {
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
+import {MAX_HISTORY_RECORDS} from "../history-config";
 import {
   formatShortcut,
   getExtensionSettings,
@@ -176,7 +177,11 @@ function App() {
               <PageHeading title="Настройки" description="Персонализируйте работу расширения под себя." />
               {settingsSection === "general"
                 ? <GeneralSettings />
-                : <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>}
+                : settingsSection === "translation"
+                  ? <TranslationSettings />
+                : settingsSection === "saving"
+                  ? <SavingSettings />
+                  : <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>}
             </>
           ) : historySection === "records" ? (
             <HistoryView records={records} loading={loading} onClear={clearRecords} onDelete={removeRecord} onUpdate={updateRecord} onOpenExport={() => openHistorySection("export")} />
@@ -274,7 +279,36 @@ function GeneralSettings() {
           </button>
         </div>
       )}
-      <div className="setting-row setting-row-secondary">
+      {error && <div className="settings-error" role="alert">{error}</div>}
+    </section>
+  );
+}
+
+function TranslationSettings() {
+  const [settings, setSettings] = useState<ExtensionSettings | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
+  }, []);
+
+  const setTargetLanguage = async (targetLanguage: string) => {
+    if (!settings) return;
+    const previous = settings;
+    const next = {...settings, targetLanguage};
+    setSettings(next);
+    setError("");
+    try {
+      setSettings(await saveExtensionSettings(next));
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
+  return (
+    <section className="settings-panel" aria-label="Настройки перевода">
+      <div className="setting-row">
         <div className="setting-copy">
           <h2>Язык перевода</h2>
           <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
@@ -284,14 +318,42 @@ function GeneralSettings() {
           aria-label="Язык перевода"
           value={settings?.targetLanguage || "ru"}
           disabled={!settings}
-          onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
+          onChange={(event) => void setTargetLanguage(event.target.value)}
         >
           {[...TRANSLATION_LANGUAGES]
             .sort((left, right) => left[1].localeCompare(right[1], "ru"))
             .map(([code, label]) => <option key={code} value={code}>{label}</option>)}
         </select>
       </div>
-      <div className="setting-row setting-row-secondary">
+      {error && <div className="settings-error" role="alert">{error}</div>}
+    </section>
+  );
+}
+
+function SavingSettings() {
+  const [settings, setSettings] = useState<ExtensionSettings | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
+  }, []);
+
+  const saveSetting = async (next: ExtensionSettings) => {
+    if (!settings) return;
+    const previous = settings;
+    setSettings(next);
+    setError("");
+    try {
+      setSettings(await saveExtensionSettings(next));
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
+  return (
+    <section className="settings-panel" aria-label="Настройки сохранения">
+      <div className="setting-row">
         <div className="setting-copy">
           <h2>Автоматическое сохранение</h2>
           <p>Сохранять каждый выполненный перевод в истории автоматически.</p>
@@ -301,10 +363,27 @@ function GeneralSettings() {
             type="checkbox"
             checked={settings?.autoSaveTranslations ?? true}
             disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, autoSaveTranslations: event.target.checked})}
+            onChange={(event) => settings && void saveSetting({...settings, autoSaveTranslations: event.target.checked})}
           />
           <span aria-hidden="true" />
           <span className="sr-only">Включить автоматическое сохранение</span>
+        </label>
+      </div>
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Ротация истории</h2>
+          <p>При добавлении новых переводов сверх лимита в {MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {MAX_HISTORY_RECORDS}.</p>
+          <p>При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {MAX_HISTORY_RECORDS}.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.historyRotationEnabled ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void saveSetting({...settings, historyRotationEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить ротацию истории</span>
         </label>
       </div>
       {error && <div className="settings-error" role="alert">{error}</div>}
