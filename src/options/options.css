@@ -377,12 +377,17 @@ h1 {
 }
 
 .setting-select {
+  appearance: none;
   min-width: 220px;
   min-height: 42px;
   padding: 0 38px 0 13px;
   border: 1px solid #d8dee8;
   border-radius: 10px;
-  background: #fff;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%237b8799' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 11px center;
+  background-repeat: no-repeat;
+  background-size: 12px 8px;
   color: #344054;
   font-size: 13px;
   font-weight: 600;

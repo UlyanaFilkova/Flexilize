@@ -286,7 +286,9 @@ function GeneralSettings() {
           disabled={!settings}
           onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
         >
-          {TRANSLATION_LANGUAGES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+          {[...TRANSLATION_LANGUAGES]
+            .sort((left, right) => left[1].localeCompare(right[1], "ru"))
+            .map(([code, label]) => <option key={code} value={code}>{label}</option>)}
         </select>
       </div>
       <div className="setting-row setting-row-secondary">

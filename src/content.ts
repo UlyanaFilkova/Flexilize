@@ -1076,11 +1076,11 @@ import {
       .save-translation:disabled { cursor: default; opacity: .55; }
       .save-translation[hidden] { display: none; }
       .language-combobox { position: relative; width: 190px; }
-      .source-language { box-sizing: border-box; width: 100%; height: 30px; padding: 0 50px 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
+      .source-language { box-sizing: border-box; width: 100%; height: 30px; padding: 0 56px 0 9px; border: 1px solid #dce3ed; border-radius: 8px; outline: none; background: #f8faff; color: #526078; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-overflow: ellipsis; }
       .source-language:focus { border-color: #7aa2ef; box-shadow: 0 0 0 3px rgba(36,87,214,.12); background: #fff; }
       .language-clear, .language-toggle { position: absolute; top: 1px; display: grid; width: 24px; height: 28px; padding: 0; place-items: center; border: 0; background: transparent; color: #7b8799; cursor: pointer; font: 16px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-      .language-clear { right: 25px; font-size: 18px; }
-      .language-toggle { right: 1px; padding-bottom: 4px; font-size: 17px; }
+      .language-clear { right: 29px; font-size: 18px; }
+      .language-toggle { right: 5px; padding-bottom: 4px; font-size: 17px; }
       .language-clear:hover, .language-toggle:hover { color: #2457d6; }
       .language-clear[hidden] { display: none; }
       .language-options { position: absolute; top: calc(100% + 4px); right: 0; box-sizing: border-box; width: 100%; max-height: 220px; padding: 4px; overflow-x: hidden; overflow-y: auto; border: 1px solid #dce3ed; border-radius: 9px; background: #fff; box-shadow: 0 10px 28px rgba(15,23,42,.18); }
