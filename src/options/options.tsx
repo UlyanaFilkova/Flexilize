@@ -257,13 +257,13 @@ function GeneralSettings() {
       </div>
 
       {settings?.hotkeyActivationEnabled && (
-        <div className="shortcut-row">
-          <div>
-            <strong>Комбинация клавиш</strong>
-            <span>Нажмите кнопку и введите новую комбинацию.</span>
+        <div className="setting-row setting-row-secondary">
+          <div className="setting-copy">
+            <h2>Комбинация клавиш</h2>
+            <p>Нажмите кнопку и введите новую комбинацию.</p>
           </div>
           <button
-            className={recording ? "shortcut-button recording" : "shortcut-button"}
+            className={recording ? "hotkey-button recording" : "hotkey-button"}
             type="button"
             onClick={() => { setRecording(true); setError(""); }}
             onBlur={() => setRecording(false)}

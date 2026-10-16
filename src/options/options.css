@@ -272,8 +272,7 @@ h1 {
   box-shadow: 0 12px 34px rgba(35, 48, 72, .04);
 }
 
-.setting-row,
-.shortcut-row {
+.setting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -281,7 +280,7 @@ h1 {
   padding: 26px 28px;
 }
 
-.shortcut-row {
+.setting-row-secondary {
   border-top: 1px solid #edf0f4;
   background: #fbfcfe;
 }
@@ -295,22 +294,6 @@ h1 {
 .setting-copy p {
   max-width: 600px;
   margin: 7px 0 0;
-  color: #7b8595;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.shortcut-row > div {
-  display: grid;
-  gap: 5px;
-}
-
-.shortcut-row strong {
-  color: #273245;
-  font-size: 16px;
-}
-
-.shortcut-row span {
   color: #7b8595;
   font-size: 13px;
   line-height: 1.5;
@@ -365,7 +348,7 @@ h1 {
   outline-offset: 2px;
 }
 
-.shortcut-button {
+.hotkey-button {
   min-width: 172px;
   min-height: 42px;
   padding: 0 15px;
@@ -378,17 +361,17 @@ h1 {
   font-weight: 600;
 }
 
-.shortcut-button:hover:not(:disabled) {
+.hotkey-button:hover:not(:disabled) {
   border-color: #9db0f5;
 }
 
-.shortcut-button.recording {
+.hotkey-button.recording {
   border-color: #315be8;
   box-shadow: 0 0 0 3px rgba(49, 91, 232, .1);
   color: #315be8;
 }
 
-.shortcut-button:disabled {
+.hotkey-button:disabled {
   cursor: default;
   opacity: .55;
 }
