@@ -4,6 +4,11 @@ import "./options.css";
 
 type Page = "settings" | "history";
 
+const pageHashes: Record<Page, string> = {
+  settings: "#settings",
+  history: "#history"
+};
+
 const sidebarItems = [
   {id: "general", label: "Основные", icon: <SlidersIcon />},
   {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
@@ -12,8 +17,15 @@ const sidebarItems = [
 ];
 
 function App() {
-  const [page, setPage] = useState<Page>("settings");
+  const [page, setPage] = useState<Page>(() =>
+    (Object.entries(pageHashes).find(([, hash]) => hash === location.hash)?.[0] as Page) || "settings"
+  );
   const [section, setSection] = useState("general");
+
+  const openPage = (nextPage: Page) => {
+    setPage(nextPage);
+    history.replaceState(null, "", pageHashes[nextPage]);
+  };
 
   return (
     <div className="app-shell">
@@ -28,7 +40,7 @@ function App() {
             className={page === "settings" ? "active" : ""}
             type="button"
             aria-current={page === "settings" ? "page" : undefined}
-            onClick={() => setPage("settings")}
+            onClick={() => openPage("settings")}
           >
             <SettingsIcon />
             Настройки
@@ -37,7 +49,7 @@ function App() {
             className={page === "history" ? "active" : ""}
             type="button"
             aria-current={page === "history" ? "page" : undefined}
-            onClick={() => setPage("history")}
+            onClick={() => openPage("history")}
           >
             <HistoryIcon />
             История
@@ -55,7 +67,7 @@ function App() {
                 className={page === "settings" && section === item.id ? "active" : ""}
                 type="button"
                 onClick={() => {
-                  setPage("settings");
+                  openPage("settings");
                   setSection(item.id);
                 }}
               >
