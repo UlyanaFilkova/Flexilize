@@ -323,9 +323,13 @@ async function translatePhraseToRussian(phrase: string, sentence: string, source
     translateChunk(phrase, sourceLanguage),
     markedContext ? translateContext(markedContext, sourceLanguage).catch(() => null) : null
   ]);
+  const contextualTranslation = normalizeText(contextResult?.selectedTranslation, 1000);
+  const primaryTranslation = contextualTranslation || phraseResult.text;
   return {
-    text: phraseResult.text,
-    alternatives: phraseResult.alternatives.length ? phraseResult.alternatives : [phraseResult.text],
+    text: primaryTranslation,
+    alternatives: contextualTranslation
+      ? [contextualTranslation]
+      : (phraseResult.alternatives.length ? phraseResult.alternatives : [phraseResult.text]),
     contextTranslation: contextResult?.fullTranslation || null,
     warning: phraseResult.warning
   };
