@@ -12,6 +12,7 @@ import {
   restoreTranslationRecord
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
+import {uniqueTranslationForms} from "../translation-variants";
 
 const extensionApi = browser;
 const listElement = document.querySelector<HTMLOListElement>("#records")!;
@@ -67,7 +68,7 @@ function createRecordElement(record: TranslationRecord) {
   termLine.append(textElement("span", "original", record.text));
   if (record.transcription) termLine.append(textElement("span", "record-transcription", record.transcription));
   pair.append(termLine, textElement("span", "translated", record.translation));
-  const alternatives = record.translations.filter((translation) => translation && translation !== record.translation);
+  const alternatives = uniqueTranslationForms([record.translation, ...record.translations]).slice(1);
   if (alternatives.length) {
     pair.append(textElement("span", "translation-alternatives", alternatives.join(", ")));
   }

@@ -7,6 +7,7 @@ import {
   type TranslationRecord,
   type TranslateResponse
 } from "./types";
+import {uniqueTranslationForms} from "./translation-variants";
 
 (() => {
   const extensionApi = browser;
@@ -471,10 +472,7 @@ import {
     const alternatives = wordCount(currentText) <= 3 && Array.isArray(result.translations) && result.translations.length
       ? result.translations
       : [result.translation];
-    const uniqueAlternatives = alternatives.filter((value, index, values) => {
-      const normalized = clean(value).toLocaleLowerCase("ru");
-      return normalized && values.findIndex((candidate) => clean(candidate).toLocaleLowerCase("ru") === normalized) === index;
-    });
+    const uniqueAlternatives = uniqueTranslationForms(alternatives);
     uniqueAlternatives.forEach((value) => {
       const item = document.createElement("div");
       item.className = "translation-option";

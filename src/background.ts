@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from "./types";
+import {uniqueTranslationForms} from "./translation-variants";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
@@ -958,7 +959,7 @@ function englishWordForms(word) {
 function uniqueRussianTranslations(values, sourceWord, maxWords = 3) {
   const source = sourceWord.toLocaleLowerCase("en");
   const seen = new Set();
-  return values.filter((value) => {
+  const translations = values.filter((value) => {
     const translation = cleanTranslationCandidate(value);
     const key = translation.toLocaleLowerCase("ru");
     const wordCount = translation.split(/\s+/).length;
@@ -970,6 +971,7 @@ function uniqueRussianTranslations(values, sourceWord, maxWords = 3) {
     seen.add(key);
     return true;
   }).map(cleanTranslationCandidate);
+  return uniqueTranslationForms(translations);
 }
 
 function transliterateRussian(value) {

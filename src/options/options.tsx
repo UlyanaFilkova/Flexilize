@@ -14,6 +14,7 @@ import {
   updateTranslationRecord
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
+import {uniqueTranslationForms} from "../translation-variants";
 import "./options.css";
 
 type Page = "settings" | "history";
@@ -210,7 +211,7 @@ function HistoryView({records, loading, onClear, onDelete, onUpdate, onOpenExpor
 
 function RecordCard({record, onDelete, onUpdate}: {record: TranslationRecord; onDelete: () => void; onUpdate: (updated: TranslationRecord) => Promise<void>}) {
   const [editing, setEditing] = useState(false);
-  const alternatives = record.translations.filter((translation) => translation && translation !== record.translation);
+  const alternatives = uniqueTranslationForms([record.translation, ...record.translations]).slice(1);
 
   if (editing) {
     return <RecordEditor record={record} onCancel={() => setEditing(false)} onSave={async (updated) => { await onUpdate(updated); setEditing(false); }} />;
@@ -242,9 +243,7 @@ function RecordEditor({record, onCancel, onSave}: {record: TranslationRecord; on
     contextTranslation: record.contextTranslation || (record.text.trim().split(/\s+/).length > 3 ? record.translation : ""),
     pageTitle: record.pageTitle,
     pageUrl: record.pageUrl,
-    translations: record.translations
-      .filter((translation) => translation && translation !== record.translation)
-      .join("\n")
+    translations: uniqueTranslationForms([record.translation, ...record.translations]).slice(1).join("\n")
   });
   const [saving, setSaving] = useState(false);
   const change = (field: keyof typeof draft, value: string) => setDraft((current) => ({...current, [field]: value}));
