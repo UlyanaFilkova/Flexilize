@@ -214,8 +214,15 @@ a:focus-visible {
 
 .content {
   width: 100%;
-  max-width: 1120px;
+  max-width: 1200px;
   padding: 62px clamp(42px, 6vw, 92px) 80px;
+}
+
+.content-heading-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
 }
 
 .content-heading {
@@ -288,6 +295,354 @@ h1 {
   background: #edf2ff;
 }
 
+.clear-history {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 11px;
+  background: #fff0f3;
+  color: #c93f5c;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.clear-history:hover {
+  background: #ffe1e7;
+}
+
+.clear-history:disabled,
+.export-grid button:disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+.clear-history svg,
+.history-record button svg,
+.export-grid button > svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.history-list {
+  display: grid;
+  gap: 12px;
+  margin: 38px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-record {
+  padding: 20px 22px 16px;
+  border: 1px solid #e4e8ef;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(35, 48, 72, .04);
+}
+
+.record-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 16px;
+  font-size: 16px;
+}
+
+.record-original {
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+.record-translation {
+  overflow-wrap: anywhere;
+  color: #315be8;
+  font-weight: 500;
+  text-align: right;
+}
+
+.record-transcription {
+  margin-top: 9px;
+  color: #69758a;
+  font: 13px/1.4 Georgia, serif;
+}
+
+.record-sentence {
+  margin-top: 13px;
+  color: #707c8e;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.record-meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 13px;
+  color: #9aa3b1;
+  font-size: 11px;
+}
+
+.record-meta a {
+  overflow: hidden;
+  color: inherit;
+  text-align: right;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-meta a:hover {
+  color: #315be8;
+}
+
+.record-actions {
+  display: flex;
+  gap: 7px;
+}
+
+.record-meta button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.record-meta .edit-record {
+  background: #edf2ff;
+  color: #315be8;
+}
+
+.record-meta .edit-record:hover {
+  background: #dfe7ff;
+}
+
+.record-meta .delete-record {
+  background: #fff0f3;
+  color: #c93f5c;
+}
+
+.record-meta .delete-record:hover {
+  background: #ffe1e7;
+}
+
+.record-editor {
+  padding: 24px;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.editor-grid label {
+  display: grid;
+  gap: 7px;
+}
+
+.editor-grid label.wide {
+  grid-column: 1 / -1;
+}
+
+.editor-grid label > span {
+  color: #6f7a8c;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.editor-grid textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #dce1e9;
+  border-radius: 10px;
+  outline: none;
+  background: #fbfcfe;
+  color: #273245;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.editor-grid textarea:focus {
+  border-color: #7d9aff;
+  box-shadow: 0 0 0 3px rgba(49, 91, 232, .1);
+  background: #fff;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.editor-actions button {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.editor-actions button:disabled {
+  cursor: default;
+  opacity: .5;
+}
+
+.cancel-edit {
+  background: #f0f2f6;
+  color: #657084;
+}
+
+.save-edit {
+  background: #315be8;
+  color: #fff;
+}
+
+.history-empty {
+  display: flex;
+  min-height: 360px;
+  margin-top: 38px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #e4e8ef;
+  border-radius: 20px;
+  background: #fff;
+  color: #7b8595;
+  text-align: center;
+}
+
+.history-empty .empty-icon {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 6px;
+  place-items: center;
+  border-radius: 16px;
+  background: #edf2ff;
+  color: #315be8;
+  font: 700 18px Georgia, serif;
+}
+
+.history-empty strong {
+  color: #3d4859;
+}
+
+.history-empty span {
+  max-width: 320px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.export-panel {
+  margin-top: 38px;
+  padding: 28px;
+  border: 1px solid #e4e8ef;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(35, 48, 72, .04);
+}
+
+.export-panel h2 {
+  margin: 0 0 20px;
+  font-size: 17px;
+}
+
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.export-grid button {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  min-height: 72px;
+  padding: 12px 16px;
+  border: 1px solid #e7eaf0;
+  border-radius: 13px;
+  background: #fbfcfe;
+  color: #657084;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+
+.export-grid button:hover:not(:disabled) {
+  border-color: #bfcdfb;
+  background: #f5f8ff;
+  transform: translateY(-1px);
+}
+
+.format-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 11px;
+  background: #edf2ff;
+  color: #315be8;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.export-grid button > span:nth-child(2) {
+  display: grid;
+  gap: 4px;
+}
+
+.export-grid strong {
+  color: #273245;
+  font-size: 14px;
+}
+
+.export-grid small {
+  color: #929baa;
+  font-size: 11px;
+}
+
+.page-notice {
+  position: fixed;
+  z-index: 20;
+  right: 28px;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  padding: 10px 15px;
+  border-radius: 11px;
+  background: #18222f;
+  box-shadow: 0 12px 30px rgba(24, 34, 47, .2);
+  color: #fff;
+  font-size: 13px;
+}
+
+.page-notice button {
+  padding: 4px 7px;
+  background: transparent;
+  color: #9db7ff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 @media (max-width: 820px) {
   .topbar {
     padding-right: 22px;
@@ -304,5 +659,17 @@ h1 {
 
   .content {
     padding: 48px 34px 64px;
+  }
+
+  .export-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-grid label.wide {
+    grid-column: auto;
   }
 }

@@ -15,9 +15,8 @@ button:disabled { cursor: default; opacity: .45; }
 main { height: 330px; overflow: auto; padding: 12px; }
 ol { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
 .record { padding: 12px 13px; border: 1px solid #e5e9f0; border-radius: 12px; background: #fff; }
-.pair { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 8px; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); align-items: center; gap: 8px; }
 .original { font-weight: 650; overflow-wrap: anywhere; }
-.arrow { color: #9aa4b3; }
 .translated { color: #2457c5; text-align: right; overflow-wrap: anywhere; }
 .record-transcription { margin-top: 7px; color: #65738a; font: 12px/1.35 Georgia,serif; }
 .sentence { margin-top: 8px; color: #68768b; font-size: 11px; line-height: 1.4; }

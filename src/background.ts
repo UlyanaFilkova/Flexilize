@@ -80,6 +80,12 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
       .catch((error) => ({ ok: false, error: readableError(error) }));
   }
 
+  if (message?.type === "update-record") {
+    return updateRecord(message.payload)
+      .then(() => ({ ok: true }))
+      .catch((error) => ({ ok: false, error: readableError(error) }));
+  }
+
   if (message?.type === "restore-record") {
     return restoreRecord(message.payload)
       .then(() => ({ ok: true }))
@@ -1067,6 +1073,31 @@ async function deleteRecord(payload: {createdAt?: unknown; sentence?: unknown; t
   if (recordIndex < 0) throw new Error("Запись уже удалена");
   records.splice(recordIndex, 1);
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
+}
+
+async function updateRecord(payload: {original?: unknown; record?: unknown}) {
+  if (!extensionApi?.storage?.local) throw new Error("Локальное хранилище недоступно");
+  if (!payload?.original || typeof payload.original !== "object" || !payload?.record || typeof payload.record !== "object") {
+    throw new Error("Не удалось прочитать запись");
+  }
+
+  const original = payload.original as {createdAt?: unknown; sentence?: unknown; text?: unknown};
+  const createdAt = normalizeText(original.createdAt, 100);
+  const sentence = normalizeText(original.sentence, 3000);
+  const text = normalizeText(original.text, 1000);
+  const records = await getRecords();
+  const recordIndex = records.findIndex((record) => (
+    record.createdAt === createdAt
+    && record.text === text
+    && record.sentence === sentence
+  ));
+  if (recordIndex < 0) throw new Error("Запись не найдена");
+
+  const updated = normalizeStoredRecord(payload.record);
+  if (!updated.text || !updated.translation) throw new Error("Оригинал и перевод не могут быть пустыми");
+  updated.createdAt = records[recordIndex].createdAt;
+  records[recordIndex] = updated;
+  await extensionApi.storage.local.set({[RECORDS_KEY]: records});
 }
 
 async function restoreRecord(payload: {index?: unknown; record?: unknown}) {

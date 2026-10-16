@@ -1,0 +1,84 @@
+import browser from "webextension-polyfill";
+import {exportTranslationRecords, type ExportFormat} from "./export";
+import type {RecordsResponse, TranslationRecord} from "./types";
+
+export const exportFormats: ReadonlyArray<{format: ExportFormat; label: string}> = [
+  {format: "json", label: "JSON"},
+  {format: "pdf", label: "PDF"},
+  {format: "txt", label: "TXT"},
+  {format: "csv", label: "CSV"},
+  {format: "tsv", label: "TSV"},
+  {format: "anki-csv", label: "Anki CSV"},
+  {format: "anki-tsv", label: "Anki TSV"},
+  {format: "xlsx", label: "XLSX"},
+  {format: "markdown", label: "Markdown"},
+  {format: "html", label: "HTML"}
+];
+
+export async function getTranslationRecords() {
+  return recordsFrom(await browser.runtime.sendMessage({type: "get-records"}), "Не удалось загрузить записи");
+}
+
+export async function deleteTranslationRecord(record: TranslationRecord) {
+  await recordsFrom(await browser.runtime.sendMessage({
+    type: "delete-record",
+    payload: {createdAt: record.createdAt, sentence: record.sentence, text: record.text}
+  }), "Не удалось удалить запись");
+}
+
+export async function updateTranslationRecord(original: TranslationRecord, record: TranslationRecord) {
+  await recordsFrom(await browser.runtime.sendMessage({
+    type: "update-record",
+    payload: {
+      original: {createdAt: original.createdAt, sentence: original.sentence, text: original.text},
+      record
+    }
+  }), "Не удалось сохранить запись");
+}
+
+export async function restoreTranslationRecord(record: TranslationRecord, index: number) {
+  await recordsFrom(await browser.runtime.sendMessage({
+    type: "restore-record",
+    payload: {index, record}
+  }), "Не удалось восстановить запись");
+}
+
+export async function clearTranslationRecords() {
+  await recordsFrom(await browser.runtime.sendMessage({type: "clear-records"}), "Не удалось очистить список");
+}
+
+export async function downloadTranslationRecords(records: TranslationRecord[], format: ExportFormat) {
+  await exportTranslationRecords(records, format);
+}
+
+export function formatLabel(format: ExportFormat) {
+  return exportFormats.find((item) => item.format === format)?.label || format.toUpperCase();
+}
+
+export function pluralizeRecords(count: number) {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  const word = mod10 === 1 && mod100 !== 11
+    ? "запись"
+    : mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)
+      ? "записи"
+      : "записей";
+  return `${count} ${word}`;
+}
+
+export function formatRecordDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? ""
+    : new Intl.DateTimeFormat("ru", {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}).format(date);
+}
+
+export function recordHostname(value: string) {
+  try { return new URL(value).hostname; } catch (_error) { return "Источник"; }
+}
+
+function recordsFrom(value: unknown, fallback: string) {
+  const result = value as RecordsResponse;
+  if (!result?.ok) throw new Error(result?.error || fallback);
+  return result.records || [];
+}
