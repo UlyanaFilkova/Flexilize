@@ -583,10 +583,11 @@ import {
 
   async function loadTranslationStages(text: string, sentence: string, ownRequest: number, requestedLanguage?: string) {
     let primaryRendered = false;
+    const targetLanguage = activationSettings.targetLanguage;
     try {
       const preview = await extensionApi.runtime.sendMessage({
         type: "translate-preview",
-        payload: {sentence, sourceLanguage: requestedLanguage, text}
+        payload: {sentence, sourceLanguage: requestedLanguage, targetLanguage, text}
       }) as TranslateResponse;
       if (ownRequest !== requestNumber || !shadow) return;
       if (!preview?.ok || !preview.translation) throw new Error(preview?.error || "Не удалось выполнить перевод");
@@ -624,6 +625,7 @@ import {
           pageTitle: document.title,
           pageUrl: location.href,
           sourceLanguage,
+          targetLanguage,
           transcription,
           transcriptionLoaded: true,
           save: activationSettings.autoSaveTranslations

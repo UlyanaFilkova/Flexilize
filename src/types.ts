@@ -5,6 +5,7 @@ export interface TranslationRecord {
   pageUrl: string
   sentence: string
   sourceLanguage: string
+  targetLanguage: string
   text: string
   transcription: string | null
   translation: string
@@ -17,6 +18,7 @@ export interface TranslatePayload {
   pageTitle?: unknown
   pageUrl?: unknown
   sourceLanguage?: unknown
+  targetLanguage?: unknown
   transcription?: unknown
   transcriptionLoaded?: unknown
   save?: unknown
@@ -24,7 +26,7 @@ export interface TranslatePayload {
 
 export type RuntimeMessage =
   | {type: "translate-selection"; payload: TranslatePayload}
-  | {type: "translate-preview"; payload: {sentence?: unknown; sourceLanguage?: unknown; text?: unknown}}
+  | {type: "translate-preview"; payload: {sentence?: unknown; sourceLanguage?: unknown; targetLanguage?: unknown; text?: unknown}}
   | {type: "detect-language"; payload: {sentence?: unknown; text?: unknown}}
   | {type: "get-transcription"; payload: {language?: unknown; text?: unknown}}
   | {type: "get-speech-audio"; payload: {language?: unknown; text?: unknown}}

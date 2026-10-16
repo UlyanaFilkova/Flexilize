@@ -15,11 +15,31 @@ export interface ExtensionSettings {
   autoSaveTranslations: boolean
   hotkeyActivationEnabled: boolean
   activationShortcut: ActivationShortcut
+  targetLanguage: string
 }
+
+export const TRANSLATION_LANGUAGES = [
+  ["ru", "Русский"], ["en", "Английский"], ["de", "Немецкий"], ["fr", "Французский"],
+  ["es", "Испанский"], ["it", "Итальянский"], ["pt", "Португальский"], ["pl", "Польский"],
+  ["uk", "Украинский"], ["be", "Белорусский"], ["bg", "Болгарский"], ["cs", "Чешский"],
+  ["sk", "Словацкий"], ["sl", "Словенский"], ["sr", "Сербский"], ["hr", "Хорватский"],
+  ["nl", "Нидерландский"], ["sv", "Шведский"], ["no", "Норвежский"], ["da", "Датский"],
+  ["fi", "Финский"], ["et", "Эстонский"], ["lv", "Латышский"], ["lt", "Литовский"],
+  ["el", "Греческий"], ["tr", "Турецкий"], ["ro", "Румынский"], ["hu", "Венгерский"],
+  ["ar", "Арабский"], ["he", "Иврит"], ["fa", "Персидский"], ["hi", "Хинди"],
+  ["zh-CN", "Китайский (упрощённый)"], ["zh-TW", "Китайский (традиционный)"],
+  ["ja", "Японский"], ["ko", "Корейский"], ["vi", "Вьетнамский"], ["id", "Индонезийский"],
+  ["af", "Африкаанс"], ["sq", "Албанский"], ["hy", "Армянский"], ["az", "Азербайджанский"],
+  ["eu", "Баскский"], ["bn", "Бенгальский"], ["ca", "Каталанский"], ["ka", "Грузинский"],
+  ["is", "Исландский"], ["ga", "Ирландский"], ["kk", "Казахский"], ["mk", "Македонский"],
+  ["ms", "Малайский"], ["mt", "Мальтийский"], ["sw", "Суахили"], ["th", "Тайский"],
+  ["ur", "Урду"], ["uz", "Узбекский"], ["cy", "Валлийский"]
+] as const;
 
 export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
   hotkeyActivationEnabled: false,
+  targetLanguage: "ru",
   activationShortcut: {
     alt: false,
     code: "BracketRight",
@@ -57,7 +77,10 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
   return {
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
-    activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut
+    activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
+    targetLanguage: TRANSLATION_LANGUAGES.some(([code]) => code === settings.targetLanguage)
+      ? String(settings.targetLanguage)
+      : defaultSettings.targetLanguage
   };
 }
 

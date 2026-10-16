@@ -20,6 +20,7 @@ import {
   getExtensionSettings,
   saveExtensionSettings,
   shortcutFromKeyboardEvent,
+  TRANSLATION_LANGUAGES,
   type ExtensionSettings
 } from "../settings";
 import "./options.css";
@@ -273,6 +274,21 @@ function GeneralSettings() {
           </button>
         </div>
       )}
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Язык перевода</h2>
+          <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+        </div>
+        <select
+          className="setting-select"
+          aria-label="Язык перевода"
+          value={settings?.targetLanguage || "ru"}
+          disabled={!settings}
+          onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
+        >
+          {TRANSLATION_LANGUAGES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+        </select>
+      </div>
       <div className="setting-row setting-row-secondary">
         <div className="setting-copy">
           <h2>Автоматическое сохранение</h2>

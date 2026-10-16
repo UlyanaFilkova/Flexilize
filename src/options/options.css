@@ -376,6 +376,27 @@ h1 {
   opacity: .55;
 }
 
+.setting-select {
+  min-width: 220px;
+  min-height: 42px;
+  padding: 0 38px 0 13px;
+  border: 1px solid #d8dee8;
+  border-radius: 10px;
+  background: #fff;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.setting-select:focus-visible {
+  border-color: #315be8;
+  outline: 3px solid rgba(49, 91, 232, .1);
+}
+
+.setting-select:disabled {
+  opacity: .55;
+}
+
 .settings-error {
   padding: 0 28px 20px;
   color: #c43d56;

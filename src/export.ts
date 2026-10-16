@@ -434,6 +434,7 @@ function toExportRecord(record: TranslationRecord): TranslationRecord {
     pageUrl: record.pageUrl,
     sentence: record.sentence,
     sourceLanguage: record.sourceLanguage,
+    targetLanguage: record.targetLanguage,
     text: record.text,
     transcription: record.transcription,
     translation: record.translation,

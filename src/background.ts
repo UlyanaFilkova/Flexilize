@@ -117,14 +117,15 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
   }
 });
 
-async function handleTranslationPreview(payload: {sentence?: unknown; sourceLanguage?: unknown; text?: unknown}) {
+async function handleTranslationPreview(payload: {sentence?: unknown; sourceLanguage?: unknown; targetLanguage?: unknown; text?: unknown}) {
   const text = normalizeText(payload?.text, 1000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
 
   const sentence = normalizeText(payload?.sentence, 3000);
   const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
     || await detectSelectionLanguage(text, sentence);
-  const result = await translateChunk(text, sourceLanguage);
+  const targetLanguage = normalizeLanguageCode(payload?.targetLanguage) || "ru";
+  const result = await translateChunk(text, sourceLanguage, targetLanguage);
   return {
     ok: true,
     translation: result.text,
@@ -151,11 +152,12 @@ async function handleSelection(payload: TranslatePayload) {
 
   const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
     || await detectSelectionLanguage(text, sentence);
+  const targetLanguage = normalizeLanguageCode(payload?.targetLanguage) || "ru";
   const providedTranscription = payload?.transcriptionLoaded === true
     ? normalizeText(payload.transcription, 1000) || null
     : undefined;
   const [translationResult, transcription] = await Promise.all([
-    translateToRussian(text, sentence, sourceLanguage),
+    translateToRussian(text, sentence, sourceLanguage, targetLanguage),
     providedTranscription !== undefined
       ? Promise.resolve(providedTranscription)
       : settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
@@ -168,6 +170,7 @@ async function handleSelection(payload: TranslatePayload) {
     pageUrl: normalizeUrl(payload?.pageUrl),
     sentence: sentence || text,
     sourceLanguage,
+    targetLanguage,
     text,
     transcription,
     translation: translationResult.text,
@@ -282,9 +285,24 @@ interface TranslationResult {
   warning: string | null
 }
 
-async function translateToRussian(text: string, sentence: string, sourceLanguage: string): Promise<TranslationResult> {
-  if (sourceLanguage === "ru") {
+async function translateToRussian(text: string, sentence: string, sourceLanguage: string, targetLanguage = "ru"): Promise<TranslationResult> {
+  if (sourceLanguage === targetLanguage) {
     return { text, alternatives: [text], contextTranslation: sentence || text, warning: null };
+  }
+  if (targetLanguage !== "ru") {
+    const normalizedSentence = normalizeText(sentence, 3000);
+    const markedContext = buildMarkedContext(normalizedSentence, text);
+    const [selectionResult, markedContextResult] = await Promise.all([
+      translateLongText(text, sourceLanguage, targetLanguage),
+      markedContext ? translateContext(markedContext, sourceLanguage, targetLanguage).catch(() => null) : null
+    ]);
+    const contextualTranslation = markedContextResult?.selectedTranslation || selectionResult.text;
+    return {
+      text: contextualTranslation,
+      alternatives: [contextualTranslation],
+      contextTranslation: markedContextResult?.fullTranslation || selectionResult.text,
+      warning: selectionResult.warning
+    };
   }
   if (isEnglishLanguage(sourceLanguage) && /^[A-Za-z][A-Za-z'-]*$/.test(text)) {
     return translateWordToRussian(text, sentence);
@@ -313,12 +331,12 @@ async function translateToRussian(text: string, sentence: string, sourceLanguage
   };
 }
 
-async function translateLongText(text: string, sourceLanguage: string) {
+async function translateLongText(text: string, sourceLanguage: string, targetLanguage = "ru") {
   const chunks = splitByUtf8Bytes(text, 450);
   const translatedChunks: string[] = [];
   let warning: string | null = null;
   for (const chunk of chunks) {
-    const result = await translateChunk(chunk, sourceLanguage);
+    const result = await translateChunk(chunk, sourceLanguage, targetLanguage);
     translatedChunks.push(result.text);
     warning ||= result.warning;
   }
@@ -506,8 +524,8 @@ function commonPrefixLength(left, right) {
   return length;
 }
 
-async function translateContext(markedContext, sourceLanguage = "en") {
-  const result = await translateChunk(markedContext, sourceLanguage);
+async function translateContext(markedContext, sourceLanguage = "en", targetLanguage = "ru") {
+  const result = await translateChunk(markedContext, sourceLanguage, targetLanguage);
   const translated = result.text;
   const selectedTranslation = translated.match(/<b(?:\s[^>]*)?>(.*?)<\/b>/i)?.[1]?.trim() || null;
   return {
@@ -680,14 +698,15 @@ async function fetchDatamuseTranscription(text) {
   }
 }
 
-async function translateChunk(text, sourceLanguage = "en") {
+async function translateChunk(text, sourceLanguage = "en", targetLanguage = "ru") {
   const normalizedText = normalizeText(text, 3000);
   const language = normalizeLanguageCode(sourceLanguage) || "en";
-  const cacheKey = persistentTranslationKey(normalizedText, language);
+  const target = normalizeLanguageCode(targetLanguage) || "ru";
+  const cacheKey = persistentTranslationKey(normalizedText, language, target);
   const cached = translationCache.get(cacheKey);
   if (cached) return cached;
 
-  const request = resolveTranslationChunk(normalizedText, language);
+  const request = resolveTranslationChunk(normalizedText, language, target);
   if (translationCache.size >= 250) {
     const oldestKey = translationCache.keys().next().value;
     if (oldestKey) translationCache.delete(oldestKey);
@@ -702,27 +721,28 @@ async function translateChunk(text, sourceLanguage = "en") {
   }
 }
 
-async function resolveTranslationChunk(text: string, sourceLanguage: string) {
-  if (sourceLanguage === "ru") {
+async function resolveTranslationChunk(text: string, sourceLanguage: string, targetLanguage: string) {
+  if (sourceLanguage === targetLanguage) {
     return { text, alternatives: [text], warning: null };
   }
-  const saved = await findSavedTranslation(text, sourceLanguage);
+  const saved = await findSavedTranslation(text, sourceLanguage, targetLanguage);
   if (saved) return saved;
 
-  const persisted = await getPersistedTranslation(text, sourceLanguage);
+  const persisted = await getPersistedTranslation(text, sourceLanguage, targetLanguage);
   if (persisted) return persisted;
 
-  const result = await requestTranslationChunk(text, sourceLanguage);
-  await persistTranslation(text, sourceLanguage, result);
+  const result = await requestTranslationChunk(text, sourceLanguage, targetLanguage);
+  await persistTranslation(text, sourceLanguage, targetLanguage, result);
   return result;
 }
 
-async function findSavedTranslation(text: string, sourceLanguage: string) {
+async function findSavedTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
   if (/<\/?b(?:\s[^>]*)?>/i.test(text)) return null;
   const key = normalizeText(text, 1000).toLocaleLowerCase();
   const records = await getRecords();
   const record = records.find((item) => (
     item.sourceLanguage === sourceLanguage
+    && item.targetLanguage === targetLanguage
     && item.text.toLocaleLowerCase() === key
   ));
   if (!record?.translation) return null;
@@ -733,11 +753,11 @@ async function findSavedTranslation(text: string, sourceLanguage: string) {
   };
 }
 
-async function getPersistedTranslation(text: string, sourceLanguage: string) {
+async function getPersistedTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
   if (!extensionApi?.storage?.local) return null;
   const stored = await extensionApi.storage.local.get(TRANSLATION_RESULTS_KEY);
   const cache = stored?.[TRANSLATION_RESULTS_KEY];
-  const entry = cache && typeof cache === "object" ? cache[persistentTranslationKey(text, sourceLanguage)] : null;
+  const entry = cache && typeof cache === "object" ? cache[persistentTranslationKey(text, sourceLanguage, targetLanguage)] : null;
   const translated = normalizeText(entry?.text, 3000);
   if (!translated) return null;
   const alternatives = Array.isArray(entry?.alternatives)
@@ -753,6 +773,7 @@ async function getPersistedTranslation(text: string, sourceLanguage: string) {
 async function persistTranslation(
   text: string,
   sourceLanguage: string,
+  targetLanguage: string,
   result: {text: string; alternatives: string[]; warning: string | null}
 ) {
   if (!extensionApi?.storage?.local) return;
@@ -760,7 +781,7 @@ async function persistTranslation(
     const stored = await extensionApi.storage.local.get(TRANSLATION_RESULTS_KEY);
     const current = stored?.[TRANSLATION_RESULTS_KEY];
     const cache = current && typeof current === "object" ? { ...current } : {};
-    cache[persistentTranslationKey(text, sourceLanguage)] = { ...result, cachedAt: Date.now() };
+    cache[persistentTranslationKey(text, sourceLanguage, targetLanguage)] = { ...result, cachedAt: Date.now() };
     const entries = Object.entries(cache);
     if (entries.length > MAX_CACHED_TRANSLATIONS) {
       entries
@@ -773,11 +794,11 @@ async function persistTranslation(
   await translationCacheWrite;
 }
 
-async function requestTranslationChunk(text: string, sourceLanguage: string) {
+async function requestTranslationChunk(text: string, sourceLanguage: string, targetLanguage: string) {
   if (Date.now() < translationCooldownUntil) {
-    return requestFallbackTranslation(text, sourceLanguage);
+    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
   }
-  const query = new URLSearchParams({ q: text, langpair: `${sourceLanguage}|ru` });
+  const query = new URLSearchParams({ q: text, langpair: `${sourceLanguage}|${targetLanguage}` });
   let response;
   try {
     response = await fetchWithTimeout(
@@ -785,26 +806,26 @@ async function requestTranslationChunk(text: string, sourceLanguage: string) {
       TRANSLATION_REQUEST_TIMEOUT_MS
     );
   } catch (_error) {
-    return requestFallbackTranslation(text, sourceLanguage);
+    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
   }
 
   if (response.status === 429) {
     translationCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
-    return requestFallbackTranslation(text, sourceLanguage);
+    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
   }
   if (!response.ok) {
-    return requestFallbackTranslation(text, sourceLanguage);
+    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
   }
 
   const data = await response.json();
   const responseStatus = Number(data?.responseStatus);
   if ([403, 429].includes(responseStatus)) {
     translationCooldownUntil = Date.now() + 15 * 60_000;
-    return requestFallbackTranslation(text, sourceLanguage);
+    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
   }
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
   if (!translated || responseStatus >= 400 || /invalid language pair|unsupported language/i.test(translated)) {
-    return requestFallbackTranslation(text, sourceLanguage);
+    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
   }
   const exactMatches = Array.isArray(data?.matches)
     ? data.matches.filter((match) => {
@@ -825,14 +846,14 @@ async function requestTranslationChunk(text: string, sourceLanguage: string) {
   };
 }
 
-async function requestFallbackTranslation(text: string, sourceLanguage: string) {
+async function requestFallbackTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
   try {
     const query = new URLSearchParams({
       client: "gtx",
       dt: "t",
       q: text,
       sl: sourceLanguage,
-      tl: "ru"
+      tl: targetLanguage
     });
     query.set("client", "dict-chrome-ex");
     const response = await fetchWithTimeout(
@@ -851,8 +872,8 @@ async function requestFallbackTranslation(text: string, sourceLanguage: string) 
   }
 }
 
-function persistentTranslationKey(text: string, sourceLanguage: string) {
-  return `${sourceLanguage}:${text}`;
+function persistentTranslationKey(text: string, sourceLanguage: string, targetLanguage = "ru") {
+  return `${sourceLanguage}:${targetLanguage}:${text}`;
 }
 
 function retryDelay(retryAfter: string | null) {
@@ -1049,6 +1070,7 @@ async function saveRecord(record: TranslationRecord) {
     savedRecord.text === record.text
     && savedRecord.sentence === record.sentence
     && savedRecord.sourceLanguage === record.sourceLanguage
+    && savedRecord.targetLanguage === record.targetLanguage
   ));
 
   if (duplicateIndex >= 0) {
@@ -1097,6 +1119,7 @@ function normalizeStoredRecord(value): TranslationRecord {
     pageUrl: normalizeUrl(value?.pageUrl),
     sentence: normalizeText(value?.sentence, 3000),
     sourceLanguage: normalizeLanguageCode(value?.sourceLanguage) || "en",
+    targetLanguage: normalizeLanguageCode(value?.targetLanguage) || "ru",
     text: normalizeText(value?.text, 1000),
     transcription: normalizeText(value?.transcription, 1000) || null,
     translation,
