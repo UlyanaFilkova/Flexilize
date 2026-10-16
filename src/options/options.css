@@ -306,13 +306,14 @@ h1 {
 }
 
 .shortcut-row strong {
-  color: #344054;
-  font-size: 13px;
+  color: #273245;
+  font-size: 16px;
 }
 
 .shortcut-row span {
-  color: #8a94a4;
-  font-size: 12px;
+  color: #7b8595;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .switch {
