@@ -1,0 +1,56 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify release version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: npm run release:check
+
+      - name: Check TypeScript
+        run: npm run typecheck
+
+      - name: Package Chrome extension
+        run: npm run zip:chrome
+
+      - name: Package Firefox extension
+        run: npm run zip:firefox
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/*-chrome.zip dist/*-firefox.zip --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/*-chrome.zip dist/*-firefox.zip --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+          fi

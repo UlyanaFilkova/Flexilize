@@ -47,6 +47,20 @@ npm ci
 npm run ci
 ```
 
+## Continuous Delivery
+
+Workflow `.github/workflows/cd.yml` запускается при отправке тега формата `v1.2.3`. Он проверяет совпадение версии тега с `package.json` и `src/manifest.json`, проверяет TypeScript, собирает ZIP для Chrome и Firefox и публикует их в GitHub Release с автоматически сформированным описанием изменений.
+
+Для выпуска новой версии обновите одинаковое значение `version` в `package.json` и `src/manifest.json`, влейте изменение в `main`, затем создайте и отправьте тег:
+
+```bash
+npm run release:check -- v1.2.3
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+Публикация в Chrome Web Store и Firefox Add-ons в этот workflow не входит: для неё потребуются ключи разработчика соответствующих магазинов.
+
 ## Установка
 
 Chrome / Edge:
