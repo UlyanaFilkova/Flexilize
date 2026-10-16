@@ -46,7 +46,6 @@ import {
   let manuallySelectedLanguage = "";
   let languageInputDirty = false;
   let requestNumber = 0;
-  let completedTranslationRequest = 0;
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
   let availableVoices: SpeechSynthesisVoice[] = [];
   let selectionRect: DOMRect | null = null;
@@ -89,38 +88,11 @@ import {
     currentSentence = details.sentence;
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text);
-    void loadDetectedLanguage(details.text, details.sentence, ownRequest);
-    if (!isSingleWord(details.text)) {
-      void loadTranslationPreview(details.text, details.sentence, ownRequest);
-    }
     if (!extensionApi?.runtime?.sendMessage) {
       showError("API расширения недоступно на этой странице");
       return;
     }
-
-    try {
-      const result = await extensionApi.runtime.sendMessage({
-        type: "translate-selection",
-        payload: {
-          text: details.text,
-          sentence: details.sentence,
-          pageTitle: document.title,
-          pageUrl: location.href
-        }
-      }) as TranslateResponse;
-
-      if (ownRequest !== requestNumber || !shadow) return;
-      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить перевод");
-      completedTranslationRequest = ownRequest;
-      renderResult(result as TranslateResponse & {translation: string});
-    } catch (error) {
-      if (ownRequest !== requestNumber) return;
-      if (isInvalidatedContextError(error)) {
-        closeModal();
-        return;
-      }
-      showError(errorMessage(error, "Ошибка перевода"));
-    }
+    await loadTranslationStages(details.text, details.sentence, ownRequest);
   }
 
   function readSelection() {
@@ -399,7 +371,6 @@ import {
   async function reloadTranslation(sourceLanguage: string) {
     if (!shadow || !currentText) return;
     const ownRequest = ++requestNumber;
-    completedTranslationRequest = 0;
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     stopSpeaking(speakButton || undefined);
     if (speakButton) speakButton.disabled = true;
@@ -412,26 +383,7 @@ import {
     transcription?.classList.add("skeleton", "short");
     if (transcription) transcription.textContent = "";
 
-    try {
-      const result = await extensionApi.runtime.sendMessage({
-        type: "translate-selection",
-        payload: {
-          text: currentText,
-          sentence: currentSentence,
-          pageTitle: document.title,
-          pageUrl: location.href,
-          sourceLanguage
-        }
-      }) as TranslateResponse;
-      if (ownRequest !== requestNumber || !shadow) return;
-      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить перевод");
-      completedTranslationRequest = ownRequest;
-      renderResult(result as TranslateResponse & {translation: string});
-    } catch (error) {
-      if (ownRequest !== requestNumber) return;
-      if (isInvalidatedContextError(error)) return closeModal();
-      showError(errorMessage(error, "Ошибка перевода"));
-    }
+    await loadTranslationStages(currentText, currentSentence, ownRequest, sourceLanguage);
   }
 
   function renderResult(result: TranslateResponse & {translation: string}) {
@@ -512,7 +464,7 @@ import {
     }
   }
 
-  function renderTranslations(result: TranslateResponse & {translation: string}) {
+  function renderTranslations(result: TranslateResponse & {translation: string}, contextPending = false) {
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
     translation.replaceChildren();
@@ -525,42 +477,63 @@ import {
       item.textContent = value;
       translation.append(item);
     });
-    if (result.contextTranslation) {
-      const context = document.createElement("div");
-      context.className = "context-translation";
-      context.textContent = result.contextTranslation;
-      translation.append(context);
-    }
+    const context = document.createElement("div");
+    context.className = "context-translation";
+    context.textContent = result.contextTranslation || "";
+    if (contextPending) context.classList.add("skeleton", "context-pending");
+    translation.append(context);
     if (selectionRect) positionModal(selectionRect);
   }
 
-  async function loadTranslationPreview(text, sentence, ownRequest) {
+  async function loadTranslationStages(text: string, sentence: string, ownRequest: number, requestedLanguage?: string) {
+    let primaryRendered = false;
     try {
-      const result = await extensionApi.runtime.sendMessage({
+      const preview = await extensionApi.runtime.sendMessage({
         type: "translate-preview",
-        payload: { sentence, text }
+        payload: {sentence, sourceLanguage: requestedLanguage, text}
       }) as TranslateResponse;
-      if (ownRequest !== requestNumber || completedTranslationRequest === ownRequest
-        || !shadow || !result?.ok || !result.translation) return;
-      setSpeechLanguage(result.sourceLanguage);
-      renderTranslations(result as TranslateResponse & {translation: string});
-    } catch (_error) {
-      if (isInvalidatedContextError(_error)) closeModal();
-      // The full contextual request below remains the source of other errors for the UI.
-    }
-  }
+      if (ownRequest !== requestNumber || !shadow) return;
+      if (!preview?.ok || !preview.translation) throw new Error(preview?.error || "Не удалось выполнить перевод");
 
-  async function loadDetectedLanguage(text: string, sentence: string, ownRequest: number) {
-    try {
+      const sourceLanguage = requestedLanguage || preview.sourceLanguage;
+      setSpeechLanguage(sourceLanguage);
+      renderTranslations(preview as TranslateResponse & {translation: string}, true);
+      primaryRendered = true;
+
+      let transcription: string | null | undefined;
+      try {
+        const transcriptionResult = await extensionApi.runtime.sendMessage({
+          type: "get-transcription",
+          payload: {language: sourceLanguage, text}
+        }) as TranslateResponse;
+        if (ownRequest !== requestNumber || !shadow) return;
+        if (transcriptionResult?.ok) transcription = transcriptionResult.transcription;
+        renderTranscription(transcription);
+      } catch (error) {
+        if (isInvalidatedContextError(error)) return closeModal();
+        renderTranscription(null);
+      }
+
       const result = await extensionApi.runtime.sendMessage({
-        type: "detect-language",
-        payload: { sentence, text }
+        type: "translate-selection",
+        payload: {
+          text,
+          sentence,
+          pageTitle: document.title,
+          pageUrl: location.href,
+          sourceLanguage,
+          transcription,
+          transcriptionLoaded: true
+        }
       }) as TranslateResponse;
-      if (ownRequest !== requestNumber || !shadow || !result?.ok) return;
-      setSpeechLanguage(result.sourceLanguage);
-    } catch (_error) {
-      if (isInvalidatedContextError(_error)) closeModal();
-      // The translation response can still provide the language and enable speech.
+      if (ownRequest !== requestNumber || !shadow) return;
+      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось выполнить контекстный перевод");
+      renderResult(result as TranslateResponse & {translation: string});
+    } catch (error) {
+      if (ownRequest !== requestNumber) return;
+      if (isInvalidatedContextError(error)) return closeModal();
+      if (primaryRendered) return;
+      showError(errorMessage(error, "Ошибка перевода"));
     }
   }
 
@@ -996,7 +969,8 @@ import {
       .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
       .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }
       .translation-option + .translation-option { margin-top: 2px; }
-      .context-translation { margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
+      .context-translation { min-height: 54px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
+      .context-translation.context-pending { height: 54px; border-top-color: transparent; }
       .storage-limit { margin-top: 10px; padding: 10px; border: 1px solid #f2cf8d; border-radius: 10px; background: #fff8e8; color: #5f4515; font-size: 12px; line-height: 1.4; }
       .storage-limit-actions { display: flex; gap: 7px; margin-top: 8px; }
       .storage-limit-actions button { padding: 7px 10px; border: 0; border-radius: 8px; cursor: pointer; font: 600 12px/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
@@ -1005,6 +979,7 @@ import {
       .storage-limit-later { background: #ece7dc; color: #5f5748; }
       .error { color: #b42318; }
       .skeleton { border-radius: 5px; background: linear-gradient(90deg,#eef1f5 25%,#f7f8fa 50%,#eef1f5 75%); background-size: 200% 100%; color: transparent; animation: shimmer 1.2s infinite; }
+      .translation.skeleton { min-height: 88px; }
       .skeleton.short { width: 96px; flex-basis: 96px; }
       @keyframes shimmer { to { background-position: -200% 0; } }
     `;

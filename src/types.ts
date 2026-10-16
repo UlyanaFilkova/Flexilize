@@ -17,6 +17,8 @@ export interface TranslatePayload {
   pageTitle?: unknown
   pageUrl?: unknown
   sourceLanguage?: unknown
+  transcription?: unknown
+  transcriptionLoaded?: unknown
 }
 
 export type RuntimeMessage =

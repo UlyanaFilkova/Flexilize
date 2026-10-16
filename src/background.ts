@@ -139,9 +139,14 @@ async function handleSelection(payload: TranslatePayload) {
 
   const sourceLanguage = normalizeLanguageCode(payload?.sourceLanguage)
     || await detectSelectionLanguage(text, sentence);
+  const providedTranscription = payload?.transcriptionLoaded === true
+    ? normalizeText(payload.transcription, 1000) || null
+    : undefined;
   const [translationResult, transcription] = await Promise.all([
     translateToRussian(text, sentence, sourceLanguage),
-    settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
+    providedTranscription !== undefined
+      ? Promise.resolve(providedTranscription)
+      : settleWithin(getTranscription(text, sourceLanguage), TRANSCRIPTION_TIMEOUT_MS, null)
   ]);
 
   const record: TranslationRecord = {
