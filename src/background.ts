@@ -279,15 +279,21 @@ async function translateToRussian(text: string, sentence: string, sourceLanguage
     return translatePhraseToRussian(text, sentence, sourceLanguage);
   }
 
-  const selectionResult = await translateLongText(text, sourceLanguage);
-  let contextTranslation = selectionResult.text;
-  if (sentence && normalizeText(sentence, 3000) !== normalizeText(text, 3000)) {
-    const contextResult = await translateLongText(sentence, sourceLanguage).catch(() => null);
+  const normalizedSentence = normalizeText(sentence, 3000);
+  const markedContext = buildMarkedContext(normalizedSentence, text);
+  const [selectionResult, markedContextResult] = await Promise.all([
+    translateLongText(text, sourceLanguage),
+    markedContext ? translateContext(markedContext, sourceLanguage).catch(() => null) : null
+  ]);
+  let contextTranslation = markedContextResult?.fullTranslation || selectionResult.text;
+  if (!markedContext && normalizedSentence && normalizedSentence !== normalizeText(text, 3000)) {
+    const contextResult = await translateLongText(normalizedSentence, sourceLanguage).catch(() => null);
     contextTranslation = contextResult?.text || selectionResult.text;
   }
+  const contextualTranslation = markedContextResult?.selectedTranslation || selectionResult.text;
   return {
-    text: selectionResult.text,
-    alternatives: [selectionResult.text],
+    text: contextualTranslation,
+    alternatives: [contextualTranslation],
     contextTranslation,
     warning: selectionResult.warning
   };

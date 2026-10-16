@@ -468,10 +468,14 @@ import {
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
     translation.replaceChildren();
-    const alternatives = Array.isArray(result.translations) && result.translations.length
+    const alternatives = wordCount(currentText) <= 3 && Array.isArray(result.translations) && result.translations.length
       ? result.translations
       : [result.translation];
-    alternatives.forEach((value) => {
+    const uniqueAlternatives = alternatives.filter((value, index, values) => {
+      const normalized = clean(value).toLocaleLowerCase("ru");
+      return normalized && values.findIndex((candidate) => clean(candidate).toLocaleLowerCase("ru") === normalized) === index;
+    });
+    uniqueAlternatives.forEach((value) => {
       const item = document.createElement("div");
       item.className = "translation-option";
       item.textContent = value;
