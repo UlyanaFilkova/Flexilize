@@ -8,6 +8,14 @@ import {
   type TranslateResponse
 } from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
+import {
+  defaultSettings,
+  getExtensionSettings,
+  matchesShortcut,
+  normalizeSettings,
+  SETTINGS_KEY,
+  type ExtensionSettings
+} from "./settings";
 
 (() => {
   const extensionApi = browser;
@@ -58,8 +66,11 @@ import {uniqueTranslationForms} from "./translation-variants";
     context: AudioContext
     sources: AudioBufferSourceNode[]
   } | null = null;
+  let activationSettings: ExtensionSettings = defaultSettings;
+  let activationSettingsReady = false;
 
   document.addEventListener("mouseup", scheduleSelection, true);
+  document.addEventListener("keydown", handleActivationKeydown, true);
   document.addEventListener("keyup", (event) => {
     const key = typeof event.key === "string" ? event.key : "";
     if (key.startsWith("Arrow") || key === "Shift") scheduleSelection();
@@ -69,15 +80,33 @@ import {uniqueTranslationForms} from "./translation-variants";
   document.addEventListener("scroll", closeModal, true);
   window.addEventListener("blur", closeModal);
 
+  void getExtensionSettings()
+    .then((settings) => { activationSettings = settings; })
+    .finally(() => { activationSettingsReady = true; });
+  extensionApi.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
+    activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
+    activationSettingsReady = true;
+  });
+
   if ("speechSynthesis" in window) {
     refreshVoices();
     window.speechSynthesis.addEventListener("voiceschanged", refreshVoices);
   }
 
   function scheduleSelection() {
-    if (!isCurrentInstance()) return;
+    if (!isCurrentInstance() || !activationSettingsReady || activationSettings.hotkeyActivationEnabled) return;
     clearTimeout(selectionTimer);
     selectionTimer = setTimeout(processSelection, 60);
+  }
+
+  function handleActivationKeydown(event: KeyboardEvent) {
+    if (!isCurrentInstance() || !activationSettingsReady || !activationSettings.hotkeyActivationEnabled
+      || event.repeat || !matchesShortcut(event, activationSettings.activationShortcut)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    clearTimeout(selectionTimer);
+    void processSelection();
   }
 
   async function processSelection() {

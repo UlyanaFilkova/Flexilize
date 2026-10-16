@@ -182,7 +182,7 @@ a:focus-visible {
 
 .content {
   width: 100%;
-  max-width: 1300px;
+  max-width: 1240px;
   padding: 62px clamp(42px, 6vw, 92px) 80px;
 }
 
@@ -261,6 +261,152 @@ h1 {
   height: 42px;
   border-radius: 13px;
   background: #edf2ff;
+}
+
+.settings-panel {
+  margin-top: 40px;
+  overflow: hidden;
+  border: 1px solid #e4e8ef;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(35, 48, 72, .04);
+}
+
+.setting-row,
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 26px 28px;
+}
+
+.shortcut-row {
+  border-top: 1px solid #edf0f4;
+  background: #fbfcfe;
+}
+
+.setting-copy h2 {
+  margin: 0;
+  color: #273245;
+  font-size: 16px;
+}
+
+.setting-copy p {
+  max-width: 600px;
+  margin: 7px 0 0;
+  color: #7b8595;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.shortcut-row > div {
+  display: grid;
+  gap: 5px;
+}
+
+.shortcut-row strong {
+  color: #344054;
+  font-size: 13px;
+}
+
+.shortcut-row span {
+  color: #8a94a4;
+  font-size: 12px;
+}
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.switch > span:first-of-type {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: #d8dde6;
+  transition: background .18s ease;
+}
+
+.switch > span:first-of-type::after {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(25, 35, 52, .2);
+  content: "";
+  transition: transform .18s ease;
+}
+
+.switch input:checked + span {
+  background: #315be8;
+}
+
+.switch input:checked + span::after {
+  transform: translateX(20px);
+}
+
+.switch input:focus-visible + span {
+  outline: 3px solid rgba(75, 115, 255, .28);
+  outline-offset: 2px;
+}
+
+.shortcut-button {
+  min-width: 172px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid #d8dee8;
+  border-radius: 10px;
+  background: #fff;
+  color: #344054;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.shortcut-button:hover:not(:disabled) {
+  border-color: #9db0f5;
+}
+
+.shortcut-button.recording {
+  border-color: #315be8;
+  box-shadow: 0 0 0 3px rgba(49, 91, 232, .1);
+  color: #315be8;
+}
+
+.shortcut-button:disabled {
+  cursor: default;
+  opacity: .55;
+}
+
+.settings-error {
+  padding: 0 28px 20px;
+  color: #c43d56;
+  font-size: 12px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .history-heading-actions {

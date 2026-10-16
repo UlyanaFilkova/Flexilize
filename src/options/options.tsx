@@ -15,6 +15,13 @@ import {
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
+import {
+  formatShortcut,
+  getExtensionSettings,
+  saveExtensionSettings,
+  shortcutFromKeyboardEvent,
+  type ExtensionSettings
+} from "../settings";
 import "./options.css";
 
 type Page = "settings" | "history";
@@ -166,7 +173,9 @@ function App() {
           {page === "settings" ? (
             <>
               <PageHeading title="Настройки" description="Персонализируйте работу расширения под себя." />
-              <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>
+              {settingsSection === "general"
+                ? <GeneralSettings />
+                : <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>}
             </>
           ) : historySection === "records" ? (
             <HistoryView records={records} loading={loading} onClear={clearRecords} onDelete={removeRecord} onUpdate={updateRecord} onOpenExport={() => openHistorySection("export")} />
@@ -188,6 +197,85 @@ function App() {
 
 function PageHeading({title, description, action}: {title: string; description: string; action?: ReactNode}) {
   return <div className="content-heading-row"><div className="content-heading"><span className="eyebrow">Context Translator</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;
+}
+
+function GeneralSettings() {
+  const [settings, setSettings] = useState<ExtensionSettings | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
+  }, []);
+
+  const persist = async (nextSettings: ExtensionSettings) => {
+    setSettings(nextSettings);
+    setError("");
+    try {
+      setSettings(await saveExtensionSettings(nextSettings));
+    } catch (_error) {
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
+  const captureShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!recording || !settings) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === "Escape") {
+      setRecording(false);
+      setError("");
+      return;
+    }
+    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
+    if (!shortcut) return;
+    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
+      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
+      return;
+    }
+    setRecording(false);
+    void persist({...settings, activationShortcut: shortcut});
+  };
+
+  return (
+    <section className="settings-panel" aria-label="Основные настройки">
+      <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Активация горячими клавишами</h2>
+          <p>Перевод будет запускаться только после нажатия выбранной комбинации на выделенном тексте.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.hotkeyActivationEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, hotkeyActivationEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить активацию горячими клавишами</span>
+        </label>
+      </div>
+
+      {settings?.hotkeyActivationEnabled && (
+        <div className="shortcut-row">
+          <div>
+            <strong>Комбинация клавиш</strong>
+            <span>Нажмите кнопку и введите новую комбинацию.</span>
+          </div>
+          <button
+            className={recording ? "shortcut-button recording" : "shortcut-button"}
+            type="button"
+            onClick={() => { setRecording(true); setError(""); }}
+            onBlur={() => setRecording(false)}
+            onKeyDown={captureShortcut}
+          >
+            {recording ? "Нажмите клавиши…" : formatShortcut(settings.activationShortcut)}
+          </button>
+        </div>
+      )}
+      {error && <div className="settings-error" role="alert">{error}</div>}
+    </section>
+  );
 }
 
 function HistoryView({records, loading, onClear, onDelete, onUpdate, onOpenExport}: {records: TranslationRecord[]; loading: boolean; onClear: () => void; onDelete: (record: TranslationRecord) => void; onUpdate: (original: TranslationRecord, updated: TranslationRecord) => Promise<void>; onOpenExport: () => void}) {
