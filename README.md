@@ -35,7 +35,7 @@ npx extension build --browser=firefox --zip
 
 - `dist/chrome/` и `dist/firefox/` — распакованные сборки;
 - `release/chrome/` — стабильная локальная Chrome-сборка, созданная командой `npm run release:chrome`;
-- `dist/context-translator-1.1.1-chrome.zip` и `dist/context-translator-1.1.1-firefox.zip` — архивы для установки и публикации.
+- `dist/context-translator-1.1.2-chrome.zip` и `dist/context-translator-1.1.2-firefox.zip` — архивы для установки и публикации.
 
 ## Continuous Integration
 
@@ -92,7 +92,7 @@ npm run zip:firefox
 The complete build is performed by the `zip:firefox` script in `package.json`. The resulting extension package is:
 
 ```text
-dist/context-translator-1.1.1-firefox.zip
+dist/context-translator-1.1.2-firefox.zip
 ```
 
 ## Установка
