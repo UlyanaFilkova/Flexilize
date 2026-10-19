@@ -16,6 +16,8 @@ export interface ExtensionSettings {
   historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
   activationShortcut: ActivationShortcut
+  speechEnabled: boolean
+  transcriptionEnabled: boolean
   speechRate: number
   targetLanguage: string
 }
@@ -46,6 +48,8 @@ export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
+  speechEnabled: true,
+  transcriptionEnabled: true,
   speechRate: 1,
   targetLanguage: "ru",
   activationShortcut: {
@@ -87,6 +91,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
+    speechEnabled: settings.speechEnabled !== false,
+    transcriptionEnabled: settings.transcriptionEnabled !== false,
     speechRate: normalizeSpeechRate(settings.speechRate),
     targetLanguage: TRANSLATION_LANGUAGES.some(([code]) => code === settings.targetLanguage)
       ? String(settings.targetLanguage)

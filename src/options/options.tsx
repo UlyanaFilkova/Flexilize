@@ -17,6 +17,7 @@ import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
 import {
+  defaultSettings,
   formatShortcut,
   getExtensionSettings,
   MAX_SPEECH_RATE,
@@ -269,23 +270,22 @@ function GeneralSettings() {
         </label>
       </div>
 
-      {settings?.hotkeyActivationEnabled && (
-        <div className="setting-row setting-row-secondary">
-          <div className="setting-copy">
-            <h2>Комбинация клавиш</h2>
-            <p>Нажмите кнопку и введите новую комбинацию.</p>
-          </div>
-          <button
-            className={recording ? "hotkey-button recording" : "hotkey-button"}
-            type="button"
-            onClick={() => { setRecording(true); setError(""); }}
-            onBlur={() => setRecording(false)}
-            onKeyDown={captureShortcut}
-          >
-            {recording ? "Нажмите клавиши…" : formatShortcut(settings.activationShortcut)}
-          </button>
+      <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+        <div className="setting-copy">
+          <h2>Комбинация клавиш</h2>
+          <p>Нажмите кнопку и введите новую комбинацию.</p>
         </div>
-      )}
+        <button
+          className={recording ? "hotkey-button recording" : "hotkey-button"}
+          type="button"
+          disabled={!settings?.hotkeyActivationEnabled}
+          onClick={() => { setRecording(true); setError(""); }}
+          onBlur={() => setRecording(false)}
+          onKeyDown={captureShortcut}
+        >
+          {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
+        </button>
+      </div>
       {error && <div className="settings-error" role="alert">{error}</div>}
     </section>
   );
@@ -422,27 +422,87 @@ function SoundSettings() {
     }
   };
 
+  const setSpeechEnabled = async (speechEnabled: boolean) => {
+    if (!settings) return;
+    const previous = settings;
+    const next = {...settings, speechEnabled};
+    setSettings(next);
+    setError("");
+    try {
+      setSettings(await saveExtensionSettings(next));
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
+  const setTranscriptionEnabled = async (transcriptionEnabled: boolean) => {
+    if (!settings) return;
+    const previous = settings;
+    const next = {...settings, transcriptionEnabled};
+    setSettings(next);
+    setError("");
+    try {
+      setSettings(await saveExtensionSettings(next));
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
   const speechRate = settings?.speechRate ?? 1;
 
   return (
     <section className="settings-panel" aria-label="Настройки звука">
       <div className="setting-row">
         <div className="setting-copy">
+          <h2>Транскрипция</h2>
+          <p>Показывать транскрипцию выделенного текста.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.transcriptionEnabled ?? true}
+            disabled={!settings}
+            onChange={(event) => void setTranscriptionEnabled(event.target.checked)}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить транскрипцию</span>
+        </label>
+      </div>
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Озвучка</h2>
+          <p>Показывать кнопку воспроизведения озвучки для выделенного текста.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.speechEnabled ?? true}
+            disabled={!settings}
+            onChange={(event) => void setSpeechEnabled(event.target.checked)}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить озвучку</span>
+        </label>
+      </div>
+      <div className={`setting-row setting-row-secondary${settings?.speechEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.speechEnabled}>
+        <div className="setting-copy">
           <h2>Скорость озвучки</h2>
-          <p>Настройте скорость воспроизведения озвученного текста.</p>
+          <p>Скорость воспроизведения озвученного текста.</p>
         </div>
         <div className="stepper" role="group" aria-label="Скорость озвучки">
           <button
             type="button"
             aria-label="Уменьшить скорость озвучки"
-            disabled={!settings || speechRate <= MIN_SPEECH_RATE}
+            disabled={!settings?.speechEnabled || speechRate <= MIN_SPEECH_RATE}
             onClick={() => void changeSpeechRate(-1)}
           >−</button>
           <output aria-live="polite" aria-label={`Текущая скорость ${speechRate.toFixed(1)}`}>{speechRate.toFixed(1)}×</output>
           <button
             type="button"
             aria-label="Увеличить скорость озвучки"
-            disabled={!settings || speechRate >= MAX_SPEECH_RATE}
+            disabled={!settings?.speechEnabled || speechRate >= MAX_SPEECH_RATE}
             onClick={() => void changeSpeechRate(1)}
           >+</button>
         </div>
