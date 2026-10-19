@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate-and-build:
-    name: Typecheck, test and build extensions
+    name: Typecheck and build extensions
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
