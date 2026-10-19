@@ -43,7 +43,7 @@ const routeHashes: Record<Route, string> = {
 };
 
 const settingsSidebarItems = [
-  {id: "general", label: "Основные", icon: <SlidersIcon />},
+  {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
   {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
@@ -216,6 +216,7 @@ function PageHeading({title, description, action}: {title: string; description: 
 function GeneralSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [recording, setRecording] = useState(false);
+  const [translatorRecording, setTranslatorRecording] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -251,8 +252,30 @@ function GeneralSettings() {
     void persist({...settings, activationShortcut: shortcut});
   };
 
+  const captureTranslatorShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!translatorRecording || !settings) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === "Escape") {
+      setTranslatorRecording(false);
+      setError("");
+      return;
+    }
+    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
+    if (!shortcut) return;
+    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
+      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
+      return;
+    }
+    setTranslatorRecording(false);
+    void persist({...settings, translatorShortcut: shortcut});
+  };
+
   return (
-    <section className="settings-panel" aria-label="Основные настройки">
+    <>
+      <div className="settings-group">
+        <h2 className="settings-group-title">Перевод выделенного текста</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Горячие клавиши перевода выделенного текста">
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
@@ -286,8 +309,31 @@ function GeneralSettings() {
           {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
         </button>
       </div>
-      {error && <div className="settings-error" role="alert">{error}</div>}
-    </section>
+        </section>
+      </div>
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Переводчик</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Горячая клавиша переводчика">
+          <div className="setting-row">
+            <div className="setting-copy">
+              <h2>Горячая клавиша переводчика</h2>
+              <p>Открывает отдельное окно для ввода и перевода текста.</p>
+            </div>
+            <button
+              className={translatorRecording ? "hotkey-button recording" : "hotkey-button"}
+              type="button"
+              disabled={!settings}
+              onClick={() => { setTranslatorRecording(true); setError(""); }}
+              onBlur={() => setTranslatorRecording(false)}
+              onKeyDown={captureTranslatorShortcut}
+            >
+              {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
+            </button>
+          </div>
+          {error && <div className="settings-error" role="alert">{error}</div>}
+        </section>
+      </div>
+    </>
   );
 }
 
@@ -299,10 +345,9 @@ function TranslationSettings() {
     void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
   }, []);
 
-  const setTargetLanguage = async (targetLanguage: string) => {
+  const persist = async (next: ExtensionSettings) => {
     if (!settings) return;
     const previous = settings;
-    const next = {...settings, targetLanguage};
     setSettings(next);
     setError("");
     try {
@@ -313,27 +358,57 @@ function TranslationSettings() {
     }
   };
 
+  const languageOptions = [...TRANSLATION_LANGUAGES]
+    .sort((left, right) => left[1].localeCompare(right[1], "ru"))
+    .map(([code, label]) => <option key={code} value={code}>{label}</option>);
+
   return (
-    <section className="settings-panel" aria-label="Настройки перевода">
-      <div className="setting-row">
-        <div className="setting-copy">
-          <h2>Язык перевода</h2>
-          <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+    <>
+      <div className="settings-group">
+        <h2 className="settings-group-title">Перевод выделенного текста</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Перевод выделенного текста">
+        <div className="setting-row">
+          <div className="setting-copy">
+            <h2>Язык перевода выделенного текста</h2>
+            <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+          </div>
+          <select
+            className="setting-select"
+            aria-label="Язык перевода"
+            value={settings?.targetLanguage || "ru"}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
+          >
+            {languageOptions}
+          </select>
         </div>
-        <select
-          className="setting-select"
-          aria-label="Язык перевода"
-          value={settings?.targetLanguage || "ru"}
-          disabled={!settings}
-          onChange={(event) => void setTargetLanguage(event.target.value)}
-        >
-          {[...TRANSLATION_LANGUAGES]
-            .sort((left, right) => left[1].localeCompare(right[1], "ru"))
-            .map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+        </section>
+      </div>
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Переводчик</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
+        <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Исходный язык переводчика</h2>
+          <p>Язык текста при открытии отдельного окна переводчика.</p>
+        </div>
+        <select className="setting-select" aria-label="Исходный язык переводчика" value={settings?.translatorSourceLanguage || "en"} disabled={!settings} onChange={(event) => settings && void persist({...settings, translatorSourceLanguage: event.target.value})}>
+          {languageOptions}
         </select>
       </div>
-      {error && <div className="settings-error" role="alert">{error}</div>}
-    </section>
+        <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Язык перевода в переводчике</h2>
+          <p>Язык результата при открытии отдельного окна переводчика.</p>
+        </div>
+        <select className="setting-select" aria-label="Язык перевода в переводчике" value={settings?.translatorTargetLanguage || "ru"} disabled={!settings} onChange={(event) => settings && void persist({...settings, translatorTargetLanguage: event.target.value})}>
+          {languageOptions}
+        </select>
+      </div>
+        {error && <div className="settings-error" role="alert">{error}</div>}
+        </section>
+      </div>
+    </>
   );
 }
 
@@ -363,7 +438,7 @@ function SavingSettings() {
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Автоматическое сохранение</h2>
-          <p>Сохранять каждый выполненный перевод в истории автоматически.</p>
+          <p>Сохранять каждый выполненный перевод в истории автоматически.<br/>Если выключено, то сохранение происходит только по нажатию кнопки "Сохранить".</p>
         </div>
         <label className="switch">
           <input

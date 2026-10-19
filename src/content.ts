@@ -21,6 +21,7 @@ import {
 (() => {
   const extensionApi = browser;
   const HOST_ID = "context-translator-extension-host";
+  const TRANSLATOR_HOST_ID = "context-translator-input-host";
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
@@ -46,10 +47,15 @@ import {
   // created by the previous content-script instance can survive that reload.
   // Remove its inert modal before installing the new instance.
   document.getElementById(HOST_ID)?.remove();
+  document.getElementById(TRANSLATOR_HOST_ID)?.remove();
   document.documentElement.setAttribute(INSTANCE_ATTRIBUTE, instanceId);
 
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
+  let translatorHost: HTMLDivElement | null = null;
+  let translatorShadow: ShadowRoot | null = null;
+  let translatorTimer: ReturnType<typeof setTimeout> | undefined;
+  let translatorRequest = 0;
   let currentText = "";
   let currentSentence = "";
   let currentSourceLanguage = "en";
@@ -74,6 +80,7 @@ import {
   const deferredManualSaveRequests = new Set<number>();
 
   document.addEventListener("mouseup", scheduleSelection, true);
+  document.addEventListener("keydown", handleTranslatorKeydown, true);
   document.addEventListener("keydown", handleActivationKeydown, true);
   document.addEventListener("keyup", (event) => {
     const key = typeof event.key === "string" ? event.key : "";
@@ -115,6 +122,229 @@ import {
     if (!isCurrentInstance() || !activationSettingsReady || activationSettings.hotkeyActivationEnabled) return;
     clearTimeout(selectionTimer);
     selectionTimer = setTimeout(processSelection, 60);
+  }
+
+  function handleTranslatorKeydown(event: KeyboardEvent) {
+    if (!isCurrentInstance() || !activationSettingsReady || event.repeat
+      || !matchesShortcut(event, activationSettings.translatorShortcut)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (translatorHost) {
+      closeTranslator();
+    } else {
+      showTranslator();
+    }
+  }
+
+  function showTranslator() {
+    closeModal();
+    translatorHost = document.createElement("div");
+    translatorHost.id = TRANSLATOR_HOST_ID;
+    translatorHost.style.cssText = "all:initial;position:fixed;z-index:2147483647;inset:0";
+    translatorShadow = translatorHost.attachShadow({mode: "closed"});
+    document.documentElement.append(translatorHost);
+
+    const languageOptions = SOURCE_LANGUAGES
+      .map(([code, name]) => `<option value="${code}">${name}</option>`)
+      .join("");
+    translatorShadow.innerHTML = `
+      <style>${translatorStyles()}</style>
+      <div class="backdrop">
+        <section class="translator" role="dialog" aria-modal="true" aria-label="Переводчик">
+          <header><strong>Переводчик</strong><span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 18 12"><circle cx="5" cy="3" r="1.4"/><circle cx="9" cy="3" r="1.4"/><circle cx="13" cy="3" r="1.4"/><circle cx="5" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="13" cy="9" r="1.4"/></svg></span><button class="close" type="button" aria-label="Закрыть">×</button></header>
+          <div class="languages">
+            <select class="source-language" aria-label="Исходный язык">${languageOptions}</select>
+            <button class="swap" type="button" aria-label="Поменять языки местами" title="Поменять языки местами">⇄</button>
+            <select class="target-language" aria-label="Язык перевода">${languageOptions}</select>
+          </div>
+          <div class="panes">
+            <div class="translator-pane">
+              <textarea class="translator-input" maxlength="1000" placeholder="Введите текст" aria-label="Текст для перевода"></textarea>
+              <button class="copy copy-input" type="button" aria-label="Копировать весь исходный текст" title="Копировать всё"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
+            </div>
+            <div class="translator-pane">
+              <div class="translator-output" role="status" aria-live="polite" data-placeholder="Перевод"></div>
+              <button class="copy copy-output" type="button" aria-label="Копировать весь перевод" title="Копировать всё"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
+            </div>
+          </div>
+          <div class="translator-status"></div>
+        </section>
+      </div>`;
+
+    const backdrop = translatorShadow.querySelector<HTMLElement>(".backdrop")!;
+    const dialog = translatorShadow.querySelector<HTMLElement>(".translator")!;
+    const header = translatorShadow.querySelector<HTMLElement>("header")!;
+    const panes = translatorShadow.querySelector<HTMLElement>(".panes")!;
+    const input = translatorShadow.querySelector<HTMLTextAreaElement>(".translator-input")!;
+    const source = translatorShadow.querySelector<HTMLSelectElement>(".source-language")!;
+    const target = translatorShadow.querySelector<HTMLSelectElement>(".target-language")!;
+    source.value = activationSettings.translatorSourceLanguage;
+    target.value = activationSettings.translatorTargetLanguage;
+
+    const resizeTranslatorPanes = () => {
+      input.style.height = "0px";
+      const maximumHeight = Math.max(250, Math.min(520, window.innerHeight - 220));
+      panes.style.height = `${Math.min(maximumHeight, Math.max(250, input.scrollHeight))}px`;
+      input.style.height = "";
+    };
+
+    let offsetX = 0;
+    let offsetY = 0;
+    header.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 || (event.target as Element).closest("button")) return;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const startOffsetX = offsetX;
+      const startOffsetY = offsetY;
+      const startRect = dialog.getBoundingClientRect();
+      header.setPointerCapture(event.pointerId);
+      dialog.classList.add("dragging");
+
+      const move = (moveEvent: PointerEvent) => {
+        const deltaX = Math.max(8 - startRect.left, Math.min(
+          moveEvent.clientX - startX,
+          window.innerWidth - 8 - startRect.right
+        ));
+        const deltaY = Math.max(8 - startRect.top, Math.min(
+          moveEvent.clientY - startY,
+          window.innerHeight - 8 - startRect.bottom
+        ));
+        offsetX = startOffsetX + deltaX;
+        offsetY = startOffsetY + deltaY;
+        dialog.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      };
+      const stop = () => {
+        dialog.classList.remove("dragging");
+        header.removeEventListener("pointermove", move);
+        header.removeEventListener("pointerup", stop);
+        header.removeEventListener("pointercancel", stop);
+      };
+      header.addEventListener("pointermove", move);
+      header.addEventListener("pointerup", stop);
+      header.addEventListener("pointercancel", stop);
+    });
+
+    const scheduleTranslation = (immediate = false) => {
+      clearTimeout(translatorTimer);
+      translatorTimer = setTimeout(() => void translateTypedText(), immediate ? 0 : 350);
+    };
+    backdrop.addEventListener("pointerdown", (event) => {
+      if (!event.composedPath().includes(dialog)) closeTranslator();
+    });
+    translatorShadow.querySelector(".close")?.addEventListener("click", closeTranslator);
+    translatorShadow.querySelector(".swap")?.addEventListener("click", () => {
+      const selectionStart = input.selectionStart;
+      const selectionEnd = input.selectionEnd;
+      const previousSource = source.value;
+      source.value = target.value;
+      target.value = previousSource;
+      scheduleTranslation(true);
+      input.focus();
+      input.setSelectionRange(selectionStart, selectionEnd);
+    });
+    const bindCopyButton = (selector: string, readText: () => string) => {
+      const button = translatorShadow?.querySelector<HTMLButtonElement>(selector);
+      if (!button) return;
+      const copyIcon = button.innerHTML;
+      button.addEventListener("click", async () => {
+        const value = readText();
+        if (!value) return;
+        try {
+          await copyToClipboard(value);
+          button.textContent = "✓";
+          setTimeout(() => {
+            if (button.isConnected) button.innerHTML = copyIcon;
+          }, 1200);
+        } catch (_error) {
+          // The browser can deny clipboard access on restricted pages.
+        }
+      });
+    };
+    bindCopyButton(".copy-input", () => input.value);
+    bindCopyButton(".copy-output", () => translatorShadow?.querySelector<HTMLElement>(".translator-output")?.textContent || "");
+    source.addEventListener("change", () => scheduleTranslation(true));
+    target.addEventListener("change", () => scheduleTranslation(true));
+    input.addEventListener("input", () => {
+      resizeTranslatorPanes();
+      scheduleTranslation();
+    });
+    translatorShadow.addEventListener("keydown", (event) => {
+      if (event instanceof KeyboardEvent && event.key === "Escape") closeTranslator();
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        scheduleTranslation(true);
+      }
+    });
+    requestAnimationFrame(() => {
+      resizeTranslatorPanes();
+      input.focus();
+    });
+  }
+
+  async function translateTypedText() {
+    const input = translatorShadow?.querySelector<HTMLTextAreaElement>(".translator-input");
+    const output = translatorShadow?.querySelector<HTMLElement>(".translator-output");
+    const status = translatorShadow?.querySelector<HTMLElement>(".translator-status");
+    const source = translatorShadow?.querySelector<HTMLSelectElement>(".source-language");
+    const target = translatorShadow?.querySelector<HTMLSelectElement>(".target-language");
+    if (!input || !output || !status || !source || !target) return;
+    const text = input.value.trim();
+    const ownRequest = ++translatorRequest;
+    if (!text) {
+      output.textContent = "";
+      status.textContent = "";
+      status.classList.remove("error");
+      return;
+    }
+    output.classList.add("loading");
+    status.classList.remove("error");
+    status.textContent = "Переводим…";
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "translate-preview",
+        payload: {text, sentence: text, sourceLanguage: source.value, targetLanguage: target.value}
+      }) as TranslateResponse;
+      if (ownRequest !== translatorRequest || !translatorShadow) return;
+      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось получить перевод");
+      output.textContent = result.translation;
+      status.textContent = result.warning || "";
+    } catch (error) {
+      if (ownRequest !== translatorRequest || !translatorShadow) return;
+      output.textContent = "";
+      status.textContent = errorMessage(error, "Не удалось получить перевод");
+      status.classList.add("error");
+    } finally {
+      if (ownRequest === translatorRequest) output.classList.remove("loading");
+    }
+  }
+
+  function closeTranslator() {
+    clearTimeout(translatorTimer);
+    translatorRequest += 1;
+    translatorHost?.remove();
+    translatorHost = null;
+    translatorShadow = null;
+  }
+
+  async function copyToClipboard(value: string) {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return;
+      } catch (_error) {
+        // Fall back to the legacy copy command when page permissions deny the Clipboard API.
+      }
+    }
+    const field = document.createElement("textarea");
+    field.value = value;
+    field.style.cssText = "position:fixed;left:-9999px;top:-9999px";
+    document.documentElement.append(field);
+    field.select();
+    const copied = document.execCommand("copy");
+    field.remove();
+    if (!copied) throw new Error("Clipboard access denied");
   }
 
   function handleActivationKeydown(event: KeyboardEvent) {
@@ -1063,6 +1293,42 @@ import {
 
   function isCurrentInstance() {
     return document.documentElement.getAttribute(INSTANCE_ATTRIBUTE) === instanceId;
+  }
+
+  function translatorStyles() {
+    return `
+      :host { color-scheme: light; }
+      * { box-sizing: border-box; }
+      button, select, textarea { font: inherit; }
+      .backdrop { position: fixed; inset: 0; display: grid; padding: 24px; place-items: center; background: rgba(15,23,42,.28); font: 14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .translator { display: flex; width: min(780px,100%); max-height: calc(100vh - 48px); overflow: hidden; flex-direction: column; border: 1px solid rgba(15,23,42,.1); border-radius: 16px; background: #fff; box-shadow: 0 24px 70px rgba(15,23,42,.3); color: #172033; }
+      header { position: relative; display: flex; height: 54px; flex: none; align-items: center; justify-content: space-between; padding: 0 16px 0 20px; border-bottom: 1px solid #e8ecf2; cursor: grab; touch-action: none; user-select: none; }
+      .translator.dragging header { cursor: grabbing; }
+      header strong { font-size: 16px; }
+      .drag-handle { position: absolute; top: 50%; left: 50%; display: grid; width: 34px; height: 26px; place-items: center; transform: translate(-50%,-50%); color: #9aa5b5; pointer-events: none; }
+      .drag-handle svg { width: 22px; height: 15px; fill: currentColor; }
+      .close { display: grid; width: 34px; height: 34px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #6f7b8c; cursor: pointer; font-size: 24px; }
+      .close:hover { background: #f1f4f8; color: #273245; }
+      .languages { display: grid; grid-template-columns: 1fr 38px 1fr; flex: none; gap: 10px; padding: 14px 16px; border-bottom: 1px solid #e8ecf2; background: #fbfcfe; }
+      select { appearance: none; min-width: 0; height: 38px; padding: 0 40px 0 12px; border: 1px solid #d8dee8; border-radius: 9px; outline: none; background-color: #fff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%237b8799' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-position: right 14px center; background-repeat: no-repeat; background-size: 12px 8px; color: #344054; }
+      select:focus, textarea:focus { border-color: #6f8ff0; box-shadow: 0 0 0 3px rgba(49,91,232,.1); }
+      .swap { border: 0; border-radius: 9px; background: #edf2ff; color: #315be8; cursor: pointer; font-size: 19px; }
+      .panes { display: grid; grid-template-columns: 1fr 1fr; height: 250px; min-height: 0; overflow: hidden; flex: 0 1 auto; }
+      .translator-pane { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; }
+      .translator-input, .translator-output { width: 100%; height: 100%; min-height: 0; padding: 18px; border: 0; background: #fff; color: #172033; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
+      .translator-input { padding-bottom: 52px; overflow-y: auto; resize: none; outline: none; }
+      .translator-output { padding-bottom: 52px; overflow-y: auto; border-left: 1px solid #e8ecf2; background: #fafbfe; }
+      .translator-output:empty::before { color: #9aa3b1; content: attr(data-placeholder); }
+      .translator-output.loading { color: #8792a4; }
+      .copy { position: absolute; right: 12px; bottom: 12px; display: grid; width: 38px; height: 38px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #667386; cursor: pointer; font-size: 22px; }
+      .copy-input { background: #fff; }
+      .copy-output { background: #fafbfe; }
+      .copy:hover { color: #315be8; }
+      .copy svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .translator-status { min-height: 35px; flex: none; padding: 8px 18px; border-top: 1px solid #e8ecf2; color: #8792a4; font-size: 12px; }
+      .translator-status.error { color: #b42318; }
+      @media (max-width: 620px) { .backdrop { padding: 12px; } .panes { grid-template-columns: 1fr; height: auto !important; max-height: calc(100vh - 190px); overflow-y: auto; } .translator-input, .translator-output { min-height: 150px; } .translator-output { border-top: 1px solid #e8ecf2; border-left: 0; } }
+    `;
   }
 
   function modalStyles() {
