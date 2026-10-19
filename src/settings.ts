@@ -16,8 +16,13 @@ export interface ExtensionSettings {
   historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
   activationShortcut: ActivationShortcut
+  speechRate: number
   targetLanguage: string
 }
+
+export const MIN_SPEECH_RATE = 0.3;
+export const MAX_SPEECH_RATE = 2;
+export const SPEECH_RATE_STEP = 0.1;
 
 export const TRANSLATION_LANGUAGES = [
   ["ru", "Русский"], ["en", "Английский"], ["de", "Немецкий"], ["fr", "Французский"],
@@ -41,6 +46,7 @@ export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
+  speechRate: 1,
   targetLanguage: "ru",
   activationShortcut: {
     alt: false,
@@ -81,10 +87,17 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
+    speechRate: normalizeSpeechRate(settings.speechRate),
     targetLanguage: TRANSLATION_LANGUAGES.some(([code]) => code === settings.targetLanguage)
       ? String(settings.targetLanguage)
       : defaultSettings.targetLanguage
   };
+}
+
+export function normalizeSpeechRate(value: unknown) {
+  const rate = typeof value === "number" && Number.isFinite(value) ? value : defaultSettings.speechRate;
+  const clamped = Math.max(MIN_SPEECH_RATE, Math.min(MAX_SPEECH_RATE, rate));
+  return Math.round(clamped / SPEECH_RATE_STEP) * SPEECH_RATE_STEP;
 }
 
 export function shortcutFromKeyboardEvent(event: KeyboardEvent): ActivationShortcut | null {

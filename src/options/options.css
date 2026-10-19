@@ -402,6 +402,49 @@ h1 {
   opacity: .55;
 }
 
+.stepper {
+  display: grid;
+  grid-template-columns: 42px 70px 42px;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid #d8dee8;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.stepper button,
+.stepper output {
+  display: grid;
+  min-height: 42px;
+  place-items: center;
+}
+
+.stepper button {
+  background: #fff;
+  color: #315be8;
+  cursor: pointer;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.stepper button:hover:not(:disabled) {
+  background: #f2f5ff;
+}
+
+.stepper button:disabled {
+  color: #b8c0cc;
+  cursor: default;
+}
+
+.stepper output {
+  border-right: 1px solid #e4e8ef;
+  border-left: 1px solid #e4e8ef;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 600;
+  user-select: none;
+}
+
 .settings-error {
   padding: 0 28px 20px;
   color: #c43d56;
