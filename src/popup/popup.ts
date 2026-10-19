@@ -25,9 +25,11 @@ const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
 
-clearButton.append(createTrashIcon());
-settingsButton.append(createSettingsIcon());
-document.addEventListener("DOMContentLoaded", loadRecords);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => void loadRecords(), {once: true});
+} else {
+  void loadRecords();
+}
 clearButton.addEventListener("click", clearRecords);
 settingsButton.addEventListener("click", () => void extensionApi.runtime.openOptionsPage());
 historyButton.addEventListener("click", () => void openHistory());
@@ -44,6 +46,8 @@ async function loadRecords() {
     records = await getTranslationRecords();
     render();
   } catch (error) {
+    records = [];
+    render();
     showNotice(errorMessage(error, "Ошибка загрузки"));
   }
 }
@@ -154,23 +158,6 @@ function createTrashIcon() {
     "M19 6l-1 14H6L5 6",
     "M10 11v5",
     "M14 11v5"
-  ];
-  paths.forEach((data) => {
-    const path = document.createElementNS(namespace, "path");
-    path.setAttribute("d", data);
-    icon.append(path);
-  });
-  return icon;
-}
-
-function createSettingsIcon() {
-  const namespace = "http://www.w3.org/2000/svg";
-  const icon = document.createElementNS(namespace, "svg");
-  icon.setAttribute("viewBox", "0 0 24 24");
-  icon.setAttribute("aria-hidden", "true");
-  const paths = [
-    "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z",
-    "M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1.4 1.6H9.55A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.6-1.4V9.55A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1.4-1.6h4.05A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 1.6 1.4v4.05A1.7 1.7 0 0 0 19.4 15Z"
   ];
   paths.forEach((data) => {
     const path = document.createElementNS(namespace, "path");

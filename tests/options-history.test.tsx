@@ -9,8 +9,8 @@ describe("options history and export", () => {
     vi.resetModules();
     const {browserMock, storageData} = await import("./mocks/browser");
     storageData[SETTINGS_KEY] = structuredClone(defaultSettings);
+    storageData.translationRecords = [structuredClone(record)];
     browserMock.runtime.sendMessage.mockImplementation(async (message) => {
-      if (message.type === "get-records") return {ok: true, records: [record]};
       return {ok: true};
     });
     document.body.innerHTML = '<div id="root"></div>';

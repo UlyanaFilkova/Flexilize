@@ -17,14 +17,16 @@ describe("options page", () => {
     browserMock.runtime.sendMessage.mockResolvedValue({ok: true, records: []});
     history.replaceState(null, "", "#settings");
     await import("../src/options/options");
-    await screen.findByRole("heading", {name: "Настройки"});
+    await screen.findByRole("heading", {name: "Горячие клавиши"});
   });
 
-  it("shows all navigation sections", () => {
+  it("shows all navigation sections and the selected section title", async () => {
     expect(screen.getByRole("button", {name: /Горячие клавиши/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Перевод/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Звук/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Сохранение/})).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
+    expect(screen.getByRole("heading", {name: "Звук"})).toBeTruthy();
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {
