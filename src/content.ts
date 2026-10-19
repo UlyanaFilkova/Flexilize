@@ -167,11 +167,48 @@ import {
 
     const backdrop = translatorShadow.querySelector<HTMLElement>(".backdrop")!;
     const dialog = translatorShadow.querySelector<HTMLElement>(".translator")!;
+    const header = translatorShadow.querySelector<HTMLElement>("header")!;
     const input = translatorShadow.querySelector<HTMLTextAreaElement>(".translator-input")!;
     const source = translatorShadow.querySelector<HTMLSelectElement>(".source-language")!;
     const target = translatorShadow.querySelector<HTMLSelectElement>(".target-language")!;
     source.value = activationSettings.translatorSourceLanguage;
     target.value = activationSettings.translatorTargetLanguage;
+
+    let offsetX = 0;
+    let offsetY = 0;
+    header.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 || (event.target as Element).closest("button")) return;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const startOffsetX = offsetX;
+      const startOffsetY = offsetY;
+      const startRect = dialog.getBoundingClientRect();
+      header.setPointerCapture(event.pointerId);
+      dialog.classList.add("dragging");
+
+      const move = (moveEvent: PointerEvent) => {
+        const deltaX = Math.max(8 - startRect.left, Math.min(
+          moveEvent.clientX - startX,
+          window.innerWidth - 8 - startRect.right
+        ));
+        const deltaY = Math.max(8 - startRect.top, Math.min(
+          moveEvent.clientY - startY,
+          window.innerHeight - 8 - startRect.bottom
+        ));
+        offsetX = startOffsetX + deltaX;
+        offsetY = startOffsetY + deltaY;
+        dialog.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      };
+      const stop = () => {
+        dialog.classList.remove("dragging");
+        header.removeEventListener("pointermove", move);
+        header.removeEventListener("pointerup", stop);
+        header.removeEventListener("pointercancel", stop);
+      };
+      header.addEventListener("pointermove", move);
+      header.addEventListener("pointerup", stop);
+      header.addEventListener("pointercancel", stop);
+    });
 
     const scheduleTranslation = (immediate = false) => {
       clearTimeout(translatorTimer);
@@ -1202,7 +1239,8 @@ import {
       button, select, textarea { font: inherit; }
       .backdrop { position: fixed; inset: 0; display: grid; padding: 24px; place-items: center; background: rgba(15,23,42,.28); font: 14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
       .translator { width: min(780px,100%); overflow: hidden; border: 1px solid rgba(15,23,42,.1); border-radius: 16px; background: #fff; box-shadow: 0 24px 70px rgba(15,23,42,.3); color: #172033; }
-      header { display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 16px 0 20px; border-bottom: 1px solid #e8ecf2; }
+      header { display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 16px 0 20px; border-bottom: 1px solid #e8ecf2; cursor: grab; touch-action: none; user-select: none; }
+      .translator.dragging header { cursor: grabbing; }
       header strong { font-size: 16px; }
       .close { display: grid; width: 34px; height: 34px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #6f7b8c; cursor: pointer; font-size: 24px; }
       .close:hover { background: #f1f4f8; color: #273245; }
