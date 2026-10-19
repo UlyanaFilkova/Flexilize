@@ -182,6 +182,7 @@ a:focus-visible {
 
 .content {
   width: 100%;
+  min-width: 0;
   max-width: 1240px;
   padding: 62px clamp(42px, 6vw, 92px) 80px;
 }
@@ -543,13 +544,17 @@ h1 {
 
 .history-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
+  min-width: 0;
   margin: 38px 0 0;
   padding: 0;
   list-style: none;
 }
 
 .history-record {
+  min-width: 0;
+  max-width: 100%;
   padding: 20px 22px 16px;
   border: 1px solid #e4e8ef;
   border-radius: 16px;
@@ -559,6 +564,7 @@ h1 {
 
 .record-pair {
   display: grid;
+  min-width: 0;
   gap: 7px;
   font-size: 16px;
 }
@@ -567,6 +573,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
+  min-width: 0;
   gap: 7px 18px;
 }
 
@@ -597,15 +604,17 @@ h1 {
   margin-left: auto;
   color: #69758a;
   font: 13px/1.4 Georgia, serif;
+  overflow-wrap: anywhere;
   text-align: right;
-  white-space: nowrap;
 }
 
 .record-sentence {
+  min-width: 0;
   margin-top: 13px;
   color: #707c8e;
   font-size: 13px;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .record-meta {
@@ -619,6 +628,8 @@ h1 {
 }
 
 .record-meta a {
+  min-width: 0;
+  max-width: 100%;
   justify-self: start;
   overflow: hidden;
   color: inherit;
