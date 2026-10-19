@@ -21,6 +21,7 @@ import {
 (() => {
   const extensionApi = browser;
   const HOST_ID = "context-translator-extension-host";
+  const TRANSLATOR_HOST_ID = "context-translator-input-host";
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
@@ -46,10 +47,15 @@ import {
   // created by the previous content-script instance can survive that reload.
   // Remove its inert modal before installing the new instance.
   document.getElementById(HOST_ID)?.remove();
+  document.getElementById(TRANSLATOR_HOST_ID)?.remove();
   document.documentElement.setAttribute(INSTANCE_ATTRIBUTE, instanceId);
 
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
+  let translatorHost: HTMLDivElement | null = null;
+  let translatorShadow: ShadowRoot | null = null;
+  let translatorTimer: ReturnType<typeof setTimeout> | undefined;
+  let translatorRequest = 0;
   let currentText = "";
   let currentSentence = "";
   let currentSourceLanguage = "en";
@@ -74,6 +80,7 @@ import {
   const deferredManualSaveRequests = new Set<number>();
 
   document.addEventListener("mouseup", scheduleSelection, true);
+  document.addEventListener("keydown", handleTranslatorKeydown, true);
   document.addEventListener("keydown", handleActivationKeydown, true);
   document.addEventListener("keyup", (event) => {
     const key = typeof event.key === "string" ? event.key : "";
@@ -115,6 +122,129 @@ import {
     if (!isCurrentInstance() || !activationSettingsReady || activationSettings.hotkeyActivationEnabled) return;
     clearTimeout(selectionTimer);
     selectionTimer = setTimeout(processSelection, 60);
+  }
+
+  function handleTranslatorKeydown(event: KeyboardEvent) {
+    if (!isCurrentInstance() || !activationSettingsReady || event.repeat
+      || !matchesShortcut(event, activationSettings.translatorShortcut)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (translatorHost) {
+      closeTranslator();
+    } else {
+      showTranslator();
+    }
+  }
+
+  function showTranslator() {
+    closeModal();
+    translatorHost = document.createElement("div");
+    translatorHost.id = TRANSLATOR_HOST_ID;
+    translatorHost.style.cssText = "all:initial;position:fixed;z-index:2147483647;inset:0";
+    translatorShadow = translatorHost.attachShadow({mode: "closed"});
+    document.documentElement.append(translatorHost);
+
+    const languageOptions = SOURCE_LANGUAGES
+      .map(([code, name]) => `<option value="${code}">${name}</option>`)
+      .join("");
+    translatorShadow.innerHTML = `
+      <style>${translatorStyles()}</style>
+      <div class="backdrop">
+        <section class="translator" role="dialog" aria-modal="true" aria-label="Переводчик">
+          <header><strong>Переводчик</strong><button class="close" type="button" aria-label="Закрыть">×</button></header>
+          <div class="languages">
+            <select class="source-language" aria-label="Исходный язык">${languageOptions}</select>
+            <button class="swap" type="button" aria-label="Поменять языки местами" title="Поменять языки местами">⇄</button>
+            <select class="target-language" aria-label="Язык перевода">${languageOptions}</select>
+          </div>
+          <div class="panes">
+            <textarea class="translator-input" maxlength="1000" placeholder="Введите текст" aria-label="Текст для перевода"></textarea>
+            <div class="translator-output" role="status" aria-live="polite" data-placeholder="Перевод"></div>
+          </div>
+          <div class="translator-status"></div>
+        </section>
+      </div>`;
+
+    const backdrop = translatorShadow.querySelector<HTMLElement>(".backdrop")!;
+    const dialog = translatorShadow.querySelector<HTMLElement>(".translator")!;
+    const input = translatorShadow.querySelector<HTMLTextAreaElement>(".translator-input")!;
+    const source = translatorShadow.querySelector<HTMLSelectElement>(".source-language")!;
+    const target = translatorShadow.querySelector<HTMLSelectElement>(".target-language")!;
+    source.value = activationSettings.translatorSourceLanguage;
+    target.value = activationSettings.translatorTargetLanguage;
+
+    const scheduleTranslation = (immediate = false) => {
+      clearTimeout(translatorTimer);
+      translatorTimer = setTimeout(() => void translateTypedText(), immediate ? 0 : 350);
+    };
+    backdrop.addEventListener("pointerdown", (event) => {
+      if (!event.composedPath().includes(dialog)) closeTranslator();
+    });
+    translatorShadow.querySelector(".close")?.addEventListener("click", closeTranslator);
+    translatorShadow.querySelector(".swap")?.addEventListener("click", () => {
+      const previousSource = source.value;
+      source.value = target.value;
+      target.value = previousSource;
+      scheduleTranslation(true);
+    });
+    source.addEventListener("change", () => scheduleTranslation(true));
+    target.addEventListener("change", () => scheduleTranslation(true));
+    input.addEventListener("input", () => scheduleTranslation());
+    translatorShadow.addEventListener("keydown", (event) => {
+      if (event instanceof KeyboardEvent && event.key === "Escape") closeTranslator();
+    });
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        scheduleTranslation(true);
+      }
+    });
+    requestAnimationFrame(() => input.focus());
+  }
+
+  async function translateTypedText() {
+    const input = translatorShadow?.querySelector<HTMLTextAreaElement>(".translator-input");
+    const output = translatorShadow?.querySelector<HTMLElement>(".translator-output");
+    const status = translatorShadow?.querySelector<HTMLElement>(".translator-status");
+    const source = translatorShadow?.querySelector<HTMLSelectElement>(".source-language");
+    const target = translatorShadow?.querySelector<HTMLSelectElement>(".target-language");
+    if (!input || !output || !status || !source || !target) return;
+    const text = input.value.trim();
+    const ownRequest = ++translatorRequest;
+    if (!text) {
+      output.textContent = "";
+      status.textContent = "";
+      status.classList.remove("error");
+      return;
+    }
+    output.classList.add("loading");
+    status.classList.remove("error");
+    status.textContent = "Переводим…";
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "translate-preview",
+        payload: {text, sentence: text, sourceLanguage: source.value, targetLanguage: target.value}
+      }) as TranslateResponse;
+      if (ownRequest !== translatorRequest || !translatorShadow) return;
+      if (!result?.ok || !result.translation) throw new Error(result?.error || "Не удалось получить перевод");
+      output.textContent = result.translation;
+      status.textContent = result.warning || "";
+    } catch (error) {
+      if (ownRequest !== translatorRequest || !translatorShadow) return;
+      output.textContent = "";
+      status.textContent = errorMessage(error, "Не удалось получить перевод");
+      status.classList.add("error");
+    } finally {
+      if (ownRequest === translatorRequest) output.classList.remove("loading");
+    }
+  }
+
+  function closeTranslator() {
+    clearTimeout(translatorTimer);
+    translatorRequest += 1;
+    translatorHost?.remove();
+    translatorHost = null;
+    translatorShadow = null;
   }
 
   function handleActivationKeydown(event: KeyboardEvent) {
@@ -1063,6 +1193,33 @@ import {
 
   function isCurrentInstance() {
     return document.documentElement.getAttribute(INSTANCE_ATTRIBUTE) === instanceId;
+  }
+
+  function translatorStyles() {
+    return `
+      :host { color-scheme: light; }
+      * { box-sizing: border-box; }
+      button, select, textarea { font: inherit; }
+      .backdrop { position: fixed; inset: 0; display: grid; padding: 24px; place-items: center; background: rgba(15,23,42,.28); font: 14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .translator { width: min(780px,100%); overflow: hidden; border: 1px solid rgba(15,23,42,.1); border-radius: 16px; background: #fff; box-shadow: 0 24px 70px rgba(15,23,42,.3); color: #172033; }
+      header { display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 16px 0 20px; border-bottom: 1px solid #e8ecf2; }
+      header strong { font-size: 16px; }
+      .close { display: grid; width: 34px; height: 34px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #6f7b8c; cursor: pointer; font-size: 24px; }
+      .close:hover { background: #f1f4f8; color: #273245; }
+      .languages { display: grid; grid-template-columns: 1fr 38px 1fr; gap: 10px; padding: 14px 16px; border-bottom: 1px solid #e8ecf2; background: #fbfcfe; }
+      select { min-width: 0; height: 38px; padding: 0 10px; border: 1px solid #d8dee8; border-radius: 9px; outline: none; background: #fff; color: #344054; }
+      select:focus, textarea:focus { border-color: #6f8ff0; box-shadow: 0 0 0 3px rgba(49,91,232,.1); }
+      .swap { border: 0; border-radius: 9px; background: #edf2ff; color: #315be8; cursor: pointer; font-size: 19px; }
+      .panes { display: grid; grid-template-columns: 1fr 1fr; min-height: 250px; }
+      .translator-input, .translator-output { width: 100%; min-height: 250px; padding: 18px; border: 0; background: #fff; color: #172033; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
+      .translator-input { resize: vertical; outline: none; }
+      .translator-output { border-left: 1px solid #e8ecf2; background: #fafbfe; }
+      .translator-output:empty::before { color: #9aa3b1; content: attr(data-placeholder); }
+      .translator-output.loading { color: #8792a4; }
+      .translator-status { min-height: 35px; padding: 8px 18px; border-top: 1px solid #e8ecf2; color: #8792a4; font-size: 12px; }
+      .translator-status.error { color: #b42318; }
+      @media (max-width: 620px) { .backdrop { padding: 12px; } .panes { grid-template-columns: 1fr; } .translator-input, .translator-output { min-height: 150px; } .translator-output { border-top: 1px solid #e8ecf2; border-left: 0; } }
+    `;
   }
 
   function modalStyles() {

@@ -20,6 +20,9 @@ export interface ExtensionSettings {
   transcriptionEnabled: boolean
   speechRate: number
   targetLanguage: string
+  translatorShortcut: ActivationShortcut
+  translatorSourceLanguage: string
+  translatorTargetLanguage: string
 }
 
 export const MIN_SPEECH_RATE = 0.3;
@@ -52,11 +55,21 @@ export const defaultSettings: ExtensionSettings = {
   transcriptionEnabled: true,
   speechRate: 1,
   targetLanguage: "ru",
+  translatorSourceLanguage: "ru",
+  translatorTargetLanguage: "en",
   activationShortcut: {
     alt: false,
     code: "BracketRight",
     ctrl: true,
     key: "]",
+    meta: false,
+    shift: true
+  },
+  translatorShortcut: {
+    alt: false,
+    code: "Quote",
+    ctrl: true,
+    key: "'",
     meta: false,
     shift: true
   }
@@ -86,6 +99,17 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     meta: typeof shortcut.meta === "boolean" ? shortcut.meta : defaultSettings.activationShortcut.meta,
     shift: typeof shortcut.shift === "boolean" ? shortcut.shift : defaultSettings.activationShortcut.shift
   };
+  const storedTranslatorShortcut = settings.translatorShortcut && typeof settings.translatorShortcut === "object"
+    ? settings.translatorShortcut as Partial<ActivationShortcut>
+    : {};
+  const translatorShortcut: ActivationShortcut = {
+    alt: typeof storedTranslatorShortcut.alt === "boolean" ? storedTranslatorShortcut.alt : defaultSettings.translatorShortcut.alt,
+    code: typeof storedTranslatorShortcut.code === "string" && storedTranslatorShortcut.code ? storedTranslatorShortcut.code : defaultSettings.translatorShortcut.code,
+    ctrl: typeof storedTranslatorShortcut.ctrl === "boolean" ? storedTranslatorShortcut.ctrl : defaultSettings.translatorShortcut.ctrl,
+    key: typeof storedTranslatorShortcut.key === "string" && storedTranslatorShortcut.key ? storedTranslatorShortcut.key : defaultSettings.translatorShortcut.key,
+    meta: typeof storedTranslatorShortcut.meta === "boolean" ? storedTranslatorShortcut.meta : defaultSettings.translatorShortcut.meta,
+    shift: typeof storedTranslatorShortcut.shift === "boolean" ? storedTranslatorShortcut.shift : defaultSettings.translatorShortcut.shift
+  };
   return {
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
@@ -96,8 +120,15 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     speechRate: normalizeSpeechRate(settings.speechRate),
     targetLanguage: TRANSLATION_LANGUAGES.some(([code]) => code === settings.targetLanguage)
       ? String(settings.targetLanguage)
-      : defaultSettings.targetLanguage
+      : defaultSettings.targetLanguage,
+    translatorShortcut: hasModifier(translatorShortcut) ? translatorShortcut : defaultSettings.translatorShortcut,
+    translatorSourceLanguage: normalizeTranslationLanguage(settings.translatorSourceLanguage, defaultSettings.translatorSourceLanguage),
+    translatorTargetLanguage: normalizeTranslationLanguage(settings.translatorTargetLanguage, defaultSettings.translatorTargetLanguage)
   };
+}
+
+function normalizeTranslationLanguage(value: unknown, fallback: string) {
+  return TRANSLATION_LANGUAGES.some(([code]) => code === value) ? String(value) : fallback;
 }
 
 export function normalizeSpeechRate(value: unknown) {

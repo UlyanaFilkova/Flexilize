@@ -293,16 +293,16 @@ function GeneralSettings() {
 
 function TranslationSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
+  const [recording, setRecording] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
   }, []);
 
-  const setTargetLanguage = async (targetLanguage: string) => {
+  const persist = async (next: ExtensionSettings) => {
     if (!settings) return;
     const previous = settings;
-    const next = {...settings, targetLanguage};
     setSettings(next);
     setError("");
     try {
@@ -312,6 +312,29 @@ function TranslationSettings() {
       setError("Не удалось сохранить настройку");
     }
   };
+
+  const captureTranslatorShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!recording || !settings) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === "Escape") {
+      setRecording(false);
+      setError("");
+      return;
+    }
+    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
+    if (!shortcut) return;
+    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
+      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
+      return;
+    }
+    setRecording(false);
+    void persist({...settings, translatorShortcut: shortcut});
+  };
+
+  const languageOptions = [...TRANSLATION_LANGUAGES]
+    .sort((left, right) => left[1].localeCompare(right[1], "ru"))
+    .map(([code, label]) => <option key={code} value={code}>{label}</option>);
 
   return (
     <section className="settings-panel" aria-label="Настройки перевода">
@@ -325,12 +348,44 @@ function TranslationSettings() {
           aria-label="Язык перевода"
           value={settings?.targetLanguage || "ru"}
           disabled={!settings}
-          onChange={(event) => void setTargetLanguage(event.target.value)}
+          onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
         >
-          {[...TRANSLATION_LANGUAGES]
-            .sort((left, right) => left[1].localeCompare(right[1], "ru"))
-            .map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+          {languageOptions}
         </select>
+      </div>
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Исходный язык переводчика</h2>
+          <p>Язык текста при открытии отдельного окна переводчика.</p>
+        </div>
+        <select className="setting-select" aria-label="Исходный язык переводчика" value={settings?.translatorSourceLanguage || "en"} disabled={!settings} onChange={(event) => settings && void persist({...settings, translatorSourceLanguage: event.target.value})}>
+          {languageOptions}
+        </select>
+      </div>
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Язык перевода в переводчике</h2>
+          <p>Язык результата при открытии отдельного окна переводчика.</p>
+        </div>
+        <select className="setting-select" aria-label="Язык перевода в переводчике" value={settings?.translatorTargetLanguage || "ru"} disabled={!settings} onChange={(event) => settings && void persist({...settings, translatorTargetLanguage: event.target.value})}>
+          {languageOptions}
+        </select>
+      </div>
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Горячая клавиша переводчика</h2>
+          <p>Открывает отдельное окно для ввода и перевода текста.</p>
+        </div>
+        <button
+          className={recording ? "hotkey-button recording" : "hotkey-button"}
+          type="button"
+          disabled={!settings}
+          onClick={() => { setRecording(true); setError(""); }}
+          onBlur={() => setRecording(false)}
+          onKeyDown={captureTranslatorShortcut}
+        >
+          {recording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
+        </button>
       </div>
       {error && <div className="settings-error" role="alert">{error}</div>}
     </section>
