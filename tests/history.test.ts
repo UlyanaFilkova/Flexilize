@@ -18,9 +18,14 @@ describe("history API", () => {
   beforeEach(() => browserMock.runtime.sendMessage.mockReset());
 
   it("loads records", async () => {
-    browserMock.runtime.sendMessage.mockResolvedValue({ok: true, records: [record]});
+    await browserMock.storage.local.set({translationRecords: [record]});
     await expect(getTranslationRecords()).resolves.toEqual([record]);
-    expect(browserMock.runtime.sendMessage).toHaveBeenCalledWith({type: "get-records"});
+    expect(browserMock.runtime.sendMessage).not.toHaveBeenCalled();
+  });
+
+  it("does not wait for the background when loading an empty history", async () => {
+    await expect(getTranslationRecords()).resolves.toEqual([]);
+    expect(browserMock.runtime.sendMessage).not.toHaveBeenCalled();
   });
 
   it("sends exact mutations", async () => {
@@ -39,7 +44,7 @@ describe("history API", () => {
 
   it("uses backend and fallback errors", async () => {
     browserMock.runtime.sendMessage.mockResolvedValueOnce({ok: false, error: "Нет доступа"});
-    await expect(getTranslationRecords()).rejects.toThrow("Нет доступа");
+    await expect(deleteTranslationRecord(record)).rejects.toThrow("Нет доступа");
     browserMock.runtime.sendMessage.mockResolvedValueOnce(undefined);
     await expect(clearTranslationRecords()).rejects.toThrow("Не удалось очистить список");
   });

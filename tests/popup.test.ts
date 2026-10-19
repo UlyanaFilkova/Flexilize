@@ -15,8 +15,8 @@ describe("popup", () => {
     vi.resetModules();
     browserMock = (await import("./mocks/browser")).browserMock;
     document.body.innerHTML = popupMarkup;
+    await browserMock.storage.local.set({translationRecords: [record]});
     browserMock.runtime.sendMessage.mockImplementation(async (message) => {
-      if (message.type === "get-records") return {ok: true, records: [record]};
       return {ok: true};
     });
     vi.spyOn(window, "close").mockImplementation(() => undefined);

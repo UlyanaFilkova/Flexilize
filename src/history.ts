@@ -1,6 +1,8 @@
 import browser from "webextension-polyfill";
-import {exportTranslationRecords, type ExportFormat} from "./export";
+import type {ExportFormat} from "./export";
 import type {RecordsResponse, TranslationRecord} from "./types";
+
+const RECORDS_KEY = "translationRecords";
 
 export const exportFormats: ReadonlyArray<{format: ExportFormat; label: string}> = [
   {format: "json", label: "JSON"},
@@ -16,7 +18,7 @@ export const exportFormats: ReadonlyArray<{format: ExportFormat; label: string}>
 ];
 
 export async function getTranslationRecords() {
-  return recordsFrom(await browser.runtime.sendMessage({type: "get-records"}), "Не удалось загрузить записи");
+  return getStoredTranslationRecords();
 }
 
 export async function deleteTranslationRecord(record: TranslationRecord) {
@@ -48,6 +50,7 @@ export async function clearTranslationRecords() {
 }
 
 export async function downloadTranslationRecords(records: TranslationRecord[], format: ExportFormat) {
+  const {exportTranslationRecords} = await import("./export");
   await exportTranslationRecords(records, format);
 }
 
@@ -81,4 +84,9 @@ function recordsFrom(value: unknown, fallback: string) {
   const result = value as RecordsResponse;
   if (!result?.ok) throw new Error(result?.error || fallback);
   return result.records || [];
+}
+
+async function getStoredTranslationRecords(): Promise<TranslationRecord[]> {
+  const stored = await browser.storage.local.get(RECORDS_KEY);
+  return Array.isArray(stored?.[RECORDS_KEY]) ? stored[RECORDS_KEY] as TranslationRecord[] : [];
 }
