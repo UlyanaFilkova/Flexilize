@@ -337,23 +337,31 @@ function TranslationSettings() {
     .map(([code, label]) => <option key={code} value={code}>{label}</option>);
 
   return (
-    <section className="settings-panel" aria-label="Настройки перевода">
-      <div className="setting-row">
-        <div className="setting-copy">
-          <h2>Язык перевода</h2>
-          <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+    <>
+      <div className="settings-group">
+        <h2 className="settings-group-title">Перевод выделенного текста</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Перевод выделенного текста">
+        <div className="setting-row">
+          <div className="setting-copy">
+            <h2>Язык перевода выделенного текста</h2>
+            <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+          </div>
+          <select
+            className="setting-select"
+            aria-label="Язык перевода"
+            value={settings?.targetLanguage || "ru"}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
+          >
+            {languageOptions}
+          </select>
         </div>
-        <select
-          className="setting-select"
-          aria-label="Язык перевода"
-          value={settings?.targetLanguage || "ru"}
-          disabled={!settings}
-          onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
-        >
-          {languageOptions}
-        </select>
+        </section>
       </div>
-      <div className="setting-row setting-row-secondary">
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Переводчик</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
+        <div className="setting-row">
         <div className="setting-copy">
           <h2>Исходный язык переводчика</h2>
           <p>Язык текста при открытии отдельного окна переводчика.</p>
@@ -362,7 +370,7 @@ function TranslationSettings() {
           {languageOptions}
         </select>
       </div>
-      <div className="setting-row setting-row-secondary">
+        <div className="setting-row setting-row-secondary">
         <div className="setting-copy">
           <h2>Язык перевода в переводчике</h2>
           <p>Язык результата при открытии отдельного окна переводчика.</p>
@@ -371,7 +379,7 @@ function TranslationSettings() {
           {languageOptions}
         </select>
       </div>
-      <div className="setting-row setting-row-secondary">
+        <div className="setting-row setting-row-secondary">
         <div className="setting-copy">
           <h2>Горячая клавиша переводчика</h2>
           <p>Открывает отдельное окно для ввода и перевода текста.</p>
@@ -387,8 +395,10 @@ function TranslationSettings() {
           {recording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
         </button>
       </div>
-      {error && <div className="settings-error" role="alert">{error}</div>}
-    </section>
+        {error && <div className="settings-error" role="alert">{error}</div>}
+        </section>
+      </div>
+    </>
   );
 }
 
@@ -418,7 +428,7 @@ function SavingSettings() {
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Автоматическое сохранение</h2>
-          <p>Сохранять каждый выполненный перевод в истории автоматически.</p>
+          <p>Сохранять каждый выполненный перевод в истории автоматически.<br/>Если выключено, то сохранение происходит только по нажатию кнопки "Сохранить".</p>
         </div>
         <label className="switch">
           <input
