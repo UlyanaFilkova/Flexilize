@@ -457,7 +457,7 @@ function SoundSettings() {
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Транскрипция</h2>
-          <p>Показывать и загружать транскрипцию выделенного текста.</p>
+          <p>Показывать транскрипцию выделенного текста.</p>
         </div>
         <label className="switch">
           <input
@@ -473,7 +473,7 @@ function SoundSettings() {
       <div className="setting-row setting-row-secondary">
         <div className="setting-copy">
           <h2>Озвучка</h2>
-          <p>Показывать кнопку воспроизведения и загружать аудио для выделенного текста.</p>
+          <p>Показывать кнопку воспроизведения озвучки для выделенного текста.</p>
         </div>
         <label className="switch">
           <input
@@ -489,7 +489,7 @@ function SoundSettings() {
       <div className={`setting-row setting-row-secondary${settings?.speechEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.speechEnabled}>
         <div className="setting-copy">
           <h2>Скорость озвучки</h2>
-          <p>Настройте скорость воспроизведения озвученного текста.</p>
+          <p>Скорость воспроизведения озвученного текста.</p>
         </div>
         <div className="stepper" role="group" aria-label="Скорость озвучки">
           <button
