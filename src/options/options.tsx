@@ -19,8 +19,12 @@ import {MAX_HISTORY_RECORDS} from "../history-config";
 import {
   formatShortcut,
   getExtensionSettings,
+  MAX_SPEECH_RATE,
+  MIN_SPEECH_RATE,
+  normalizeSpeechRate,
   saveExtensionSettings,
   shortcutFromKeyboardEvent,
+  SPEECH_RATE_STEP,
   TRANSLATION_LANGUAGES,
   type ExtensionSettings
 } from "../settings";
@@ -40,6 +44,7 @@ const routeHashes: Record<Route, string> = {
 const settingsSidebarItems = [
   {id: "general", label: "Основные", icon: <SlidersIcon />},
   {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
+  {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
 ];
 
@@ -179,6 +184,8 @@ function App() {
                 ? <GeneralSettings />
                 : settingsSection === "translation"
                   ? <TranslationSettings />
+                : settingsSection === "sound"
+                  ? <SoundSettings />
                 : settingsSection === "saving"
                   ? <SavingSettings />
                   : <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>}
@@ -391,6 +398,60 @@ function SavingSettings() {
   );
 }
 
+function SoundSettings() {
+  const [settings, setSettings] = useState<ExtensionSettings | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
+  }, []);
+
+  const changeSpeechRate = async (direction: -1 | 1) => {
+    if (!settings) return;
+    const previous = settings;
+    const speechRate = normalizeSpeechRate(settings.speechRate + direction * SPEECH_RATE_STEP);
+    if (speechRate === settings.speechRate) return;
+    const next = {...settings, speechRate};
+    setSettings(next);
+    setError("");
+    try {
+      setSettings(await saveExtensionSettings(next));
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
+  const speechRate = settings?.speechRate ?? 1;
+
+  return (
+    <section className="settings-panel" aria-label="Настройки звука">
+      <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Скорость озвучки</h2>
+          <p>Настройте скорость воспроизведения озвученного текста.</p>
+        </div>
+        <div className="stepper" role="group" aria-label="Скорость озвучки">
+          <button
+            type="button"
+            aria-label="Уменьшить скорость озвучки"
+            disabled={!settings || speechRate <= MIN_SPEECH_RATE}
+            onClick={() => void changeSpeechRate(-1)}
+          >−</button>
+          <output aria-live="polite" aria-label={`Текущая скорость ${speechRate.toFixed(1)}`}>{speechRate.toFixed(1)}×</output>
+          <button
+            type="button"
+            aria-label="Увеличить скорость озвучки"
+            disabled={!settings || speechRate >= MAX_SPEECH_RATE}
+            onClick={() => void changeSpeechRate(1)}
+          >+</button>
+        </div>
+      </div>
+      {error && <div className="settings-error" role="alert">{error}</div>}
+    </section>
+  );
+}
+
 function HistoryView({records, loading, onClear, onDelete, onUpdate, onOpenExport}: {records: TranslationRecord[]; loading: boolean; onClear: () => void; onDelete: (record: TranslationRecord) => void; onUpdate: (original: TranslationRecord, updated: TranslationRecord) => Promise<void>; onOpenExport: () => void}) {
   return (
     <>
@@ -522,6 +583,7 @@ function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
 function LanguagesIcon() { return <Icon><path d="M4 5h9M8.5 3v2M6 9c1.6 2.3 3.6 4 6.2 5.1M11.5 5C10.4 9.4 7.9 12.5 4 14.2M14 20l3-8 3 8M15 17.5h4"/></Icon>; }
 function BookmarkIcon() { return <Icon><path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"/></Icon>; }
+function SoundIcon() { return <Icon><path d="M5 9v6h4l5 4V5L9 9H5Z"/><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11"/></Icon>; }
 function DownloadIcon() { return <Icon><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 20h16"/></Icon>; }
 function EditIcon() { return <Icon><path d="m4 16-.8 4.8L8 20l11-11-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></Icon>; }
 function TrashIcon() { return <Icon><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></Icon>; }

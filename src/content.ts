@@ -725,7 +725,7 @@ import {
     const voice = chooseVoice(locale);
     utterance.lang = voice?.lang || locale;
     utterance.voice = voice || null;
-    utterance.rate = 0.92;
+    utterance.rate = activationSettings.speechRate;
     utterance.pitch = 1;
     utterance.onstart = () => {
       if (ownSpeechRun !== speechRun) return;
@@ -819,11 +819,13 @@ import {
       decoded.forEach(({buffer, chunk}) => {
         const source = context.createBufferSource();
         source.buffer = buffer;
+        source.playbackRate.value = activationSettings.speechRate;
         source.connect(context.destination);
         source.start(scheduledTime);
         sources.push(source);
-        schedule.push({ chunk, startTime: scheduledTime, endTime: scheduledTime + buffer.duration });
-        scheduledTime += buffer.duration;
+        const playbackDuration = buffer.duration / activationSettings.speechRate;
+        schedule.push({ chunk, startTime: scheduledTime, endTime: scheduledTime + playbackDuration });
+        scheduledTime += playbackDuration;
       });
 
       speechLoading = false;
@@ -914,7 +916,7 @@ import {
   ) {
     stopSpeechProgressAnimation();
     const startedAt = performance.now();
-    const estimatedDuration = estimateSpeechDuration(spokenText);
+    const estimatedDuration = estimateSpeechDuration(spokenText, activationSettings.speechRate);
     const remainingCharacters = fullText.length - startPosition;
 
     const update = (now: number) => {
@@ -933,8 +935,8 @@ import {
     speechProgressFrame = null;
   }
 
-  function estimateSpeechDuration(value: string) {
-    const wordsPerMinute = 165 * 0.92;
+  function estimateSpeechDuration(value: string, speechRate: number) {
+    const wordsPerMinute = 165 * speechRate;
     return Math.max(1200, (wordCount(value) / wordsPerMinute) * 60_000);
   }
 
