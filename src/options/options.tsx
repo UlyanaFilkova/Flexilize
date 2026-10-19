@@ -43,7 +43,7 @@ const routeHashes: Record<Route, string> = {
 };
 
 const settingsSidebarItems = [
-  {id: "general", label: "Основные", icon: <SlidersIcon />},
+  {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
   {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
@@ -216,6 +216,7 @@ function PageHeading({title, description, action}: {title: string; description: 
 function GeneralSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [recording, setRecording] = useState(false);
+  const [translatorRecording, setTranslatorRecording] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -251,8 +252,30 @@ function GeneralSettings() {
     void persist({...settings, activationShortcut: shortcut});
   };
 
+  const captureTranslatorShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!translatorRecording || !settings) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === "Escape") {
+      setTranslatorRecording(false);
+      setError("");
+      return;
+    }
+    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
+    if (!shortcut) return;
+    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
+      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
+      return;
+    }
+    setTranslatorRecording(false);
+    void persist({...settings, translatorShortcut: shortcut});
+  };
+
   return (
-    <section className="settings-panel" aria-label="Основные настройки">
+    <>
+      <div className="settings-group">
+        <h2 className="settings-group-title">Перевод выделенного текста</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Горячие клавиши перевода выделенного текста">
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
@@ -286,14 +309,36 @@ function GeneralSettings() {
           {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
         </button>
       </div>
-      {error && <div className="settings-error" role="alert">{error}</div>}
-    </section>
+        </section>
+      </div>
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Переводчик</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Горячая клавиша переводчика">
+          <div className="setting-row">
+            <div className="setting-copy">
+              <h2>Горячая клавиша переводчика</h2>
+              <p>Открывает отдельное окно для ввода и перевода текста.</p>
+            </div>
+            <button
+              className={translatorRecording ? "hotkey-button recording" : "hotkey-button"}
+              type="button"
+              disabled={!settings}
+              onClick={() => { setTranslatorRecording(true); setError(""); }}
+              onBlur={() => setTranslatorRecording(false)}
+              onKeyDown={captureTranslatorShortcut}
+            >
+              {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
+            </button>
+          </div>
+          {error && <div className="settings-error" role="alert">{error}</div>}
+        </section>
+      </div>
+    </>
   );
 }
 
 function TranslationSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
-  const [recording, setRecording] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -311,25 +356,6 @@ function TranslationSettings() {
       setSettings(previous);
       setError("Не удалось сохранить настройку");
     }
-  };
-
-  const captureTranslatorShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (!recording || !settings) return;
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.key === "Escape") {
-      setRecording(false);
-      setError("");
-      return;
-    }
-    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
-    if (!shortcut) return;
-    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
-      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
-      return;
-    }
-    setRecording(false);
-    void persist({...settings, translatorShortcut: shortcut});
   };
 
   const languageOptions = [...TRANSLATION_LANGUAGES]
@@ -378,22 +404,6 @@ function TranslationSettings() {
         <select className="setting-select" aria-label="Язык перевода в переводчике" value={settings?.translatorTargetLanguage || "ru"} disabled={!settings} onChange={(event) => settings && void persist({...settings, translatorTargetLanguage: event.target.value})}>
           {languageOptions}
         </select>
-      </div>
-        <div className="setting-row setting-row-secondary">
-        <div className="setting-copy">
-          <h2>Горячая клавиша переводчика</h2>
-          <p>Открывает отдельное окно для ввода и перевода текста.</p>
-        </div>
-        <button
-          className={recording ? "hotkey-button recording" : "hotkey-button"}
-          type="button"
-          disabled={!settings}
-          onClick={() => { setRecording(true); setError(""); }}
-          onBlur={() => setRecording(false)}
-          onKeyDown={captureTranslatorShortcut}
-        >
-          {recording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
-        </button>
       </div>
         {error && <div className="settings-error" role="alert">{error}</div>}
         </section>
