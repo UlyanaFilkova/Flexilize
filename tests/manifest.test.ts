@@ -23,9 +23,11 @@ describe("extension manifest", () => {
       .forEach((host) => expect(manifest.host_permissions.some((permission) => permission.includes(host))).toBe(true));
   });
 
-  it("exposes runnable local test commands without changing the CI command", () => {
+  it("exposes runnable local test commands and includes coverage in CI", () => {
     expect(packageJson.scripts.test).toContain("vitest");
     expect(packageJson.scripts["test:coverage"]).toContain("--coverage");
-    expect(packageJson.scripts.ci).toBe("npm run typecheck && npm run build:chrome && npm run build:firefox");
+    expect(packageJson.scripts.ci).toBe(
+      "npm run typecheck && npm run test:coverage && npm run build:chrome && npm run build:firefox",
+    );
   });
 });

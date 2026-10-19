@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate-and-build:
-    name: Typecheck and build extensions
+    name: Typecheck, test and build extensions
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -35,6 +35,9 @@ jobs:
 
       - name: Check TypeScript
         run: npm run typecheck
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
 
       - name: Build Chromium extension
         run: npm run build:chrome

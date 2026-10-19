@@ -23,7 +23,7 @@
     "test:watch": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs",
     "test:coverage": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs run --coverage",
     "typecheck": "bash ./scripts/run-with-project-node.sh node_modules/typescript/bin/tsc --noEmit",
-    "ci": "npm run typecheck && npm run build:chrome && npm run build:firefox",
+    "ci": "npm run typecheck && npm run test:coverage && npm run build:chrome && npm run build:firefox",
     "release:check": "node scripts/check-release-version.mjs"
   },
   "dependencies": {
