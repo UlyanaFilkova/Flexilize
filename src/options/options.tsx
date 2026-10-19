@@ -145,6 +145,8 @@ function App() {
     }
   };
 
+  const settingsSectionTitle = settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -180,7 +182,7 @@ function App() {
         <main className="content">
           {page === "settings" ? (
             <>
-              <PageHeading title="Настройки" description="Персонализируйте работу расширения под себя." />
+              <PageHeading title={settingsSectionTitle} description="Настройте работу расширения под себя." />
               {settingsSection === "general"
                 ? <GeneralSettings />
                 : settingsSection === "translation"
