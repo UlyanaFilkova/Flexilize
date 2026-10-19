@@ -19,8 +19,11 @@
     "zip:firefox": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip",
     "zip:firefox-source": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip-source",
     "preview": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs preview",
+    "test": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs run",
+    "test:watch": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs",
+    "test:coverage": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs run --coverage",
     "typecheck": "bash ./scripts/run-with-project-node.sh node_modules/typescript/bin/tsc --noEmit",
-    "ci": "npm run typecheck && npm run build:chrome && npm run build:firefox",
+    "ci": "npm run typecheck && npm run test:coverage && npm run build:chrome && npm run build:firefox",
     "release:check": "node scripts/check-release-version.mjs"
   },
   "dependencies": {
@@ -33,13 +36,18 @@
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/chrome": "^0.0.287",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/webextension-polyfill": "^0.12.3",
+    "@vitest/coverage-v8": "^3.2.4",
     "addons-linter": "^10.14.0",
     "extension": "^4.1.33",
-    "typescript": "7.0.2"
+    "jsdom": "^26.1.0",
+    "typescript": "7.0.2",
+    "vitest": "^3.2.4"
   },
   "packageManager": "npm@10.9.3"
 }

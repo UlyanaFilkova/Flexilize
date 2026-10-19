@@ -36,6 +36,9 @@ jobs:
       - name: Check TypeScript
         run: npm run typecheck
 
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
       - name: Build Chromium extension
         run: npm run build:chrome
 

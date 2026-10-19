@@ -134,7 +134,7 @@ function normalizeTranslationLanguage(value: unknown, fallback: string) {
 export function normalizeSpeechRate(value: unknown) {
   const rate = typeof value === "number" && Number.isFinite(value) ? value : defaultSettings.speechRate;
   const clamped = Math.max(MIN_SPEECH_RATE, Math.min(MAX_SPEECH_RATE, rate));
-  return Math.round(clamped / SPEECH_RATE_STEP) * SPEECH_RATE_STEP;
+  return Number((Math.round(clamped / SPEECH_RATE_STEP) * SPEECH_RATE_STEP).toFixed(1));
 }
 
 export function shortcutFromKeyboardEvent(event: KeyboardEvent): ActivationShortcut | null {
