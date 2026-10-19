@@ -18,6 +18,7 @@
     "zip:chrome": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser chrome --zip",
     "zip:firefox": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip",
     "zip:firefox-source": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs build --browser firefox --zip-source",
+    "release:chrome": "bash ./scripts/run-with-project-node.sh scripts/copy-chrome-release.mjs --check-dev && npm run build:chrome && bash ./scripts/run-with-project-node.sh scripts/copy-chrome-release.mjs",
     "preview": "bash ./scripts/run-with-project-node.sh node_modules/extension/bin/extension.cjs preview",
     "test": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs run",
     "test:watch": "bash ./scripts/run-with-project-node.sh node_modules/vitest/vitest.mjs",
