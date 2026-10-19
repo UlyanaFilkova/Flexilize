@@ -89,11 +89,21 @@ import {
     .finally(() => { activationSettingsReady = true; });
   extensionApi.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
+    const speechWasEnabled = activationSettings.speechEnabled;
+    const transcriptionWasEnabled = activationSettings.transcriptionEnabled;
     activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
     activationSettingsReady = true;
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
     if (saveButton) saveButton.hidden = activationSettings.autoSaveTranslations;
     if (activationSettings.historyRotationEnabled) shadow?.querySelector(".storage-limit")?.remove();
+    if (speechWasEnabled && !activationSettings.speechEnabled) {
+      stopSpeaking();
+      shadow?.querySelector(".speak")?.remove();
+      shadow?.querySelector(".speech-progress-row")?.remove();
+    }
+    if (transcriptionWasEnabled && !activationSettings.transcriptionEnabled) {
+      shadow?.querySelector(".transcription")?.remove();
+    }
   });
 
   if ("speechSynthesis" in window) {
@@ -221,7 +231,7 @@ import {
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
-    const showSpeechProgress = wordCount(text) > 10;
+    const showSpeechProgress = activationSettings.speechEnabled && wordCount(text) > 10;
     host = document.createElement("div");
     host.id = HOST_ID;
     host.style.cssText = "all:initial;position:fixed;z-index:2147483647;top:0;left:0";
@@ -234,10 +244,10 @@ import {
         <div class="top">
           <div class="term-details">
             <div class="source"></div>
-            <div class="transcription skeleton short${text.length > 42 ? " multiline" : ""}"></div>
+            ${activationSettings.transcriptionEnabled ? `<div class="transcription skeleton short${text.length > 42 ? " multiline" : ""}"></div>` : ""}
           </div>
           <div class="top-actions">
-            <button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>
+            ${activationSettings.speechEnabled ? `<button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>` : ""}
             <button class="save-translation" type="button" ${activationSettings.autoSaveTranslations ? "hidden" : ""} disabled>Сохранить</button>
           </div>
         </div>
@@ -268,9 +278,9 @@ import {
     const languageClear = shadow.querySelector<HTMLButtonElement>(".language-clear");
     const languageToggle = shadow.querySelector<HTMLButtonElement>(".language-toggle");
     const saveButton = shadow.querySelector<HTMLButtonElement>(".save-translation");
-    speakButton.disabled = true;
+    if (speakButton) speakButton.disabled = true;
     saveButton?.addEventListener("click", () => requestManualSave(saveButton, ownRequest));
-    speakButton.addEventListener("click", (event) => {
+    speakButton?.addEventListener("click", (event) => {
       event.stopPropagation();
       if (isSpeechActive()) {
         stopSpeaking(speakButton);
@@ -281,16 +291,16 @@ import {
     });
     progress?.addEventListener("input", () => {
       if (isSpeechActive()) {
-        stopSpeaking(speakButton);
+        stopSpeaking(speakButton || undefined);
       }
     });
     progress?.addEventListener("change", () => {
       const requestedPosition = Number(progress.value);
       if (requestedPosition >= text.length) {
-        stopSpeaking(speakButton);
+        stopSpeaking(speakButton || undefined);
         return;
       }
-      speak(text, speakButton, requestedPosition);
+      if (speakButton) speak(text, speakButton, requestedPosition);
     });
     languageInput?.addEventListener("input", () => {
       languageInputDirty = true;
@@ -603,20 +613,22 @@ import {
         saveButton.disabled = false;
       }
 
-      let transcription: string | null | undefined;
-      try {
-        const transcriptionResult = await extensionApi.runtime.sendMessage({
-          type: "get-transcription",
-          payload: {language: sourceLanguage, text}
-        }) as TranslateResponse;
-        const requestIsActive = ownRequest === requestNumber && Boolean(shadow);
-        if (!requestIsActive && !deferredManualSaveRequests.has(ownRequest)) return;
-        if (transcriptionResult?.ok) transcription = transcriptionResult.transcription;
-        if (requestIsActive) renderTranscription(transcription);
-      } catch (error) {
-        if (isInvalidatedContextError(error)) return closeModal();
-        if (ownRequest === requestNumber && shadow) renderTranscription(null);
-        if (ownRequest !== requestNumber && !deferredManualSaveRequests.has(ownRequest)) return;
+      let transcription: string | null | undefined = null;
+      if (activationSettings.transcriptionEnabled) {
+        try {
+          const transcriptionResult = await extensionApi.runtime.sendMessage({
+            type: "get-transcription",
+            payload: {language: sourceLanguage, text}
+          }) as TranslateResponse;
+          const requestIsActive = ownRequest === requestNumber && Boolean(shadow);
+          if (!requestIsActive && !deferredManualSaveRequests.has(ownRequest)) return;
+          if (transcriptionResult?.ok) transcription = transcriptionResult.transcription;
+          if (requestIsActive) renderTranscription(transcription);
+        } catch (error) {
+          if (isInvalidatedContextError(error)) return closeModal();
+          if (ownRequest === requestNumber && shadow) renderTranscription(null);
+          if (ownRequest !== requestNumber && !deferredManualSaveRequests.has(ownRequest)) return;
+        }
       }
 
       const result = await extensionApi.runtime.sendMessage({
@@ -705,6 +717,7 @@ import {
   }
 
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
+    if (!activationSettings.speechEnabled) return;
     void speakWithRemoteVoice(text, button, requestedPosition);
   }
 

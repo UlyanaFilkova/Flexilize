@@ -285,6 +285,10 @@ h1 {
   background: #fbfcfe;
 }
 
+.setting-row-disabled {
+  opacity: .5;
+}
+
 .setting-copy h2 {
   margin: 0;
   color: #273245;
