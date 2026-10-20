@@ -34,7 +34,8 @@ npx extension build --browser=firefox --zip
 Результат сборки:
 
 - `dist/chrome/` и `dist/firefox/` — распакованные сборки;
-- `dist/context-translator-1.1.1-chrome.zip` и `dist/context-translator-1.1.1-firefox.zip` — архивы для установки и публикации.
+- `release/chrome/` — стабильная локальная Chrome-сборка, созданная командой `npm run release:chrome`;
+- `dist/context-translator-1.1.2-chrome.zip` и `dist/context-translator-1.1.2-firefox.zip` — архивы для установки и публикации.
 
 ## Continuous Integration
 
@@ -91,16 +92,21 @@ npm run zip:firefox
 The complete build is performed by the `zip:firefox` script in `package.json`. The resulting extension package is:
 
 ```text
-dist/context-translator-1.1.1-firefox.zip
+dist/context-translator-1.1.2-firefox.zip
 ```
 
 ## Установка
 
 Chrome / Edge:
 
-1. Откройте `chrome://extensions`.
-2. Включите **Режим разработчика**.
-3. Нажмите **Загрузить распакованное расширение** и выберите папку `dist/chrome`.
+1. Остановите запущенный dev-сервер и создайте стабильную production-сборку командой `npm run release:chrome`.
+2. Откройте `chrome://extensions`.
+3. Включите **Режим разработчика**.
+4. Нажмите **Загрузить распакованное расширение** и выберите папку `release/chrome`.
+
+`release/chrome` больше не изменяется при последующем запуске `npm run dev:chrome`. Команда `npm run release:chrome` также проверяет, что в стабильную копию не попали HMR-файлы, `dev-stub` или dev-манифест. После каждой новой production-сборки нажмите **Обновить** на карточке уже установленного расширения или установите его заново.
+
+При первом переходе с `dist/chrome` на `release/chrome` Chrome установит её как отдельную локальную копию расширения, потому что идентификатор распакованного расширения зависит от пути. Её настройки и история будут храниться отдельно от dev-версии; в дальнейшем путь `release/chrome` остаётся постоянным и данные сохраняются между обновлениями.
 
 Firefox:
 

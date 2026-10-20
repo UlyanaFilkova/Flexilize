@@ -3,6 +3,7 @@ node_modules/
 
 # Production builds and browser packages
 dist/
+release/
 web-ext-artifacts/
 *.zip
 
