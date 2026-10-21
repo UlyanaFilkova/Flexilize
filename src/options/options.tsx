@@ -371,6 +371,23 @@ function TranslationSettings() {
         <section className="settings-panel settings-panel-grouped" aria-label="Перевод выделенного текста">
         <div className="setting-row">
           <div className="setting-copy">
+            <h2>Показывать окно перевода</h2>
+            <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
+            <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
+          </div>
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={settings?.showSelectionTranslationModal ?? true}
+              disabled={!settings}
+              onChange={(event) => settings && void persist({...settings, showSelectionTranslationModal: event.target.checked})}
+            />
+            <span aria-hidden="true" />
+            <span className="sr-only">Показывать окно перевода</span>
+          </label>
+        </div>
+        <div className="setting-row setting-row-secondary">
+          <div className="setting-copy">
             <h2>Язык перевода выделенного текста</h2>
             <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
           </div>

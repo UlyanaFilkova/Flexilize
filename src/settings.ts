@@ -15,6 +15,7 @@ export interface ExtensionSettings {
   autoSaveTranslations: boolean
   historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
+  showSelectionTranslationModal: boolean
   activationShortcut: ActivationShortcut
   speechEnabled: boolean
   transcriptionEnabled: boolean
@@ -51,6 +52,7 @@ export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
+  showSelectionTranslationModal: true,
   speechEnabled: true,
   transcriptionEnabled: true,
   speechRate: 1,
@@ -114,6 +116,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
+    showSelectionTranslationModal: settings.showSelectionTranslationModal !== false,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
     speechEnabled: settings.speechEnabled !== false,
     transcriptionEnabled: settings.transcriptionEnabled !== false,

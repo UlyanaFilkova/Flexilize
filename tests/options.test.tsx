@@ -54,6 +54,12 @@ describe("options page", () => {
     await waitFor(() => expect(storageData[SETTINGS_KEY]).toMatchObject({translatorSourceLanguage: "de", translatorTargetLanguage: "fr"}));
   });
 
+  it("can hide the selection translation window", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Перевод$/}));
+    await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
+    await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
+  });
+
   it("controls transcription, speech and dependent speed", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
     const speech = screen.getByRole("checkbox", {name: "Включить озвучку"});
