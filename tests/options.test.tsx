@@ -17,17 +17,25 @@ describe("options page", () => {
     browserMock.runtime.sendMessage.mockResolvedValue({ok: true, records: []});
     history.replaceState(null, "", "#settings");
     await import("../src/options/options");
-    await screen.findByRole("heading", {name: "Горячие клавиши"});
+    await screen.findByRole("heading", {name: "Настройки"});
   });
 
   it("shows all navigation sections and the selected section title", async () => {
-    expect(screen.getByRole("button", {name: /Горячие клавиши/})).toBeTruthy();
-    expect(screen.getByRole("button", {name: /Перевод/})).toBeTruthy();
-    expect(screen.getByRole("button", {name: /Звук/})).toBeTruthy();
-    expect(screen.getByRole("button", {name: /Сохранение/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /Все настройки/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Горячие клавиши$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Перевод$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Звук$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Сохранение$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Как пользоваться/})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
     expect(screen.getByRole("heading", {name: "Звук"})).toBeTruthy();
+  });
+
+  it("opens settings sections from the overview", async () => {
+    expect(screen.getByRole("heading", {name: "Переводчик, который работает по вашим правилам"})).toBeTruthy();
+    expect(screen.getByRole("region", {name: "Разделы настроек"})).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", {name: /Перевод.*Языки и интерфейс/}));
+    expect(screen.getByRole("heading", {name: "Перевод"})).toBeTruthy();
   });
 
   it("shows a detailed help section and links it to settings", async () => {
@@ -44,6 +52,7 @@ describe("options page", () => {
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Горячие клавиши$/}));
     const shortcut = screen.getByRole("button", {name: "Ctrl + Shift + ]"});
     expect((shortcut as HTMLButtonElement).disabled).toBe(true);
     await userEvent.click(screen.getByRole("checkbox", {name: "Включить активацию горячими клавишами"}));
@@ -52,6 +61,7 @@ describe("options page", () => {
   });
 
   it("records a new translator shortcut", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Горячие клавиши$/}));
     const button = screen.getByRole("button", {name: "Ctrl + Shift + '"});
     await userEvent.click(button);
     fireEvent.keyDown(button, {key: "T", code: "KeyT", ctrlKey: true, altKey: true});

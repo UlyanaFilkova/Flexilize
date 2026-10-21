@@ -44,6 +44,7 @@ const routeHashes: Record<Route, string> = {
 };
 
 const settingsSidebarItems = [
+  {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
   {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
@@ -57,7 +58,7 @@ function routeFromHash(): Route {
 function App() {
   const initialRoute = routeFromHash();
   const [page, setPage] = useState<Page>(initialRoute === "help" ? "help" : initialRoute === "settings" ? "settings" : "history");
-  const [settingsSection, setSettingsSection] = useState("general");
+  const [settingsSection, setSettingsSection] = useState("overview");
   const [historySection, setHistorySection] = useState<HistorySection>(initialRoute === "export" ? "export" : "records");
   const [records, setRecords] = useState<TranslationRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -151,7 +152,7 @@ function App() {
     }
   };
 
-  const settingsSectionTitle = settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
+  const settingsSectionTitle = settingsSection === "overview" ? "Настройки" : settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
 
   return (
     <div className="app-shell">
@@ -197,7 +198,9 @@ function App() {
           ) : page === "settings" ? (
             <>
               <PageHeading title={settingsSectionTitle} description="Настройте работу расширения под себя." />
-              {settingsSection === "general"
+              {settingsSection === "overview"
+                ? <SettingsOverview onOpenSection={openSettingsSection} />
+                : settingsSection === "general"
                 ? <GeneralSettings />
                 : settingsSection === "translation"
                   ? <TranslationSettings />
@@ -227,6 +230,52 @@ function App() {
 
 function PageHeading({title, description, action}: {title: string; description: string; action?: ReactNode}) {
   return <div className="content-heading-row"><div className="content-heading"><span className="eyebrow">Context Translator</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;
+}
+
+function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
+  const sections = [
+    {id: "general", title: "Горячие клавиши", description: "Управляйте переводом выделенного текста и быстрым вызовом переводчика.", icon: <SlidersIcon />, meta: "2 комбинации"},
+    {id: "translation", title: "Перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
+    {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
+    {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
+  ];
+
+  return (
+    <div className="settings-overview">
+      <section className="settings-banner">
+        <div className="settings-banner-copy">
+          <span className="settings-banner-kicker">Персональная настройка</span>
+          <h2>Переводчик, который работает по вашим правилам</h2>
+          <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
+          <button type="button" onClick={() => onOpenSection("general")}>Начать с горячих клавиш<ArrowIcon /></button>
+        </div>
+        <div className="settings-banner-visual" aria-hidden="true">
+          <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
+          <div className="banner-control banner-control-language"><LanguagesIcon /><span><strong>English</strong><small>на русский</small></span></div>
+          <div className="banner-control banner-control-sound"><SoundIcon /><span><strong>Скорость речи</strong><small>1,0×</small></span><b>−</b><em>+</em></div>
+          <div className="banner-orbit banner-orbit-one" />
+          <div className="banner-orbit banner-orbit-two" />
+        </div>
+      </section>
+
+      <div className="settings-overview-heading">
+        <div><span>Разделы</span><h2>Что хотите настроить?</h2></div>
+        <p>Каждый параметр сохраняется автоматически. Вы всегда можете вернуться и изменить его.</p>
+      </div>
+
+      <section className="settings-overview-grid" aria-label="Разделы настроек">
+        {sections.map((section) => (
+          <button key={section.id} type="button" onClick={() => onOpenSection(section.id)}>
+            <span className="settings-overview-icon">{section.icon}</span>
+            <span className="settings-overview-card-copy"><strong>{section.title}</strong><small>{section.description}</small><em>{section.meta}</em></span>
+            <span className="settings-overview-arrow"><ArrowIcon /></span>
+          </button>
+        ))}
+      </section>
+
+      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>Расширение не отправляет их разработчику. При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
+    </div>
+  );
 }
 
 function GeneralSettings() {
@@ -844,6 +893,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 function Icon({children}: {children: ReactNode}) { return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>; }
 function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></Icon>; }
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
+function SettingsIcon() { return <Icon><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1.4 1.6H9.55A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.6-1.4V9.55A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1.4-1.6h4.05A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 1.6 1.4v4.05A1.7 1.7 0 0 0 19.4 15Z"/></Icon>; }
 function LanguagesIcon() { return <Icon><path d="M4 5h9M8.5 3v2M6 9c1.6 2.3 3.6 4 6.2 5.1M11.5 5C10.4 9.4 7.9 12.5 4 14.2M14 20l3-8 3 8M15 17.5h4"/></Icon>; }
 function BookmarkIcon() { return <Icon><path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"/></Icon>; }
 function SoundIcon() { return <Icon><path d="M5 9v6h4l5 4V5L9 9H5Z"/><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11"/></Icon>; }
