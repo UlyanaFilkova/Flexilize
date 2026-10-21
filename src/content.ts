@@ -363,6 +363,14 @@ import {
 
     currentText = details.text;
     currentSentence = details.sentence;
+
+    if (!activationSettings.showSelectionTranslationModal) {
+      removeModal();
+      await saveSelectionInBackground(details.text, details.sentence);
+      if (currentText === details.text && !host) currentText = "";
+      return;
+    }
+
     const ownRequest = ++requestNumber;
     showModal(details.rect, details.text, ownRequest);
     if (!extensionApi?.runtime?.sendMessage) {
@@ -370,6 +378,30 @@ import {
       return;
     }
     await loadTranslationStages(details.text, details.sentence, ownRequest);
+  }
+
+  async function saveSelectionInBackground(text: string, sentence: string) {
+    if (!extensionApi?.runtime?.sendMessage) return;
+    try {
+      const result = await extensionApi.runtime.sendMessage({
+        type: "translate-selection",
+        payload: {
+          text,
+          sentence,
+          pageTitle: document.title,
+          pageUrl: location.href,
+          targetLanguage: activationSettings.targetLanguage,
+          transcription: null,
+          transcriptionLoaded: !activationSettings.transcriptionEnabled,
+          save: true
+        }
+      }) as TranslateResponse;
+      if (!result?.ok) throw new Error(result?.error || "Не удалось выполнить перевод");
+    } catch (error) {
+      if (!isInvalidatedContextError(error)) {
+        console.warn(`[Context Translator] ${errorMessage(error, "Ошибка фонового перевода")}`);
+      }
+    }
   }
 
   function readSelection() {
