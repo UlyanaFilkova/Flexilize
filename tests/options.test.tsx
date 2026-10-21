@@ -25,8 +25,22 @@ describe("options page", () => {
     expect(screen.getByRole("button", {name: /Перевод/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Звук/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Сохранение/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /Как пользоваться/})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
     expect(screen.getByRole("heading", {name: "Звук"})).toBeTruthy();
+  });
+
+  it("shows a detailed help section and links it to settings", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(screen.getByRole("heading", {name: "Как пользоваться"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Читаете текст на иностранном языке"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Частые вопросы"})).toBeTruthy();
+    expect(location.hash).toBe("#help");
+
+    await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
+    expect(screen.getByRole("heading", {name: "Горячие клавиши"})).toBeTruthy();
+    expect(location.hash).toBe("#settings");
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {
