@@ -41,7 +41,7 @@ const translationCache = new Map<string, Promise<{
 }>>();
 let translationCacheWrite = Promise.resolve();
 let recordSaveQueue = Promise.resolve();
-let translationCooldownUntil = 0;
+let myMemoryCooldownUntil = 0;
 
 extensionApi.runtime.onMessage.addListener((message: unknown) => {
   if (!isRuntimeMessage(message)) return undefined;
@@ -797,9 +797,15 @@ async function persistTranslation(
 }
 
 async function requestTranslationChunk(text: string, sourceLanguage: string, targetLanguage: string) {
-  if (Date.now() < translationCooldownUntil) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+  try {
+    return await requestGoogleTranslation(text, sourceLanguage, targetLanguage);
+  } catch (_error) {
+    return requestMyMemoryTranslation(text, sourceLanguage, targetLanguage);
   }
+}
+
+async function requestMyMemoryTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
+  if (Date.now() < myMemoryCooldownUntil) throw translationUnavailableError();
   const query = new URLSearchParams({ q: text, langpair: `${sourceLanguage}|${targetLanguage}` });
   let response;
   try {
@@ -808,26 +814,26 @@ async function requestTranslationChunk(text: string, sourceLanguage: string, tar
       TRANSLATION_REQUEST_TIMEOUT_MS
     );
   } catch (_error) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    throw translationUnavailableError();
   }
 
   if (response.status === 429) {
-    translationCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    myMemoryCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
+    throw translationUnavailableError();
   }
   if (!response.ok) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    throw translationUnavailableError();
   }
 
   const data = await response.json();
   const responseStatus = Number(data?.responseStatus);
   if ([403, 429].includes(responseStatus)) {
-    translationCooldownUntil = Date.now() + 15 * 60_000;
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    myMemoryCooldownUntil = Date.now() + 15 * 60_000;
+    throw translationUnavailableError();
   }
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
   if (!translated || responseStatus >= 400 || /invalid language pair|unsupported language/i.test(translated)) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    throw translationUnavailableError();
   }
   const exactMatches = Array.isArray(data?.matches)
     ? data.matches.filter((match) => {
@@ -848,7 +854,7 @@ async function requestTranslationChunk(text: string, sourceLanguage: string, tar
   };
 }
 
-async function requestFallbackTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
+async function requestGoogleTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
   try {
     const query = new URLSearchParams({
       client: "gtx",
@@ -862,16 +868,20 @@ async function requestFallbackTranslation(text: string, sourceLanguage: string, 
       `https://clients5.google.com/translate_a/t?${query}`,
       TRANSLATION_REQUEST_TIMEOUT_MS
     );
-    if (!response.ok) throw new Error("fallback unavailable");
+    if (!response.ok) throw new Error("Google translation unavailable");
     const data = await response.json();
     const translated = Array.isArray(data)
       ? data.map((segment) => typeof segment === "string" ? segment : "").join("").trim()
       : "";
-    if (!translated) throw new Error("fallback returned an empty translation");
+    if (!translated) throw new Error("Google returned an empty translation");
     return { text: translated, alternatives: [translated], warning: null };
   } catch (_error) {
-    throw new Error("Сейчас не удалось получить перевод. Проверьте интернет-соединение или попробуйте ещё раз позже.");
+    throw translationUnavailableError();
   }
+}
+
+function translationUnavailableError() {
+  return new Error("Сейчас не удалось получить перевод. Проверьте интернет-соединение или попробуйте ещё раз позже.");
 }
 
 function persistentTranslationKey(text: string, sourceLanguage: string, targetLanguage = "ru") {

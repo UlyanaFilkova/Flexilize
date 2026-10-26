@@ -40,24 +40,19 @@ describe("background message handling", () => {
   });
 
   it("translates arbitrary language pairs and caches the result", async () => {
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({
-      responseStatus: 200,
-      responseData: {translatedText: "Hallo"},
-      matches: []
-    }), {status: 200, headers: {"content-type": "application/json"}}));
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify(["Hallo"]), {
+      status: 200, headers: {"content-type": "application/json"}
+    }));
     vi.stubGlobal("fetch", fetchMock);
     const message = {type: "translate-preview", payload: {text: "Hello unique", sentence: "Hello unique", sourceLanguage: "en", targetLanguage: "de"}};
     await expect(handle(message)).resolves.toMatchObject({ok: true, translation: "Hallo", sourceLanguage: "en"});
     await expect(handle(message)).resolves.toMatchObject({translation: "Hallo"});
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0][0])).toContain("clients5.google.com/translate_a/t");
   });
 
   it("creates and saves a selection translation without a transcription request", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({
-      responseStatus: 200,
-      responseData: {translatedText: "Тестовый перевод"},
-      matches: []
-    }), {status: 200})));
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify(["Тестовый перевод"]), {status: 200})));
     const result = await handle({type: "translate-selection", payload: {
       text: "Unique integration phrase", sentence: "Unique integration phrase.",
       sourceLanguage: "en", targetLanguage: "ru", transcription: null, transcriptionLoaded: true,
@@ -107,15 +102,21 @@ describe("background message handling", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("falls back to Google translation when the primary provider fails", async () => {
+  it("falls back to MyMemory translation when Google fails", async () => {
     const fetchMock = vi.fn()
       .mockRejectedValueOnce(new Error("offline"))
-      .mockResolvedValueOnce(new Response(JSON.stringify(["резервный перевод"]), {status: 200}));
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        responseStatus: 200,
+        responseData: {translatedText: "резервный перевод"},
+        matches: []
+      }), {status: 200}));
     vi.stubGlobal("fetch", fetchMock);
     await expect(handle({type: "translate-preview", payload: {
       text: "fallback unique phrase", sentence: "fallback unique phrase", sourceLanguage: "en", targetLanguage: "ru"
     }})).resolves.toMatchObject({ok: true, translation: "резервный перевод"});
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(String(fetchMock.mock.calls[0][0])).toContain("clients5.google.com/translate_a/t");
+    expect(String(fetchMock.mock.calls[1][0])).toContain("api.mymemory.translated.net/get");
   });
 
   it("clears history and saves the supplied current record atomically", async () => {
