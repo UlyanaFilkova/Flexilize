@@ -29,7 +29,7 @@ describe("exports", () => {
       downloaded.push(blob as Blob);
       return "blob:test";
     });
-    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function () {
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
       anchors.push(this);
     });
   });

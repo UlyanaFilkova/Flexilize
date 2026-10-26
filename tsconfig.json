@@ -19,6 +19,6 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "extension-env.d.ts", "browser-global.d.ts"],
+  "include": ["src", "tests", "extension-env.d.ts", "browser-global.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

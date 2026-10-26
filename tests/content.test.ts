@@ -20,7 +20,7 @@ describe("standalone translator content UI", () => {
       return {ok: true};
     });
     const originalAttachShadow = Element.prototype.attachShadow;
-    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (init) {
+    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (this: Element, init) {
       return originalAttachShadow.call(this, {...init, mode: "open"});
     });
     await import("../src/content");
