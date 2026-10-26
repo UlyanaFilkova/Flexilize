@@ -610,8 +610,12 @@ h1 {
 
 .record-sentence {
   min-width: 0;
-  margin-top: 13px;
-  color: #707c8e;
+  margin: 13px 0 0;
+  padding: 11px 13px;
+  border-left: 3px solid #c9d6ff;
+  border-radius: 0 9px 9px 0;
+  background: #f3f6ff;
+  color: #667287;
   font-size: 13px;
   line-height: 1.55;
   overflow-wrap: anywhere;

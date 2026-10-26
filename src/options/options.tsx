@@ -752,7 +752,7 @@ function RecordCard({record, onDelete, onUpdate}: {record: TranslationRecord; on
     <li className="history-record">
       <div className="record-pair"><div className="record-term-line"><span className="record-original">{record.text || "—"}</span>{record.transcription && <span className="record-transcription">{record.transcription}</span>}</div><span className="record-translation">{record.translation || "—"}</span></div>
       {alternatives.length > 0 && <div className="record-alternatives">{alternatives.join(", ")}</div>}
-      <div className="record-sentence">{record.sentence || "—"}</div>
+      <blockquote className="record-sentence">{record.sentence || "—"}</blockquote>
       <div className="record-meta">
         <time>{formatRecordDate(record.createdAt)}</time>
         {record.pageUrl && <a href={record.pageUrl} target="_blank" rel="noreferrer" title={record.pageUrl}>{record.pageTitle || recordHostname(record.pageUrl)}</a>}

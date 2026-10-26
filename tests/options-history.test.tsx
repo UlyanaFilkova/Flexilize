@@ -21,6 +21,7 @@ describe("options history and export", () => {
     await userEvent.click(await screen.findByRole("button", {name: /^История$/}));
     expect(await screen.findByText("Hello")).toBeTruthy();
     expect(screen.getByText("Здравствуйте")).toBeTruthy();
+    expect(screen.getByText("Hello, world!").tagName).toBe("BLOCKQUOTE");
 
     await userEvent.click(screen.getByRole("button", {name: "Редактировать перевод «Hello»"}));
     const translation = screen.getByLabelText("Перевод");

@@ -36,6 +36,7 @@ describe("standalone translator content UI", () => {
     const shadow = host.shadowRoot!;
     expect(shadow.querySelector(".translator")?.getAttribute("aria-label")).toBe("Translator");
     expect(shadow.querySelector(".translator-input")?.getAttribute("placeholder")).toBe("Enter text");
+    expect(shadow.querySelector(".translator-shortcut-hint")?.textContent).toBe("Ctrl + Shift + '");
     const input = shadow.querySelector(".translator-input") as HTMLTextAreaElement;
     expect((shadow.querySelector(".source-language") as HTMLSelectElement).value).toBe(defaultSettings.translatorSourceLanguage);
     expect((shadow.querySelector(".target-language") as HTMLSelectElement).value).toBe(defaultSettings.translatorTargetLanguage);

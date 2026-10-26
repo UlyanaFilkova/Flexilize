@@ -12,6 +12,7 @@ import {MAX_HISTORY_RECORDS} from "./history-config";
 import {loadInterfaceLanguage, observeLocalizedDom} from "./i18n";
 import {
   defaultSettings,
+  formatShortcut,
   getExtensionSettings,
   matchesShortcut,
   normalizeSettings,
@@ -105,6 +106,8 @@ import {
     const previousInterfaceLanguage = activationSettings.interfaceLanguage;
     activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
     activationSettingsReady = true;
+    const translatorShortcutHint = translatorShadow?.querySelector<HTMLElement>(".translator-shortcut-hint");
+    if (translatorShortcutHint) translatorShortcutHint.textContent = formatShortcut(activationSettings.translatorShortcut);
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
     if (saveButton) saveButton.hidden = activationSettings.autoSaveTranslations;
     if (activationSettings.historyRotationEnabled) shadow?.querySelector(".storage-limit")?.remove();
@@ -164,7 +167,7 @@ import {
       <style>${translatorStyles()}</style>
       <div class="backdrop">
         <section class="translator" role="dialog" aria-modal="true" aria-label="Переводчик">
-          <header><strong>Переводчик</strong><span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 18 12"><circle cx="5" cy="3" r="1.4"/><circle cx="9" cy="3" r="1.4"/><circle cx="13" cy="3" r="1.4"/><circle cx="5" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="13" cy="9" r="1.4"/></svg></span><button class="close" type="button" aria-label="Закрыть">×</button></header>
+          <header><strong>Переводчик</strong><span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 18 12"><circle cx="5" cy="3" r="1.4"/><circle cx="9" cy="3" r="1.4"/><circle cx="13" cy="3" r="1.4"/><circle cx="5" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="13" cy="9" r="1.4"/></svg></span><span class="translator-header-actions"><span class="translator-shortcut-hint" title="Горячая клавиша переводчика"></span><button class="close" type="button" aria-label="Закрыть">×</button></span></header>
           <div class="languages">
             <select class="source-language" aria-label="Исходный язык">${languageOptions}</select>
             <button class="swap" type="button" aria-label="Поменять языки местами" title="Поменять языки местами">⇄</button>
@@ -192,6 +195,7 @@ import {
     const input = translatorShadow.querySelector<HTMLTextAreaElement>(".translator-input")!;
     const source = translatorShadow.querySelector<HTMLSelectElement>(".source-language")!;
     const target = translatorShadow.querySelector<HTMLSelectElement>(".target-language")!;
+    translatorShadow.querySelector<HTMLElement>(".translator-shortcut-hint")!.textContent = formatShortcut(activationSettings.translatorShortcut);
     source.value = activationSettings.translatorSourceLanguage;
     target.value = activationSettings.translatorTargetLanguage;
 
@@ -1392,6 +1396,8 @@ import {
       header { position: relative; display: flex; height: 54px; flex: none; align-items: center; justify-content: space-between; padding: 0 16px 0 20px; border-bottom: 1px solid #e8ecf2; cursor: grab; touch-action: none; user-select: none; }
       .translator.dragging header { cursor: grabbing; }
       header strong { font-size: 16px; }
+      .translator-header-actions { display: flex; align-items: center; gap: 8px; }
+      .translator-shortcut-hint { padding: 5px 8px; border-radius: 7px; background: #f2f4f8; color: #7d8899; font-size: 10px; font-weight: 600; letter-spacing: .01em; white-space: nowrap; }
       .drag-handle { position: absolute; top: 50%; left: 50%; display: grid; width: 34px; height: 26px; place-items: center; transform: translate(-50%,-50%); color: #9aa5b5; pointer-events: none; }
       .drag-handle svg { width: 22px; height: 15px; fill: currentColor; }
       .close { display: grid; width: 34px; height: 34px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #6f7b8c; cursor: pointer; font-size: 24px; }
@@ -1414,7 +1420,7 @@ import {
       .copy svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
       .translator-status { min-height: 35px; flex: none; padding: 8px 18px; border-top: 1px solid #e8ecf2; color: #8792a4; font-size: 12px; }
       .translator-status.error { color: #b42318; }
-      @media (max-width: 620px) { .backdrop { padding: 12px; } .panes { grid-template-columns: 1fr; height: auto !important; max-height: calc(100vh - 190px); overflow-y: auto; } .translator-input, .translator-output { min-height: 150px; } .translator-output { border-top: 1px solid #e8ecf2; border-left: 0; } }
+      @media (max-width: 620px) { .backdrop { padding: 12px; } .translator-shortcut-hint { font-size: 9px; } .panes { grid-template-columns: 1fr; height: auto !important; max-height: calc(100vh - 190px); overflow-y: auto; } .translator-input, .translator-output { min-height: 150px; } .translator-output { border-top: 1px solid #e8ecf2; border-left: 0; } }
     `;
   }
 
