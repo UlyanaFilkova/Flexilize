@@ -31,18 +31,20 @@ import {
 } from "../settings";
 import "./options.css";
 
-type Page = "settings" | "history";
+type Page = "settings" | "history" | "help";
 type HistorySection = "records" | "export";
-type Route = Page | "export";
+type Route = "settings" | "history" | "export" | "help";
 type Notice = {message: string; undo?: () => Promise<void>};
 
 const routeHashes: Record<Route, string> = {
   settings: "#settings",
   history: "#history",
-  export: "#export"
+  export: "#export",
+  help: "#help"
 };
 
 const settingsSidebarItems = [
+  {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
   {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
@@ -55,8 +57,8 @@ function routeFromHash(): Route {
 
 function App() {
   const initialRoute = routeFromHash();
-  const [page, setPage] = useState<Page>(initialRoute === "settings" ? "settings" : "history");
-  const [settingsSection, setSettingsSection] = useState("general");
+  const [page, setPage] = useState<Page>(initialRoute === "help" ? "help" : initialRoute === "settings" ? "settings" : "history");
+  const [settingsSection, setSettingsSection] = useState("overview");
   const [historySection, setHistorySection] = useState<HistorySection>(initialRoute === "export" ? "export" : "records");
   const [records, setRecords] = useState<TranslationRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,6 +88,11 @@ function App() {
     setPage("settings");
     setSettingsSection(section);
     window.history.replaceState(null, "", routeHashes.settings);
+  };
+
+  const openHelp = () => {
+    setPage("help");
+    window.history.replaceState(null, "", routeHashes.help);
   };
 
   const removeRecord = async (record: TranslationRecord) => {
@@ -145,7 +152,7 @@ function App() {
     }
   };
 
-  const settingsSectionTitle = settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
+  const settingsSectionTitle = settingsSection === "overview" ? "Настройки" : settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
 
   return (
     <div className="app-shell">
@@ -176,14 +183,24 @@ function App() {
               </button>
             ))}
           </nav>
+          <div className="sidebar-heading sidebar-section-heading">Помощь</div>
+          <nav>
+            <button className={page === "help" ? "active" : ""} type="button" onClick={openHelp}>
+              <HelpIcon /><span>Как пользоваться</span>
+            </button>
+          </nav>
           <div className="sidebar-footer"><span className="status-dot" aria-hidden="true" />Расширение активно</div>
         </aside>
 
         <main className="content">
-          {page === "settings" ? (
+          {page === "help" ? (
+            <HelpView onOpenSettings={openSettingsSection} onOpenHistory={() => openHistorySection("records")} onOpenExport={() => openHistorySection("export")} />
+          ) : page === "settings" ? (
             <>
               <PageHeading title={settingsSectionTitle} description="Настройте работу расширения под себя." />
-              {settingsSection === "general"
+              {settingsSection === "overview"
+                ? <SettingsOverview onOpenSection={openSettingsSection} />
+                : settingsSection === "general"
                 ? <GeneralSettings />
                 : settingsSection === "translation"
                   ? <TranslationSettings />
@@ -213,6 +230,52 @@ function App() {
 
 function PageHeading({title, description, action}: {title: string; description: string; action?: ReactNode}) {
   return <div className="content-heading-row"><div className="content-heading"><span className="eyebrow">Context Translator</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;
+}
+
+function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
+  const sections = [
+    {id: "general", title: "Горячие клавиши", description: "Управляйте переводом выделенного текста и быстрым вызовом переводчика.", icon: <SlidersIcon />, meta: "2 комбинации"},
+    {id: "translation", title: "Перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
+    {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
+    {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
+  ];
+
+  return (
+    <div className="settings-overview">
+      <section className="settings-banner">
+        <div className="settings-banner-copy">
+          <span className="settings-banner-kicker">Персональная настройка</span>
+          <h2>Переводчик, который работает по вашим правилам</h2>
+          <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
+          <button type="button" onClick={() => onOpenSection("general")}>Начать с горячих клавиш<ArrowIcon /></button>
+        </div>
+        <div className="settings-banner-visual" aria-hidden="true">
+          <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
+          <div className="banner-control banner-control-language"><LanguagesIcon /><span><strong>English</strong><small>на русский</small></span></div>
+          <div className="banner-control banner-control-sound"><SoundIcon /><span><strong>Скорость речи</strong><small>1,0×</small></span><b>−</b><em>+</em></div>
+          <div className="banner-orbit banner-orbit-one" />
+          <div className="banner-orbit banner-orbit-two" />
+        </div>
+      </section>
+
+      <div className="settings-overview-heading">
+        <div><span>Разделы</span><h2>Что хотите настроить?</h2></div>
+        <p>Каждый параметр сохраняется автоматически. Вы всегда можете вернуться и изменить его.</p>
+      </div>
+
+      <section className="settings-overview-grid" aria-label="Разделы настроек">
+        {sections.map((section) => (
+          <button key={section.id} type="button" onClick={() => onOpenSection(section.id)}>
+            <span className="settings-overview-icon">{section.icon}</span>
+            <span className="settings-overview-card-copy"><strong>{section.title}</strong><small>{section.description}</small><em>{section.meta}</em></span>
+            <span className="settings-overview-arrow"><ArrowIcon /></span>
+          </button>
+        ))}
+      </section>
+
+      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>Расширение не отправляет их разработчику. При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
+    </div>
+  );
 }
 
 function GeneralSettings() {
@@ -732,14 +795,118 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
   );
 }
 
+function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
+  return (
+    <div className="help-page">
+      <PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в Anki." />
+
+      <section className="help-hero" aria-labelledby="quick-start-title">
+        <div className="help-hero-copy">
+          <span className="help-kicker">Быстрый старт</span>
+          <h2 id="quick-start-title">Первый перевод — за несколько секунд</h2>
+          <ol className="quick-steps">
+            <li><span>1</span><div><strong>Откройте обычную веб-страницу</strong><p>Статья, документация, письмо или учебный материал — подойдёт любой доступный сайт.</p></div></li>
+            <li><span>2</span><div><strong>Выделите нужный текст</strong><p>Можно выбрать одно слово, фразу или целый абзац.</p></div></li>
+            <li><span>3</span><div><strong>Изучите результат</strong><p>В окне появятся перевод, контекст, варианты значения, транскрипция и кнопка озвучивания.</p></div></li>
+          </ol>
+        </div>
+        <div className="help-demo" aria-hidden="true">
+          <div className="demo-browser-bar"><i /><i /><i /><span>example.com/article</span></div>
+          <div className="demo-copy"><span /><span /><em>context matters</em><span /><span /></div>
+          <div className="demo-translation"><small>EN → RU</small><strong>контекст имеет значение</strong><p>/ˈkɒntekst/</p><div><span>Слушать</span><span>Сохранено</span></div></div>
+        </div>
+      </section>
+
+      <nav className="help-toc" aria-label="Содержание справки">
+        <a href="#help-reading"><ReadingIcon /><span><strong>Чтение</strong><small>Перевод выделения</small></span></a>
+        <a href="#help-writing"><KeyboardIcon /><span><strong>Переводчик</strong><small>Ввод своего текста</small></span></a>
+        <a href="#help-listening"><SoundIcon /><span><strong>Произношение</strong><small>Транскрипция и звук</small></span></a>
+        <a href="#help-vocabulary"><BookmarkIcon /><span><strong>Словарь</strong><small>История и экспорт</small></span></a>
+      </nav>
+
+      <section className="help-section" id="help-reading">
+        <div className="help-section-heading"><span>Задача 01</span><h2>Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место в тексте.</p></div>
+        <div className="help-card-grid">
+          <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
+          <article className="help-card"><div className="help-card-icon"><TextIcon /></div><h3>Предложение или абзац</h3><ol><li>Выделите текст целиком.</li><li>Для длинного фрагмента основным результатом станет перевод всего выделения.</li><li>Проверьте границы выделения, если смысл кажется неполным.</li></ol><p className="help-tip"><strong>Полезно для:</strong> статей, документации, учебников и деловой переписки.</p></article>
+        </div>
+        <div className="help-callout"><InfoIcon /><div><strong>Не хотите открывать окно при каждом выделении?</strong><p>Включите активацию горячими клавишами: тогда перевод запускается только после вашей комбинации. Это удобно при копировании и редактировании текста.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Настроить клавиши</button></div>
+      </section>
+
+      <section className="help-section" id="help-writing">
+        <div className="help-section-heading"><span>Задача 02</span><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
+        <div className="workflow-card">
+          <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Нажмите назначенную горячую клавишу. По умолчанию комбинацию можно посмотреть или изменить в настройках.</p></div></div>
+          <div className="workflow-arrow" aria-hidden="true">→</div>
+          <div className="workflow-step"><span>2</span><div><h3>Выберите языки</h3><p>Исходный язык и язык результата для переводчика настраиваются отдельно от перевода выделений.</p></div></div>
+          <div className="workflow-arrow" aria-hidden="true">→</div>
+          <div className="workflow-step"><span>3</span><div><h3>Введите текст</h3><p>Напечатайте фразу или вставьте её из буфера обмена, затем используйте готовый перевод.</p></div></div>
+        </div>
+        <button className="help-inline-link" type="button" onClick={() => onOpenSettings("translation")}><LanguagesIcon />Открыть настройки языков<ArrowIcon /></button>
+      </section>
+
+      <section className="help-section" id="help-listening">
+        <div className="help-section-heading"><span>Задача 03</span><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
+        <div className="help-card-grid help-card-grid-three">
+          <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка и фрагмента.</p></article>
+          <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку звука в окне перевода и повторите фразу вслух.</p></article>
+          <article className="help-mini-card"><span className="mini-card-number">03</span><h3>Подберите темп</h3><p>В разделе «Звук» установите скорость от 0,3× для разбора речи до 2× для тренировки.</p></article>
+        </div>
+        <button className="help-inline-link" type="button" onClick={() => onOpenSettings("sound")}><SoundIcon />Настроить звук и транскрипцию<ArrowIcon /></button>
+      </section>
+
+      <section className="help-section" id="help-vocabulary">
+        <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
+        <div className="vocabulary-layout">
+          <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong> — при лимите в 5000 записей старые переводы могут автоматически заменяться новыми.</span></li></ul></article>
+          <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
+        </div>
+      </section>
+
+      <section className="help-section">
+        <div className="help-section-heading"><span>Задача 05</span><h2>Переносите переводы в другие приложения</h2><p>Экспортируйте всю историю в подходящем формате. Файл создаётся по вашему запросу и сохраняется через браузер.</p></div>
+        <div className="format-guide">
+          <div><span>ANKI</span><h3>Для интервального повторения</h3><p>Anki CSV или Anki TSV — готовая основа для импорта карточек.</p></div>
+          <div><span>XLSX · CSV · TSV</span><h3>Для таблиц и анализа</h3><p>Подойдут для Excel, Google Таблиц, сортировки и собственной обработки.</p></div>
+          <div><span>PDF · HTML · MD · TXT</span><h3>Для чтения и печати</h3><p>Удобны для архива, заметок, печати и повторения без расширения.</p></div>
+          <div><span>JSON</span><h3>Для резервной копии</h3><p>Сохраняет структурированные данные записей для технических сценариев.</p></div>
+        </div>
+        <button className="help-primary-action" type="button" onClick={onOpenExport}><DownloadIcon />Перейти к экспорту</button>
+      </section>
+
+      <section className="help-section help-troubleshooting">
+        <div className="help-section-heading"><span>Если что-то не работает</span><h2>Частые вопросы</h2></div>
+        <div className="faq-list">
+          <details><summary>Окно перевода не появляется после выделения</summary><p>Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения. На служебных страницах браузера вида <code>chrome://…</code> расширения не запускаются.</p></details>
+          <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
+          <details><summary>Новая запись не появилась в истории</summary><p>Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.</p></details>
+          <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Горячие клавиши», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
+          <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удалите данные расширения средствами браузера.</p></details>
+        </div>
+      </section>
+
+      <footer className="help-footer"><div><span className="brand-mark" aria-hidden="true">A<span>а</span></span><p><strong>Готовы попробовать?</strong><br />Откройте любую статью и выделите незнакомую фразу.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Проверить горячие клавиши</button></footer>
+    </div>
+  );
+}
+
 function Icon({children}: {children: ReactNode}) { return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>; }
 function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></Icon>; }
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
+function SettingsIcon() { return <Icon><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1.4 1.6H9.55A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.6-1.4V9.55A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1.4-1.6h4.05A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 1.6 1.4v4.05A1.7 1.7 0 0 0 19.4 15Z"/></Icon>; }
 function LanguagesIcon() { return <Icon><path d="M4 5h9M8.5 3v2M6 9c1.6 2.3 3.6 4 6.2 5.1M11.5 5C10.4 9.4 7.9 12.5 4 14.2M14 20l3-8 3 8M15 17.5h4"/></Icon>; }
 function BookmarkIcon() { return <Icon><path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"/></Icon>; }
 function SoundIcon() { return <Icon><path d="M5 9v6h4l5 4V5L9 9H5Z"/><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11"/></Icon>; }
 function DownloadIcon() { return <Icon><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 20h16"/></Icon>; }
 function EditIcon() { return <Icon><path d="m4 16-.8 4.8L8 20l11-11-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></Icon>; }
 function TrashIcon() { return <Icon><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></Icon>; }
+function HelpIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.5 2.1c-.8.4-1.2 1-1.2 1.9M12 17h.01"/></Icon>; }
+function ReadingIcon() { return <Icon><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4V5.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v18a3 3 0 0 1 3-3h3V5.5Z"/></Icon>; }
+function KeyboardIcon() { return <Icon><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M18 10h.01M7 14h.01M10 14h7"/></Icon>; }
+function CursorIcon() { return <Icon><path d="m5 3 6.5 16 2.2-5.3L19 11.5 5 3Z"/></Icon>; }
+function TextIcon() { return <Icon><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></Icon>; }
+function InfoIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></Icon>; }
+function CheckIcon() { return <Icon><path d="m5 12 4 4L19 6"/></Icon>; }
+function ArrowIcon() { return <Icon><path d="M5 12h14M14 7l5 5-5 5"/></Icon>; }
 
 createRoot(document.getElementById("root")!).render(<App />);
