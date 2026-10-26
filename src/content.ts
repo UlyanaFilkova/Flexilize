@@ -126,7 +126,7 @@ import {
     }
   });
 
-  if ("speechSynthesis" in window) {
+  if (window.speechSynthesis) {
     refreshVoices();
     window.speechSynthesis.addEventListener("voiceschanged", refreshVoices);
   }
@@ -1022,7 +1022,7 @@ import {
   }
 
   function speakWithBrowserVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
-    if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+    if (!window.speechSynthesis || !("SpeechSynthesisUtterance" in window)) {
       showError("Озвучка не поддерживается этим браузером");
       return;
     }
@@ -1079,7 +1079,7 @@ import {
     speechLoading = false;
     stopSpeechProgressAnimation();
     stopRemoteSpeech();
-    window.speechSynthesis.cancel();
+    window.speechSynthesis?.cancel();
     if (button) resetSpeakButton(button);
   }
 
@@ -1097,7 +1097,7 @@ import {
     const ownSpeechRun = ++speechRun;
 
     stopRemoteSpeech();
-    window.speechSynthesis.cancel();
+    window.speechSynthesis?.cancel();
     speechLoading = true;
     button.textContent = "■";
     button.title = "Остановить озвучку";
@@ -1234,7 +1234,7 @@ import {
 
   function isSpeechActive() {
     return speechLoading || Boolean(remoteSpeech)
-      || window.speechSynthesis.speaking || window.speechSynthesis.pending;
+      || Boolean(window.speechSynthesis?.speaking || window.speechSynthesis?.pending);
   }
 
   function animateSpeechProgress(
@@ -1359,7 +1359,7 @@ import {
     host = null;
     shadow = null;
     selectionRect = null;
-    if ("speechSynthesis" in window) stopSpeaking();
+    if (window.speechSynthesis) stopSpeaking();
   }
 
   function clean(value) {

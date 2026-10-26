@@ -49,11 +49,6 @@ describe("selection translator settings", () => {
       }));
     }
     vi.stubGlobal("AudioContext", MockAudioContext);
-    vi.stubGlobal("speechSynthesis", {
-      addEventListener: vi.fn(), cancel: vi.fn(), getVoices: vi.fn(() => []), pending: false,
-      resume: vi.fn(), speak: vi.fn(), speaking: false
-    });
-
     const originalAttachShadow = Element.prototype.attachShadow;
     vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (this: Element, init) {
       return originalAttachShadow.call(this, {...init, mode: "open"});
