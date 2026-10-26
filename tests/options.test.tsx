@@ -44,6 +44,7 @@ describe("options page", () => {
     expect(screen.getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Читаете текст на иностранном языке"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Частые вопросы"})).toBeTruthy();
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
     expect(location.hash).toBe("#help");
 
     await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
