@@ -28,6 +28,9 @@ const local = {
 };
 
 export const browserMock = {
+  i18n: {
+    getUILanguage: vi.fn(() => "ru-RU")
+  },
   storage: {
     local,
     onChanged: {addListener: vi.fn((listener: Listener) => storageListeners.push(listener))}
@@ -66,6 +69,7 @@ export function resetBrowserMock(data: Record<string, any> = {}) {
   });
   browserMock.runtime.openOptionsPage.mockClear();
   browserMock.tabs.create.mockClear();
+  browserMock.i18n.getUILanguage.mockClear();
 }
 
 export default browserMock;

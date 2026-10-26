@@ -10,11 +10,26 @@ import {
   normalizeSpeechRate,
   saveExtensionSettings,
   SETTINGS_KEY,
-  shortcutFromKeyboardEvent
+  shortcutFromKeyboardEvent,
+  interfaceLanguageFromBrowser,
+  targetLanguageFromBrowser
 } from "../src/settings";
 import {storageData} from "./mocks/browser";
 
 describe("settings", () => {
+  it.each([
+    ["ru-RU", "ru", "ru"],
+    ["en-US", "en", "en"],
+    ["de-DE", "en", "de"],
+    ["pt_BR", "en", "pt"],
+    ["zh-TW", "en", "zh-TW"],
+    ["zh-Hans-CN", "en", "zh-CN"],
+    ["eo", "en", "en"]
+  ])("uses browser locale %s for interface and translation defaults", (locale, interfaceLanguage, targetLanguage) => {
+    expect(interfaceLanguageFromBrowser(locale)).toBe(interfaceLanguage);
+    expect(targetLanguageFromBrowser(locale)).toBe(targetLanguage);
+  });
+
   it("returns every default for empty or invalid storage", () => {
     expect(normalizeSettings(null)).toEqual(defaultSettings);
     expect(normalizeSettings("bad")).toEqual(defaultSettings);

@@ -50,16 +50,46 @@ export const TRANSLATION_LANGUAGES = [
   ["ur", "Урду"], ["uz", "Узбекский"], ["cy", "Валлийский"]
 ] as const;
 
+export function interfaceLanguageFromBrowser(locale: unknown): InterfaceLanguage {
+  return normalizedBrowserLocale(locale).split("-")[0] === "ru" ? "ru" : "en";
+}
+
+export function targetLanguageFromBrowser(locale: unknown): string {
+  const normalized = normalizedBrowserLocale(locale);
+  if (!normalized) return "en";
+  if (normalized === "zh" || normalized.startsWith("zh-")) {
+    return /(?:^|-)TW|HK|MO|HANT(?:-|$)/i.test(normalized) ? "zh-TW" : "zh-CN";
+  }
+  const exact = TRANSLATION_LANGUAGES.find(([code]) => code.toLocaleLowerCase() === normalized.toLocaleLowerCase());
+  if (exact) return exact[0];
+  const base = normalized.split("-")[0];
+  return TRANSLATION_LANGUAGES.find(([code]) => code.toLocaleLowerCase() === base)?.[0] || "en";
+}
+
+function browserUiLanguage() {
+  try {
+    return browser.i18n?.getUILanguage?.() || globalThis.navigator?.language || "en";
+  } catch (_error) {
+    return globalThis.navigator?.language || "en";
+  }
+}
+
+function normalizedBrowserLocale(value: unknown) {
+  return typeof value === "string" ? value.trim().replace(/_/g, "-") : "";
+}
+
+const initialBrowserLanguage = browserUiLanguage();
+
 export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
-  interfaceLanguage: "ru",
+  interfaceLanguage: interfaceLanguageFromBrowser(initialBrowserLanguage),
   showSelectionTranslationModal: true,
   speechEnabled: true,
   transcriptionEnabled: true,
   speechRate: 1,
-  targetLanguage: "ru",
+  targetLanguage: targetLanguageFromBrowser(initialBrowserLanguage),
   translatorSourceLanguage: "ru",
   translatorTargetLanguage: "en",
   activationShortcut: {
