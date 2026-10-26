@@ -7,7 +7,7 @@ describe("standalone translator content UI", () => {
     vi.resetModules();
     const {browserMock, storageData} = await import("./mocks/browser");
     document.body.innerHTML = "<main>Page content</main>";
-    storageData[SETTINGS_KEY] = structuredClone(defaultSettings);
+    storageData[SETTINGS_KEY] = {...structuredClone(defaultSettings), interfaceLanguage: "en"};
     browserMock.runtime.sendMessage.mockImplementation(async (message) => {
       if (message.type === "translate-preview") {
         return {ok: true, translation: message.payload.text === "Hello" ? "Привет" : `Перевод: ${message.payload.text}`, sourceLanguage: "en"};
@@ -34,6 +34,8 @@ describe("standalone translator content UI", () => {
       return element!;
     });
     const shadow = host.shadowRoot!;
+    expect(shadow.querySelector(".translator")?.getAttribute("aria-label")).toBe("Translator");
+    expect(shadow.querySelector(".translator-input")?.getAttribute("placeholder")).toBe("Enter text");
     const input = shadow.querySelector(".translator-input") as HTMLTextAreaElement;
     expect((shadow.querySelector(".source-language") as HTMLSelectElement).value).toBe(defaultSettings.translatorSourceLanguage);
     expect((shadow.querySelector(".target-language") as HTMLSelectElement).value).toBe(defaultSettings.translatorTargetLanguage);
@@ -94,6 +96,7 @@ describe("standalone translator content UI", () => {
       expect(element).not.toBeNull();
       return element!;
     }, {timeout: 1500});
+    expect(selectionHost.shadowRoot?.querySelector(".card")?.getAttribute("aria-label")).toBe("Selected text translation");
     await waitFor(() => expect(selectionHost.shadowRoot?.querySelectorAll(".translation-option")).toHaveLength(3));
     expect([...selectionHost.shadowRoot!.querySelectorAll(".translation-option")].map((item) => item.textContent))
       .toEqual(["Привет", "Добрый день", "Здравствуйте"]);

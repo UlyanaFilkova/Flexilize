@@ -16,6 +16,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
+import {observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -129,7 +130,7 @@ function App() {
   };
 
   const clearRecords = async () => {
-    if (!records.length || !confirm("Удалить все сохранённые переводы?")) return;
+    if (!records.length || !confirm(translate("Удалить все сохранённые переводы?"))) return;
     try {
       await clearTranslationRecords();
       setRecords([]);
@@ -423,12 +424,43 @@ function TranslationSettings() {
     }
   };
 
+  const changeInterfaceLanguage = async (interfaceLanguage: InterfaceLanguage) => {
+    if (!settings || settings.interfaceLanguage === interfaceLanguage) return;
+    const previous = settings;
+    const next = {...settings, interfaceLanguage};
+    setSettings(next);
+    setError("");
+    try {
+      await saveExtensionSettings(next);
+      window.location.reload();
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
   const languageOptions = [...TRANSLATION_LANGUAGES]
     .sort((left, right) => left[1].localeCompare(right[1], "ru"))
     .map(([code, label]) => <option key={code} value={code}>{label}</option>);
 
   return (
     <>
+      <div className="settings-group">
+        <h2 className="settings-group-title">Языки и интерфейс</h2>
+        <section className="settings-panel" aria-label="Язык интерфейса">
+          <div className="setting-row">
+            <div className="setting-copy">
+              <h2>Язык интерфейса</h2>
+              <p>Язык кнопок, настроек и сообщений расширения.</p>
+            </div>
+            <div className="interface-language-switch" role="group" aria-label="Язык интерфейса">
+              <button className={settings?.interfaceLanguage === "ru" ? "active" : ""} type="button" disabled={!settings} onClick={() => void changeInterfaceLanguage("ru")}>Русский</button>
+              <button className={settings?.interfaceLanguage === "en" ? "active" : ""} type="button" disabled={!settings} onClick={() => void changeInterfaceLanguage("en")}>English</button>
+            </div>
+          </div>
+          {error && <div className="settings-error" role="alert">{error}</div>}
+        </section>
+      </div>
       <div className="settings-group">
         <h2 className="settings-group-title">Перевод выделенного текста</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Перевод выделенного текста">
@@ -536,8 +568,8 @@ function SavingSettings() {
       <div className="setting-row setting-row-secondary">
         <div className="setting-copy">
           <h2>Ротация истории</h2>
-          <p>При добавлении новых переводов сверх лимита в {MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {MAX_HISTORY_RECORDS}.</p>
-          <p>При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {MAX_HISTORY_RECORDS}.</p>
+          <p>{`При добавлении новых переводов сверх лимита в ${MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным ${MAX_HISTORY_RECORDS}.`}</p>
+          <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${MAX_HISTORY_RECORDS}.`}</p>
         </div>
         <label className="switch">
           <input
@@ -909,4 +941,16 @@ function InfoIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M12 1
 function CheckIcon() { return <Icon><path d="m5 12 4 4L19 6"/></Icon>; }
 function ArrowIcon() { return <Icon><path d="M5 12h14M14 7l5 5-5 5"/></Icon>; }
 
-createRoot(document.getElementById("root")!).render(<App />);
+async function startApp() {
+  let language: InterfaceLanguage = "ru";
+  try {
+    language = (await getExtensionSettings()).interfaceLanguage;
+  } catch (_error) {
+    // Keep the default language when storage is unavailable.
+  }
+  setActiveLanguage(language);
+  observeLocalizedDom(document, language);
+  createRoot(document.getElementById("root")!).render(<App />);
+}
+
+void startApp();

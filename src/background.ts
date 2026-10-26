@@ -1,8 +1,9 @@
 import browser from "webextension-polyfill";
 import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
-import {getExtensionSettings} from "./settings";
+import {getExtensionSettings, normalizeSettings, SETTINGS_KEY} from "./settings";
 import {MAX_HISTORY_RECORDS} from "./history-config";
+import {translate} from "./i18n";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
@@ -46,6 +47,20 @@ let recordSaveQueue = Promise.resolve();
 let myMemoryCooldownUntil = 0;
 let googleTranslationCooldownUntil = 0;
 let consecutiveGoogleTranslationFailures = 0;
+
+type ToolbarAction = {setTitle(details: {title: string}): Promise<void>};
+const toolbarApi = extensionApi as unknown as {action?: ToolbarAction; browserAction?: ToolbarAction};
+
+void getExtensionSettings().then((settings) => updateToolbarTitle(settings.interfaceLanguage)).catch(() => undefined);
+extensionApi.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
+  updateToolbarTitle(normalizeSettings(changes[SETTINGS_KEY].newValue).interfaceLanguage);
+});
+
+function updateToolbarTitle(language: "ru" | "en") {
+  const action = toolbarApi.action || toolbarApi.browserAction;
+  void action?.setTitle({title: translate("Сохранённые переводы", language)}).catch(() => undefined);
+}
 
 extensionApi.runtime.onMessage.addListener((message: unknown) => {
   if (!isRuntimeMessage(message)) return undefined;

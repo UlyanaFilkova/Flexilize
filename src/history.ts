@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import type {ExportFormat} from "./export";
 import type {RecordsResponse, TranslationRecord} from "./types";
+import {getActiveLanguage, type InterfaceLanguage} from "./i18n";
 
 const RECORDS_KEY = "translationRecords";
 
@@ -58,7 +59,8 @@ export function formatLabel(format: ExportFormat) {
   return exportFormats.find((item) => item.format === format)?.label || format.toUpperCase();
 }
 
-export function pluralizeRecords(count: number) {
+export function pluralizeRecords(count: number, language: InterfaceLanguage = getActiveLanguage()) {
+  if (language === "en") return `${count} ${count === 1 ? "record" : "records"}`;
   const mod10 = count % 10;
   const mod100 = count % 100;
   const word = mod10 === 1 && mod100 !== 11
@@ -69,15 +71,15 @@ export function pluralizeRecords(count: number) {
   return `${count} ${word}`;
 }
 
-export function formatRecordDate(value: string) {
+export function formatRecordDate(value: string, language: InterfaceLanguage = getActiveLanguage()) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? ""
-    : new Intl.DateTimeFormat("ru", {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}).format(date);
+    : new Intl.DateTimeFormat(language === "en" ? "en" : "ru", {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}).format(date);
 }
 
-export function recordHostname(value: string) {
-  try { return new URL(value).hostname; } catch (_error) { return "Источник"; }
+export function recordHostname(value: string, language: InterfaceLanguage = getActiveLanguage()) {
+  try { return new URL(value).hostname; } catch (_error) { return language === "en" ? "Source" : "Источник"; }
 }
 
 function recordsFrom(value: unknown, fallback: string) {

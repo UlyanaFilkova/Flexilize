@@ -428,6 +428,43 @@ h1 {
   opacity: .55;
 }
 
+.interface-language-switch {
+  display: inline-flex;
+  flex: none;
+  padding: 3px;
+  border: 1px solid #d8dee8;
+  border-radius: 11px;
+  background: #f4f6fa;
+}
+
+.interface-language-switch button {
+  min-height: 36px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #667085;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.interface-language-switch button.active {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, .12);
+  color: #315be8;
+}
+
+.interface-language-switch button:focus-visible {
+  outline: 3px solid rgba(49, 91, 232, .16);
+}
+
+.interface-language-switch button:disabled {
+  cursor: default;
+  opacity: .55;
+}
+
 .stepper {
   display: grid;
   grid-template-columns: 42px 70px 42px;

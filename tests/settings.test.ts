@@ -25,6 +25,7 @@ describe("settings", () => {
       autoSaveTranslations: false,
       historyRotationEnabled: false,
       hotkeyActivationEnabled: true,
+      interfaceLanguage: "en",
       showSelectionTranslationModal: false,
       speechEnabled: false,
       transcriptionEnabled: false,
@@ -39,6 +40,7 @@ describe("settings", () => {
       autoSaveTranslations: false,
       historyRotationEnabled: false,
       hotkeyActivationEnabled: true,
+      interfaceLanguage: "en",
       showSelectionTranslationModal: false,
       speechEnabled: false,
       transcriptionEnabled: false,
@@ -54,12 +56,14 @@ describe("settings", () => {
   it("rejects invalid languages and modifierless shortcuts", () => {
     const normalized = normalizeSettings({
       targetLanguage: "xx",
+      interfaceLanguage: "de",
       translatorSourceLanguage: "xx",
       translatorTargetLanguage: 3,
       activationShortcut: {alt: false, code: "KeyA", ctrl: false, key: "A", meta: false, shift: false},
       translatorShortcut: {alt: false, code: "KeyB", ctrl: false, key: "B", meta: false, shift: false}
     });
     expect(normalized.targetLanguage).toBe(defaultSettings.targetLanguage);
+    expect(normalized.interfaceLanguage).toBe("ru");
     expect(normalized.translatorSourceLanguage).toBe(defaultSettings.translatorSourceLanguage);
     expect(normalized.activationShortcut).toEqual(defaultSettings.activationShortcut);
     expect(normalized.translatorShortcut).toEqual(defaultSettings.translatorShortcut);

@@ -9,6 +9,7 @@ import {
 } from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
 import {MAX_HISTORY_RECORDS} from "./history-config";
+import {observeLocalizedDom} from "./i18n";
 import {
   defaultSettings,
   getExtensionSettings,
@@ -98,6 +99,7 @@ import {
     if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
     const speechWasEnabled = activationSettings.speechEnabled;
     const transcriptionWasEnabled = activationSettings.transcriptionEnabled;
+    const previousInterfaceLanguage = activationSettings.interfaceLanguage;
     activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
     activationSettingsReady = true;
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
@@ -110,6 +112,10 @@ import {
     }
     if (transcriptionWasEnabled && !activationSettings.transcriptionEnabled) {
       shadow?.querySelector(".transcription")?.remove();
+    }
+    if (previousInterfaceLanguage !== activationSettings.interfaceLanguage) {
+      closeModal();
+      closeTranslator();
     }
   });
 
@@ -170,6 +176,7 @@ import {
           <div class="translator-status"></div>
         </section>
       </div>`;
+    observeLocalizedDom(translatorShadow, activationSettings.interfaceLanguage);
 
     const backdrop = translatorShadow.querySelector<HTMLElement>(".backdrop")!;
     const dialog = translatorShadow.querySelector<HTMLElement>(".translator")!;
@@ -534,6 +541,7 @@ import {
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
+    observeLocalizedDom(shadow, activationSettings.interfaceLanguage);
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
     const languageInput = shadow.querySelector<HTMLInputElement>(".source-language");

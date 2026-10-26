@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import {normalizeInterfaceLanguage, type InterfaceLanguage} from "./i18n";
 
 export const SETTINGS_KEY = "extensionSettings";
 
@@ -15,6 +16,7 @@ export interface ExtensionSettings {
   autoSaveTranslations: boolean
   historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
+  interfaceLanguage: InterfaceLanguage
   showSelectionTranslationModal: boolean
   activationShortcut: ActivationShortcut
   speechEnabled: boolean
@@ -52,6 +54,7 @@ export const defaultSettings: ExtensionSettings = {
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
+  interfaceLanguage: "ru",
   showSelectionTranslationModal: true,
   speechEnabled: true,
   transcriptionEnabled: true,
@@ -116,6 +119,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
+    interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage),
     showSelectionTranslationModal: settings.showSelectionTranslationModal !== false,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
     speechEnabled: settings.speechEnabled !== false,

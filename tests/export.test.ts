@@ -4,6 +4,8 @@ import {readFile} from "node:fs/promises";
 import {resolve} from "node:path";
 import {exportTranslationRecords, type ExportFormat} from "../src/export";
 import {record} from "./fixtures";
+import {storageData} from "./mocks/browser";
+import {defaultSettings, SETTINGS_KEY} from "../src/settings";
 
 async function blobBytes(blob: Blob) {
   return new Uint8Array(await new Promise<ArrayBuffer>((resolve, reject) => {
@@ -64,6 +66,14 @@ describe("exports", () => {
     downloaded.length = 0;
     await exportTranslationRecords([{...dangerous, text: "*term*"}], "markdown");
     expect(await blobText(downloaded[0])).toContain("\\*term\\*");
+  });
+
+  it("uses the selected interface language in readable exports", async () => {
+    storageData[SETTINGS_KEY] = {...defaultSettings, interfaceLanguage: "en"};
+    await exportTranslationRecords([record], "markdown");
+    const markdown = await blobText(downloaded[0]);
+    expect(markdown).toContain("# Translation history");
+    expect(markdown).toContain("**Context translation:**");
   });
 
   it("creates a valid XLSX archive with escaped worksheet values", async () => {

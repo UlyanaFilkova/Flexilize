@@ -3,8 +3,9 @@
   "chromium:manifest_version": 3,
   "firefox:manifest_version": 2,
   "version": "1.1.2",
-  "name": "Context Translator",
-  "description": "Мгновенный перевод, прослушивание и сохранение текста на любом языке.",
+  "default_locale": "ru",
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -30,11 +31,11 @@
     "open_in_tab": true
   },
   "chromium:action": {
-    "default_title": "Сохранённые переводы",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup/index.html"
   },
   "firefox:browser_action": {
-    "default_title": "Сохранённые переводы",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup/index.html"
   },
   "firefox:browser_specific_settings": {

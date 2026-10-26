@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "Мгновенный перевод, прослушивание и сохранение текста на любом языке."},
+  "actionTitle": {"message": "Сохранённые переводы"}
+}
