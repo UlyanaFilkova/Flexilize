@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "あらゆる言語のテキストをすぐに翻訳、読み上げ、保存できます。"},
+  "actionTitle": {"message": "保存した翻訳"}
+}

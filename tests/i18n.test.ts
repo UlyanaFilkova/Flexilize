@@ -1,11 +1,23 @@
 import {describe, expect, it} from "vitest";
-import {localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
+import {loadInterfaceLanguage, localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
 
 describe("interface localization", () => {
   it("normalizes the supported interface languages", () => {
     expect(normalizeInterfaceLanguage("en")).toBe("en");
     expect(normalizeInterfaceLanguage("ru")).toBe("ru");
-    expect(normalizeInterfaceLanguage("de")).toBe("ru");
+    expect(normalizeInterfaceLanguage("de")).toBe("de");
+    expect(normalizeInterfaceLanguage("unsupported")).toBe("ru");
+  });
+
+  it.each([
+    ["de", "Einstellungen"], ["fr", "Paramètres"], ["es", "Configuración"], ["ja", "設定"],
+    ["nl", "Instellingen"], ["it", "Impostazioni"], ["pt", "Configurações"],
+    ["id", "Pengaturan"], ["hi", "सेटिंग्स"]
+  ] as const)("loads the complete %s catalog", async (language, settingsLabel) => {
+    await loadInterfaceLanguage(language);
+    expect(translate("Настройки", language)).toBe(settingsLabel);
+    expect(translate("Удалить перевод «hello»", language)).not.toMatch(/[А-Яа-яЁё]/u);
+    expect(translate("Практическое руководство: от первого перевода до личного словаря и экспорта в Anki.", language)).not.toMatch(/[А-Яа-яЁё]/u);
   });
 
   it("translates static and dynamic messages", () => {

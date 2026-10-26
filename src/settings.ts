@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import {normalizeInterfaceLanguage, type InterfaceLanguage} from "./i18n";
+import {INTERFACE_LANGUAGES, normalizeInterfaceLanguage, type InterfaceLanguage} from "./i18n";
 
 export const SETTINGS_KEY = "extensionSettings";
 
@@ -51,7 +51,8 @@ export const TRANSLATION_LANGUAGES = [
 ] as const;
 
 export function interfaceLanguageFromBrowser(locale: unknown): InterfaceLanguage {
-  return normalizedBrowserLocale(locale).split("-")[0] === "ru" ? "ru" : "en";
+  const base = normalizedBrowserLocale(locale).split("-")[0].toLocaleLowerCase() as InterfaceLanguage;
+  return INTERFACE_LANGUAGES.includes(base) ? base : "en";
 }
 
 export function targetLanguageFromBrowser(locale: unknown): string {
@@ -149,7 +150,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
-    interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage),
+    interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage, defaultSettings.interfaceLanguage),
     showSelectionTranslationModal: settings.showSelectionTranslationModal !== false,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
     speechEnabled: settings.speechEnabled !== false,

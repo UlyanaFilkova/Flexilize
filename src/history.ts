@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import type {ExportFormat} from "./export";
 import type {RecordsResponse, TranslationRecord} from "./types";
-import {getActiveLanguage, type InterfaceLanguage} from "./i18n";
+import {formatRecordCount, getActiveLanguage, type InterfaceLanguage} from "./i18n";
 
 const RECORDS_KEY = "translationRecords";
 
@@ -60,7 +60,7 @@ export function formatLabel(format: ExportFormat) {
 }
 
 export function pluralizeRecords(count: number, language: InterfaceLanguage = getActiveLanguage()) {
-  if (language === "en") return `${count} ${count === 1 ? "record" : "records"}`;
+  if (language !== "ru") return formatRecordCount(count, language);
   const mod10 = count % 10;
   const mod100 = count % 100;
   const word = mod10 === 1 && mod100 !== 11

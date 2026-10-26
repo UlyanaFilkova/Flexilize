@@ -13,7 +13,7 @@ import {
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
-import {observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {getExtensionSettings} from "../settings";
 
 const extensionApi = browser;
@@ -42,6 +42,7 @@ async function initialize() {
   } catch (_error) {
     // Keep Russian defaults when settings cannot be read.
   }
+  await loadInterfaceLanguage(language);
   setActiveLanguage(language);
   observeLocalizedDom(document, language);
   await loadRecords();

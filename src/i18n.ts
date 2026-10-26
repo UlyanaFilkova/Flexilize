@@ -1,7 +1,8 @@
-export const INTERFACE_LANGUAGES = ["ru", "en"] as const;
+export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi"] as const;
 export type InterfaceLanguage = typeof INTERFACE_LANGUAGES[number];
 
 let activeLanguage: InterfaceLanguage = "ru";
+const loadedCatalogs: Partial<Record<InterfaceLanguage, Record<string, string>>> = {};
 
 const en: Record<string, string> = {
   "Все настройки": "All settings",
@@ -179,7 +180,7 @@ const en: Record<string, string> = {
   "Не удалось загрузить записи": "Could not load records", "Не удалось очистить хранилище": "Could not clear storage", "Хранилище очищено, текущий перевод сохранён": "Storage cleared and current translation saved", "Переводы скачаны, хранилище очищено": "Translations downloaded and storage cleared", "Ошибка экспорта": "Export error", "Не удалось скачать переводы": "Could not download translations",
   "Транскрипция недоступна": "Transcription unavailable", "Озвучка не поддерживается этим браузером": "Speech is not supported by this browser", "Остановить озвучку": "Stop speaking", "Не удалось загрузить озвучку": "Could not load speech",
   "Запись удалена": "Record deleted", "Запись восстановлена": "Record restored", "Изменения сохранены": "Changes saved", "Список очищен": "List cleared", "Ошибка загрузки": "Load error", "Ошибка удаления": "Delete error", "Ошибка восстановления": "Restore error", "Ошибка очистки": "Clear error", "Не удалось подготовить файл": "Could not prepare the file", "Не удалось сохранить запись": "Could not save the record",
-  "Удалить все сохранённые переводы?": "Delete all saved translations?", "Источник": "Source",
+  "Удалить все сохранённые переводы?": "Delete all saved translations?", "Источник": "Source", "Варианты": "Alternatives", "Экспортировано записей": "Exported records", "Записей": "Records",
   "Не удалось удалить запись": "Could not delete the record", "Не удалось восстановить запись": "Could not restore the record", "Не удалось очистить список": "Could not clear the list",
   "Не удалось прочитать выделенный текст": "Could not read the selected text", "Не удалось прочитать текст для озвучки": "Could not read the text for speech",
   "Сервис перевода временно недоступен": "The translation service is temporarily unavailable", "Перевод может быть неточным": "The translation may be inaccurate",
@@ -188,11 +189,27 @@ const en: Record<string, string> = {
   "Локальное хранилище недоступно": "Local storage is unavailable", "Не удалось прочитать перевод": "Could not read the translation", "Перевод повреждён": "The translation is corrupted",
   "Не удалось определить запись": "Could not identify the record", "Запись уже удалена": "The record has already been deleted", "Не удалось прочитать запись": "Could not read the record", "Запись не найдена": "Record not found",
   "Оригинал и перевод не могут быть пустыми": "Original text and translation cannot be empty", "Запись повреждена": "The record is corrupted",
-  "Не удалось сохранить текущий перевод": "Could not save the current translation", "Текущая запись повреждена": "The current record is corrupted", "Не удалось загрузить шрифт PDF": "Could not load the PDF font"
+  "Не удалось сохранить текущий перевод": "Could not save the current translation", "Текущая запись повреждена": "The current record is corrupted", "Не удалось загрузить шрифт PDF": "Could not load the PDF font",
+  "{records} доступно для скачивания.": "{records} available to download.", "Скачать {format}": "Download {format}", "Файл {format} подготовлен": "{format} file is ready",
+  "Удалить перевод «{term}»": "Delete translation “{term}”", "Редактировать перевод «{term}»": "Edit translation “{term}”", "Текущая скорость {rate}": "Current rate {rate}",
+  "Код языка: {code}": "Language code: {code}", "Озвучить ({code})": "Speak ({code})", "Ошибка озвучки: {error}": "Speech error: {error}",
+  "Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.": "The limit of {count} translations has been reached. Download the saved records and clear storage to save new ones.",
+  "При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.": "When rotation is disabled, new records will not be saved while the {count}-record limit has been reached.",
+  "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.": "When new translations exceed the {count}-record limit, the oldest records are removed automatically, keeping history at {count} records."
 };
 
-export function normalizeInterfaceLanguage(value: unknown): InterfaceLanguage {
-  return value === "en" ? "en" : "ru";
+export function normalizeInterfaceLanguage(value: unknown, fallback: InterfaceLanguage = "ru"): InterfaceLanguage {
+  return INTERFACE_LANGUAGES.includes(value as InterfaceLanguage) ? value as InterfaceLanguage : fallback;
+}
+
+export async function loadInterfaceLanguage(language: InterfaceLanguage) {
+  if (language === "ru" || language === "en" || loadedCatalogs[language]) return;
+  const loaders: Record<Exclude<InterfaceLanguage, "ru" | "en">, () => Promise<{default: Record<string, string>}>> = {
+    de: () => import("./locales/de.json"), fr: () => import("./locales/fr.json"), es: () => import("./locales/es.json"),
+    ja: () => import("./locales/ja.json"), nl: () => import("./locales/nl.json"), it: () => import("./locales/it.json"),
+    pt: () => import("./locales/pt.json"), id: () => import("./locales/id.json"), hi: () => import("./locales/hi.json")
+  };
+  loadedCatalogs[language] = (await loaders[language]()).default;
 }
 
 export function setActiveLanguage(language: InterfaceLanguage) {
@@ -208,28 +225,43 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
   const leading = value.match(/^\s*/)?.[0] || "";
   const trailing = value.match(/\s*$/)?.[0] || "";
   const text = value.trim();
-  const exact = en[text];
+  const exact = (language === "en" ? en[text] : loadedCatalogs[language]?.[text]) || en[text];
   if (exact) return `${leading}${exact}${trailing}`;
   const patterns: Array<[RegExp, (...parts: string[]) => string]> = [
-    [/^(\d+) (?:запись|записи|записей)$/, (count) => `${count} ${Number(count) === 1 ? "record" : "records"}`],
-    [/^(\d+ (?:запись|записи|записей)) доступно для скачивания\.$/, (records) => `${translate(records, language)} available to download.`],
-    [/^Скачать (.+)$/, (format) => `Download ${format}`],
-    [/^Файл (.+) подготовлен$/, (format) => `${format} file is ready`],
-    [/^Удалить перевод «(.+)»$/, (term) => `Delete translation “${term}”`],
-    [/^Редактировать перевод «(.+)»$/, (term) => `Edit translation “${term}”`],
-    [/^Текущая скорость (.+)$/, (rate) => `Current rate ${rate}`],
-    [/^Код языка: (.+)$/, (code) => `Language code: ${code}`],
-    [/^Озвучить \((.+)\)$/, (code) => `Speak (${code})`],
-    [/^Ошибка озвучки: (.+)$/, (error) => `Speech error: ${error}`],
-    [/^Достигнут лимит в (\d+) переводов\. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые\.$/, (count) => `The limit of ${count} translations has been reached. Download the saved records and clear storage to save new ones.`],
-    [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\.$/, (count) => `When rotation is disabled, new records will not be saved while the ${count}-record limit has been reached.`],
-    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удалены из истории\. Таким образом, общее количество записей в истории будет остается равным (\d+)\.$/, (count) => `When new translations exceed the ${count}-record limit, the oldest records are removed automatically, keeping history at ${count} records.`]
+    [/^(\d+) (?:запись|записи|записей)$/, (count) => formatRecordCount(Number(count), language)],
+    [/^(\d+ (?:запись|записи|записей)) доступно для скачивания\.$/, (records) => formatMessage("{records} доступно для скачивания.", {records: translate(records, language)}, language)],
+    [/^Скачать (.+)$/, (format) => formatMessage("Скачать {format}", {format}, language)],
+    [/^Файл (.+) подготовлен$/, (format) => formatMessage("Файл {format} подготовлен", {format}, language)],
+    [/^Удалить перевод «(.+)»$/, (term) => formatMessage("Удалить перевод «{term}»", {term}, language)],
+    [/^Редактировать перевод «(.+)»$/, (term) => formatMessage("Редактировать перевод «{term}»", {term}, language)],
+    [/^Текущая скорость (.+)$/, (rate) => formatMessage("Текущая скорость {rate}", {rate}, language)],
+    [/^Код языка: (.+)$/, (code) => formatMessage("Код языка: {code}", {code}, language)],
+    [/^Озвучить \((.+)\)$/, (code) => formatMessage("Озвучить ({code})", {code}, language)],
+    [/^Ошибка озвучки: (.+)$/, (error) => formatMessage("Ошибка озвучки: {error}", {error}, language)],
+    [/^Достигнут лимит в (\d+) переводов\. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые\.$/, (count) => formatMessage("Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.", {count}, language)],
+    [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.", {count}, language)],
+    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удалены из истории\. Таким образом, общее количество записей в истории будет остается равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.", {count}, language)]
   ];
   for (const [pattern, replacement] of patterns) {
     const match = text.match(pattern);
     if (match) return `${leading}${replacement(...match.slice(1))}${trailing}`;
   }
   return value;
+}
+
+function formatMessage(template: string, values: Record<string, string>, language: InterfaceLanguage) {
+  const translated = language === "en" ? en[template] : loadedCatalogs[language]?.[template] || en[template] || template;
+  return translated.replace(/\{(\w+)}/g, (_, key) => values[key] ?? `{${key}}`);
+}
+
+export function formatRecordCount(count: number, language: InterfaceLanguage = activeLanguage) {
+  const labels: Record<InterfaceLanguage, [string, string]> = {
+    ru: ["запись", "записей"], en: ["record", "records"], de: ["Eintrag", "Einträge"], fr: ["entrée", "entrées"],
+    es: ["registro", "registros"], ja: ["件", "件"], nl: ["item", "items"], it: ["voce", "voci"],
+    pt: ["registro", "registros"], id: ["catatan", "catatan"], hi: ["रिकॉर्ड", "रिकॉर्ड"]
+  };
+  const [one, many] = labels[language];
+  return `${count} ${count === 1 ? one : many}`;
 }
 
 const excludedTextSelector = [

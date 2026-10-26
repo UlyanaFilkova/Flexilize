@@ -430,7 +430,10 @@ h1 {
 
 .interface-language-switch {
   display: inline-flex;
-  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 680px;
+  flex: 1 1 480px;
   padding: 3px;
   border: 1px solid #d8dee8;
   border-radius: 11px;

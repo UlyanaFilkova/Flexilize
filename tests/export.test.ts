@@ -76,6 +76,15 @@ describe("exports", () => {
     expect(markdown).toContain("**Context translation:**");
   });
 
+  it("loads non-English export catalogs on demand", async () => {
+    storageData[SETTINGS_KEY] = {...defaultSettings, interfaceLanguage: "de"};
+    await exportTranslationRecords([record], "markdown");
+    const markdown = await blobText(downloaded[0]);
+    expect(markdown).toContain("# Übersetzungsverlauf");
+    expect(markdown).toContain("**Kontextübersetzung:**");
+    expect(markdown).toContain("Exportierte Datensätze: 1");
+  });
+
   it("creates a valid XLSX archive with escaped worksheet values", async () => {
     await exportTranslationRecords([{...record, text: "A&B <test>"}], "xlsx");
     const archive = unzipSync(await blobBytes(downloaded[0]));

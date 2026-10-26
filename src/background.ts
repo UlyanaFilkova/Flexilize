@@ -3,7 +3,7 @@ import {isRuntimeMessage, type TranslatePayload, type TranslationRecord} from ".
 import {uniqueTranslationForms} from "./translation-variants";
 import {getExtensionSettings, normalizeSettings, SETTINGS_KEY} from "./settings";
 import {MAX_HISTORY_RECORDS} from "./history-config";
-import {translate} from "./i18n";
+import {loadInterfaceLanguage, translate} from "./i18n";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
@@ -51,13 +51,17 @@ let consecutiveGoogleTranslationFailures = 0;
 type ToolbarAction = {setTitle(details: {title: string}): Promise<void>};
 const toolbarApi = extensionApi as unknown as {action?: ToolbarAction; browserAction?: ToolbarAction};
 
-void getExtensionSettings().then((settings) => updateToolbarTitle(settings.interfaceLanguage)).catch(() => undefined);
+void getExtensionSettings().then(async (settings) => {
+  await loadInterfaceLanguage(settings.interfaceLanguage);
+  updateToolbarTitle(settings.interfaceLanguage);
+}).catch(() => undefined);
 extensionApi.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
-  updateToolbarTitle(normalizeSettings(changes[SETTINGS_KEY].newValue).interfaceLanguage);
+  const language = normalizeSettings(changes[SETTINGS_KEY].newValue).interfaceLanguage;
+  void loadInterfaceLanguage(language).then(() => updateToolbarTitle(language));
 });
 
-function updateToolbarTitle(language: "ru" | "en") {
+function updateToolbarTitle(language: import("./i18n").InterfaceLanguage) {
   const action = toolbarApi.action || toolbarApi.browserAction;
   void action?.setTitle({title: translate("Сохранённые переводы", language)}).catch(() => undefined);
 }

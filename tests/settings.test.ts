@@ -20,8 +20,15 @@ describe("settings", () => {
   it.each([
     ["ru-RU", "ru", "ru"],
     ["en-US", "en", "en"],
-    ["de-DE", "en", "de"],
-    ["pt_BR", "en", "pt"],
+    ["de-DE", "de", "de"],
+    ["fr-CA", "fr", "fr"],
+    ["es-MX", "es", "es"],
+    ["ja-JP", "ja", "ja"],
+    ["nl-BE", "nl", "nl"],
+    ["it-IT", "it", "it"],
+    ["pt_BR", "pt", "pt"],
+    ["id-ID", "id", "id"],
+    ["hi-IN", "hi", "hi"],
     ["zh-TW", "en", "zh-TW"],
     ["zh-Hans-CN", "en", "zh-CN"],
     ["eo", "en", "en"]
@@ -71,7 +78,7 @@ describe("settings", () => {
   it("rejects invalid languages and modifierless shortcuts", () => {
     const normalized = normalizeSettings({
       targetLanguage: "xx",
-      interfaceLanguage: "de",
+      interfaceLanguage: "xx",
       translatorSourceLanguage: "xx",
       translatorTargetLanguage: 3,
       activationShortcut: {alt: false, code: "KeyA", ctrl: false, key: "A", meta: false, shift: false},

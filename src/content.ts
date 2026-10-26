@@ -9,7 +9,7 @@ import {
 } from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
 import {MAX_HISTORY_RECORDS} from "./history-config";
-import {observeLocalizedDom} from "./i18n";
+import {loadInterfaceLanguage, observeLocalizedDom} from "./i18n";
 import {
   defaultSettings,
   getExtensionSettings,
@@ -93,7 +93,10 @@ import {
   window.addEventListener("blur", closeModal);
 
   void getExtensionSettings()
-    .then((settings) => { activationSettings = settings; })
+    .then(async (settings) => {
+      activationSettings = settings;
+      await loadInterfaceLanguage(settings.interfaceLanguage);
+    })
     .finally(() => { activationSettingsReady = true; });
   extensionApi.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
@@ -114,8 +117,12 @@ import {
       shadow?.querySelector(".transcription")?.remove();
     }
     if (previousInterfaceLanguage !== activationSettings.interfaceLanguage) {
-      closeModal();
-      closeTranslator();
+      activationSettingsReady = false;
+      void loadInterfaceLanguage(activationSettings.interfaceLanguage).finally(() => {
+        closeModal();
+        closeTranslator();
+        activationSettingsReady = true;
+      });
     }
   });
 

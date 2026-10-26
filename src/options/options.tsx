@@ -16,7 +16,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
-import {observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -36,6 +36,12 @@ type Page = "settings" | "history" | "help";
 type HistorySection = "records" | "export";
 type Route = "settings" | "history" | "export" | "help";
 type Notice = {message: string; undo?: () => Promise<void>};
+
+const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, string]> = [
+  ["ru", "Русский"], ["en", "English"], ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"],
+  ["ja", "日本語"], ["nl", "Nederlands"], ["it", "Italiano"], ["pt", "Português"],
+  ["id", "Bahasa Indonesia"], ["hi", "हिन्दी"]
+];
 
 const routeHashes: Record<Route, string> = {
   settings: "#settings",
@@ -454,8 +460,9 @@ function TranslationSettings() {
               <p>Язык кнопок, настроек и сообщений расширения.</p>
             </div>
             <div className="interface-language-switch" role="group" aria-label="Язык интерфейса">
-              <button className={settings?.interfaceLanguage === "ru" ? "active" : ""} type="button" disabled={!settings} onClick={() => void changeInterfaceLanguage("ru")}>Русский</button>
-              <button className={settings?.interfaceLanguage === "en" ? "active" : ""} type="button" disabled={!settings} onClick={() => void changeInterfaceLanguage("en")}>English</button>
+              {interfaceLanguageOptions.map(([language, label]) => (
+                <button key={language} className={settings?.interfaceLanguage === language ? "active" : ""} type="button" disabled={!settings} onClick={() => void changeInterfaceLanguage(language)}>{label}</button>
+              ))}
             </div>
           </div>
           {error && <div className="settings-error" role="alert">{error}</div>}
@@ -948,6 +955,7 @@ async function startApp() {
   } catch (_error) {
     // Keep the default language when storage is unavailable.
   }
+  await loadInterfaceLanguage(language);
   setActiveLanguage(language);
   observeLocalizedDom(document, language);
   createRoot(document.getElementById("root")!).render(<App />);
