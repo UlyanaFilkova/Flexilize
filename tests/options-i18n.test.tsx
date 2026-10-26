@@ -19,9 +19,10 @@ describe("English options interface", () => {
     expect(screen.getByRole("button", {name: /^Keyboard shortcuts$/})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /^Translation$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
-    expect(screen.getByRole("button", {name: "Russian"})).toBeTruthy();
-    ["English", "Deutsch", "Français", "Español", "日本語", "Nederlands", "Italiano", "Português", "Bahasa Indonesia", "हिन्दी"]
-      .forEach((language) => expect(screen.getByRole("button", {name: language})).toBeTruthy());
+    const interfaceSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
+    expect([...interfaceSelect.options].map((option) => option.textContent)).toEqual([
+      "Russian", "English", "Deutsch", "Français", "Español", "日本語", "Nederlands", "Italiano", "Português", "Bahasa Indonesia", "हिन्दी"
+    ]);
     expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(3);
     expect(document.querySelector("main")?.textContent).not.toMatch(/[А-Яа-яЁё]/u);
     for (const section of ["Keyboard shortcuts", "Sound", "Saving"]) {

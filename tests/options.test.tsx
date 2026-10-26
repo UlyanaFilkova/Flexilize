@@ -48,7 +48,7 @@ describe("options page", () => {
 
     await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
     expect(screen.getByRole("heading", {name: "Горячие клавиши"})).toBeTruthy();
-    expect(location.hash).toBe("#settings");
+    expect(location.hash).toBe("#settings/general");
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {

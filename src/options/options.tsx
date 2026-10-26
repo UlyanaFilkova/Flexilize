@@ -50,6 +50,8 @@ const routeHashes: Record<Route, string> = {
   help: "#help"
 };
 
+const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving"]);
+
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
@@ -59,13 +61,21 @@ const settingsSidebarItems = [
 ];
 
 function routeFromHash(): Route {
+  if (location.hash === routeHashes.settings || location.hash.startsWith(`${routeHashes.settings}/`)) return "settings";
   return (Object.entries(routeHashes).find(([, hash]) => hash === location.hash)?.[0] as Route) || "settings";
+}
+
+function settingsSectionFromHash() {
+  const section = location.hash.startsWith(`${routeHashes.settings}/`)
+    ? location.hash.slice(`${routeHashes.settings}/`.length)
+    : "overview";
+  return settingsSectionIds.has(section) ? section : "overview";
 }
 
 function App() {
   const initialRoute = routeFromHash();
   const [page, setPage] = useState<Page>(initialRoute === "help" ? "help" : initialRoute === "settings" ? "settings" : "history");
-  const [settingsSection, setSettingsSection] = useState("overview");
+  const [settingsSection, setSettingsSection] = useState(settingsSectionFromHash);
   const [historySection, setHistorySection] = useState<HistorySection>(initialRoute === "export" ? "export" : "records");
   const [records, setRecords] = useState<TranslationRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +104,7 @@ function App() {
   const openSettingsSection = (section: string) => {
     setPage("settings");
     setSettingsSection(section);
-    window.history.replaceState(null, "", routeHashes.settings);
+    window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
   };
 
   const openHelp = () => {
@@ -459,11 +469,15 @@ function TranslationSettings() {
               <h2>Язык интерфейса</h2>
               <p>Язык кнопок, настроек и сообщений расширения.</p>
             </div>
-            <div className="interface-language-switch" role="group" aria-label="Язык интерфейса">
-              {interfaceLanguageOptions.map(([language, label]) => (
-                <button key={language} className={settings?.interfaceLanguage === language ? "active" : ""} type="button" disabled={!settings} onClick={() => void changeInterfaceLanguage(language)}>{label}</button>
-              ))}
-            </div>
+            <select
+              className="setting-select"
+              aria-label="Язык интерфейса"
+              value={settings?.interfaceLanguage || "ru"}
+              disabled={!settings}
+              onChange={(event) => void changeInterfaceLanguage(event.target.value as InterfaceLanguage)}
+            >
+              {interfaceLanguageOptions.map(([language, label]) => <option key={language} value={language}>{label}</option>)}
+            </select>
           </div>
           {error && <div className="settings-error" role="alert">{error}</div>}
         </section>
