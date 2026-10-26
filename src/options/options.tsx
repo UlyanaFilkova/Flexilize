@@ -55,7 +55,7 @@ const settingsSectionIds = new Set(["overview", "general", "translation", "sound
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
-  {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
+  {id: "translation", label: "Язык и перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
 ];
@@ -252,7 +252,7 @@ function PageHeading({title, description, action}: {title: string; description: 
 function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
   const sections = [
     {id: "general", title: "Горячие клавиши", description: "Управляйте переводом выделенного текста и быстрым вызовом переводчика.", icon: <SlidersIcon />, meta: "2 комбинации"},
-    {id: "translation", title: "Перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
+    {id: "translation", title: "Язык и перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
     {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
     {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
   ];
@@ -462,7 +462,6 @@ function TranslationSettings() {
   return (
     <>
       <div className="settings-group">
-        <h2 className="settings-group-title">Языки и интерфейс</h2>
         <section className="settings-panel" aria-label="Язык интерфейса">
           <div className="setting-row">
             <div className="setting-copy">
@@ -487,6 +486,21 @@ function TranslationSettings() {
         <section className="settings-panel settings-panel-grouped" aria-label="Перевод выделенного текста">
         <div className="setting-row">
           <div className="setting-copy">
+            <h2>Язык перевода выделенного текста</h2>
+            <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+          </div>
+          <select
+            className="setting-select"
+            aria-label="Язык перевода"
+            value={settings?.targetLanguage || "ru"}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
+          >
+            {languageOptions}
+          </select>
+        </div>
+        <div className="setting-row setting-row-secondary">
+          <div className="setting-copy">
             <h2>Показывать окно перевода</h2>
             <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
             <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
@@ -501,21 +515,6 @@ function TranslationSettings() {
             <span aria-hidden="true" />
             <span className="sr-only">Показывать окно перевода</span>
           </label>
-        </div>
-        <div className="setting-row setting-row-secondary">
-          <div className="setting-copy">
-            <h2>Язык перевода выделенного текста</h2>
-            <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
-          </div>
-          <select
-            className="setting-select"
-            aria-label="Язык перевода"
-            value={settings?.targetLanguage || "ru"}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
-          >
-            {languageOptions}
-          </select>
         </div>
         </section>
       </div>

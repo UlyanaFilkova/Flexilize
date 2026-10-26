@@ -9,6 +9,7 @@ const en: Record<string, string> = {
   "Context Translator — настройки": "Context Translator — Settings",
   "Горячие клавиши": "Keyboard shortcuts",
   "Перевод": "Translation",
+  "Язык и перевод": "Language and translation",
   "Звук": "Sound",
   "Сохранение": "Saving",
   "Настройки": "Settings",

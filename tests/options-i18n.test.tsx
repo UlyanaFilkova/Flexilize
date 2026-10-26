@@ -17,7 +17,7 @@ describe("English options interface", () => {
 
   it("localizes navigation, settings, language names, and help", async () => {
     expect(screen.getByRole("button", {name: /^Keyboard shortcuts$/})).toBeTruthy();
-    await userEvent.click(screen.getByRole("button", {name: /^Translation$/}));
+    await userEvent.click(screen.getByRole("button", {name: /^Language and translation$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
     const interfaceSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
     expect([...interfaceSelect.options].map((option) => option.textContent)).toEqual([
