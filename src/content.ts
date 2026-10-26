@@ -1011,7 +1011,14 @@ import {
 
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
     if (!activationSettings.speechEnabled) return;
-    void speakWithRemoteVoice(text, button, requestedPosition);
+    try {
+      const context = getAudioContext();
+      unlockAudioContext(context);
+      void speakWithRemoteVoice(text, button, requestedPosition, context);
+    } catch (error) {
+      console.warn(`[Context Translator] Web Audio is unavailable: ${errorMessage(error, "unknown error")}`);
+      speakWithBrowserVoice(text, button, requestedPosition);
+    }
   }
 
   function speakWithBrowserVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
@@ -1076,13 +1083,17 @@ import {
     if (button) resetSpeakButton(button);
   }
 
-  async function speakWithRemoteVoice(text: string, button: HTMLButtonElement, requestedPosition = 0) {
+  async function speakWithRemoteVoice(
+    text: string,
+    button: HTMLButtonElement,
+    requestedPosition: number,
+    context: AudioContext
+  ) {
     const startPosition = nearestWordStart(text, requestedPosition);
     const spokenText = text.slice(startPosition).trimStart();
     const leadingWhitespace = text.slice(startPosition).length - spokenText.length;
     const actualStart = startPosition + leadingWhitespace;
     const progress = shadow?.querySelector<HTMLInputElement>(".speech-progress") || null;
-    const context = getAudioContext();
     const ownSpeechRun = ++speechRun;
 
     stopRemoteSpeech();
@@ -1092,10 +1103,6 @@ import {
     button.title = "Остановить озвучку";
     button.setAttribute("aria-label", "Остановить озвучку");
     if (progress) progress.value = String(actualStart);
-
-    // Calling resume directly from the click handler keeps the browser's autoplay
-    // permission while the audio itself is being downloaded.
-    void context.resume();
 
     try {
       const result = await extensionApi.runtime.sendMessage({
@@ -1113,7 +1120,8 @@ import {
       })));
       if (ownSpeechRun !== speechRun) return;
 
-      await context.resume();
+      if (context.state !== "running") await context.resume();
+      if (context.state !== "running") throw new Error("Браузер не разрешил воспроизведение звука");
       const sources: AudioBufferSourceNode[] = [];
       const schedule: Array<{
         chunk: SpeechAudioChunk
@@ -1183,8 +1191,24 @@ import {
   }
 
   function getAudioContext() {
-    audioContext ||= new AudioContext();
+    const AudioContextConstructor = window.AudioContext
+      || (window as typeof window & {webkitAudioContext?: typeof AudioContext}).webkitAudioContext;
+    if (!AudioContextConstructor) throw new Error("Web Audio API is unavailable");
+    if (!audioContext || audioContext.state === "closed") audioContext = new AudioContextConstructor();
     return audioContext;
+  }
+
+  function unlockAudioContext(context: AudioContext) {
+    // Chromium-based browsers may keep a newly created context suspended until
+    // an audio source starts during a user gesture. A silent source makes the
+    // first click unlock playback before the remote audio is downloaded.
+    if (context.state === "suspended") void context.resume().catch(() => undefined);
+    const silentBuffer = context.createBuffer(1, 1, context.sampleRate);
+    const silentSource = context.createBufferSource();
+    silentSource.buffer = silentBuffer;
+    silentSource.connect(context.destination);
+    silentSource.onended = () => silentSource.disconnect();
+    silentSource.start(0);
   }
 
   function stopRemoteSpeech() {
