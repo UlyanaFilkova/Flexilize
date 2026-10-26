@@ -53,7 +53,7 @@ describe("selection translator settings", () => {
       return {ok: true};
     });
     const originalAttachShadow = Element.prototype.attachShadow;
-    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (init) {
+    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (this: Element, init) {
       return originalAttachShadow.call(this, {...init, mode: "open"});
     });
     const input = document.createElement("textarea");

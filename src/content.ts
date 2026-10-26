@@ -704,9 +704,9 @@ import {
     await loadTranslationStages(currentText, currentSentence, ownRequest, sourceLanguage);
   }
 
-  function renderResult(result: TranslateResponse & {translation: string}) {
+  function renderResult(result: TranslateResponse & {translation: string}, displayedTranslation?: string) {
     setSpeechLanguage(result.sourceLanguage);
-    renderTranslations(result);
+    renderTranslations(result, false, displayedTranslation);
     renderTranscription(result.transcription);
     pendingManualRecord = result.pendingRecord || null;
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
@@ -833,15 +833,31 @@ import {
     }
   }
 
-  function renderTranslations(result: TranslateResponse & {translation: string}, contextPending = false) {
+  function renderTranslations(
+    result: TranslateResponse & {translation: string},
+    contextPending = false,
+    displayedTranslation?: string
+  ) {
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
-    translation.replaceChildren();
     const alternatives = wordCount(currentText) <= 3 && Array.isArray(result.translations) && result.translations.length
       ? result.translations
       : [result.translation];
-    const uniqueAlternatives = uniqueTranslationForms(alternatives);
-    uniqueAlternatives.forEach((value) => {
+    const uniqueAlternatives = uniqueTranslationForms(displayedTranslation
+      ? [displayedTranslation, ...alternatives]
+      : alternatives);
+    const displayedItem = displayedTranslation
+      ? translation.querySelector<HTMLElement>(".translation-option")
+      : null;
+    const keepDisplayedItem = displayedItem?.textContent === uniqueAlternatives[0];
+    if (keepDisplayedItem) {
+      [...translation.children].forEach((child) => {
+        if (child !== displayedItem) child.remove();
+      });
+    } else {
+      translation.replaceChildren();
+    }
+    uniqueAlternatives.slice(keepDisplayedItem ? 1 : 0).forEach((value) => {
       const item = document.createElement("div");
       item.className = "translation-option";
       item.textContent = value;
@@ -913,7 +929,7 @@ import {
         ? shadow?.querySelector<HTMLButtonElement>(".save-translation") || null
         : null;
       if (ownRequest === requestNumber && shadow) {
-        renderResult(result as TranslateResponse & {translation: string});
+        renderResult(result as TranslateResponse & {translation: string}, preview.translation);
       }
       if (shouldSaveManually && result.pendingRecord) {
         void persistManualRecord(activeButton, result.pendingRecord, ownRequest);

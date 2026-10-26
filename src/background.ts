@@ -6,12 +6,14 @@ import {MAX_HISTORY_RECORDS} from "./history-config";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
-const TRANSLATION_RESULTS_KEY = "translationResultCacheV1";
+const TRANSLATION_RESULTS_KEY = "translationResultCacheV2";
 const MAX_CACHED_TRANSLATIONS = 500;
 const TRANSCRIPTION_TIMEOUT_MS = 4500;
 const DICTIONARY_REQUEST_TIMEOUT_MS = 2500;
 const WIKTIONARY_REQUEST_TIMEOUT_MS = 3500;
 const TRANSLATION_REQUEST_TIMEOUT_MS = 4500;
+const GOOGLE_FAILURE_COOLDOWN_MS = 60_000;
+const GOOGLE_GET_URL_LIMIT = 1900;
 const LANGUAGE_DETECTION_TIMEOUT_MS = 4500;
 const SPEECH_REQUEST_TIMEOUT_MS = 8000;
 const CONTEXT_START = "<b>";
@@ -41,7 +43,9 @@ const translationCache = new Map<string, Promise<{
 }>>();
 let translationCacheWrite = Promise.resolve();
 let recordSaveQueue = Promise.resolve();
-let translationCooldownUntil = 0;
+let myMemoryCooldownUntil = 0;
+let googleTranslationCooldownUntil = 0;
+let consecutiveGoogleTranslationFailures = 0;
 
 extensionApi.runtime.onMessage.addListener((message: unknown) => {
   if (!isRuntimeMessage(message)) return undefined;
@@ -797,9 +801,18 @@ async function persistTranslation(
 }
 
 async function requestTranslationChunk(text: string, sourceLanguage: string, targetLanguage: string) {
-  if (Date.now() < translationCooldownUntil) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+  if (Date.now() < googleTranslationCooldownUntil) {
+    return requestMyMemoryTranslation(text, sourceLanguage, targetLanguage);
   }
+  try {
+    return await requestGoogleTranslation(text, sourceLanguage, targetLanguage);
+  } catch (_error) {
+    return requestMyMemoryTranslation(text, sourceLanguage, targetLanguage);
+  }
+}
+
+async function requestMyMemoryTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
+  if (Date.now() < myMemoryCooldownUntil) throw translationUnavailableError();
   const query = new URLSearchParams({ q: text, langpair: `${sourceLanguage}|${targetLanguage}` });
   let response;
   try {
@@ -808,26 +821,26 @@ async function requestTranslationChunk(text: string, sourceLanguage: string, tar
       TRANSLATION_REQUEST_TIMEOUT_MS
     );
   } catch (_error) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    throw translationUnavailableError();
   }
 
   if (response.status === 429) {
-    translationCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    myMemoryCooldownUntil = Date.now() + retryDelay(response.headers.get("retry-after"));
+    throw translationUnavailableError();
   }
   if (!response.ok) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    throw translationUnavailableError();
   }
 
   const data = await response.json();
   const responseStatus = Number(data?.responseStatus);
   if ([403, 429].includes(responseStatus)) {
-    translationCooldownUntil = Date.now() + 15 * 60_000;
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    myMemoryCooldownUntil = Date.now() + 15 * 60_000;
+    throw translationUnavailableError();
   }
   const translated = decodeHtmlEntities(data?.responseData?.translatedText ?? "").trim();
   if (!translated || responseStatus >= 400 || /invalid language pair|unsupported language/i.test(translated)) {
-    return requestFallbackTranslation(text, sourceLanguage, targetLanguage);
+    throw translationUnavailableError();
   }
   const exactMatches = Array.isArray(data?.matches)
     ? data.matches.filter((match) => {
@@ -848,30 +861,70 @@ async function requestTranslationChunk(text: string, sourceLanguage: string, tar
   };
 }
 
-async function requestFallbackTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
-  try {
-    const query = new URLSearchParams({
-      client: "gtx",
-      dt: "t",
-      q: text,
-      sl: sourceLanguage,
-      tl: targetLanguage
-    });
-    query.set("client", "dict-chrome-ex");
-    const response = await fetchWithTimeout(
-      `https://clients5.google.com/translate_a/t?${query}`,
-      TRANSLATION_REQUEST_TIMEOUT_MS
-    );
-    if (!response.ok) throw new Error("fallback unavailable");
-    const data = await response.json();
-    const translated = Array.isArray(data)
-      ? data.map((segment) => typeof segment === "string" ? segment : "").join("").trim()
-      : "";
-    if (!translated) throw new Error("fallback returned an empty translation");
-    return { text: translated, alternatives: [translated], warning: null };
-  } catch (_error) {
-    throw new Error("Сейчас не удалось получить перевод. Проверьте интернет-соединение или попробуйте ещё раз позже.");
+async function requestGoogleTranslation(text: string, sourceLanguage: string, targetLanguage: string) {
+  const query = new URLSearchParams({
+    client: "dict-chrome-ex",
+    dt: "t",
+    sl: sourceLanguage,
+    tl: targetLanguage
+  });
+  const textQuery = new URLSearchParams({q: text}).toString();
+  let url = `https://clients5.google.com/translate_a/t?${query}`;
+  let requestInit: RequestInit | undefined;
+  if (url.length + textQuery.length + 1 < GOOGLE_GET_URL_LIMIT) {
+    url += `&${textQuery}`;
+  } else {
+    requestInit = {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
+      body: textQuery
+    };
   }
+
+  let response: Response;
+  try {
+    response = await fetchWithTimeout(url, TRANSLATION_REQUEST_TIMEOUT_MS, requestInit);
+  } catch (_error) {
+    registerGoogleTranslationFailure();
+    throw translationUnavailableError();
+  }
+  if ([403, 429].includes(response.status)) {
+    registerGoogleTranslationFailure(response.headers.get("retry-after"), true);
+    throw translationUnavailableError();
+  }
+  if (!response.ok) {
+    registerGoogleTranslationFailure();
+    throw translationUnavailableError();
+  }
+
+  let data;
+  try {
+    data = await response.json();
+  } catch (_error) {
+    registerGoogleTranslationFailure();
+    throw translationUnavailableError();
+  }
+  const translated = Array.isArray(data)
+    ? data.map((segment) => typeof segment === "string" ? segment : "").join("").trim()
+    : "";
+  if (!translated) {
+    registerGoogleTranslationFailure();
+    throw translationUnavailableError();
+  }
+  consecutiveGoogleTranslationFailures = 0;
+  return { text: translated, alternatives: [translated], warning: null };
+}
+
+function registerGoogleTranslationFailure(retryAfter?: string | null, forceCooldown = false) {
+  consecutiveGoogleTranslationFailures += 1;
+  if (!forceCooldown && consecutiveGoogleTranslationFailures < 3) return;
+  const delay = forceCooldown ? retryDelay(retryAfter || null) : GOOGLE_FAILURE_COOLDOWN_MS;
+  googleTranslationCooldownUntil = Math.max(googleTranslationCooldownUntil, Date.now() + delay);
+  consecutiveGoogleTranslationFailures = 0;
+}
+
+function translationUnavailableError() {
+  return new Error("Сейчас не удалось получить перевод. Проверьте интернет-соединение или попробуйте ещё раз позже.");
 }
 
 function persistentTranslationKey(text: string, sourceLanguage: string, targetLanguage = "ru") {
@@ -909,11 +962,13 @@ async function fetchEnglishPhonetic(word) {
   }
 }
 
-async function fetchWithTimeout(url, timeoutMs) {
+async function fetchWithTimeout(url: string, timeoutMs: number, init: RequestInit = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const headers = new Headers(init.headers);
+  if (!headers.has("Accept")) headers.set("Accept", "application/json");
   try {
-    return await fetch(url, { signal: controller.signal, headers: { Accept: "application/json" } });
+    return await fetch(url, {...init, signal: controller.signal, headers});
   } finally {
     clearTimeout(timeout);
   }

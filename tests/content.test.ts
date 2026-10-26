@@ -14,13 +14,13 @@ describe("standalone translator content UI", () => {
       }
       if (message.type === "get-transcription") return {ok: true, transcription: "/həˈləʊ/"};
       if (message.type === "translate-selection") return {
-        ok: true, translation: "Привет", translations: ["Привет", "Здравствуйте"],
+        ok: true, translation: "Добрый день", translations: ["Добрый день", "Здравствуйте"],
         contextTranslation: "Привет, мир!", transcription: "/həˈləʊ/", sourceLanguage: "en", saved: true
       };
       return {ok: true};
     });
     const originalAttachShadow = Element.prototype.attachShadow;
-    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (init) {
+    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (this: Element, init) {
       return originalAttachShadow.call(this, {...init, mode: "open"});
     });
     await import("../src/content");
@@ -94,7 +94,9 @@ describe("standalone translator content UI", () => {
       expect(element).not.toBeNull();
       return element!;
     }, {timeout: 1500});
-    await waitFor(() => expect(selectionHost.shadowRoot?.querySelector(".translation")?.textContent).toContain("Привет"));
+    await waitFor(() => expect(selectionHost.shadowRoot?.querySelectorAll(".translation-option")).toHaveLength(3));
+    expect([...selectionHost.shadowRoot!.querySelectorAll(".translation-option")].map((item) => item.textContent))
+      .toEqual(["Привет", "Добрый день", "Здравствуйте"]);
     expect(selectionHost.shadowRoot?.querySelector(".transcription")?.textContent).toBe("/həˈləʊ/");
     expect(browserMock.runtime.sendMessage.mock.calls.map(([message]) => message.type)).toContain("translate-selection");
   }, 5000);
