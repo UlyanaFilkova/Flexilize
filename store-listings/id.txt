@@ -1,9 +1,6 @@
-DESKRIPSI
-
 Ekstensi ini otomatis mendeteksi bahasa teks yang dipilih di halaman dan menampilkan terjemahan, transkripsi, terjemahan kontekstual untuk seluruh kalimat atau paragraf, serta audio dalam bahasa asli. Buka jendela penerjemah dengan cepat menggunakan pintasan keyboard.
 
 UNTUK APA EKSTENSI INI?
-
 
 1) Menerjemahkan kata yang tidak dikenal atau seluruh kalimat dengan cepat. Pilih teks untuk mendapatkan terjemahannya. Anda tidak perlu menyalin teks, membuka tab baru, lalu mencari penerjemah atau kamus.
 

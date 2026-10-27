@@ -1,5 +1,3 @@
-BESKRIVELSE
-
 Utvidelsen oppdager automatisk språket i markert tekst på en nettside og viser oversettelse, transkripsjon, en kontekstuell oversettelse av hele setningen eller avsnittet og opplesing på originalspråket. Åpne oversetteren umiddelbart med en hurtigtast.
 
 HVA ER DET TIL?

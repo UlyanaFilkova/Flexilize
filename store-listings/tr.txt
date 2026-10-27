@@ -1,5 +1,3 @@
-AÇIKLAMA
-
 Uzantı, bir web sayfasında seçilen metnin dilini otomatik olarak algılar; çeviriyi, telaffuz yazımını, tüm cümle veya paragrafın bağlama uygun çevirisini gösterir ve özgün metni seslendirir. Bir klavye kısayoluyla çevirmeni hemen açabilirsiniz.
 
 NE İŞE YARAR?

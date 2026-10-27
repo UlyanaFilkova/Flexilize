@@ -1,5 +1,3 @@
-PENERANGAN
-
 Sambungan ini mengesan bahasa teks yang dipilih pada halaman web secara automatik. Sambungan memaparkan terjemahan, transkripsi sebutan, terjemahan kontekstual bagi seluruh ayat atau perenggan, serta audio teks asal. Buka penterjemah dengan serta-merta menggunakan pintasan papan kekunci.
 
 UNTUK APA?

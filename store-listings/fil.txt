@@ -1,5 +1,3 @@
-PAGLALARAWAN
-
 Awtomatikong natutukoy ng extension ang wika ng tekstong pinili sa isang webpage. Ipinapakita nito ang salin, gabay sa pagbigkas, salin ayon sa konteksto ng buong pangungusap o talata, at pinatutunog ang orihinal na teksto. Buksan agad ang tagasalin gamit ang keyboard shortcut.
 
 PARA SAAN ITO?

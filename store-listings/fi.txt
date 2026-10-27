@@ -1,5 +1,3 @@
-KUVAUS
-
 Laajennus tunnistaa verkkosivulta valitun tekstin kielen automaattisesti ja näyttää käännöksen, ääntämisasun, koko virkkeen tai kappaleen kontekstikäännöksen sekä alkuperäisen tekstin puheena. Avaa kääntäjä heti pikanäppäimellä.
 
 MIHIN SITÄ TARVITAAN?

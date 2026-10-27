@@ -1,5 +1,3 @@
-BESKRIVNING
-
 Tillägget identifierar automatiskt språket i markerad text på en webbsida och visar översättningen, uttalstranskriptionen, en sammanhangsbaserad översättning av hela meningen eller stycket och uppläsning av originaltexten. Öppna översättaren direkt med ett kortkommando.
 
 VAD ÄR DET TILL FÖR?

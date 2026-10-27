@@ -1,5 +1,3 @@
-BESKRIVELSE
-
 Udvidelsen registrerer automatisk sproget i markeret tekst på en webside og viser oversættelsen, udtalegengivelsen, en kontekstuel oversættelse af hele sætningen eller afsnittet samt oplæsning af originalteksten. Åbn oversætteren med det samme med en tastaturgenvej.
 
 HVAD KAN DEN BRUGES TIL?

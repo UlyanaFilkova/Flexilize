@@ -1,5 +1,3 @@
-DESCRIERE
-
 Extensia detectează automat limba textului selectat pe o pagină web și afișează traducerea, transcrierea pronunției, traducerea contextuală a întregii propoziții sau a paragrafului și redarea audio a textului original. Deschideți traducătorul imediat cu o comandă rapidă de la tastatură.
 
 LA CE FOLOSEȘTE?

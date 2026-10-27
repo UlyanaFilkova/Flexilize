@@ -1,5 +1,3 @@
-LEÍRÁS
-
 A bővítmény automatikusan felismeri a weboldalon kijelölt szöveg nyelvét, és megjeleníti a fordítást, az átírást, a teljes mondat vagy bekezdés kontextus szerinti fordítását, valamint felolvassa az eredeti szöveget. A fordítóablak gyorsbillentyűvel azonnal megnyitható.
 
 MIRE JÓ?

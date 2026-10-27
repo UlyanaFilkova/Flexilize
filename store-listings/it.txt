@@ -1,9 +1,6 @@
-DESCRIZIONE
-
 L’estensione rileva automaticamente la lingua del testo selezionato in una pagina e mostra la traduzione, la trascrizione, una traduzione contestuale dell’intera frase o del paragrafo e l’audio nella lingua originale. Apri subito la finestra del traduttore con una scorciatoia da tastiera.
 
 A COSA SERVE?
-
 
 1) Tradurre subito parole sconosciute o frasi intere. Seleziona il testo e ottieni la traduzione. Non serve copiarlo, aprire una nuova scheda e cercare un traduttore o un dizionario.
 

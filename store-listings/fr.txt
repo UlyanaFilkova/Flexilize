@@ -1,9 +1,6 @@
-DESCRIPTION
-
 L’extension détecte automatiquement la langue du texte sélectionné sur une page et affiche sa traduction, sa transcription, une traduction contextuelle de la phrase ou du paragraphe entier, ainsi que la lecture audio dans la langue d’origine. Ouvrez le traducteur instantanément à l’aide d’un raccourci clavier.
 
 À QUOI SERT L’EXTENSION ?
-
 
 1) Traduire instantanément des mots inconnus ou des phrases entières. Sélectionnez le texte pour obtenir sa traduction. Inutile de le copier, d’ouvrir un nouvel onglet et d’y chercher un traducteur ou un dictionnaire.
 

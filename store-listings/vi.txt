@@ -1,5 +1,3 @@
-MÔ TẢ
-
 Tiện ích tự động nhận diện ngôn ngữ của đoạn văn bản được chọn trên trang web, hiển thị bản dịch, phiên âm, bản dịch theo ngữ cảnh của cả câu hoặc đoạn văn và đọc văn bản gốc thành tiếng. Mở trình dịch ngay bằng phím tắt.
 
 TIỆN ÍCH DÙNG ĐỂ LÀM GÌ?

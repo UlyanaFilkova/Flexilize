@@ -1,5 +1,3 @@
-POPIS
-
 Rozšíření automaticky rozpozná jazyk označeného textu na webové stránce a zobrazí překlad, přepis výslovnosti, kontextový překlad celé věty nebo odstavce a přečte původní text. Překladač otevřete okamžitě klávesovou zkratkou.
 
 K ČEMU SLOUŽÍ?

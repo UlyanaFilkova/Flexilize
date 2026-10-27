@@ -1,9 +1,6 @@
-DESCRIPTION
-
 The extension automatically detects the language of selected text on a webpage and shows its translation, transcription, a contextual translation of the full sentence or paragraph, and audio in the original language. Open the translator instantly with a keyboard shortcut.
 
 WHAT IS IT FOR?
-
 
 1) Instantly translate unfamiliar words or entire sentences. Select text and get a translation. There is no need to copy it, open a new tab, and look for a translator or dictionary.
 

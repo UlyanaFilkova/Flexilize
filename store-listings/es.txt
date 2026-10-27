@@ -1,9 +1,6 @@
-DESCRIPCIÓN
-
 La extensión detecta automáticamente el idioma del texto seleccionado en una página y muestra su traducción, transcripción, una traducción contextual de la oración o el párrafo completo y audio en el idioma original. Abre el traductor al instante con un atajo de teclado.
 
 ¿PARA QUÉ SIRVE?
-
 
 1) Traducir al instante palabras desconocidas o frases completas. Selecciona el texto y obtén la traducción. No hace falta copiarlo, abrir otra pestaña y buscar allí un traductor o diccionario.
 

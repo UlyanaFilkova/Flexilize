@@ -1,9 +1,6 @@
-OPIS
-
 Rozszerzenie automatycznie wykrywa język wybranego tekstu na stronie internetowej i pokazuje jego tłumaczenie, transkrypcję, tłumaczenie kontekstowe pełnego zdania lub akapitu oraz dźwięk w języku oryginalnym. Natychmiast otwórz tłumacza za pomocą skrótu klawiaturowego.
 
 DO CZEGO SŁUŻY ROZSZERZENIE?
-
 
 1) Natychmiast przetłumacz nieznane słowa lub całe zdania. Wybierz tekst i uzyskaj tłumaczenie. Nie trzeba go kopiować, otwierać nowej zakładki i szukać tłumacza czy słownika.
 

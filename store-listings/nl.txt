@@ -1,9 +1,6 @@
-BESCHRIJVING
-
 De extensie herkent automatisch de taal van geselecteerde tekst op een webpagina en toont de vertaling, transcriptie, een contextuele vertaling van de volledige zin of alinea en audio in de oorspronkelijke taal. Open de vertaler direct met een sneltoets.
 
 WAARVOOR IS DIT HANDIG?
-
 
 1) Vertaal onbekende woorden of volledige zinnen meteen. Selecteer tekst en krijg een vertaling. Kopiëren, een nieuw tabblad openen en daar een vertaler of woordenboek zoeken is niet nodig.
 
