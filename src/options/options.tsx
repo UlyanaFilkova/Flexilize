@@ -16,7 +16,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
-import {getActiveLanguage, loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -848,8 +848,6 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 }
 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
-  const showRussianVisuals = getActiveLanguage() === "ru";
-
   return (
     <div className="help-page">
       <PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в Anki." />
@@ -880,7 +878,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-reading">
         <div className="help-section-heading"><span>Задача 01</span><h2>Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место в тексте.</p></div>
-        {showRussianVisuals && <SelectionHelpExample />}
+        <SelectionHelpExample />
         <div className="help-card-grid">
           <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
           <article className="help-card"><div className="help-card-icon"><TextIcon /></div><h3>Предложение или абзац</h3><ol><li>Выделите текст целиком.</li><li>Для длинного фрагмента основным результатом станет перевод всего выделения.</li><li>Проверьте границы выделения, если смысл кажется неполным.</li></ol><p className="help-tip"><strong>Полезно для:</strong> статей, документации, учебников и деловой переписки.</p></article>
@@ -890,7 +888,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-writing">
         <div className="help-section-heading"><span>Задача 02</span><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
-        {showRussianVisuals && <TranslatorHelpExample />}
+        <TranslatorHelpExample />
         <div className="workflow-card">
           <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Нажмите назначенную горячую клавишу. По умолчанию комбинацию можно посмотреть или изменить в настройках.</p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
@@ -903,7 +901,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-listening">
         <div className="help-section-heading"><span>Задача 03</span><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
-        {showRussianVisuals && <SpeechHelpExample />}
+        <SpeechHelpExample />
         <div className="help-card-grid help-card-grid-three">
           <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка и фрагмента.</p></article>
           <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку звука в окне перевода и повторите фразу вслух.</p></article>
@@ -914,7 +912,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-vocabulary">
         <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
-        {showRussianVisuals && <HistoryHelpExample />}
+        <HistoryHelpExample />
         <div className="vocabulary-layout">
           <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong> — при лимите в 5000 записей старые переводы могут автоматически заменяться новыми.</span></li></ul></article>
           <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
@@ -980,7 +978,7 @@ function TranslatorHelpExample() {
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-translator-window">
           <div className="visual-translator-header"><strong>Переводчик</strong><span>Ctrl + Shift + '</span><i>×</i></div>
-          <div className="visual-language-row"><span>English⌄</span><b>⇄</b><span>Русский⌄</span></div>
+          <div className="visual-language-row"><span>English<span aria-hidden="true">⌄</span></span><b>⇄</b><span>Русский<span aria-hidden="true">⌄</span></span></div>
           <div className="visual-translator-panes">
             <div><small>Исходный текст</small><p>Could you send me the updated document?</p><i className="visual-copy-icon" /></div>
             <div><small>Перевод</small><p>Не могли бы вы отправить мне обновлённый документ?</p><i className="visual-copy-icon" /></div>
@@ -1017,7 +1015,7 @@ function HistoryHelpExample() {
           <div className="visual-history-record">
             <div><strong>to figure out</strong><span>разобраться · выяснить</span></div><i>/tə ˈfɪɡər aʊt/</i>
             <p>I need to figure out how this feature works.</p>
-            <footer><div><span>example.com</span><time>Сегодня, 14:32</time></div><div className="visual-history-actions"><span><EditIcon /></span><span><TrashIcon /></span></div></footer>
+            <footer><div><span>example.com</span><span>Сегодня, 14:32</span></div><div className="visual-history-actions"><span><EditIcon /></span><span><TrashIcon /></span></div></footer>
           </div>
         </div>
       </div>

@@ -196,7 +196,26 @@ const en: Record<string, string> = {
   "Код языка: {code}": "Language code: {code}", "Озвучить ({code})": "Speak ({code})", "Ошибка озвучки: {error}": "Speech error: {error}",
   "Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.": "The limit of {count} translations has been reached. Download the saved records and clear storage to save new ones.",
   "При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.": "When rotation is disabled, new records will not be saved while the {count}-record limit has been reached.",
-  "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.": "When new translations exceed the {count}-record limit, the oldest records are removed automatically, keeping history at {count} records."
+  "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.": "When new translations exceed the {count}-record limit, the oldest records are removed automatically, keeping history at {count} records.",
+  "Перевод с английского": "Translated from English",
+  "Пример на странице": "On-page example",
+  "Выделили фразу — сразу получили перевод": "Select a phrase and get an instant translation",
+  "Окно остаётся рядом с текстом, поэтому контекст и место чтения не теряются.": "The window stays beside the text, so you keep the context and your place while reading.",
+  "Пример отдельного переводчика": "Standalone translator example",
+  "Вставьте свой текст и продолжайте работать на странице": "Paste your text and keep working on the page",
+  "Языки выбираются прямо в окне, а результат можно скопировать одной кнопкой.": "Choose languages in the window and copy the result with one click.",
+  "Исходный текст": "Source text",
+  "Не могли бы вы отправить мне обновлённый документ?": "Could you send me the updated document?",
+  "Медленнее": "Slower",
+  "Быстрее": "Faster",
+  "Пример тренировки": "Practice example",
+  "Слушайте, следите за транскрипцией и меняйте темп": "Listen, follow the transcription, and adjust the pace",
+  "Для сложной фразы начните с 0,8×, затем вернитесь к обычной скорости.": "For a difficult phrase, start at 0.8×, then return to normal speed.",
+  "Пример записи в словаре": "Vocabulary entry example",
+  "Всё нужное для повторения хранится вместе": "Everything you need for review stays together",
+  "Оригинал, перевод, контекст, источник и дата доступны в одной карточке.": "The original, translation, context, source, and date are available in one card.",
+  "разобраться · выяснить": "figure out · understand",
+  "Сегодня, 14:32": "Today, 14:32"
 };
 
 export function normalizeInterfaceLanguage(value: unknown, fallback: InterfaceLanguage = "ru"): InterfaceLanguage {

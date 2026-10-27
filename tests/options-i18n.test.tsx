@@ -32,7 +32,9 @@ describe("English options interface", () => {
     }
     await userEvent.click(screen.getByRole("button", {name: /How to use/}));
     await waitFor(() => expect(screen.getByRole("heading", {name: "Frequently asked questions"})).toBeTruthy());
-    expect(document.querySelector(".help-visual-example")).toBeNull();
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(screen.getByText("On-page example")).toBeTruthy();
+    expect(screen.getByText("Standalone translator example")).toBeTruthy();
     const helpPage = document.querySelector(".help-page")!.cloneNode(true) as HTMLElement;
     helpPage.querySelectorAll(".brand-mark").forEach((element) => element.remove());
     expect(helpPage.textContent).not.toMatch(/[А-Яа-яЁё]/u);
