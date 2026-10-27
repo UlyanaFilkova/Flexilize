@@ -45,6 +45,7 @@ async function initialize() {
   await loadInterfaceLanguage(language);
   setActiveLanguage(language);
   observeLocalizedDom(document, language);
+  updateExportButton();
   await loadRecords();
 }
 
@@ -215,7 +216,7 @@ function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: s
 }
 
 function updateExportButton() {
-  exportButton.textContent = `Скачать ${formatLabel(formatSelect.value as ExportFormat)}`;
+  exportButton.textContent = translate(`Скачать ${formatLabel(formatSelect.value as ExportFormat)}`);
 }
 
 let noticeTimer: ReturnType<typeof setTimeout> | undefined;
