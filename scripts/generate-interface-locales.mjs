@@ -5,13 +5,9 @@ import {promisify} from "node:util";
 const execFile = promisify(execFileCallback);
 
 const targets = ["de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi"];
-const sourcePath = new URL("../src/i18n.ts", import.meta.url);
+const sourcePath = new URL("../src/locales/en.json", import.meta.url);
 const outputUrl = (locale) => new URL(`../src/locales/${locale}.json`, import.meta.url);
-const source = await readFile(sourcePath, "utf8");
-const english = {};
-const objectSource = source.slice(source.indexOf("const en:"), source.indexOf("\n};", source.indexOf("const en:")) + 3);
-const entryPattern = /("(?:\\.|[^"\\])*")\s*:\s*("(?:\\.|[^"\\])*")/g;
-for (const match of objectSource.matchAll(entryPattern)) english[JSON.parse(match[1])] = JSON.parse(match[2]);
+const english = JSON.parse(await readFile(sourcePath, "utf8"));
 
 if (!Object.keys(english).length) throw new Error("English interface catalog was not found");
 
