@@ -29,8 +29,10 @@ describe("settings", () => {
     ["pt_BR", "pt", "pt"],
     ["id-ID", "id", "id"],
     ["hi-IN", "hi", "hi"],
-    ["zh-TW", "en", "zh-TW"],
-    ["zh-Hans-CN", "en", "zh-CN"],
+    ["zh-TW", "zh-TW", "zh-TW"],
+    ["zh-Hans-CN", "zh-CN", "zh-CN"],
+    ["fil-PH", "fil", "tl"],
+    ["tl-PH", "en", "tl"],
     ["eo", "en", "en"]
   ])("uses browser locale %s for interface and translation defaults", (locale, interfaceLanguage, targetLanguage) => {
     expect(interfaceLanguageFromBrowser(locale)).toBe(interfaceLanguage);
