@@ -1,0 +1,57 @@
+DESCRIERE
+
+Extensia detectează automat limba textului selectat pe o pagină web și afișează traducerea, transcrierea pronunției, traducerea contextuală a întregii propoziții sau a paragrafului și redarea audio a textului original. Deschideți traducătorul imediat cu o comandă rapidă de la tastatură.
+
+LA CE FOLOSEȘTE?
+
+1) Traduceți imediat cuvinte necunoscute sau propoziții întregi. Selectați textul și vedeți traducerea fără să îl copiați, să deschideți o filă nouă sau să căutați un dicționar.
+
+2) Traduceți propriile texte fără să părăsiți fila curentă. Deschideți fereastra traducătorului cu o comandă rapidă și introduceți sau lipiți textul.
+
+3) Învățați limbi în context. Verificați cuvintele necunoscute în timp ce citiți și salvați-le împreună cu contextul.
+
+4) Creați-vă propriul vocabular. Salvați automat informațiile utile și exportați-le într-un fișier.
+
+FUNCȚIILE EXTENSIEI
+
+FUNCȚII:
+
+- Detectează automat limba textului selectat.
+- Traduce un cuvânt, o expresie, o propoziție sau un paragraf selectat în limba dorită.
+- Deschide o fereastră separată de traducere pentru introducerea textului.
+- Traduce în context propoziția sau paragraful din jurul selecției.
+- Afișează transcrierea pronunției și traduceri alternative.
+- Redă cu voce textul original.
+- Salvează traducerile automat sau manual împreună cu contextul, transcrierea, adresa URL și titlul paginii.
+- Păstrează un istoric de până la 5.000 de traduceri.
+- Permite editarea, ștergerea și restaurarea înregistrărilor sau ștergerea întregului istoric.
+- Exportă întregul istoric.
+- Păstrează istoricul și setările local pe dispozitivul dvs.
+
+SETĂRI FLEXIBILE
+
+- Selectați manual limba sursă și limba țintă.
+- Setați traducerea textului selectat să pornească numai cu o comandă rapidă.
+- Personalizați comenzile rapide de la tastatură.
+- Activați sau dezactivați transcrierea și redarea vocală.
+- Reglați viteza de redare de la 0,3× la 2×.
+- Activați salvarea automată sau salvați traducerile cu un buton.
+- Alegeți dacă istoricul se rotește. Când se atinge limita, cele mai vechi înregistrări sunt înlocuite automat. Dacă rotația este dezactivată, nu se salvează înregistrări noi până când eliberați spațiu.
+
+PENTRU CINE ESTE CONTEXT TRANSLATOR?
+
+Extensia este utilă dacă:
+
+- citiți articole, știri sau documentație în alte limbi;
+- învățați cuvinte noi în contextul lor natural;
+- doriți să verificați sensul unei expresii fără să părăsiți pagina;
+- vă creați propriul vocabular sau carduri pentru recapitulare;
+- lucrați cu materiale multilingve.
+
+CONFIDENȚIALITATE ȘI STOCAREA DATELOR
+
+Istoricul traducerilor și setările sunt stocate local în browser. Pentru traducere și obținerea transcrierii pronunției, textul selectat poate fi trimis serviciilor de traducere și surselor de dicționar folosite de extensie. Aceste funcții necesită o conexiune la internet.
+
+Extensia nu vinde datele utilizatorilor și nu le folosește pentru publicitate, evaluarea creditului sau alte scopuri fără legătură cu funcțiile sale principale. Puteți șterge înregistrări individuale sau întregul istoric din extensie. Pentru a elimina complet istoricul, setările și memoria cache locală, dezinstalați extensia sau ștergeți datele acesteia din browser.
+
+Context Translator simplifică procesul: selectați textul, înțelegeți-i imediat sensul și salvați traducerea pentru studiu ulterior, dacă doriți.

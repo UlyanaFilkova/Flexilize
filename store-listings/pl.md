@@ -1,0 +1,60 @@
+OPIS
+
+Rozszerzenie automatycznie wykrywa język wybranego tekstu na stronie internetowej i pokazuje jego tłumaczenie, transkrypcję, tłumaczenie kontekstowe pełnego zdania lub akapitu oraz dźwięk w języku oryginalnym. Natychmiast otwórz tłumacza za pomocą skrótu klawiaturowego.
+
+DO CZEGO SŁUŻY ROZSZERZENIE?
+
+
+1) Natychmiast przetłumacz nieznane słowa lub całe zdania. Wybierz tekst i uzyskaj tłumaczenie. Nie trzeba go kopiować, otwierać nowej zakładki i szukać tłumacza czy słownika.
+
+2) Przetłumacz własny tekst bez opuszczania bieżącej zakładki. Naciśnij skrót klawiaturowy, aby otworzyć wyskakujący tłumacz i wpisać lub wkleić tekst.
+
+3) Ucz się języków w kontekście. Czytając w innym języku, szybko sprawdź nieznane słowo i czytaj dalej. Zapisz słowo wraz z kontekstem, w którym się pojawiło, nie przerywając czytania, aby zbudować listę słownictwa.
+
+4) Zbuduj własne słownictwo. Automatycznie zapisuj przydatne informacje i eksportuj je do pliku w celu utworzenia listy słownictwa lub materiałów do nauki.
+
+FUNKCJE ROZSZERZENIA
+
+CECHY:
+
+- Automatycznie wykryj język wybranego tekstu.
+- Przetłumacz wybrane słowo, frazę, zdanie lub akapit na wybrany język.
+- Otwórz oddzielne okno tłumacza, aby wprowadzić tekst.
+- Przetłumacz zdanie lub akapit wokół wybranego tekstu.
+- Zobacz transkrypcję i alternatywne tłumaczenia.
+- Posłuchaj oryginalnego tekstu.
+- Automatycznie lub ręcznie zapisuj tłumaczenia z kontekstem, transkrypcją, adresem URL strony i tytułem strony.
+- Przeglądaj historię do 5000 tłumaczeń.
+- Edytuj, usuwaj i przywracaj wpisy lub wyczyść całą historię.
+- Eksportuj pełną historię.
+- Przechowuj historię i ustawienia lokalnie na swoim urządzeniu.
+
+ELASTYCZNE USTAWIENIA.
+
+- Wybierz ręcznie język źródłowy i docelowy.
+- Ustaw tłumaczenie wyboru tak, aby działało tylko za pomocą skrótu klawiaturowego.
+- Personalizacja skrótów klawiszowych
+- Włącz lub wyłącz transkrypcję.
+- Włącz lub wyłącz mowę.
+- Dostosuj prędkość mowy od 0,3× do 2×.
+- Włącz automatyczne zapisywanie lub zapisz tłumaczenia za pomocą przycisku.
+- Wybierz, czy historia się obraca: po osiągnięciu limitu najstarsze wpisy są automatycznie zastępowane. Jeśli rotacja jest wyłączona, nowe wpisy nie są zapisywane, dopóki nie zrobisz miejsca.
+
+DLA KOGO TŁUMACZ KONTEKSTOWY?
+
+Context Translator jest przydatny, jeśli:
+
+- czytania artykułów, wiadomości lub dokumentacji w innych językach;
+- uczyć się nowych słów w ich naturalnym kontekście;
+- chcesz sprawdzić frazę bez opuszczania strony;
+- zbudować osobistą listę słownictwa;
+- tworzyć fiszki do powtarzania w odstępach;
+- praca z treściami wielojęzycznymi.
+
+PRYWATNOŚĆ I PRZECHOWYWANIE DANYCH
+
+Historia tłumaczeń i ustawienia są przechowywane lokalnie w przeglądarce. Aby przetłumaczyć tekst i pobrać transkrypcje, wybrany tekst może zostać wysłany do usług tłumaczeniowych i źródeł słownikowych używanych przez rozszerzenie. Funkcje te wymagają połączenia z Internetem.
+
+Rozszerzenie nie sprzedaje danych użytkownika ani nie wykorzystuje ich do celów reklamowych, decyzji kredytowych ani do celów niezwiązanych z jego podstawowymi funkcjami. Możesz usunąć poszczególne wpisy lub wyczyścić historię w rozszerzeniu. Aby usunąć całą historię, ustawienia i lokalną pamięć podręczną, odinstaluj rozszerzenie lub wyczyść jego dane za pomocą przeglądarki.
+
+Context Translator sprawia, że proces jest prosty: zaznacz tekst, zrozum go od razu i zapisz tłumaczenie do przyszłych badań, gdy będziesz go potrzebować.
