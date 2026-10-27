@@ -21,11 +21,16 @@ describe("English options interface", () => {
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
     const interfaceSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
     expect([...interfaceSelect.options].map((option) => option.textContent)).toEqual([
-      "Russian", "English", "Deutsch", "Français", "Español", "日本語", "Nederlands", "Italiano", "Português", "Bahasa Indonesia", "हिन्दी",
-      "Polski", "简体中文", "繁體中文", "한국어", "Türkçe", "Tiếng Việt", "Čeština", "Română", "Svenska", "Dansk", "Norsk",
-      "Suomi", "Magyar", "Ελληνικά", "Bahasa Melayu", "Filipino", "العربية", "فارسی"
+      "Arabic", "Chinese (China)", "Chinese (Taiwan)", "Czech", "Danish", "Dutch", "English", "Filipino", "Finnish", "French",
+      "German", "Greek", "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian",
+      "Persian", "Polish", "Portuguese", "Romanian", "Russian", "Spanish", "Swedish", "Turkish", "Vietnamese"
     ]);
-    expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(3);
+    const collator = new Intl.Collator("en", {sensitivity: "base"});
+    for (const select of [...document.querySelectorAll("select")]) {
+      const labels = [...select.options].map((option) => option.textContent || "");
+      if (labels.length > 20) expect(labels).toEqual([...labels].sort((left, right) => collator.compare(left, right)));
+    }
+    expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(4);
     expect(document.querySelector("main")?.textContent).not.toMatch(/[А-Яа-яЁё]/u);
     for (const section of ["Keyboard shortcuts", "Sound", "Saving"]) {
       await userEvent.click(screen.getByRole("button", {name: new RegExp(`^${section}$`)}));

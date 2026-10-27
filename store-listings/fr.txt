@@ -1,0 +1,57 @@
+L’extension détecte automatiquement la langue du texte sélectionné sur une page et affiche sa traduction, sa transcription, une traduction contextuelle de la phrase ou du paragraphe entier, ainsi que la lecture audio dans la langue d’origine. Ouvrez le traducteur instantanément à l’aide d’un raccourci clavier.
+
+À QUOI SERT L’EXTENSION ?
+
+1) Traduire instantanément des mots inconnus ou des phrases entières. Sélectionnez le texte pour obtenir sa traduction. Inutile de le copier, d’ouvrir un nouvel onglet et d’y chercher un traducteur ou un dictionnaire.
+
+2) Traduire vos propres textes sans quitter l’onglet actuel. Appuyez sur un raccourci clavier pour ouvrir le traducteur, puis saisissez ou collez votre texte.
+
+3) Apprendre une langue en contexte. En lisant dans une autre langue, vérifiez rapidement le sens d’un mot inconnu et poursuivez votre lecture. Enregistrez le mot avec son contexte sans interrompre votre lecture pour remplir un vocabulaire.
+
+4) Créer votre propre vocabulaire. Enregistrez automatiquement les informations utiles et exportez-les dans un fichier pour créer une liste de vocabulaire ou des supports d’apprentissage.
+
+FONCTIONNALITÉS DE L’EXTENSION
+
+FONCTIONNALITÉS :
+
+- Détection automatique de la langue du texte sélectionné.
+- Traduction d’un mot, d’une expression, d’une phrase ou d’un paragraphe vers la langue choisie.
+- Fenêtre de traduction séparée pour saisir du texte.
+- Traduction contextuelle de la phrase ou du paragraphe entourant la sélection.
+- Affichage de la transcription et d’autres traductions possibles.
+- Lecture audio du texte original.
+- Enregistrement automatique ou manuel des traductions avec le contexte, la transcription, l’URL et le titre de la page.
+- Historique pouvant contenir jusqu’à 5 000 traductions.
+- Modification, suppression et restauration d’entrées, ou suppression de tout l’historique.
+- Exportation de l’historique complet.
+- Stockage local de l’historique et des réglages sur l’appareil.
+
+RÉGLAGES FLEXIBLES
+
+- Choisissez manuellement les langues source et cible.
+- Limitez la traduction du texte sélectionné au raccourci clavier.
+- Personnalisez les raccourcis clavier.
+- Activez ou désactivez la transcription.
+- Activez ou désactivez la lecture audio.
+- Réglez la vitesse de lecture de 0,3× à 2×.
+- Activez l’enregistrement automatique ou enregistrez avec un bouton.
+- Choisissez la rotation de l’historique : une fois la limite atteinte, les entrées les plus anciennes sont remplacées automatiquement. Si la rotation est désactivée, aucune nouvelle entrée n’est enregistrée tant que vous n’avez pas libéré de place.
+
+À QUI S’ADRESSE CONTEXT TRANSLATOR ?
+
+L’extension est utile si vous :
+
+- lisez des articles, des actualités ou de la documentation dans d’autres langues ;
+- apprenez de nouveaux mots dans leur contexte naturel ;
+- voulez vérifier rapidement le sens d’une expression sans quitter la page ;
+- constituez votre vocabulaire personnel ;
+- créez des cartes mémoire pour la répétition espacée ;
+- travaillez avec des contenus multilingues.
+
+CONFIDENTIALITÉ ET STOCKAGE DES DONNÉES
+
+L’historique des traductions et les réglages sont stockés localement dans le navigateur. Pour traduire un texte et obtenir une transcription, le texte sélectionné peut être transmis aux services de traduction et aux sources de dictionnaires utilisés par l’extension. Ces fonctions nécessitent une connexion Internet.
+
+L’extension ne vend pas les données des utilisateurs et ne les utilise pas à des fins publicitaires, de décision de crédit ou à d’autres fins sans rapport avec ses fonctions principales. Vous pouvez supprimer des entrées individuelles ou effacer l’historique dans l’extension. Pour supprimer complètement l’historique, les réglages et le cache local, désinstallez l’extension ou effacez ses données depuis le navigateur.
+
+Context Translator simplifie la démarche : sélectionnez un texte, comprenez immédiatement son sens et, si besoin, enregistrez la traduction pour l’étudier plus tard.

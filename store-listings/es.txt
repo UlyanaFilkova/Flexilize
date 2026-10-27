@@ -1,0 +1,57 @@
+La extensión detecta automáticamente el idioma del texto seleccionado en una página y muestra su traducción, transcripción, una traducción contextual de la oración o el párrafo completo y audio en el idioma original. Abre el traductor al instante con un atajo de teclado.
+
+¿PARA QUÉ SIRVE?
+
+1) Traducir al instante palabras desconocidas o frases completas. Selecciona el texto y obtén la traducción. No hace falta copiarlo, abrir otra pestaña y buscar allí un traductor o diccionario.
+
+2) Traducir tus propios textos sin salir de la pestaña actual. Presiona un atajo de teclado para abrir la ventana del traductor y escribe o pega el texto.
+
+3) Aprender idiomas en contexto. Al leer en otro idioma, consulta rápidamente las palabras que no conoces y sigue leyendo. Guarda cada palabra junto con el contexto en el que aparece, sin interrumpir la lectura para crear una lista de vocabulario.
+
+4) Crear tu propio vocabulario. Guarda automáticamente la información necesaria y expórtala a un archivo para crear una lista de palabras o materiales de estudio.
+
+FUNCIONES DE LA EXTENSIÓN
+
+FUNCIONES:
+
+- Detecta automáticamente el idioma del texto seleccionado.
+- Traduce una palabra, frase, oración o párrafo seleccionado al idioma que elijas.
+- Abre una ventana independiente para introducir texto y traducirlo.
+- Traduce la oración o el párrafo que rodea el texto seleccionado.
+- Muestra la transcripción y otras opciones de traducción.
+- Reproduce el texto original en voz alta.
+- Guarda traducciones con contexto, transcripción, URL y título de la página, de forma automática o manual.
+- Consulta un historial de hasta 5.000 traducciones.
+- Edita, elimina y restaura entradas, o borra todo el historial.
+- Exporta el historial completo.
+- Guarda el historial y los ajustes localmente en tu dispositivo.
+
+AJUSTES FLEXIBLES
+
+- Elige manualmente los idiomas de origen y destino.
+- Configura la traducción de selección para que solo se active con un atajo de teclado.
+- Personaliza los atajos de teclado.
+- Activa o desactiva la transcripción.
+- Activa o desactiva la voz.
+- Ajusta la velocidad de reproducción de 0,3× a 2×.
+- Activa el guardado automático o guarda las traducciones con un botón.
+- Elige si el historial rota: al alcanzar el límite, las entradas más antiguas se sustituyen automáticamente. Si desactivas la rotación, no se guardarán entradas nuevas hasta que liberes espacio.
+
+¿PARA QUIÉN ES CONTEXT TRANSLATOR?
+
+La extensión te resultará útil si:
+
+- lees artículos, noticias o documentación en otros idiomas;
+- aprendes palabras nuevas en su contexto natural;
+- quieres comprobar el significado de una frase sin salir de la página;
+- estás creando tu propio vocabulario;
+- preparas tarjetas para la repetición espaciada;
+- trabajas con contenido multilingüe.
+
+PRIVACIDAD Y ALMACENAMIENTO DE DATOS
+
+El historial de traducciones y los ajustes se guardan localmente en el navegador. Para traducir y obtener transcripciones, el texto seleccionado puede enviarse a los servicios de traducción y las fuentes de diccionarios que utiliza la extensión. Estas funciones requieren conexión a Internet.
+
+La extensión no vende los datos de los usuarios ni los utiliza con fines publicitarios, de evaluación crediticia u otros fines ajenos a sus funciones principales. Puedes borrar entradas individuales o todo el historial desde la extensión. Para eliminar por completo el historial, los ajustes y la caché local, desinstala la extensión o borra sus datos desde el navegador.
+
+Context Translator simplifica el proceso: selecciona un texto, entiende su significado al momento y guarda la traducción para estudiarla más adelante si lo necesitas.

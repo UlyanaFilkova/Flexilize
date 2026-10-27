@@ -1,0 +1,57 @@
+The extension automatically detects the language of selected text on a webpage and shows its translation, transcription, a contextual translation of the full sentence or paragraph, and audio in the original language. Open the translator instantly with a keyboard shortcut.
+
+WHAT IS IT FOR?
+
+1) Instantly translate unfamiliar words or entire sentences. Select text and get a translation. There is no need to copy it, open a new tab, and look for a translator or dictionary.
+
+2) Translate your own text without leaving the current tab. Press a keyboard shortcut to open a pop-up translator and type or paste text.
+
+3) Learn languages in context. When reading in another language, quickly check an unfamiliar word and keep reading. Save the word together with the context in which it appeared, without interrupting your reading to build a vocabulary list.
+
+4) Build your own vocabulary. Automatically save useful information and export it to a file for making a vocabulary list or study materials.
+
+EXTENSION FEATURES
+
+FEATURES:
+
+- Automatically detect the language of selected text.
+- Translate a selected word, phrase, sentence, or paragraph into the chosen language.
+- Open a separate translator window to enter text.
+- Translate the sentence or paragraph around the selected text.
+- View transcription and alternative translations.
+- Listen to the original text.
+- Automatically or manually save translations with context, transcription, page URL, and page title.
+- Browse a history of up to 5,000 translations.
+- Edit, delete, and restore entries, or clear the entire history.
+- Export the full history.
+- Store history and settings locally on your device.
+
+FLEXIBLE SETTINGS
+
+- Choose the source and target languages manually.
+- Set selection translation to work only with a keyboard shortcut.
+- Customize keyboard shortcuts.
+- Turn transcription on or off.
+- Turn speech on or off.
+- Adjust speech speed from 0.3× to 2×.
+- Enable automatic saving or save translations with a button.
+- Choose whether history rotates: when the limit is reached, the oldest entries are replaced automatically. If rotation is off, new entries are not saved until you make room.
+
+WHO IS CONTEXT TRANSLATOR FOR?
+
+Context Translator is useful if you:
+
+- read articles, news, or documentation in other languages;
+- learn new words in their natural context;
+- want to check a phrase without leaving the page;
+- build a personal vocabulary list;
+- create flashcards for spaced repetition;
+- work with multilingual content.
+
+PRIVACY AND DATA STORAGE
+
+Translation history and settings are stored locally in your browser. To translate text and retrieve transcriptions, selected text may be sent to the translation services and dictionary sources used by the extension. These features require an internet connection.
+
+The extension does not sell user data or use it for advertising, credit decisions, or purposes unrelated to its core features. You can delete individual entries or clear your history in the extension. To remove all history, settings, and local cache, uninstall the extension or clear its data using your browser.
+
+Context Translator keeps the process simple: select text, understand it right away, and save the translation for future study when you need it.

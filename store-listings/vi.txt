@@ -1,0 +1,55 @@
+Tiện ích tự động nhận diện ngôn ngữ của đoạn văn bản được chọn trên trang web, hiển thị bản dịch, phiên âm, bản dịch theo ngữ cảnh của cả câu hoặc đoạn văn và đọc văn bản gốc thành tiếng. Mở trình dịch ngay bằng phím tắt.
+
+TIỆN ÍCH DÙNG ĐỂ LÀM GÌ?
+
+1) Dịch ngay từ lạ hoặc cả câu. Chọn văn bản để xem bản dịch mà không cần sao chép, mở tab mới hay tìm từ điển.
+
+2) Dịch văn bản của bạn mà không rời tab hiện tại. Nhấn phím tắt để mở cửa sổ trình dịch, rồi nhập hoặc dán văn bản.
+
+3) Học ngôn ngữ trong ngữ cảnh. Tra từ chưa biết khi đang đọc và lưu từ đó cùng phần văn bản xung quanh.
+
+4) Tạo danh sách từ vựng riêng. Tự động lưu thông tin cần thiết và xuất thành tệp.
+
+TÍNH NĂNG CỦA TIỆN ÍCH
+
+CHỨC NĂNG:
+
+- Tự động nhận diện ngôn ngữ của văn bản được chọn.
+- Dịch từ, cụm từ, câu hoặc đoạn văn được chọn sang ngôn ngữ bạn muốn.
+- Mở cửa sổ trình dịch riêng để nhập văn bản.
+- Dịch câu hoặc đoạn văn xung quanh phần được chọn theo ngữ cảnh.
+- Hiển thị phiên âm và các cách dịch khác.
+- Đọc văn bản gốc thành tiếng.
+- Tự động hoặc thủ công lưu bản dịch cùng ngữ cảnh, phiên âm, URL và tiêu đề trang.
+- Xem lịch sử tối đa 5.000 bản dịch.
+- Chỉnh sửa, xóa, khôi phục từng mục hoặc xóa toàn bộ lịch sử.
+- Xuất toàn bộ lịch sử.
+- Lưu lịch sử và cài đặt cục bộ trên thiết bị của bạn.
+
+CÀI ĐẶT LINH HOẠT
+
+- Tự chọn ngôn ngữ nguồn và ngôn ngữ đích.
+- Chỉ dịch văn bản được chọn khi nhấn phím tắt.
+- Tùy chỉnh phím tắt.
+- Bật hoặc tắt phiên âm và đọc thành tiếng.
+- Điều chỉnh tốc độ đọc từ 0,3× đến 2×.
+- Bật lưu tự động hoặc lưu bản dịch bằng nút.
+- Chọn có xoay vòng lịch sử hay không. Khi đạt giới hạn, các mục cũ nhất sẽ được thay thế tự động. Nếu tắt tính năng này, bản dịch mới sẽ không được lưu cho đến khi bạn giải phóng dung lượng.
+
+CONTEXT TRANSLATOR PHÙ HỢP VỚI AI?
+
+Tiện ích hữu ích nếu bạn:
+
+- đọc bài viết, tin tức hoặc tài liệu bằng ngôn ngữ khác;
+- học từ mới trong ngữ cảnh tự nhiên;
+- muốn tra nghĩa một cụm từ mà không rời trang;
+- xây dựng danh sách từ vựng hoặc thẻ ôn tập riêng;
+- làm việc với nội dung đa ngôn ngữ.
+
+QUYỀN RIÊNG TƯ VÀ LƯU TRỮ DỮ LIỆU
+
+Lịch sử dịch và cài đặt được lưu cục bộ trong trình duyệt. Để dịch và lấy phiên âm, văn bản được chọn có thể được gửi đến các dịch vụ dịch thuật và nguồn từ điển mà tiện ích sử dụng. Các tính năng này cần kết nối Internet.
+
+Tiện ích không bán dữ liệu người dùng và không sử dụng dữ liệu cho quảng cáo, đánh giá tín dụng hoặc mục đích ngoài các chức năng chính. Bạn có thể xóa từng mục hoặc xóa lịch sử trong tiện ích. Để xóa hoàn toàn lịch sử, cài đặt và bộ nhớ đệm cục bộ, hãy gỡ tiện ích hoặc xóa dữ liệu của tiện ích trong trình duyệt.
+
+Context Translator giúp quy trình đơn giản hơn: chọn văn bản, hiểu ngay ý nghĩa và lưu bản dịch để học sau nếu bạn muốn.

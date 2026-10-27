@@ -1,0 +1,55 @@
+A bővítmény automatikusan felismeri a weboldalon kijelölt szöveg nyelvét, és megjeleníti a fordítást, az átírást, a teljes mondat vagy bekezdés kontextus szerinti fordítását, valamint felolvassa az eredeti szöveget. A fordítóablak gyorsbillentyűvel azonnal megnyitható.
+
+MIRE JÓ?
+
+1) Fordíts le ismeretlen szavakat vagy teljes mondatokat azonnal. Jelöld ki a szöveget, és megkapod a fordítást másolás, új lap megnyitása vagy külön szótár keresése nélkül.
+
+2) Fordítsd le a saját szövegedet az aktuális lap elhagyása nélkül. Nyisd meg a fordítóablakot gyorsbillentyűvel, majd írd be vagy illeszd be a szöveget.
+
+3) Tanulj nyelveket szövegkörnyezetben. Olvasás közben nézd meg az ismeretlen szavakat, és mentsd el őket a környező szöveggel együtt.
+
+4) Készíts saját szókincsgyűjteményt. Mentsd el automatikusan a hasznos adatokat, és exportáld őket fájlba.
+
+A BŐVÍTMÉNY FUNKCIÓI
+
+FUNKCIÓK:
+
+- Automatikusan felismeri a kijelölt szöveg nyelvét.
+- Lefordítja a kijelölt szót, kifejezést, mondatot vagy bekezdést a kiválasztott nyelvre.
+- Külön fordítóablakot nyit a beírt szöveghez.
+- Kontextus szerint lefordítja a kijelölést körülvevő mondatot vagy bekezdést.
+- Átírást és további fordítási lehetőségeket jelenít meg.
+- Felolvassa az eredeti szöveget.
+- Automatikusan vagy manuálisan menti a fordításokat a szövegkörnyezettel, átírással, az oldal URL-címével és címével együtt.
+- Legfeljebb 5000 fordítás előzményeit jeleníti meg.
+- Lehetővé teszi a bejegyzések szerkesztését, törlését és visszaállítását, illetve a teljes előzmény törlését.
+- Exportálja a teljes előzményt.
+- Helyben, az eszközödön tárolja az előzményeket és a beállításokat.
+
+RUGALMAS BEÁLLÍTÁSOK
+
+- Válaszd ki kézzel a forrás- és célnyelvet.
+- Állítsd be, hogy a kijelölt szöveg fordítása csak gyorsbillentyűvel induljon.
+- Személyre szabhatod a gyorsbillentyűket.
+- Be- vagy kikapcsolhatod az átírást és a felolvasást.
+- A beszéd sebességét 0,3× és 2× között állíthatod.
+- Engedélyezheted az automatikus mentést, vagy gombbal mentheted a fordításokat.
+- Beállíthatod az előzmények körforgását. A korlát elérésekor a legrégebbi bejegyzések automatikusan lecserélődnek. Kikapcsolt körforgásnál új bejegyzések csak tárhely felszabadítása után menthetők.
+
+KINEK AJÁNLOTT A CONTEXT TRANSLATOR?
+
+A bővítmény hasznos lehet, ha:
+
+- idegen nyelvű cikkeket, híreket vagy dokumentációt olvasol;
+- új szavakat tanulsz természetes szövegkörnyezetben;
+- az oldal elhagyása nélkül szeretnéd ellenőrizni egy kifejezés jelentését;
+- saját szókincsgyűjteményt vagy tanulókártyákat készítesz;
+- többnyelvű tartalmakkal dolgozol.
+
+ADATVÉDELEM ÉS ADATTÁROLÁS
+
+A fordítási előzmények és a beállítások helyben, a böngészőben tárolódnak. Fordításhoz és átíráshoz a kijelölt szöveg elküldhető a bővítmény által használt fordítószolgáltatásoknak és szótárforrásoknak. Ezekhez a funkciókhoz internetkapcsolat szükséges.
+
+A bővítmény nem értékesíti a felhasználói adatokat, és nem használja azokat reklámozásra, hitelképesség vizsgálatára vagy az alapfunkciókhoz nem kapcsolódó célokra. Egyes bejegyzéseket törölhetsz, vagy törölheted az előzményeket a bővítményben. Az összes előzmény, beállítás és helyi gyorsítótár eltávolításához távolítsd el a bővítményt, vagy töröld az adatait a böngészőben.
+
+A Context Translator egyszerűvé teszi a folyamatot: jelölj ki egy szöveget, értsd meg azonnal a jelentését, és ha szeretnéd, mentsd el későbbi tanuláshoz.

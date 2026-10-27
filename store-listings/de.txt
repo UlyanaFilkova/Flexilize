@@ -1,0 +1,56 @@
+Die Erweiterung erkennt automatisch die Sprache des auf einer Webseite markierten Textes und zeigt die Übersetzung, die Transkription, eine kontextbezogene Übersetzung des ganzen Satzes oder Absatzes sowie eine Sprachausgabe im Original. Mit einer Tastenkombination öffnen Sie sofort das Übersetzerfenster.
+
+WOFÜR IST DIE ERWEITERUNG GEDACHT?
+
+1) Unbekannte Wörter und ganze Sätze sofort übersetzen. Markieren Sie Text und erhalten Sie eine Übersetzung. Sie müssen ihn weder kopieren noch einen neuen Tab öffnen und dort nach einem Übersetzer oder Wörterbuch suchen.
+
+2) Eigene Texte übersetzen, ohne den aktuellen Tab zu verlassen. Öffnen Sie mit einer Tastenkombination das Übersetzerfenster und tippen Sie Text ein oder fügen Sie ihn ein.
+
+3) Sprachen im Kontext lernen. Schlagen Sie beim Lesen in einer Fremdsprache unbekannte Wörter schnell nach und lesen Sie weiter. Speichern Sie Wörter zusammen mit ihrem Kontext, ohne das Lesen zum Aufbau einer Vokabelliste zu unterbrechen.
+
+4) Eine eigene Vokabelsammlung aufbauen. Speichern Sie wichtige Informationen automatisch und exportieren Sie sie als Datei für eine Vokabelliste oder Lernmaterialien.
+
+FUNKTIONEN DER ERWEITERUNG
+FUNKTIONEN:
+
+- Sprache des markierten Textes automatisch erkennen.
+- Markierte Wörter, Wendungen, Sätze oder Absätze in die gewählte Sprache übersetzen.
+- Separates Übersetzerfenster zur Texteingabe öffnen.
+- Den Satz oder Absatz rund um die Markierung kontextbezogen übersetzen.
+- Transkription und weitere Übersetzungsvarianten anzeigen.
+- Originaltext vorlesen lassen.
+- Übersetzungen mit Kontext, Transkription, Seiten-URL und Seitentitel automatisch oder manuell speichern.
+- Verlauf mit bis zu 5.000 Übersetzungen anzeigen.
+- Einträge bearbeiten, löschen und wiederherstellen oder den gesamten Verlauf leeren.
+- Gesamten Verlauf exportieren.
+- Verlauf und Einstellungen lokal auf dem Gerät speichern.
+
+FLEXIBLE EINSTELLUNGEN
+
+- Ausgangs- und Zielsprache manuell auswählen.
+- Übersetzung markierter Texte nur per Tastenkombination aktivieren.
+- Tastenkombinationen anpassen.
+- Transkription ein- oder ausschalten.
+- Sprachausgabe ein- oder ausschalten.
+- Sprechtempo von 0,3× bis 2× einstellen.
+- Automatisches Speichern aktivieren oder Übersetzungen per Schaltfläche speichern.
+- Verlauf-Rotation wählen: Bei Erreichen des Limits werden die ältesten Einträge automatisch ersetzt. Ist die Rotation deaktiviert, werden neue Einträge erst gespeichert, wenn Sie Platz schaffen.
+
+FÜR WEN EIGNET SICH CONTEXT TRANSLATOR?
+
+Die Erweiterung ist hilfreich, wenn Sie:
+
+- Artikel, Nachrichten oder Dokumentationen in anderen Sprachen lesen;
+- neue Wörter im natürlichen Kontext lernen;
+- die Bedeutung einer Wendung prüfen möchten, ohne die Seite zu verlassen;
+- einen persönlichen Wortschatz aufbauen;
+- Karteikarten für Wiederholungen in Abständen erstellen;
+- mit mehrsprachigen Inhalten arbeiten.
+
+DATENSCHUTZ UND DATENSPEICHERUNG
+
+Übersetzungsverlauf und Einstellungen werden lokal im Browser gespeichert. Für Übersetzungen und Transkriptionen kann markierter Text an die von der Erweiterung verwendeten Übersetzungsdienste und Wörterbuchquellen übertragen werden. Für diese Funktionen ist eine Internetverbindung erforderlich.
+
+Die Erweiterung verkauft keine Nutzerdaten und verwendet sie weder für Werbung noch für Kreditentscheidungen oder andere Zwecke außerhalb ihrer Kernfunktionen. Sie können einzelne Einträge löschen oder den Verlauf in der Erweiterung leeren. Um Verlauf, Einstellungen und lokalen Cache vollständig zu entfernen, deinstallieren Sie die Erweiterung oder löschen Sie ihre Daten über den Browser.
+
+Context Translator macht es einfach: Text markieren, seine Bedeutung sofort verstehen und die Übersetzung bei Bedarf zum späteren Lernen speichern.
