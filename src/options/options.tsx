@@ -47,6 +47,17 @@ const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, strin
   ["ar", "العربية"], ["fa", "فارسی"]
 ];
 
+function localizedLanguageOptions<T extends string>(options: ReadonlyArray<readonly [T, string]>, locale: string) {
+  const displayNames = new Intl.DisplayNames([locale], {type: "language"});
+  const collator = new Intl.Collator(locale, {sensitivity: "base"});
+  return options
+    .map(([code, fallback]) => {
+      const displayCode = code === "tl" ? "fil" : code;
+      return [code, displayNames.of(displayCode) || fallback] as const;
+    })
+    .sort((left, right) => collator.compare(left[1], right[1]));
+}
+
 const routeHashes: Record<Route, string> = {
   settings: "#settings",
   history: "#history",
@@ -459,9 +470,10 @@ function TranslationSettings() {
     }
   };
 
-  const languageOptions = [...TRANSLATION_LANGUAGES]
-    .sort((left, right) => left[1].localeCompare(right[1], "ru"))
+  const interfaceLocale = settings?.interfaceLanguage || "ru";
+  const languageOptions = localizedLanguageOptions(TRANSLATION_LANGUAGES, interfaceLocale)
     .map(([code, label]) => <option key={code} value={code}>{label}</option>);
+  const sortedInterfaceLanguageOptions = localizedLanguageOptions(interfaceLanguageOptions, interfaceLocale);
 
   return (
     <>
@@ -479,7 +491,7 @@ function TranslationSettings() {
               disabled={!settings}
               onChange={(event) => void changeInterfaceLanguage(event.target.value as InterfaceLanguage)}
             >
-              {interfaceLanguageOptions.map(([language, label]) => <option key={language} value={language}>{label}</option>)}
+              {sortedInterfaceLanguageOptions.map(([language, label]) => <option key={language} value={language}>{label}</option>)}
             </select>
           </div>
           {error && <div className="settings-error" role="alert">{error}</div>}
