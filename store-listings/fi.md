@@ -1,0 +1,57 @@
+KUVAUS
+
+Laajennus tunnistaa verkkosivulta valitun tekstin kielen automaattisesti ja näyttää käännöksen, ääntämisasun, koko virkkeen tai kappaleen kontekstikäännöksen sekä alkuperäisen tekstin puheena. Avaa kääntäjä heti pikanäppäimellä.
+
+MIHIN SITÄ TARVITAAN?
+
+1) Käännä tuntemattomat sanat tai kokonaiset virkkeet heti. Valitse teksti ja näe käännös ilman kopiointia, uuden välilehden avaamista tai erillisen sanakirjan etsimistä.
+
+2) Käännä oma tekstisi poistumatta nykyiseltä välilehdeltä. Avaa kääntäjä pikanäppäimellä ja kirjoita tai liitä teksti.
+
+3) Opiskele kieliä asiayhteydessä. Tarkista tuntemattomat sanat lukemisen aikana ja tallenna ne asiayhteyksineen keskeyttämättä lukemista.
+
+4) Kokoa oma sanastosi. Tallenna hyödylliset tiedot automaattisesti ja vie ne tiedostoon.
+
+LAAJENNUKSEN OMINAISUUDET
+
+TOIMINNOT:
+
+- Tunnistaa valitun tekstin kielen automaattisesti.
+- Kääntää valitun sanan, ilmauksen, virkkeen tai kappaleen valitsemallesi kielelle.
+- Avaa erillisen kääntäjäikkunan tekstin kirjoittamista varten.
+- Kääntää valintaa ympäröivän virkkeen tai kappaleen.
+- Näyttää ääntämisasun ja vaihtoehtoisia käännöksiä.
+- Lukee alkuperäisen tekstin ääneen.
+- Tallentaa käännökset automaattisesti tai manuaalisesti asiayhteyden, ääntämisasun, sivun URL-osoitteen ja otsikon kanssa.
+- Näyttää enintään 5 000 käännöksen historian.
+- Voit muokata, poistaa ja palauttaa merkintöjä tai tyhjentää koko historian.
+- Vie koko historian tiedostoon.
+- Tallentaa historian ja asetukset paikallisesti laitteellesi.
+
+JOUSTAVAT ASETUKSET
+
+- Valitse lähde- ja kohdekieli itse.
+- Määritä valitun tekstin käännös käynnistymään vain pikanäppäimellä.
+- Mukauta pikanäppäimiä.
+- Ota ääntämisasu ja puhe käyttöön tai poista ne käytöstä.
+- Säädä puhenopeutta välillä 0,3×–2×.
+- Ota automaattinen tallennus käyttöön tai tallenna käännökset painikkeella.
+- Valitse, kiertääkö historia. Kun raja täyttyy, vanhimmat merkinnät korvataan automaattisesti. Jos kierto ei ole käytössä, uusia merkintöjä ei tallenneta ennen kuin vapautat tilaa.
+
+KENELLE CONTEXT TRANSLATOR SOPII?
+
+Laajennuksesta on hyötyä, jos:
+
+- luet artikkeleita, uutisia tai ohjeita muilla kielillä;
+- opiskelet uusia sanoja niiden luontevassa asiayhteydessä;
+- haluat tarkistaa ilmauksen merkityksen poistumatta sivulta;
+- kokoat omaa sanastoa tai teet muistikortteja kertaamiseen;
+- käsittelet monikielistä sisältöä.
+
+TIETOSUOJA JA TIETOJEN TALLENNUS
+
+Käännöshistoria ja asetukset tallennetaan paikallisesti selaimeen. Käännöksiä ja ääntämisasuja varten valittua tekstiä voidaan lähettää laajennuksen käyttämiin käännöspalveluihin ja sanakirjalähteisiin. Nämä ominaisuudet edellyttävät internetyhteyttä.
+
+Laajennus ei myy käyttäjätietoja eikä käytä niitä mainontaan, luottopäätöksiin tai muihin kuin ydintoimintoihin liittyviin tarkoituksiin. Voit poistaa yksittäisiä merkintöjä tai tyhjentää historian laajennuksessa. Poista laajennus tai tyhjennä sen tiedot selaimessa, jos haluat poistaa historian, asetukset ja paikallisen välimuistin kokonaan.
+
+Context Translator tekee käytöstä yksinkertaista: valitse teksti, ymmärrä sen merkitys heti ja tallenna käännös myöhempää opiskelua varten, jos haluat.

@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "即時翻譯、朗讀並儲存任何語言的文字。"},
+  "actionTitle": {"message": "已儲存的翻譯"}
+}

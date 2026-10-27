@@ -10,11 +10,35 @@ import {
   normalizeSpeechRate,
   saveExtensionSettings,
   SETTINGS_KEY,
-  shortcutFromKeyboardEvent
+  shortcutFromKeyboardEvent,
+  interfaceLanguageFromBrowser,
+  targetLanguageFromBrowser
 } from "../src/settings";
 import {storageData} from "./mocks/browser";
 
 describe("settings", () => {
+  it.each([
+    ["ru-RU", "ru", "ru"],
+    ["en-US", "en", "en"],
+    ["de-DE", "de", "de"],
+    ["fr-CA", "fr", "fr"],
+    ["es-MX", "es", "es"],
+    ["ja-JP", "ja", "ja"],
+    ["nl-BE", "nl", "nl"],
+    ["it-IT", "it", "it"],
+    ["pt_BR", "pt", "pt"],
+    ["id-ID", "id", "id"],
+    ["hi-IN", "hi", "hi"],
+    ["zh-TW", "zh-TW", "zh-TW"],
+    ["zh-Hans-CN", "zh-CN", "zh-CN"],
+    ["fil-PH", "fil", "tl"],
+    ["tl-PH", "en", "tl"],
+    ["eo", "en", "en"]
+  ])("uses browser locale %s for interface and translation defaults", (locale, interfaceLanguage, targetLanguage) => {
+    expect(interfaceLanguageFromBrowser(locale)).toBe(interfaceLanguage);
+    expect(targetLanguageFromBrowser(locale)).toBe(targetLanguage);
+  });
+
   it("returns every default for empty or invalid storage", () => {
     expect(normalizeSettings(null)).toEqual(defaultSettings);
     expect(normalizeSettings("bad")).toEqual(defaultSettings);
@@ -25,6 +49,7 @@ describe("settings", () => {
       autoSaveTranslations: false,
       historyRotationEnabled: false,
       hotkeyActivationEnabled: true,
+      interfaceLanguage: "en",
       showSelectionTranslationModal: false,
       speechEnabled: false,
       transcriptionEnabled: false,
@@ -39,6 +64,7 @@ describe("settings", () => {
       autoSaveTranslations: false,
       historyRotationEnabled: false,
       hotkeyActivationEnabled: true,
+      interfaceLanguage: "en",
       showSelectionTranslationModal: false,
       speechEnabled: false,
       transcriptionEnabled: false,
@@ -54,12 +80,14 @@ describe("settings", () => {
   it("rejects invalid languages and modifierless shortcuts", () => {
     const normalized = normalizeSettings({
       targetLanguage: "xx",
+      interfaceLanguage: "xx",
       translatorSourceLanguage: "xx",
       translatorTargetLanguage: 3,
       activationShortcut: {alt: false, code: "KeyA", ctrl: false, key: "A", meta: false, shift: false},
       translatorShortcut: {alt: false, code: "KeyB", ctrl: false, key: "B", meta: false, shift: false}
     });
     expect(normalized.targetLanguage).toBe(defaultSettings.targetLanguage);
+    expect(normalized.interfaceLanguage).toBe("ru");
     expect(normalized.translatorSourceLanguage).toBe(defaultSettings.translatorSourceLanguage);
     expect(normalized.activationShortcut).toEqual(defaultSettings.activationShortcut);
     expect(normalized.translatorShortcut).toEqual(defaultSettings.translatorShortcut);

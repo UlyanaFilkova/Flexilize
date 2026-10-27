@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "Käännä, kuuntele ja tallenna minkä tahansa kielen tekstiä heti."},
+  "actionTitle": {"message": "Tallennetut käännökset"}
+}

@@ -16,6 +16,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
+import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -36,6 +37,16 @@ type HistorySection = "records" | "export";
 type Route = "settings" | "history" | "export" | "help";
 type Notice = {message: string; undo?: () => Promise<void>};
 
+const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, string]> = [
+  ["ru", "Русский"], ["en", "English"], ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"],
+  ["ja", "日本語"], ["nl", "Nederlands"], ["it", "Italiano"], ["pt", "Português"],
+  ["id", "Bahasa Indonesia"], ["hi", "हिन्दी"], ["pl", "Polski"],
+  ["zh-CN", "简体中文"], ["zh-TW", "繁體中文"], ["ko", "한국어"], ["tr", "Türkçe"],
+  ["vi", "Tiếng Việt"], ["cs", "Čeština"], ["ro", "Română"], ["sv", "Svenska"], ["da", "Dansk"],
+  ["no", "Norsk"], ["fi", "Suomi"], ["hu", "Magyar"], ["el", "Ελληνικά"], ["ms", "Bahasa Melayu"], ["fil", "Filipino"],
+  ["ar", "العربية"], ["fa", "فارسی"]
+];
+
 const routeHashes: Record<Route, string> = {
   settings: "#settings",
   history: "#history",
@@ -43,22 +54,32 @@ const routeHashes: Record<Route, string> = {
   help: "#help"
 };
 
+const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving"]);
+
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
-  {id: "translation", label: "Перевод", icon: <LanguagesIcon />},
+  {id: "translation", label: "Язык и перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
 ];
 
 function routeFromHash(): Route {
+  if (location.hash === routeHashes.settings || location.hash.startsWith(`${routeHashes.settings}/`)) return "settings";
   return (Object.entries(routeHashes).find(([, hash]) => hash === location.hash)?.[0] as Route) || "settings";
+}
+
+function settingsSectionFromHash() {
+  const section = location.hash.startsWith(`${routeHashes.settings}/`)
+    ? location.hash.slice(`${routeHashes.settings}/`.length)
+    : "overview";
+  return settingsSectionIds.has(section) ? section : "overview";
 }
 
 function App() {
   const initialRoute = routeFromHash();
   const [page, setPage] = useState<Page>(initialRoute === "help" ? "help" : initialRoute === "settings" ? "settings" : "history");
-  const [settingsSection, setSettingsSection] = useState("overview");
+  const [settingsSection, setSettingsSection] = useState(settingsSectionFromHash);
   const [historySection, setHistorySection] = useState<HistorySection>(initialRoute === "export" ? "export" : "records");
   const [records, setRecords] = useState<TranslationRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,7 +108,7 @@ function App() {
   const openSettingsSection = (section: string) => {
     setPage("settings");
     setSettingsSection(section);
-    window.history.replaceState(null, "", routeHashes.settings);
+    window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
   };
 
   const openHelp = () => {
@@ -129,7 +150,7 @@ function App() {
   };
 
   const clearRecords = async () => {
-    if (!records.length || !confirm("Удалить все сохранённые переводы?")) return;
+    if (!records.length || !confirm(translate("Удалить все сохранённые переводы?"))) return;
     try {
       await clearTranslationRecords();
       setRecords([]);
@@ -235,7 +256,7 @@ function PageHeading({title, description, action}: {title: string; description: 
 function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
   const sections = [
     {id: "general", title: "Горячие клавиши", description: "Управляйте переводом выделенного текста и быстрым вызовом переводчика.", icon: <SlidersIcon />, meta: "2 комбинации"},
-    {id: "translation", title: "Перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
+    {id: "translation", title: "Язык и перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
     {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
     {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
   ];
@@ -423,6 +444,21 @@ function TranslationSettings() {
     }
   };
 
+  const changeInterfaceLanguage = async (interfaceLanguage: InterfaceLanguage) => {
+    if (!settings || settings.interfaceLanguage === interfaceLanguage) return;
+    const previous = settings;
+    const next = {...settings, interfaceLanguage};
+    setSettings(next);
+    setError("");
+    try {
+      await saveExtensionSettings(next);
+      window.location.reload();
+    } catch (_error) {
+      setSettings(previous);
+      setError("Не удалось сохранить настройку");
+    }
+  };
+
   const languageOptions = [...TRANSLATION_LANGUAGES]
     .sort((left, right) => left[1].localeCompare(right[1], "ru"))
     .map(([code, label]) => <option key={code} value={code}>{label}</option>);
@@ -430,9 +466,44 @@ function TranslationSettings() {
   return (
     <>
       <div className="settings-group">
+        <section className="settings-panel" aria-label="Язык интерфейса">
+          <div className="setting-row">
+            <div className="setting-copy">
+              <h2>Язык интерфейса</h2>
+              <p>Язык кнопок, настроек и сообщений расширения.</p>
+            </div>
+            <select
+              className="setting-select"
+              aria-label="Язык интерфейса"
+              value={settings?.interfaceLanguage || "ru"}
+              disabled={!settings}
+              onChange={(event) => void changeInterfaceLanguage(event.target.value as InterfaceLanguage)}
+            >
+              {interfaceLanguageOptions.map(([language, label]) => <option key={language} value={language}>{label}</option>)}
+            </select>
+          </div>
+          {error && <div className="settings-error" role="alert">{error}</div>}
+        </section>
+      </div>
+      <div className="settings-group">
         <h2 className="settings-group-title">Перевод выделенного текста</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Перевод выделенного текста">
         <div className="setting-row">
+          <div className="setting-copy">
+            <h2>Язык перевода выделенного текста</h2>
+            <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
+          </div>
+          <select
+            className="setting-select"
+            aria-label="Язык перевода"
+            value={settings?.targetLanguage || "ru"}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
+          >
+            {languageOptions}
+          </select>
+        </div>
+        <div className="setting-row setting-row-secondary">
           <div className="setting-copy">
             <h2>Показывать окно перевода</h2>
             <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
@@ -448,21 +519,6 @@ function TranslationSettings() {
             <span aria-hidden="true" />
             <span className="sr-only">Показывать окно перевода</span>
           </label>
-        </div>
-        <div className="setting-row setting-row-secondary">
-          <div className="setting-copy">
-            <h2>Язык перевода выделенного текста</h2>
-            <p>Все выделенные тексты будут переводиться на выбранный язык.</p>
-          </div>
-          <select
-            className="setting-select"
-            aria-label="Язык перевода"
-            value={settings?.targetLanguage || "ru"}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, targetLanguage: event.target.value})}
-          >
-            {languageOptions}
-          </select>
         </div>
         </section>
       </div>
@@ -536,8 +592,8 @@ function SavingSettings() {
       <div className="setting-row setting-row-secondary">
         <div className="setting-copy">
           <h2>Ротация истории</h2>
-          <p>При добавлении новых переводов сверх лимита в {MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {MAX_HISTORY_RECORDS}.</p>
-          <p>При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {MAX_HISTORY_RECORDS}.</p>
+          <p>{`При добавлении новых переводов сверх лимита в ${MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным ${MAX_HISTORY_RECORDS}.`}</p>
+          <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${MAX_HISTORY_RECORDS}.`}</p>
         </div>
         <label className="switch">
           <input
@@ -700,7 +756,7 @@ function RecordCard({record, onDelete, onUpdate}: {record: TranslationRecord; on
     <li className="history-record">
       <div className="record-pair"><div className="record-term-line"><span className="record-original">{record.text || "—"}</span>{record.transcription && <span className="record-transcription">{record.transcription}</span>}</div><span className="record-translation">{record.translation || "—"}</span></div>
       {alternatives.length > 0 && <div className="record-alternatives">{alternatives.join(", ")}</div>}
-      <div className="record-sentence">{record.sentence || "—"}</div>
+      <blockquote className="record-sentence">{record.sentence || "—"}</blockquote>
       <div className="record-meta">
         <time>{formatRecordDate(record.createdAt)}</time>
         {record.pageUrl && <a href={record.pageUrl} target="_blank" rel="noreferrer" title={record.pageUrl}>{record.pageTitle || recordHostname(record.pageUrl)}</a>}
@@ -826,6 +882,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-reading">
         <div className="help-section-heading"><span>Задача 01</span><h2>Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место в тексте.</p></div>
+        <SelectionHelpExample />
         <div className="help-card-grid">
           <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
           <article className="help-card"><div className="help-card-icon"><TextIcon /></div><h3>Предложение или абзац</h3><ol><li>Выделите текст целиком.</li><li>Для длинного фрагмента основным результатом станет перевод всего выделения.</li><li>Проверьте границы выделения, если смысл кажется неполным.</li></ol><p className="help-tip"><strong>Полезно для:</strong> статей, документации, учебников и деловой переписки.</p></article>
@@ -835,6 +892,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-writing">
         <div className="help-section-heading"><span>Задача 02</span><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
+        <TranslatorHelpExample />
         <div className="workflow-card">
           <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Нажмите назначенную горячую клавишу. По умолчанию комбинацию можно посмотреть или изменить в настройках.</p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
@@ -847,6 +905,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-listening">
         <div className="help-section-heading"><span>Задача 03</span><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
+        <SpeechHelpExample />
         <div className="help-card-grid help-card-grid-three">
           <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка и фрагмента.</p></article>
           <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку звука в окне перевода и повторите фразу вслух.</p></article>
@@ -857,6 +916,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-vocabulary">
         <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
+        <HistoryHelpExample />
         <div className="vocabulary-layout">
           <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong> — при лимите в 5000 записей старые переводы могут автоматически заменяться новыми.</span></li></ul></article>
           <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
@@ -890,6 +950,83 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
   );
 }
 
+function SelectionHelpExample() {
+  return (
+    <figure className="help-visual-example help-selection-example">
+      <div className="help-visual-canvas" aria-hidden="true">
+        <div className="visual-browser">
+          <div className="visual-browser-toolbar"><i /><i /><i /><span>learn.example.com/article</span></div>
+          <div className="visual-article">
+            <b>Why context matters</b>
+            <span className="visual-line visual-line-long" /><span className="visual-line visual-line-medium" />
+            <p>Words become clearer when <mark>context matters</mark> in a real sentence.</p>
+            <span className="visual-line visual-line-short" />
+          </div>
+          <div className="visual-selection-popup">
+            <div className="visual-popup-source"><span><strong>context matters</strong><small>/ˈkɒntekst ˈmætəz/</small></span><em>▶</em></div>
+            <div className="visual-popup-divider" />
+            <strong className="visual-popup-result">контекст имеет значение</strong>
+            <small>Перевод с английского</small>
+          </div>
+        </div>
+      </div>
+      <figcaption><span>Пример на странице</span><strong>Выделили фразу — сразу получили перевод</strong><p>Окно остаётся рядом с текстом, поэтому контекст и место чтения не теряются.</p></figcaption>
+    </figure>
+  );
+}
+
+function TranslatorHelpExample() {
+  return (
+    <figure className="help-visual-example help-translator-example">
+      <figcaption><span>Пример отдельного переводчика</span><strong>Вставьте свой текст и продолжайте работать на странице</strong><p>Языки выбираются прямо в окне, а результат можно скопировать одной кнопкой.</p></figcaption>
+      <div className="help-visual-canvas" aria-hidden="true">
+        <div className="visual-translator-window">
+          <div className="visual-translator-header"><strong>Переводчик</strong><span>Ctrl + Shift + '</span><i>×</i></div>
+          <div className="visual-language-row"><span>English<span aria-hidden="true">⌄</span></span><b>⇄</b><span>Русский<span aria-hidden="true">⌄</span></span></div>
+          <div className="visual-translator-panes">
+            <div><small>Исходный текст</small><p>Could you send me the updated document?</p><i className="visual-copy-icon" /></div>
+            <div><small>Перевод</small><p>Не могли бы вы отправить мне обновлённый документ?</p><i className="visual-copy-icon" /></div>
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
+function SpeechHelpExample() {
+  return (
+    <figure className="help-visual-example help-speech-example">
+      <div className="help-visual-canvas" aria-hidden="true">
+        <div className="visual-speech-card">
+          <div className="visual-speech-top"><span><strong>Good morning</strong><small>/ɡʊd ˈmɔːnɪŋ/</small></span><i>■</i></div>
+          <div className="visual-waveform">{[14, 25, 18, 34, 28, 43, 22, 38, 30, 18, 27, 13].map((height, index) => <span key={index} style={{height}} />)}</div>
+          <div className="visual-speech-progress"><span /><i /></div>
+          <div className="visual-speed"><span>Медленнее</span><strong>0,8×</strong><span>Быстрее</span></div>
+        </div>
+      </div>
+      <figcaption><span>Пример тренировки</span><strong>Слушайте, следите за транскрипцией и меняйте темп</strong><p>Для сложной фразы начните с 0,8×, затем вернитесь к обычной скорости.</p></figcaption>
+    </figure>
+  );
+}
+
+function HistoryHelpExample() {
+  return (
+    <figure className="help-visual-example help-history-example">
+      <figcaption><span>Пример записи в словаре</span><strong>Всё нужное для повторения хранится вместе</strong><p>Оригинал, перевод, контекст, источник и дата доступны в одной карточке.</p></figcaption>
+      <div className="help-visual-canvas" aria-hidden="true">
+        <div className="visual-history-window">
+          <div className="visual-history-heading"><span><strong>История переводов</strong><small>24 записи</small></span><em>Экспорт</em></div>
+          <div className="visual-history-record">
+            <div><strong>to figure out</strong><span>разобраться · выяснить</span></div><i>/tə ˈfɪɡər aʊt/</i>
+            <p>I need to figure out how this feature works.</p>
+            <footer><div><span>example.com</span><span>Сегодня, 14:32</span></div><div className="visual-history-actions"><span><EditIcon /></span><span><TrashIcon /></span></div></footer>
+          </div>
+        </div>
+      </div>
+    </figure>
+  );
+}
+
 function Icon({children}: {children: ReactNode}) { return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>; }
 function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></Icon>; }
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
@@ -909,4 +1046,17 @@ function InfoIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M12 1
 function CheckIcon() { return <Icon><path d="m5 12 4 4L19 6"/></Icon>; }
 function ArrowIcon() { return <Icon><path d="M5 12h14M14 7l5 5-5 5"/></Icon>; }
 
-createRoot(document.getElementById("root")!).render(<App />);
+async function startApp() {
+  let language: InterfaceLanguage = "ru";
+  try {
+    language = (await getExtensionSettings()).interfaceLanguage;
+  } catch (_error) {
+    // Keep the default language when storage is unavailable.
+  }
+  await loadInterfaceLanguage(language);
+  setActiveLanguage(language);
+  observeLocalizedDom(document, language);
+  createRoot(document.getElementById("root")!).render(<App />);
+}
+
+void startApp();

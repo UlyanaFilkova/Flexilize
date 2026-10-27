@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "Fordítson le, hallgasson meg és mentsen el szöveget bármilyen nyelven."},
+  "actionTitle": {"message": "Mentett fordítások"}
+}

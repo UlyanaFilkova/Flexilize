@@ -13,6 +13,8 @@ import {
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
+import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {getExtensionSettings} from "../settings";
 
 const extensionApi = browser;
 const listElement = document.querySelector<HTMLOListElement>("#records")!;
@@ -25,16 +27,27 @@ const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => void loadRecords(), {once: true});
-} else {
-  void loadRecords();
-}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => void initialize(), {once: true});
+else void initialize();
 clearButton.addEventListener("click", clearRecords);
 settingsButton.addEventListener("click", () => void extensionApi.runtime.openOptionsPage());
 historyButton.addEventListener("click", () => void openHistory());
 exportButton.addEventListener("click", () => void exportRecords());
 formatSelect.addEventListener("change", updateExportButton);
+
+async function initialize() {
+  let language: InterfaceLanguage = "ru";
+  try {
+    language = (await getExtensionSettings()).interfaceLanguage;
+  } catch (_error) {
+    // Keep Russian defaults when settings cannot be read.
+  }
+  await loadInterfaceLanguage(language);
+  setActiveLanguage(language);
+  observeLocalizedDom(document, language);
+  updateExportButton();
+  await loadRecords();
+}
 
 async function openHistory() {
   await extensionApi.tabs.create({url: extensionApi.runtime.getURL("options/index.html#history")});
@@ -168,7 +181,7 @@ function createTrashIcon() {
 }
 
 async function clearRecords() {
-  if (!records.length || !confirm("Удалить все сохранённые переводы?")) return;
+  if (!records.length || !confirm(translate("Удалить все сохранённые переводы?"))) return;
   try {
     await clearTranslationRecords();
     records = [];
@@ -203,7 +216,7 @@ function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, className: s
 }
 
 function updateExportButton() {
-  exportButton.textContent = `Скачать ${formatLabel(formatSelect.value as ExportFormat)}`;
+  exportButton.textContent = translate(`Скачать ${formatLabel(formatSelect.value as ExportFormat)}`);
 }
 
 let noticeTimer: ReturnType<typeof setTimeout> | undefined;

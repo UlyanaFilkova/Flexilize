@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {fireEvent, screen, waitFor} from "@testing-library/react";
+import {fireEvent, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {defaultSettings, SETTINGS_KEY} from "../src/settings";
 
@@ -23,7 +23,7 @@ describe("options page", () => {
   it("shows all navigation sections and the selected section title", async () => {
     expect(screen.getByRole("button", {name: /Все настройки/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Горячие клавиши$/})).toBeTruthy();
-    expect(screen.getByRole("button", {name: /^Перевод$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Язык и перевод$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Звук$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Сохранение$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Как пользоваться/})).toBeTruthy();
@@ -34,8 +34,8 @@ describe("options page", () => {
   it("opens settings sections from the overview", async () => {
     expect(screen.getByRole("heading", {name: "Переводчик, который работает по вашим правилам"})).toBeTruthy();
     expect(screen.getByRole("region", {name: "Разделы настроек"})).toBeTruthy();
-    await userEvent.click(screen.getByRole("button", {name: /Перевод.*Языки и интерфейс/}));
-    expect(screen.getByRole("heading", {name: "Перевод"})).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", {name: /Язык и перевод.*Языки и интерфейс/}));
+    expect(screen.getByRole("heading", {name: "Язык и перевод"})).toBeTruthy();
   });
 
   it("shows a detailed help section and links it to settings", async () => {
@@ -44,11 +44,12 @@ describe("options page", () => {
     expect(screen.getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Читаете текст на иностранном языке"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Частые вопросы"})).toBeTruthy();
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
     expect(location.hash).toBe("#help");
 
     await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
     expect(screen.getByRole("heading", {name: "Горячие клавиши"})).toBeTruthy();
-    expect(location.hash).toBe("#settings");
+    expect(location.hash).toBe("#settings/general");
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {
@@ -70,16 +71,21 @@ describe("options page", () => {
   });
 
   it("separates selection and standalone translator language settings", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Перевод$/}));
+    await userEvent.click(screen.getByRole("button", {name: /^Язык и перевод$/}));
     expect(screen.getByRole("heading", {name: "Перевод выделенного текста"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Переводчик"})).toBeTruthy();
+    expect(screen.queryByRole("heading", {name: "Языки и интерфейс"})).toBeNull();
+    const selectionSettings = screen.getByRole("region", {name: "Перевод выделенного текста"});
+    expect(within(selectionSettings).getAllByRole("heading").map((heading) => heading.textContent)).toEqual([
+      "Язык перевода выделенного текста", "Показывать окно перевода"
+    ]);
     await userEvent.selectOptions(screen.getByLabelText("Исходный язык переводчика"), "de");
     await userEvent.selectOptions(screen.getByLabelText("Язык перевода в переводчике"), "fr");
     await waitFor(() => expect(storageData[SETTINGS_KEY]).toMatchObject({translatorSourceLanguage: "de", translatorTargetLanguage: "fr"}));
   });
 
   it("can hide the selection translation window", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Перевод$/}));
+    await userEvent.click(screen.getByRole("button", {name: /^Язык и перевод$/}));
     await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
   });

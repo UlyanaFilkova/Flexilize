@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "Traduce, escucha y guarda al instante textos en cualquier idioma."},
+  "actionTitle": {"message": "Traducciones guardadas"}
+}
