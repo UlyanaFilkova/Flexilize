@@ -41,7 +41,7 @@ import {
     ["pl", "Polski"], ["pt", "Português"], ["ro", "Română"], ["ru", "Русский"],
     ["sr", "Српски"], ["sk", "Slovenčina"], ["sl", "Slovenščina"], ["es", "Español"],
     ["sw", "Kiswahili"], ["sv", "Svenska"], ["th", "ไทย"], ["tr", "Türkçe"],
-    ["uk", "Українська"], ["ur", "اردو"], ["uz", "O‘zbekcha"], ["vi", "Tiếng Việt"],
+    ["uk", "Українська"], ["ur", "اردو"], ["uz", "O‘zbekcha"], ["vi", "Tiếng Việt"], ["tl", "Filipino"],
     ["cy", "Cymraeg"]
   ] as const;
 

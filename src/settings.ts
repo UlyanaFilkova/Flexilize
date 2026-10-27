@@ -47,17 +47,22 @@ export const TRANSLATION_LANGUAGES = [
   ["eu", "Баскский"], ["bn", "Бенгальский"], ["ca", "Каталанский"], ["ka", "Грузинский"],
   ["is", "Исландский"], ["ga", "Ирландский"], ["kk", "Казахский"], ["mk", "Македонский"],
   ["ms", "Малайский"], ["mt", "Мальтийский"], ["sw", "Суахили"], ["th", "Тайский"],
-  ["ur", "Урду"], ["uz", "Узбекский"], ["cy", "Валлийский"]
+  ["ur", "Урду"], ["uz", "Узбекский"], ["cy", "Валлийский"], ["tl", "Филиппинский"]
 ] as const;
 
 export function interfaceLanguageFromBrowser(locale: unknown): InterfaceLanguage {
-  const base = normalizedBrowserLocale(locale).split("-")[0].toLocaleLowerCase() as InterfaceLanguage;
+  const normalized = normalizedBrowserLocale(locale).toLocaleLowerCase();
+  if (normalized === "zh" || normalized.startsWith("zh-")) {
+    return /(?:^|-)tw|hk|mo|hant(?:-|$)/i.test(normalized) ? "zh-TW" : "zh-CN";
+  }
+  const base = normalized.split("-")[0] as InterfaceLanguage;
   return INTERFACE_LANGUAGES.includes(base) ? base : "en";
 }
 
 export function targetLanguageFromBrowser(locale: unknown): string {
   const normalized = normalizedBrowserLocale(locale);
   if (!normalized) return "en";
+  if (/^(?:fil|tl)(?:-|$)/i.test(normalized)) return "tl";
   if (normalized === "zh" || normalized.startsWith("zh-")) {
     return /(?:^|-)TW|HK|MO|HANT(?:-|$)/i.test(normalized) ? "zh-TW" : "zh-CN";
   }

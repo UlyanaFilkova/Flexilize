@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "모든 언어의 텍스트를 즉시 번역하고 듣고 저장하세요."},
+  "actionTitle": {"message": "저장된 번역"}
+}

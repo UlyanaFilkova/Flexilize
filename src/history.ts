@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 import type {ExportFormat} from "./export";
 import type {RecordsResponse, TranslationRecord} from "./types";
-import {formatRecordCount, getActiveLanguage, type InterfaceLanguage} from "./i18n";
+import {formatRecordCount, getActiveLanguage, translate, type InterfaceLanguage} from "./i18n";
 
 const RECORDS_KEY = "translationRecords";
 
@@ -75,11 +75,11 @@ export function formatRecordDate(value: string, language: InterfaceLanguage = ge
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? ""
-    : new Intl.DateTimeFormat(language === "en" ? "en" : "ru", {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}).format(date);
+    : new Intl.DateTimeFormat(language, {day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"}).format(date);
 }
 
 export function recordHostname(value: string, language: InterfaceLanguage = getActiveLanguage()) {
-  try { return new URL(value).hostname; } catch (_error) { return language === "en" ? "Source" : "Источник"; }
+  try { return new URL(value).hostname; } catch (_error) { return translate("Источник", language); }
 }
 
 function recordsFrom(value: unknown, fallback: string) {

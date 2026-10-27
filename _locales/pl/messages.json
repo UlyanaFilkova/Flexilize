@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "Tłumacz, odsłuchuj i zapisuj tekst w dowolnym języku."},
+  "actionTitle": {"message": "Zapisane tłumaczenia"}
+}

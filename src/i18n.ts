@@ -1,7 +1,7 @@
 import englishCatalog from "./locales/en.json";
 import russianCatalog from "./locales/ru.json";
 
-export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi"] as const;
+export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi", "pl", "zh-CN", "zh-TW", "ko", "tr", "vi", "cs", "ro", "sv", "da", "no", "fi", "hu", "el", "ms", "fil", "ar", "fa"] as const;
 export type InterfaceLanguage = typeof INTERFACE_LANGUAGES[number];
 
 let activeLanguage: InterfaceLanguage = "ru";
@@ -37,7 +37,14 @@ export async function loadInterfaceLanguage(language: InterfaceLanguage) {
   const loaders: Record<Exclude<InterfaceLanguage, "ru" | "en">, () => Promise<{default: Record<string, string>}>> = {
     de: () => import("./locales/de.json"), fr: () => import("./locales/fr.json"), es: () => import("./locales/es.json"),
     ja: () => import("./locales/ja.json"), nl: () => import("./locales/nl.json"), it: () => import("./locales/it.json"),
-    pt: () => import("./locales/pt.json"), id: () => import("./locales/id.json"), hi: () => import("./locales/hi.json")
+    pt: () => import("./locales/pt.json"), id: () => import("./locales/id.json"), hi: () => import("./locales/hi.json"),
+    pl: () => import("./locales/pl.json"), "zh-CN": () => import("./locales/zh-CN.json"),
+    "zh-TW": () => import("./locales/zh-TW.json"), ko: () => import("./locales/ko.json"), tr: () => import("./locales/tr.json"),
+    vi: () => import("./locales/vi.json"), cs: () => import("./locales/cs.json"), ro: () => import("./locales/ro.json"),
+    sv: () => import("./locales/sv.json"), da: () => import("./locales/da.json"), no: () => import("./locales/no.json"),
+    fi: () => import("./locales/fi.json"), hu: () => import("./locales/hu.json"), el: () => import("./locales/el.json"),
+    ms: () => import("./locales/ms.json"), fil: () => import("./locales/fil.json"), ar: () => import("./locales/ar.json"),
+    fa: () => import("./locales/fa.json")
   };
   loadedCatalogs[language] = (await loaders[language]()).default;
 }
@@ -88,8 +95,22 @@ export function formatRecordCount(count: number, language: InterfaceLanguage = a
   const labels: Record<InterfaceLanguage, [string, string]> = {
     ru: ["запись", "записей"], en: ["record", "records"], de: ["Eintrag", "Einträge"], fr: ["entrée", "entrées"],
     es: ["registro", "registros"], ja: ["件", "件"], nl: ["item", "items"], it: ["voce", "voci"],
-    pt: ["registro", "registros"], id: ["catatan", "catatan"], hi: ["रिकॉर्ड", "रिकॉर्ड"]
+    pt: ["registro", "registros"], id: ["catatan", "catatan"], hi: ["रिकॉर्ड", "रिकॉर्ड"],
+    pl: ["rekord", "rekordów"], "zh-CN": ["条记录", "条记录"], "zh-TW": ["筆記錄", "筆記錄"],
+    ko: ["건", "건"], tr: ["kayıt", "kayıt"], vi: ["bản ghi", "bản ghi"],
+    cs: ["záznam", "záznamů"], ro: ["înregistrare", "înregistrări"], sv: ["post", "poster"], da: ["post", "poster"],
+    no: ["oppføring", "oppføringer"], fi: ["merkintä", "merkintää"], hu: ["bejegyzés", "bejegyzés"],
+    el: ["εγγραφή", "εγγραφές"], ms: ["catatan", "catatan"], fil: ["talaan", "talaan"],
+    ar: ["سجل", "سجلات"], fa: ["رکورد", "رکورد"]
   };
+  if (language === "ar") {
+    if (count === 2) return `${count} سجلان`;
+    if (count >= 3 && count <= 10) return `${count} سجلات`;
+    if (count > 10) return `${count} سجلًا`;
+  }
+  if (["pl", "cs"].includes(language) && count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)) {
+    return `${count} ${language === "pl" ? "rekordy" : "záznamy"}`;
+  }
   const [one, many] = labels[language];
   return `${count} ${count === 1 ? one : many}`;
 }
@@ -120,7 +141,12 @@ export function localizeDom(root: Document | ShadowRoot, language: InterfaceLang
   if (isDocument) {
     const documentRoot = root as Document;
     documentRoot.documentElement.lang = language;
+    documentRoot.documentElement.dir = language === "ar" || language === "fa" ? "rtl" : "ltr";
     documentRoot.title = translate(documentRoot.title, language);
+  } else {
+    const host = (root as ShadowRoot).host;
+    host.setAttribute("lang", language);
+    host.setAttribute("dir", language === "ar" || language === "fa" ? "rtl" : "ltr");
   }
 }
 

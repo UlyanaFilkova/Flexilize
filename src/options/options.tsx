@@ -40,7 +40,11 @@ type Notice = {message: string; undo?: () => Promise<void>};
 const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, string]> = [
   ["ru", "Русский"], ["en", "English"], ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"],
   ["ja", "日本語"], ["nl", "Nederlands"], ["it", "Italiano"], ["pt", "Português"],
-  ["id", "Bahasa Indonesia"], ["hi", "हिन्दी"]
+  ["id", "Bahasa Indonesia"], ["hi", "हिन्दी"], ["pl", "Polski"],
+  ["zh-CN", "简体中文"], ["zh-TW", "繁體中文"], ["ko", "한국어"], ["tr", "Türkçe"],
+  ["vi", "Tiếng Việt"], ["cs", "Čeština"], ["ro", "Română"], ["sv", "Svenska"], ["da", "Dansk"],
+  ["no", "Norsk"], ["fi", "Suomi"], ["hu", "Magyar"], ["el", "Ελληνικά"], ["ms", "Bahasa Melayu"], ["fil", "Filipino"],
+  ["ar", "العربية"], ["fa", "فارسی"]
 ];
 
 const routeHashes: Record<Route, string> = {

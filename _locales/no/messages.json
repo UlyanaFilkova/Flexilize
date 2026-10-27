@@ -1,0 +1,5 @@
+{
+  "extensionName": {"message": "Context Translator"},
+  "extensionDescription": {"message": "Oversett, lytt til og lagre tekst på alle språk med én gang."},
+  "actionTitle": {"message": "Lagrede oversettelser"}
+}

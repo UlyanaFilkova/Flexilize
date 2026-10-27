@@ -4,7 +4,7 @@ import {promisify} from "node:util";
 
 const execFile = promisify(execFileCallback);
 
-const targets = ["de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi"];
+const targets = ["de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi", "pl", "zh-CN", "zh-TW", "ko", "tr", "vi", "cs", "ro", "sv", "da", "no", "fi", "hu", "el", "ms", "fil", "ar", "fa"];
 const sourcePath = new URL("../src/locales/en.json", import.meta.url);
 const outputUrl = (locale) => new URL(`../src/locales/${locale}.json`, import.meta.url);
 const english = JSON.parse(await readFile(sourcePath, "utf8"));
@@ -29,6 +29,24 @@ if (chunk.length) chunks.push(chunk);
 
 async function translateChunk(locale, values) {
   const protectedValues = values.map((value) => value.replaceAll("Context Translator", "ZXQBRANDQXZ"));
+  if (locale === "ar" || locale === "fa") {
+    const translated = [];
+    for (let start = 0; start < protectedValues.length; start += 8) {
+      const group = protectedValues.slice(start, start + 8);
+      const groupResults = await Promise.all(group.map(async (value) => {
+        const {stdout} = await execFile("/usr/bin/curl", [
+          "-sS", "--fail", "--max-time", "30", "--get",
+          "--data-urlencode", "client=gtx", "--data-urlencode", "sl=en",
+          "--data-urlencode", `tl=${locale}`, "--data-urlencode", "dt=t",
+          "--data-urlencode", `q=${value}`,
+          "https://translate.google.com/translate_a/single"
+        ], {maxBuffer: 2_000_000});
+        return JSON.parse(stdout)[0].map((part) => part[0]).join("");
+      }));
+      translated.push(...groupResults);
+    }
+    return translated.map((value, index) => restorePlaceholders(values[index], value.replaceAll("ZXQBRANDQXZ", "Context Translator")));
+  }
   for (let attempt = 1; attempt <= 8; attempt += 1) {
     try {
       const {stdout} = await execFile("/usr/bin/curl", [
@@ -41,7 +59,20 @@ async function translateChunk(locale, values) {
       const body = JSON.parse(stdout);
       const translatedText = body[0].map((part) => part[0]).join("");
       const translated = translatedText.split(separator);
-      if (translated.length !== values.length) throw new Error(`expected ${values.length} values, got ${translated.length}: ${translatedText.slice(0, 300)}`);
+      if (translated.length !== values.length) {
+        const individual = [];
+        for (const value of protectedValues) {
+          const {stdout: singleOutput} = await execFile("/usr/bin/curl", [
+            "-sS", "--fail", "--max-time", "30", "--get",
+            "--data-urlencode", "client=gtx", "--data-urlencode", "sl=en",
+            "--data-urlencode", `tl=${locale}`, "--data-urlencode", "dt=t",
+            "--data-urlencode", `q=${value}`,
+            "https://translate.google.com/translate_a/single"
+          ], {maxBuffer: 2_000_000});
+          individual.push(JSON.parse(singleOutput)[0].map((part) => part[0]).join(""));
+        }
+        return individual.map((value, index) => restorePlaceholders(values[index], value.replaceAll("ZXQBRANDQXZ", "Context Translator")));
+      }
       return translated.map((value, index) => restorePlaceholders(values[index], value.replaceAll("ZXQBRANDQXZ", "Context Translator")));
     } catch (error) {
       console.warn(`${locale} chunk retry ${attempt}: ${error.message}`);
@@ -60,6 +91,7 @@ function restorePlaceholders(source, translated) {
 for (const locale of targets) {
   let catalog = {};
   try { catalog = JSON.parse(await readFile(outputUrl(locale), "utf8")); } catch (_error) { /* First run. */ }
+  if (process.argv.includes("--refresh-ar-fa") && ["ar", "fa"].includes(locale)) catalog = {};
   const missingEntries = entries.filter(([key]) => !catalog[key]);
   if (!missingEntries.length) {
     console.log(`Skipped ${locale}`);
