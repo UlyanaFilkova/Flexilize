@@ -629,12 +629,13 @@ import {
   }
 
   function languageCodeForInput(value: string) {
-    const normalized = clean(value).toLocaleLowerCase("ru");
+    const locale = activationSettings.interfaceLanguage;
+    const normalized = clean(value).toLocaleLowerCase(locale);
     if (!normalized) return "";
     const match = SOURCE_LANGUAGES.find(([code, name]) => (
       code.toLocaleLowerCase() === normalized
       || name.toLocaleLowerCase() === normalized
-      || localizedLanguageName(code).toLocaleLowerCase("ru") === normalized
+      || localizedLanguageName(code).toLocaleLowerCase(locale) === normalized
     ));
     return match?.[0] || "";
   }
@@ -657,12 +658,13 @@ import {
     const input = shadow.querySelector<HTMLInputElement>(".source-language");
     const list = shadow.querySelector<HTMLElement>(".language-options");
     if (!input || !list) return;
-    const filter = showAll ? "" : clean(input.value).toLocaleLowerCase();
+    const locale = activationSettings.interfaceLanguage;
+    const filter = showAll ? "" : clean(input.value).toLocaleLowerCase(locale);
     const matches = SOURCE_LANGUAGES
       .filter(([code, name]) => !filter || [
         code, name, localizedLanguageName(code)
       ].some((candidate) => candidate.toLocaleLowerCase().includes(filter)))
-      .sort((left, right) => languageName(left[0]).localeCompare(languageName(right[0]), "ru"));
+      .sort((left, right) => languageName(left[0]).localeCompare(languageName(right[0]), locale));
     list.replaceChildren();
     matches.forEach(([code, name]) => {
       const option = document.createElement("button");
@@ -983,14 +985,15 @@ import {
 
   function localizedLanguageName(language: string) {
     const normalized = String(language || "").replace(/_/g, "-").toLocaleLowerCase();
+    const locale = activationSettings.interfaceLanguage;
     let name = "";
     try {
-      name = new Intl.DisplayNames(["ru"], { type: "language" }).of(normalized) || "";
+      name = new Intl.DisplayNames([locale], { type: "language" }).of(normalized) || "";
     } catch (_error) {
       // The language code is still useful in browsers without Intl.DisplayNames.
     }
     const readableName = name
-      ? `${name.charAt(0).toLocaleUpperCase("ru")}${name.slice(1)}`
+      ? `${name.charAt(0).toLocaleUpperCase(locale)}${name.slice(1)}`
       : normalized.toLocaleUpperCase();
     return readableName;
   }

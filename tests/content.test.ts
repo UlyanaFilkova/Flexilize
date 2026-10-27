@@ -99,6 +99,7 @@ describe("standalone translator content UI", () => {
     }, {timeout: 1500});
     expect(selectionHost.shadowRoot?.querySelector(".card")?.getAttribute("aria-label")).toBe("Selected text translation");
     await waitFor(() => expect(selectionHost.shadowRoot?.querySelectorAll(".translation-option")).toHaveLength(3));
+    expect((selectionHost.shadowRoot?.querySelector(".source-language") as HTMLInputElement).value).toBe("English");
     expect([...selectionHost.shadowRoot!.querySelectorAll(".translation-option")].map((item) => item.textContent))
       .toEqual(["Привет", "Добрый день", "Здравствуйте"]);
     expect(selectionHost.shadowRoot?.querySelector(".transcription")?.textContent).toBe("/həˈləʊ/");
