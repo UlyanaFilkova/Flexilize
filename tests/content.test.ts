@@ -105,4 +105,45 @@ describe("standalone translator content UI", () => {
     expect(selectionHost.shadowRoot?.querySelector(".transcription")?.textContent).toBe("/həˈləʊ/");
     expect(browserMock.runtime.sendMessage.mock.calls.map(([message]) => message.type)).toContain("translate-selection");
   }, 5000);
+
+  it("shows one final translation for long selections that cover their context", async () => {
+    vi.resetModules();
+    const {browserMock, storageData} = await import("./mocks/browser");
+    storageData[SETTINGS_KEY] = structuredClone(defaultSettings);
+    browserMock.runtime.sendMessage.mockImplementation(async (message) => {
+      if (message.type === "translate-preview") return {ok: true, translation: "Preview translation", sourceLanguage: "de"};
+      if (message.type === "get-transcription") return {ok: true, transcription: null};
+      if (message.type === "translate-selection") return {
+        ok: true, translation: "Final translation", translations: ["Final translation"],
+        contextTranslation: "A slightly different translation of the same full paragraph.",
+        transcription: null, sourceLanguage: "de", saved: true
+      };
+      return {ok: true};
+    });
+    const originalAttachShadow = Element.prototype.attachShadow;
+    vi.spyOn(Element.prototype, "attachShadow").mockImplementation(function (this: Element, init) {
+      return originalAttachShadow.call(this, {...init, mode: "open"});
+    });
+    const paragraph = document.createElement("textarea");
+    paragraph.value = "Ein langer Absatz mit mehreren Sätzen. Der ganze Absatz wird ausgewählt.";
+    document.body.append(paragraph);
+    paragraph.focus();
+    paragraph.setSelectionRange(0, paragraph.value.length);
+    vi.spyOn(paragraph, "getBoundingClientRect").mockReturnValue({
+      x: 20, y: 20, left: 20, top: 20, right: 220, bottom: 60, width: 200, height: 40, toJSON: () => ({})
+    });
+
+    await import("../src/content");
+    await waitFor(() => expect(document.documentElement.hasAttribute("data-context-translator-instance")).toBe(true));
+    fireEvent.mouseUp(paragraph);
+    const host = await waitFor(() => {
+      const element = document.querySelector("#context-translator-extension-host") as HTMLElement | null;
+      expect(element).not.toBeNull();
+      return element!;
+    });
+    const shadow = host.shadowRoot!;
+    await waitFor(() => expect(shadow.querySelector(".translation-option")?.textContent).toBe("Final translation"));
+    expect(shadow.querySelectorAll(".translation-option")).toHaveLength(1);
+    expect(shadow.querySelector(".context-translation")).toBeNull();
+  });
 });

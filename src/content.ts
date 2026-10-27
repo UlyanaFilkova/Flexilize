@@ -861,10 +861,11 @@ import {
   ) {
     const translation = shadow.querySelector(".translation");
     translation.classList.remove("skeleton");
-    const alternatives = wordCount(currentText) <= 3 && Array.isArray(result.translations) && result.translations.length
+    const isShortSelection = wordCount(currentText) <= 3;
+    const alternatives = isShortSelection && Array.isArray(result.translations) && result.translations.length
       ? result.translations
       : [result.translation];
-    const uniqueAlternatives = uniqueTranslationForms(displayedTranslation
+    const uniqueAlternatives = uniqueTranslationForms(displayedTranslation && isShortSelection
       ? [displayedTranslation, ...alternatives]
       : alternatives);
     const displayedItem = displayedTranslation
@@ -884,12 +885,21 @@ import {
       item.textContent = value;
       translation.append(item);
     });
-    const context = document.createElement("div");
-    context.className = "context-translation";
-    context.textContent = result.contextTranslation || "";
-    if (contextPending) context.classList.add("skeleton", "context-pending");
-    translation.append(context);
+    const contextText = clean(result.contextTranslation || "");
+    const contextRepeatsSelection = normalizedForDuplicateCheck(currentText) === normalizedForDuplicateCheck(currentSentence);
+    const contextRepeatsTranslation = normalizedForDuplicateCheck(contextText) === normalizedForDuplicateCheck(result.translation);
+    if (!contextRepeatsSelection && (contextPending || (contextText && !contextRepeatsTranslation))) {
+      const context = document.createElement("div");
+      context.className = "context-translation";
+      context.textContent = contextText;
+      if (contextPending) context.classList.add("skeleton", "context-pending");
+      translation.append(context);
+    }
     if (selectionRect) positionModal(selectionRect);
+  }
+
+  function normalizedForDuplicateCheck(value: string) {
+    return clean(value).toLocaleLowerCase().replace(/[\p{P}\p{Z}\s]+/gu, "");
   }
 
   async function loadTranslationStages(text: string, sentence: string, ownRequest: number, requestedLanguage?: string) {
