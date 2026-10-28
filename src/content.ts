@@ -9,6 +9,7 @@ import {
 } from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
 import {MAX_HISTORY_RECORDS} from "./history-config";
+import {isMobileDevice} from "./device";
 import {loadInterfaceLanguage, observeLocalizedDom} from "./i18n";
 import {
   defaultSettings,
@@ -27,7 +28,7 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
-  const isTouchDevice = globalThis.matchMedia?.("(pointer: coarse)").matches || false;
+  const isMobile = isMobileDevice();
   const SOURCE_LANGUAGES = [
     ["af", "Afrikaans"], ["sq", "Shqip"], ["ar", "العربية"], ["hy", "Հայերեն"],
     ["az", "Azərbaycan dili"], ["eu", "Euskara"], ["be", "Беларуская"], ["bn", "বাংলা"],
@@ -146,7 +147,7 @@ import {
   function scheduleSelection() {
     if (!isCurrentInstance() || !activationSettingsReady
       || !activationSettings.autoActivationEnabled
-      || (activationSettings.hotkeyActivationEnabled && !(isTouchDevice && activationSettings.contextMenuEnabled))) return;
+      || (activationSettings.hotkeyActivationEnabled && !(isMobile && activationSettings.contextMenuEnabled))) return;
     clearTimeout(selectionTimer);
     selectionTimer = setTimeout(processSelection, 60);
   }
