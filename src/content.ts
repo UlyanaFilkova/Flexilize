@@ -55,6 +55,9 @@ import {
 
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
+  let selectionActionHost: HTMLDivElement | null = null;
+  let selectionActionShadow: ShadowRoot | null = null;
+  let pendingSelectionAction: {text: string; rect: DOMRect} | null = null;
   let translatorHost: HTMLDivElement | null = null;
   let translatorShadow: ShadowRoot | null = null;
   let translatorTimer: ReturnType<typeof setTimeout> | undefined;
@@ -90,6 +93,7 @@ import {
     if (key.startsWith("Arrow") || key === "Shift") scheduleSelection();
   }, true);
   document.addEventListener("select", scheduleSelection, true);
+  document.addEventListener("selectionchange", scheduleSelection, true);
   document.addEventListener("pointerdown", handleOutsidePointerDown, true);
   document.addEventListener("scroll", closeModal, true);
   window.addEventListener("blur", closeModal);
@@ -128,6 +132,7 @@ import {
         activationSettingsReady = true;
       });
     }
+    scheduleSelection();
   });
 
   extensionApi.runtime.onMessage.addListener((message: unknown) => {
@@ -144,11 +149,23 @@ import {
   }
 
   function scheduleSelection() {
-    if (!isCurrentInstance() || !activationSettingsReady
-      || !activationSettings.autoActivationEnabled
-      || (activationSettings.hotkeyActivationEnabled && !isMobileDevice())) return;
+    if (!isCurrentInstance() || !activationSettingsReady) return;
     clearTimeout(selectionTimer);
-    selectionTimer = setTimeout(processSelection, 60);
+    selectionTimer = setTimeout(() => {
+      const details = readSelection();
+      if (!details) {
+        removeSelectionAction();
+        return;
+      }
+      if (activationSettings.selectionButtonEnabled) {
+        showSelectionAction(details.text, details.rect);
+      } else if (activationSettings.autoActivationEnabled
+        && (!activationSettings.hotkeyActivationEnabled || isMobileDevice())) {
+        void processSelection();
+      } else {
+        removeSelectionAction();
+      }
+    }, 100);
   }
 
   function handleTranslatorKeydown(event: KeyboardEvent) {
@@ -385,15 +402,16 @@ import {
     void processSelection();
   }
 
-  async function processSelection(selectedText?: string) {
+  async function processSelection(selectedText?: string, selectedRect?: DOMRect) {
     if (!isCurrentInstance()) return;
+    removeSelectionAction();
     const selectionDetails = readSelection();
     const normalizedSelectedText = selectedText ? clean(selectedText).slice(0, MAX_SELECTION_LENGTH) : "";
     const details = normalizedSelectedText
       ? {
           text: normalizedSelectedText,
           sentence: selectionDetails?.sentence || normalizedSelectedText,
-          rect: selectionDetails?.rect || new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 0, 0)
+          rect: selectionDetails?.rect || selectedRect || new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 0, 0)
         }
       : selectionDetails;
     if (!details || details.text === currentText) return;
@@ -1373,12 +1391,15 @@ import {
 
   function handleOutsidePointerDown(event) {
     if (!isCurrentInstance()) return;
-    if (!host) return;
     const path = event.composedPath();
+    if (selectionActionHost && path.includes(selectionActionHost)) return;
+    removeSelectionAction();
+    if (!host) return;
     if (!path.includes(host)) closeModal();
   }
 
   function closeModal() {
+    removeSelectionAction();
     if (!isCurrentInstance()) {
       host?.remove();
       host = null;
@@ -1396,6 +1417,50 @@ import {
     shadow = null;
     selectionRect = null;
     if (window.speechSynthesis) stopSpeaking();
+  }
+
+  function showSelectionAction(text: string, rect: DOMRect) {
+    if (!activationSettings.selectionButtonEnabled || !isCurrentInstance()) {
+      removeSelectionAction();
+      return;
+    }
+    pendingSelectionAction = {text, rect};
+    if (!selectionActionHost) {
+      selectionActionHost = document.createElement("div");
+      selectionActionHost.id = `${HOST_ID}-selection-action`;
+      selectionActionHost.style.cssText = "all:initial;position:fixed;z-index:2147483646;inset:0;pointer-events:none";
+      selectionActionShadow = selectionActionHost.attachShadow({mode: "closed"});
+      selectionActionShadow.innerHTML = `<style>${selectionActionStyles()}</style><button type="button" aria-label="Перевести выделенный текст" title="Перевести выделенный текст"><span class="logo">A<span>а</span></span></button>`;
+      selectionActionShadow.querySelector("button")!.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const selectionAction = pendingSelectionAction;
+        removeSelectionAction();
+        if (selectionAction) void processSelection(selectionAction.text, selectionAction.rect);
+      });
+      document.documentElement.append(selectionActionHost);
+    }
+    positionSelectionAction(rect);
+  }
+
+  function positionSelectionAction(rect: DOMRect) {
+    const button = selectionActionShadow?.querySelector<HTMLButtonElement>("button");
+    if (!button) return;
+    const width = 48;
+    const height = 48;
+    const left = Math.max(12, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 12));
+    const below = rect.bottom + 8;
+    const top = below + height <= window.innerHeight - 8
+      ? below
+      : Math.max(8, rect.top - height - 8);
+    button.style.left = `${left}px`;
+    button.style.top = `${top}px`;
+  }
+
+  function removeSelectionAction() {
+    selectionActionHost?.remove();
+    selectionActionHost = null;
+    selectionActionShadow = null;
+    pendingSelectionAction = null;
   }
 
   function clean(value) {
@@ -1416,6 +1481,17 @@ import {
 
   function isCurrentInstance() {
     return document.documentElement.getAttribute(INSTANCE_ATTRIBUTE) === instanceId;
+  }
+
+  function selectionActionStyles() {
+    return `
+      :host { color-scheme: light; }
+      button { position: fixed; z-index: 2147483646; display: grid; width: 48px; height: 48px; padding: 0; place-items: center; border: 1px solid rgba(255,255,255,.34); border-radius: 15px; background: linear-gradient(145deg,#315be8,#5a80ff); box-shadow: 0 5px 18px rgba(15,23,42,.28); color: #fff; cursor: pointer; font: 700 17px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; pointer-events: auto; }
+      button:active { filter: brightness(.92); transform: scale(.97); }
+      button:focus-visible { outline: 3px solid rgba(75,115,255,.45); outline-offset: 3px; }
+      .logo { position: relative; }
+      .logo span { position: absolute; right: -6px; bottom: -5px; font-size: 9px; opacity: .82; }
+    `;
   }
 
   function translatorStyles() {

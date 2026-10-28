@@ -20,6 +20,7 @@ export interface ExtensionSettings {
   contextMenuEnabled: boolean
   interfaceLanguage: InterfaceLanguage
   showSelectionTranslationModal: boolean
+  selectionButtonEnabled: boolean
   activationShortcut: ActivationShortcut
   speechEnabled: boolean
   transcriptionEnabled: boolean
@@ -96,6 +97,7 @@ export const defaultSettings: ExtensionSettings = {
   contextMenuEnabled: false,
   interfaceLanguage: interfaceLanguageFromBrowser(initialBrowserLanguage),
   showSelectionTranslationModal: true,
+  selectionButtonEnabled: false,
   speechEnabled: true,
   transcriptionEnabled: true,
   speechRate: 1,
@@ -163,6 +165,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     contextMenuEnabled: settings.contextMenuEnabled === true,
     interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage, defaultSettings.interfaceLanguage),
     showSelectionTranslationModal: settings.showSelectionTranslationModal !== false,
+    selectionButtonEnabled: settings.selectionButtonEnabled === true,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
     speechEnabled: settings.speechEnabled !== false,
     transcriptionEnabled: settings.transcriptionEnabled !== false,

@@ -388,17 +388,34 @@ function GeneralSettings() {
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Автоматическая активация</h2>
-          <p>Переводить выделенный текст сразу после выделения.</p>
+          <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
         </div>
         <label className="switch">
           <input
             type="checkbox"
             checked={settings?.autoActivationEnabled ?? true}
             disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, autoActivationEnabled: event.target.checked})}
+            onChange={(event) => settings && void persist({...settings, autoActivationEnabled: event.target.checked, ...(event.target.checked ? {selectionButtonEnabled: false} : {})})}
           />
           <span aria-hidden="true" />
           <span className="sr-only">Включить автоматическую активацию</span>
+        </label>
+      </div>
+
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Кнопка рядом с выделением</h2>
+          <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.selectionButtonEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, selectionButtonEnabled: event.target.checked, ...(event.target.checked ? {autoActivationEnabled: false} : {})})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить кнопку рядом с выделением</span>
         </label>
       </div>
 
