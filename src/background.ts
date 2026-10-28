@@ -50,7 +50,7 @@ let consecutiveGoogleTranslationFailures = 0;
 
 type ToolbarAction = {setTitle(details: {title: string}): Promise<void>};
 const toolbarApi = extensionApi as unknown as {action?: ToolbarAction; browserAction?: ToolbarAction};
-const contextMenuApi = extensionApi.menus;
+const contextMenuApi = extensionApi.menus || extensionApi.contextMenus;
 const TRANSLATE_SELECTION_MENU_ID = "flexilize-translate-selection";
 const isFirefox = /Firefox\//.test(globalThis.navigator?.userAgent || "");
 
@@ -61,16 +61,19 @@ void getExtensionSettings().then(async (settings) => {
 
 function registerSelectionMenu() {
   if (!contextMenuApi) return;
-  void getExtensionSettings().then(async (settings) => {
-    await loadInterfaceLanguage(settings.interfaceLanguage);
-    if (isFirefox) await contextMenuApi.removeAll();
+  try {
     contextMenuApi.create({
       id: TRANSLATE_SELECTION_MENU_ID,
-      title: translate("Перевести выделенный текст", settings.interfaceLanguage),
+      title: "Context Translator",
       contexts: ["selection"],
-      enabled: settings.contextMenuEnabled
+      enabled: false
     });
-  }).catch(() => undefined);
+  } catch (_error) {
+    // A prior registration may still exist after an extension update.
+  }
+  void getExtensionSettings().then((settings) => contextMenuApi.update(TRANSLATE_SELECTION_MENU_ID, {
+    enabled: settings.contextMenuEnabled
+  })).catch(() => undefined);
 }
 
 if (isFirefox) {
@@ -93,7 +96,6 @@ extensionApi.storage.onChanged.addListener((changes, areaName) => {
   void loadInterfaceLanguage(settings.interfaceLanguage).then(() => {
     updateToolbarTitle(settings.interfaceLanguage);
     return contextMenuApi?.update(TRANSLATE_SELECTION_MENU_ID, {
-      title: translate("Перевести выделенный текст", settings.interfaceLanguage),
       enabled: settings.contextMenuEnabled
     });
   }).catch(() => undefined);
