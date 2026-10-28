@@ -16,6 +16,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
+import {isMobileDevice} from "../device";
 import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
@@ -69,7 +70,7 @@ const settingsSectionIds = new Set(["overview", "general", "translation", "sound
 
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
-  {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
+  {id: "general", label: "Активация", icon: <SlidersIcon />},
   {id: "translation", label: "Язык и перевод", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
@@ -270,7 +271,7 @@ function PageHeading({title, description, action}: {title: string; description: 
 
 function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
   const sections = [
-    {id: "general", title: "Горячие клавиши", description: "Управляйте переводом выделенного текста и быстрым вызовом переводчика.", icon: <SlidersIcon />, meta: "2 комбинации"},
+    {id: "general", title: "Активация", description: "Управляйте автоматическим переводом, контекстным меню и горячими клавишами.", icon: <SlidersIcon />, meta: "Способы запуска"},
     {id: "translation", title: "Язык и перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
     {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
     {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
@@ -283,7 +284,7 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
           <span className="settings-banner-kicker">Персональная настройка</span>
           <h2>Переводчик, который работает по вашим правилам</h2>
           <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
-          <button type="button" onClick={() => onOpenSection("general")}>Начать с горячих клавиш<ArrowIcon /></button>
+          <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
         </div>
         <div className="settings-banner-visual" aria-hidden="true">
           <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
@@ -315,6 +316,7 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
 }
 
 function GeneralSettings() {
+  const [isMobile, setIsMobile] = useState(isMobileDevice);
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [recording, setRecording] = useState(false);
   const [translatorRecording, setTranslatorRecording] = useState(false);
@@ -322,6 +324,12 @@ function GeneralSettings() {
 
   useEffect(() => {
     void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
+  }, []);
+
+  useEffect(() => {
+    const updateDeviceType = () => setIsMobile(isMobileDevice());
+    window.addEventListener("resize", updateDeviceType);
+    return () => window.removeEventListener("resize", updateDeviceType);
   }, []);
 
   const persist = async (nextSettings: ExtensionSettings) => {
@@ -376,7 +384,7 @@ function GeneralSettings() {
     <>
       <div className="settings-group">
         <h2 className="settings-group-title">Перевод выделенного текста</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Горячие клавиши перевода выделенного текста">
+        <section className="settings-panel settings-panel-grouped" aria-label="Параметры активации перевода выделенного текста">
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Автоматическая активация</h2>
@@ -394,7 +402,7 @@ function GeneralSettings() {
         </label>
       </div>
 
-      <div className="setting-row">
+      {!isMobile && <div className="setting-row">
         <div className="setting-copy">
           <h2>Активация через контекстное меню</h2>
           <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
@@ -409,9 +417,9 @@ function GeneralSettings() {
           <span aria-hidden="true" />
           <span className="sr-only">Включить перевод через контекстное меню</span>
         </label>
-      </div>
+      </div>}
 
-      <div className="setting-row">
+      {!isMobile && <div className="setting-row">
         <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
           <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
@@ -426,9 +434,9 @@ function GeneralSettings() {
           <span aria-hidden="true" />
           <span className="sr-only">Включить активацию горячими клавишами</span>
         </label>
-      </div>
+      </div>}
 
-      <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+      {!isMobile && <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
         <div className="setting-copy">
           <h2>Комбинация клавиш</h2>
           <p>Нажмите кнопку и введите новую комбинацию.</p>
@@ -443,10 +451,10 @@ function GeneralSettings() {
         >
           {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
         </button>
-      </div>
+      </div>}
         </section>
       </div>
-      <div className="settings-group settings-group-following">
+      {!isMobile && <div className="settings-group settings-group-following">
         <h2 className="settings-group-title">Переводчик</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Горячая клавиша переводчика">
           <div className="setting-row">
@@ -467,7 +475,7 @@ function GeneralSettings() {
           </div>
           {error && <div className="settings-error" role="alert">{error}</div>}
         </section>
-      </div>
+      </div>}
     </>
   );
 }
@@ -990,7 +998,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
           <details><summary>Окно перевода не появляется после выделения</summary><p>Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения. На служебных страницах браузера вида <code>chrome://…</code> расширения не запускаются.</p></details>
           <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
           <details><summary>Новая запись не появилась в истории</summary><p>Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.</p></details>
-          <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Горячие клавиши», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
+          <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
           <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удалите данные расширения средствами браузера.</p></details>
         </div>
       </section>

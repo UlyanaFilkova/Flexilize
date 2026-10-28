@@ -28,7 +28,6 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
-  const isMobile = isMobileDevice();
   const SOURCE_LANGUAGES = [
     ["af", "Afrikaans"], ["sq", "Shqip"], ["ar", "العربية"], ["hy", "Հայերեն"],
     ["az", "Azərbaycan dili"], ["eu", "Euskara"], ["be", "Беларуская"], ["bn", "বাংলা"],
@@ -147,7 +146,7 @@ import {
   function scheduleSelection() {
     if (!isCurrentInstance() || !activationSettingsReady
       || !activationSettings.autoActivationEnabled
-      || (activationSettings.hotkeyActivationEnabled && !(isMobile && activationSettings.contextMenuEnabled))) return;
+      || (activationSettings.hotkeyActivationEnabled && !isMobileDevice())) return;
     clearTimeout(selectionTimer);
     selectionTimer = setTimeout(processSelection, 60);
   }
