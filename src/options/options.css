@@ -16,7 +16,8 @@
 }
 
 body {
-  min-width: 720px;
+  width: 100%;
+  min-width: 0;
   min-height: 100vh;
   margin: 0;
 }
@@ -53,6 +54,9 @@ a:focus-visible {
   background: rgba(255, 255, 255, .94);
   backdrop-filter: blur(14px);
 }
+
+.mobile-menu-toggle,
+.mobile-menu-backdrop { display: none; }
 
 .brand {
   display: inline-flex;
@@ -1965,17 +1969,16 @@ h1 {
     padding-left: 22px;
   }
 
-  .brand > span:last-child {
-    display: none;
-  }
-
   .workspace {
-    grid-template-columns: 210px minmax(0, 1fr);
+    grid-template-columns: 200px minmax(0, 1fr);
   }
 
   .content {
-    padding: 48px 34px 64px;
+    padding: 44px clamp(22px, 4vw, 34px) 64px;
   }
+
+  .setting-row { gap: 22px; padding: 22px; }
+  .setting-select { min-width: 0; max-width: 100%; }
 
   .export-grid {
     grid-template-columns: 1fr;
@@ -2014,33 +2017,71 @@ h1 {
 }
 
 @media (max-width: 680px) {
-  body { min-width: 0; }
-
-  .topbar { position: static; height: 64px; }
+  .topbar { position: sticky; height: 64px; justify-content: space-between; padding-right: 16px; padding-left: 16px; }
+  .brand { gap: 10px; min-width: 0; }
+  .brand > span:last-child { display: block; overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+  .mobile-menu-toggle {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid #e7eaf0;
+    border-radius: 12px;
+    background: #fff;
+    color: #344054;
+    cursor: pointer;
+  }
+  .mobile-menu-toggle svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .mobile-menu-backdrop {
+    position: fixed;
+    z-index: 29;
+    inset: 64px 0 0;
+    display: block;
+    width: 100%;
+    border: 0;
+    background: rgba(20, 29, 44, .22);
+  }
 
   .workspace { display: block; }
 
   .sidebar {
-    position: static;
-    display: block;
-    width: 100%;
+    position: fixed;
+    z-index: 30;
+    top: 72px;
+    right: 12px;
+    display: none;
+    width: min(320px, calc(100vw - 24px));
     height: auto;
-    padding: 14px 18px;
-    overflow-x: auto;
-    border-right: 0;
-    border-bottom: 1px solid #e7eaf0;
-    white-space: nowrap;
-    scrollbar-width: none;
+    max-height: calc(100dvh - 84px);
+    padding: 20px 16px 14px;
+    overflow: auto;
+    border: 1px solid #e7eaf0;
+    border-radius: 16px;
+    box-shadow: 0 18px 48px rgba(24, 34, 47, .18);
+    white-space: normal;
+    scrollbar-width: thin;
   }
 
-  .sidebar::-webkit-scrollbar { display: none; }
+  .mobile-menu-open .sidebar { display: block; }
+  .sidebar-heading { display: block; margin: 0 10px 8px; }
+  .sidebar-section-heading { margin-top: 20px; }
+  .sidebar-footer { display: flex; margin-top: 18px; }
+  .sidebar nav { display: grid; gap: 4px; margin: 0; }
+  .sidebar nav button { width: 100%; min-height: 44px; }
 
-  .sidebar-heading,
-  .sidebar-footer { display: none; }
-  .sidebar nav { display: inline-flex; margin-right: 8px; }
-  .sidebar nav button { width: auto; min-height: 40px; }
-
-  .content { padding: 38px 20px 56px; }
+  .content { padding: 32px 16px 48px; }
+  .content-heading-row { align-items: flex-start; flex-direction: column; gap: 18px; }
+  .content-heading p { font-size: 14px; }
+  h1 { font-size: clamp(29px, 8vw, 38px); }
+  .setting-row { align-items: stretch; flex-direction: column; gap: 14px; padding: 20px 18px; }
+  .setting-select,
+  .hotkey-button { width: 100%; min-width: 0; }
+  .stepper { align-self: flex-start; }
+  .settings-panel { border-radius: 15px; }
+  .history-record { padding: 16px; }
+  .record-editor { padding: 18px; }
+  .export-panel { padding: 20px 16px; border-radius: 16px; }
+  .page-notice { right: 12px; bottom: 12px; left: 12px; justify-content: space-between; gap: 8px; }
   .help-hero { padding: 26px 22px; }
   .help-visual-example { padding: 18px; }
   .visual-translator-panes { grid-template-columns: 1fr; }
@@ -2059,4 +2100,13 @@ h1 {
   .help-callout button { grid-column: 2; justify-self: start; }
   .help-section { margin-top: 58px; }
   .help-footer { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 380px) {
+  .topbar { padding-right: 16px; padding-left: 16px; }
+  .sidebar nav button { padding-right: 11px; padding-left: 11px; font-size: 13px; }
+  .content { padding-right: 12px; padding-left: 12px; }
+  .settings-banner-copy { padding: 26px 20px; }
+  .export-grid button { grid-template-columns: 38px minmax(0, 1fr) auto; gap: 9px; padding: 10px; }
+  .format-icon { width: 38px; height: 38px; }
 }

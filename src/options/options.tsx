@@ -96,6 +96,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState<ExportFormat | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     void getTranslationRecords()
@@ -187,37 +188,40 @@ function App() {
   const settingsSectionTitle = settingsSection === "overview" ? "Настройки" : settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${mobileMenuOpen ? " mobile-menu-open" : ""}`}>
       <header className="topbar">
         <div className="brand" aria-label="Context Translator">
           <span className="brand-mark" aria-hidden="true">A<span>а</span></span>
           <span>Context Translator</span>
         </div>
-
+        <button className="mobile-menu-toggle" type="button" aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"} aria-expanded={mobileMenuOpen} aria-controls="options-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>
+          {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
       </header>
 
+      {mobileMenuOpen && <button className="mobile-menu-backdrop" type="button" aria-label="Закрыть меню" onClick={() => setMobileMenuOpen(false)} />}
       <div className="workspace">
-        <aside className="sidebar" aria-label="Навигация">
+        <aside className="sidebar" id="options-navigation" aria-label="Навигация">
           <div className="sidebar-heading">Переводы</div>
           <nav>
-            <button className={page === "history" && historySection === "records" ? "active" : ""} type="button" onClick={() => openHistorySection("records")}>
+            <button className={page === "history" && historySection === "records" ? "active" : ""} type="button" onClick={() => { openHistorySection("records"); setMobileMenuOpen(false); }}>
               <HistoryIcon /><span>История</span>
             </button>
-            <button className={page === "history" && historySection === "export" ? "active" : ""} type="button" onClick={() => openHistorySection("export")}>
+            <button className={page === "history" && historySection === "export" ? "active" : ""} type="button" onClick={() => { openHistorySection("export"); setMobileMenuOpen(false); }}>
               <DownloadIcon /><span>Экспорт</span>
             </button>
           </nav>
           <div className="sidebar-heading sidebar-section-heading">Настройки</div>
           <nav>
             {settingsSidebarItems.map((item) => (
-              <button key={item.id} className={page === "settings" && settingsSection === item.id ? "active" : ""} type="button" onClick={() => openSettingsSection(item.id)}>
+              <button key={item.id} className={page === "settings" && settingsSection === item.id ? "active" : ""} type="button" onClick={() => { openSettingsSection(item.id); setMobileMenuOpen(false); }}>
                 {item.icon}<span>{item.label}</span>
               </button>
             ))}
           </nav>
           <div className="sidebar-heading sidebar-section-heading">Помощь</div>
           <nav>
-            <button className={page === "help" ? "active" : ""} type="button" onClick={openHelp}>
+            <button className={page === "help" ? "active" : ""} type="button" onClick={() => { openHelp(); setMobileMenuOpen(false); }}>
               <HelpIcon /><span>Как пользоваться</span>
             </button>
           </nav>
@@ -1040,6 +1044,8 @@ function HistoryHelpExample() {
 }
 
 function Icon({children}: {children: ReactNode}) { return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>; }
+function MenuIcon() { return <Icon><path d="M4 6h16M4 12h16M4 18h16"/></Icon>; }
+function CloseIcon() { return <Icon><path d="m6 6 12 12M18 6 6 18"/></Icon>; }
 function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></Icon>; }
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
 function SettingsIcon() { return <Icon><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1.4 1.6H9.55A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.6-1.4V9.55A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1.4-1.6h4.05A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 1.6 1.4v4.05A1.7 1.7 0 0 0 19.4 15Z"/></Icon>; }
