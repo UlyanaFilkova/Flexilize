@@ -13,9 +13,11 @@ export interface ActivationShortcut {
 }
 
 export interface ExtensionSettings {
+  autoActivationEnabled: boolean
   autoSaveTranslations: boolean
   historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
+  contextMenuEnabled: boolean
   interfaceLanguage: InterfaceLanguage
   showSelectionTranslationModal: boolean
   activationShortcut: ActivationShortcut
@@ -87,9 +89,11 @@ function normalizedBrowserLocale(value: unknown) {
 const initialBrowserLanguage = browserUiLanguage();
 
 export const defaultSettings: ExtensionSettings = {
+  autoActivationEnabled: true,
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
+  contextMenuEnabled: false,
   interfaceLanguage: interfaceLanguageFromBrowser(initialBrowserLanguage),
   showSelectionTranslationModal: true,
   speechEnabled: true,
@@ -152,9 +156,11 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     shift: typeof storedTranslatorShortcut.shift === "boolean" ? storedTranslatorShortcut.shift : defaultSettings.translatorShortcut.shift
   };
   return {
+    autoActivationEnabled: settings.autoActivationEnabled !== false,
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
+    contextMenuEnabled: settings.contextMenuEnabled === true,
     interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage, defaultSettings.interfaceLanguage),
     showSelectionTranslationModal: settings.showSelectionTranslationModal !== false,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,

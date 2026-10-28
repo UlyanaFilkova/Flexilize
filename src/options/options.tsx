@@ -379,6 +379,40 @@ function GeneralSettings() {
         <section className="settings-panel settings-panel-grouped" aria-label="Горячие клавиши перевода выделенного текста">
       <div className="setting-row">
         <div className="setting-copy">
+          <h2>Автоматическая активация</h2>
+          <p>Переводить выделенный текст сразу после выделения.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.autoActivationEnabled ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, autoActivationEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить автоматическую активацию</span>
+        </label>
+      </div>
+
+      <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Активация через контекстное меню</h2>
+          <p>На компьютере добавляет команду в меню выделенного текста. В Firefox для Android расширения не могут добавлять пункты в меню, поэтому перевод запускается при выделении.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.contextMenuEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, contextMenuEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить перевод через контекстное меню</span>
+        </label>
+      </div>
+
+      <div className="setting-row">
+        <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
           <p>Перевод будет запускаться только после нажатия выбранной комбинации на выделенном тексте.</p>
         </div>

@@ -27,6 +27,7 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
+  const isTouchDevice = globalThis.matchMedia?.("(pointer: coarse)").matches || false;
   const SOURCE_LANGUAGES = [
     ["af", "Afrikaans"], ["sq", "Shqip"], ["ar", "العربية"], ["hy", "Հայերեն"],
     ["az", "Azərbaycan dili"], ["eu", "Euskara"], ["be", "Беларуская"], ["bn", "বাংলা"],
@@ -129,13 +130,23 @@ import {
     }
   });
 
+  extensionApi.runtime.onMessage.addListener((message: unknown) => {
+    if (!message || typeof message !== "object" || !("type" in message)
+      || message.type !== "translate-context-selection" || !("text" in message) || typeof message.text !== "string") return undefined;
+    clearTimeout(selectionTimer);
+    void processSelection(message.text);
+    return undefined;
+  });
+
   if (window.speechSynthesis) {
     refreshVoices();
     window.speechSynthesis.addEventListener("voiceschanged", refreshVoices);
   }
 
   function scheduleSelection() {
-    if (!isCurrentInstance() || !activationSettingsReady || activationSettings.hotkeyActivationEnabled) return;
+    if (!isCurrentInstance() || !activationSettingsReady
+      || !activationSettings.autoActivationEnabled
+      || (activationSettings.hotkeyActivationEnabled && !(isTouchDevice && activationSettings.contextMenuEnabled))) return;
     clearTimeout(selectionTimer);
     selectionTimer = setTimeout(processSelection, 60);
   }
@@ -374,9 +385,17 @@ import {
     void processSelection();
   }
 
-  async function processSelection() {
+  async function processSelection(selectedText?: string) {
     if (!isCurrentInstance()) return;
-    const details = readSelection();
+    const selectionDetails = readSelection();
+    const normalizedSelectedText = selectedText ? clean(selectedText).slice(0, MAX_SELECTION_LENGTH) : "";
+    const details = normalizedSelectedText
+      ? {
+          text: normalizedSelectedText,
+          sentence: selectionDetails?.sentence || normalizedSelectedText,
+          rect: selectionDetails?.rect || new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 0, 0)
+        }
+      : selectionDetails;
     if (!details || details.text === currentText) return;
 
     currentText = details.text;

@@ -50,15 +50,53 @@ let consecutiveGoogleTranslationFailures = 0;
 
 type ToolbarAction = {setTitle(details: {title: string}): Promise<void>};
 const toolbarApi = extensionApi as unknown as {action?: ToolbarAction; browserAction?: ToolbarAction};
+const contextMenuApi = extensionApi.menus;
+const TRANSLATE_SELECTION_MENU_ID = "flexilize-translate-selection";
+const isFirefox = /Firefox\//.test(globalThis.navigator?.userAgent || "");
 
 void getExtensionSettings().then(async (settings) => {
   await loadInterfaceLanguage(settings.interfaceLanguage);
   updateToolbarTitle(settings.interfaceLanguage);
 }).catch(() => undefined);
+
+function registerSelectionMenu() {
+  if (!contextMenuApi) return;
+  void getExtensionSettings().then(async (settings) => {
+    await loadInterfaceLanguage(settings.interfaceLanguage);
+    if (isFirefox) await contextMenuApi.removeAll();
+    contextMenuApi.create({
+      id: TRANSLATE_SELECTION_MENU_ID,
+      title: translate("Перевести выделенный текст", settings.interfaceLanguage),
+      contexts: ["selection"],
+      enabled: settings.contextMenuEnabled
+    });
+  }).catch(() => undefined);
+}
+
+if (isFirefox) {
+  registerSelectionMenu();
+} else {
+  extensionApi.runtime.onInstalled.addListener(registerSelectionMenu);
+}
+
+contextMenuApi?.onClicked.addListener((info, tab) => {
+  if (info.menuItemId !== TRANSLATE_SELECTION_MENU_ID || !tab?.id || !info.selectionText) return;
+  void extensionApi.tabs.sendMessage(tab.id, {
+    type: "translate-context-selection",
+    text: info.selectionText
+  }).catch(() => undefined);
+});
+
 extensionApi.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
-  const language = normalizeSettings(changes[SETTINGS_KEY].newValue).interfaceLanguage;
-  void loadInterfaceLanguage(language).then(() => updateToolbarTitle(language));
+  const settings = normalizeSettings(changes[SETTINGS_KEY].newValue);
+  void loadInterfaceLanguage(settings.interfaceLanguage).then(() => {
+    updateToolbarTitle(settings.interfaceLanguage);
+    return contextMenuApi?.update(TRANSLATE_SELECTION_MENU_ID, {
+      title: translate("Перевести выделенный текст", settings.interfaceLanguage),
+      enabled: settings.contextMenuEnabled
+    });
+  }).catch(() => undefined);
 });
 
 function updateToolbarTitle(language: import("./i18n").InterfaceLanguage) {
