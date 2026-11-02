@@ -79,7 +79,7 @@ function registerSelectionMenu() {
 if (isFirefox) {
   registerSelectionMenu();
 } else {
-  extensionApi.runtime.onInstalled.addListener(registerSelectionMenu);
+  extensionApi.runtime.onInstalled?.addListener(registerSelectionMenu);
 }
 
 contextMenuApi?.onClicked.addListener((info, tab) => {
