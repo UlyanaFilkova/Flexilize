@@ -324,6 +324,7 @@ function GeneralSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [recording, setRecording] = useState(false);
   const [translatorRecording, setTranslatorRecording] = useState(false);
+  const [reverseTranslationRecording, setReverseTranslationRecording] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -382,6 +383,25 @@ function GeneralSettings() {
     }
     setTranslatorRecording(false);
     void persist({...settings, translatorShortcut: shortcut});
+  };
+
+  const captureReverseTranslationShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!reverseTranslationRecording || !settings) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === "Escape") {
+      setReverseTranslationRecording(false);
+      setError("");
+      return;
+    }
+    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
+    if (!shortcut) return;
+    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
+      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
+      return;
+    }
+    setReverseTranslationRecording(false);
+    void persist({...settings, reverseTranslationShortcut: shortcut});
   };
 
   return (
@@ -509,6 +529,22 @@ function GeneralSettings() {
               onKeyDown={captureTranslatorShortcut}
             >
               {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
+            </button>
+          </div>
+          <div className="setting-row setting-row-secondary">
+            <div className="setting-copy">
+              <h2>Горячая клавиша обратного перевода</h2>
+              <p>Меняет местами исходный язык и язык перевода.</p>
+            </div>
+            <button
+              className={reverseTranslationRecording ? "hotkey-button recording" : "hotkey-button"}
+              type="button"
+              disabled={!settings}
+              onClick={() => { setReverseTranslationRecording(true); setError(""); }}
+              onBlur={() => setReverseTranslationRecording(false)}
+              onKeyDown={captureReverseTranslationShortcut}
+            >
+              {reverseTranslationRecording ? "Нажмите клавиши…" : formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)}
             </button>
           </div>
           <div className="setting-row setting-row-secondary">

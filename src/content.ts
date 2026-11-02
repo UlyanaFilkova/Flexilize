@@ -87,6 +87,7 @@ import {
   const deferredManualSaveRequests = new Set<number>();
 
   document.addEventListener("mouseup", scheduleSelection, true);
+  document.addEventListener("keydown", handleReverseTranslationKeydown, true);
   document.addEventListener("keydown", handleTranslatorKeydown, true);
   document.addEventListener("keydown", handleActivationKeydown, true);
   document.addEventListener("keyup", (event) => {
@@ -115,6 +116,8 @@ import {
     if (!activationSettings.preserveTranslatorText) previousTranslatorText = "";
     const translatorShortcutHint = translatorShadow?.querySelector<HTMLElement>(".translator-shortcut-hint");
     if (translatorShortcutHint) translatorShortcutHint.textContent = formatShortcut(activationSettings.translatorShortcut);
+    const reverseTranslationButton = translatorShadow?.querySelector<HTMLButtonElement>(".swap");
+    if (reverseTranslationButton) reverseTranslationButton.title = `Обратный перевод (${formatShortcut(activationSettings.reverseTranslationShortcut)})`;
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
     if (saveButton) saveButton.hidden = activationSettings.autoSaveTranslations;
     if (activationSettings.historyRotationEnabled) shadow?.querySelector(".storage-limit")?.remove();
@@ -182,6 +185,14 @@ import {
     }
   }
 
+  function handleReverseTranslationKeydown(event: KeyboardEvent) {
+    if (!isCurrentInstance() || !activationSettingsReady || event.repeat || !translatorShadow
+      || !matchesShortcut(event, activationSettings.reverseTranslationShortcut)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    translatorShadow.querySelector<HTMLButtonElement>(".swap")?.click();
+  }
+
   function showTranslator() {
     closeModal();
     translatorHost = document.createElement("div");
@@ -200,7 +211,7 @@ import {
           <header><strong>Переводчик</strong><span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 18 12"><circle cx="5" cy="3" r="1.4"/><circle cx="9" cy="3" r="1.4"/><circle cx="13" cy="3" r="1.4"/><circle cx="5" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="13" cy="9" r="1.4"/></svg></span><span class="translator-header-actions"><span class="translator-shortcut-hint" title="Горячая клавиша переводчика"></span><button class="close" type="button" aria-label="Закрыть">×</button></span></header>
           <div class="languages">
             <select class="source-language" aria-label="Исходный язык">${languageOptions}</select>
-            <button class="swap" type="button" aria-label="Поменять языки местами" title="Поменять языки местами">⇄</button>
+            <button class="swap" type="button" aria-label="Обратный перевод" title="Обратный перевод (${formatShortcut(activationSettings.reverseTranslationShortcut)})">⇄</button>
             <select class="target-language" aria-label="Язык перевода">${languageOptions}</select>
           </div>
           <div class="panes">
@@ -290,14 +301,20 @@ import {
     });
     translatorShadow.querySelector(".close")?.addEventListener("click", closeTranslator);
     translatorShadow.querySelector(".swap")?.addEventListener("click", () => {
-      const selectionStart = input.selectionStart;
-      const selectionEnd = input.selectionEnd;
+      const output = translatorShadow?.querySelector<HTMLElement>(".translator-output");
+      const translatedText = input.value.trim() ? output?.textContent?.trim() || "" : "";
       const previousSource = source.value;
       source.value = target.value;
       target.value = previousSource;
+      if (translatedText) {
+        input.value = translatedText;
+        previousTranslatorText = activationSettings.preserveTranslatorText ? translatedText : "";
+        if (output) output.textContent = "";
+      }
       scheduleTranslation(true);
+      resizeTranslatorPanes();
       input.focus();
-      input.setSelectionRange(selectionStart, selectionEnd);
+      input.setSelectionRange(input.value.length, input.value.length);
     });
     const bindCopyButton = (selector: string, readText: () => string) => {
       const button = translatorShadow?.querySelector<HTMLButtonElement>(selector);

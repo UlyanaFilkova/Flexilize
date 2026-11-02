@@ -27,6 +27,7 @@ export interface ExtensionSettings {
   speechRate: number
   targetLanguage: string
   translatorShortcut: ActivationShortcut
+  reverseTranslationShortcut: ActivationShortcut
   translatorSourceLanguage: string
   translatorTargetLanguage: string
   preserveTranslatorText: boolean
@@ -121,6 +122,14 @@ export const defaultSettings: ExtensionSettings = {
     key: "'",
     meta: false,
     shift: true
+  },
+  reverseTranslationShortcut: {
+    alt: false,
+    code: "KeyS",
+    ctrl: true,
+    key: "S",
+    meta: false,
+    shift: true
   }
 };
 
@@ -159,6 +168,17 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     meta: typeof storedTranslatorShortcut.meta === "boolean" ? storedTranslatorShortcut.meta : defaultSettings.translatorShortcut.meta,
     shift: typeof storedTranslatorShortcut.shift === "boolean" ? storedTranslatorShortcut.shift : defaultSettings.translatorShortcut.shift
   };
+  const storedReverseTranslationShortcut = settings.reverseTranslationShortcut && typeof settings.reverseTranslationShortcut === "object"
+    ? settings.reverseTranslationShortcut as Partial<ActivationShortcut>
+    : {};
+  const reverseTranslationShortcut: ActivationShortcut = {
+    alt: typeof storedReverseTranslationShortcut.alt === "boolean" ? storedReverseTranslationShortcut.alt : defaultSettings.reverseTranslationShortcut.alt,
+    code: typeof storedReverseTranslationShortcut.code === "string" && storedReverseTranslationShortcut.code ? storedReverseTranslationShortcut.code : defaultSettings.reverseTranslationShortcut.code,
+    ctrl: typeof storedReverseTranslationShortcut.ctrl === "boolean" ? storedReverseTranslationShortcut.ctrl : defaultSettings.reverseTranslationShortcut.ctrl,
+    key: typeof storedReverseTranslationShortcut.key === "string" && storedReverseTranslationShortcut.key ? storedReverseTranslationShortcut.key : defaultSettings.reverseTranslationShortcut.key,
+    meta: typeof storedReverseTranslationShortcut.meta === "boolean" ? storedReverseTranslationShortcut.meta : defaultSettings.reverseTranslationShortcut.meta,
+    shift: typeof storedReverseTranslationShortcut.shift === "boolean" ? storedReverseTranslationShortcut.shift : defaultSettings.reverseTranslationShortcut.shift
+  };
   return {
     autoActivationEnabled: settings.autoActivationEnabled !== false,
     autoSaveTranslations: settings.autoSaveTranslations !== false,
@@ -176,6 +196,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       ? String(settings.targetLanguage)
       : defaultSettings.targetLanguage,
     translatorShortcut: hasModifier(translatorShortcut) ? translatorShortcut : defaultSettings.translatorShortcut,
+    reverseTranslationShortcut: hasModifier(reverseTranslationShortcut) ? reverseTranslationShortcut : defaultSettings.reverseTranslationShortcut,
     translatorSourceLanguage: normalizeTranslationLanguage(settings.translatorSourceLanguage, defaultSettings.translatorSourceLanguage),
     translatorTargetLanguage: normalizeTranslationLanguage(settings.translatorTargetLanguage, defaultSettings.translatorTargetLanguage),
     preserveTranslatorText: settings.preserveTranslatorText === true
