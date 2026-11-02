@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {loadInterfaceLanguage, localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
+import {INTERFACE_LANGUAGES, loadInterfaceLanguage, localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
 
 describe("interface localization", () => {
   it("normalizes the supported interface languages", () => {
@@ -25,6 +25,16 @@ describe("interface localization", () => {
     expect(translate("2 записи", "en")).toBe("2 records");
     expect(translate("Удалить перевод «hello»", "en")).toBe("Delete translation “hello”");
     expect(translate("Настройки", "ru")).toBe("Настройки");
+    expect(translate("Обратный перевод (Ctrl + Shift + S)", "en")).toBe("Reverse translation (Ctrl + Shift + S)");
+    expect(translate("Достигнут лимит в 500 символов.", "en")).toBe("The limit of 500 characters has been reached.");
+  });
+
+  it.each(INTERFACE_LANGUAGES.filter((language) => language !== "ru"))("translates updated interface labels in %s", async (language) => {
+    await loadInterfaceLanguage(language);
+    for (const source of ["Активация", "Языки", "Открыть меню", "Закрыть меню", "Настроить активацию", "При удалении данных расширения параметры вернутся к значениям по умолчанию."]) {
+      const translated = translate(source, language);
+      expect(translated, `${language}: ${source}`).not.toBe(source);
+    }
   });
 
   it("localizes text and accessibility attributes without changing translated records", () => {

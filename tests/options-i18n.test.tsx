@@ -16,26 +16,27 @@ describe("English options interface", () => {
   });
 
   it("localizes navigation, settings, language names, and help", async () => {
-    expect(screen.getByRole("button", {name: /^Keyboard shortcuts$/})).toBeTruthy();
-    await userEvent.click(screen.getByRole("button", {name: /^Language and translation$/}));
+    expect(screen.getByRole("button", {name: /^Activation$/})).toBeTruthy();
+    expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
+    await userEvent.click(screen.getByRole("button", {name: /^Languages$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
     const interfaceSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
     expect([...interfaceSelect.options].map((option) => option.textContent)).toEqual([
-      "Arabic", "Chinese (China)", "Chinese (Taiwan)", "Czech", "Danish", "Dutch", "English", "Filipino", "Finnish", "French",
-      "German", "Greek", "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Malay", "Norwegian",
-      "Persian", "Polish", "Portuguese", "Romanian", "Russian", "Spanish", "Swedish", "Turkish", "Vietnamese"
+      "čeština", "dansk", "Deutsch", "English", "español", "Filipino", "français", "Indonesia", "italiano", "magyar",
+      "Melayu", "Nederlands", "norsk", "polski", "português", "română", "suomi", "svenska", "Tiếng Việt", "Türkçe",
+      "Ελληνικά", "русский", "العربية", "فارسی", "हिन्दी", "한국어", "中文（中国）", "中文（台灣）", "日本語"
     ]);
     const collator = new Intl.Collator("en", {sensitivity: "base"});
     for (const select of [...document.querySelectorAll("select")]) {
       const labels = [...select.options].map((option) => option.textContent || "");
       if (labels.length > 20) expect(labels).toEqual([...labels].sort((left, right) => collator.compare(left, right)));
     }
-    expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(4);
-    expect(document.querySelector("main")?.textContent).not.toMatch(/[А-Яа-яЁё]/u);
-    for (const section of ["Keyboard shortcuts", "Sound", "Saving"]) {
+    expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(3);
+    expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
+    for (const section of ["Activation", "Sound", "Saving"]) {
       await userEvent.click(screen.getByRole("button", {name: new RegExp(`^${section}$`)}));
       await waitFor(() => expect(screen.getByRole("heading", {name: section})).toBeTruthy());
-      expect(document.querySelector("main")?.textContent).not.toMatch(/[А-Яа-яЁё]/u);
+      expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
     }
     await userEvent.click(screen.getByRole("button", {name: /How to use/}));
     await waitFor(() => expect(screen.getByRole("heading", {name: "Frequently asked questions"})).toBeTruthy());
@@ -47,3 +48,9 @@ describe("English options interface", () => {
     expect(helpPage.textContent).not.toMatch(/[А-Яа-яЁё]/u);
   });
 });
+
+function mainTextWithoutInterfaceLanguageNames() {
+  const main = document.querySelector("main")?.cloneNode(true) as HTMLElement | null;
+  main?.querySelector('select[aria-label="Interface language"]')?.remove();
+  return main?.textContent || "";
+}

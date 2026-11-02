@@ -48,13 +48,15 @@ describe("standalone translator content UI", () => {
     input.setSelectionRange(1, 3);
     fireEvent.click(shadow.querySelector(".swap")!);
     expect(shadow.activeElement).toBe(input);
-    expect([input.selectionStart, input.selectionEnd]).toEqual([1, 3]);
+    expect(input.value).toBe("Привет");
+    expect([input.selectionStart, input.selectionEnd]).toEqual([6, 6]);
     expect((shadow.querySelector(".source-language") as HTMLSelectElement).value).toBe(defaultSettings.translatorTargetLanguage);
+    await waitFor(() => expect(shadow.querySelector(".translator-output")?.textContent).toBe("Перевод: Привет"), {timeout: 1500});
 
     const writeText = vi.fn(async () => undefined);
     Object.defineProperty(navigator, "clipboard", {configurable: true, value: {writeText}});
     fireEvent.click(shadow.querySelector(".copy-input")!);
-    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Hello"));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Привет"));
     await waitFor(() => expect(shadow.querySelector(".copy-input")?.textContent).toBe("✓"));
     const outputText = shadow.querySelector(".translator-output")?.textContent;
     fireEvent.click(shadow.querySelector(".copy-output")!);
