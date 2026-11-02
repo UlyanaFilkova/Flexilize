@@ -985,7 +985,7 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
   return (
     <div className="help-page">
-      <PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в Anki." />
+<PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в другие приложения" />
 
       <section className="help-hero" aria-labelledby="quick-start-title">
         <div className="help-hero-copy">
