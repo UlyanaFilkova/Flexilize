@@ -50,15 +50,55 @@ let consecutiveGoogleTranslationFailures = 0;
 
 type ToolbarAction = {setTitle(details: {title: string}): Promise<void>};
 const toolbarApi = extensionApi as unknown as {action?: ToolbarAction; browserAction?: ToolbarAction};
+const contextMenuApi = extensionApi.menus || extensionApi.contextMenus;
+const TRANSLATE_SELECTION_MENU_ID = "flexilize-translate-selection";
+const isFirefox = /Firefox\//.test(globalThis.navigator?.userAgent || "");
 
 void getExtensionSettings().then(async (settings) => {
   await loadInterfaceLanguage(settings.interfaceLanguage);
   updateToolbarTitle(settings.interfaceLanguage);
 }).catch(() => undefined);
+
+function registerSelectionMenu() {
+  if (!contextMenuApi) return;
+  try {
+    contextMenuApi.create({
+      id: TRANSLATE_SELECTION_MENU_ID,
+      title: "Context Translator",
+      contexts: ["selection"],
+      enabled: false
+    });
+  } catch (_error) {
+    // A prior registration may still exist after an extension update.
+  }
+  void getExtensionSettings().then((settings) => contextMenuApi.update(TRANSLATE_SELECTION_MENU_ID, {
+    enabled: settings.contextMenuEnabled
+  })).catch(() => undefined);
+}
+
+if (isFirefox) {
+  registerSelectionMenu();
+} else {
+  extensionApi.runtime.onInstalled?.addListener(registerSelectionMenu);
+}
+
+contextMenuApi?.onClicked.addListener((info, tab) => {
+  if (info.menuItemId !== TRANSLATE_SELECTION_MENU_ID || !tab?.id || !info.selectionText) return;
+  void extensionApi.tabs.sendMessage(tab.id, {
+    type: "translate-context-selection",
+    text: info.selectionText
+  }).catch(() => undefined);
+});
+
 extensionApi.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== "local" || !changes[SETTINGS_KEY]) return;
-  const language = normalizeSettings(changes[SETTINGS_KEY].newValue).interfaceLanguage;
-  void loadInterfaceLanguage(language).then(() => updateToolbarTitle(language));
+  const settings = normalizeSettings(changes[SETTINGS_KEY].newValue);
+  void loadInterfaceLanguage(settings.interfaceLanguage).then(() => {
+    updateToolbarTitle(settings.interfaceLanguage);
+    return contextMenuApi?.update(TRANSLATE_SELECTION_MENU_ID, {
+      enabled: settings.contextMenuEnabled
+    });
+  }).catch(() => undefined);
 });
 
 function updateToolbarTitle(language: import("./i18n").InterfaceLanguage) {
@@ -143,7 +183,7 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
 });
 
 async function handleTranslationPreview(payload: {sentence?: unknown; sourceLanguage?: unknown; targetLanguage?: unknown; text?: unknown}) {
-  const text = normalizeText(payload?.text, 1000);
+  const text = normalizeText(payload?.text, 2000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
 
   const sentence = normalizeText(payload?.sentence, 3000);

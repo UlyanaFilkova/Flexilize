@@ -13,19 +13,24 @@ export interface ActivationShortcut {
 }
 
 export interface ExtensionSettings {
+  autoActivationEnabled: boolean
   autoSaveTranslations: boolean
   historyRotationEnabled: boolean
   hotkeyActivationEnabled: boolean
+  contextMenuEnabled: boolean
   interfaceLanguage: InterfaceLanguage
   showSelectionTranslationModal: boolean
+  selectionButtonEnabled: boolean
   activationShortcut: ActivationShortcut
   speechEnabled: boolean
   transcriptionEnabled: boolean
   speechRate: number
   targetLanguage: string
   translatorShortcut: ActivationShortcut
+  reverseTranslationShortcut: ActivationShortcut
   translatorSourceLanguage: string
   translatorTargetLanguage: string
+  preserveTranslatorText: boolean
 }
 
 export const MIN_SPEECH_RATE = 0.3;
@@ -87,17 +92,21 @@ function normalizedBrowserLocale(value: unknown) {
 const initialBrowserLanguage = browserUiLanguage();
 
 export const defaultSettings: ExtensionSettings = {
+  autoActivationEnabled: true,
   autoSaveTranslations: true,
   historyRotationEnabled: true,
   hotkeyActivationEnabled: false,
+  contextMenuEnabled: false,
   interfaceLanguage: interfaceLanguageFromBrowser(initialBrowserLanguage),
   showSelectionTranslationModal: true,
+  selectionButtonEnabled: false,
   speechEnabled: true,
   transcriptionEnabled: true,
   speechRate: 1,
   targetLanguage: targetLanguageFromBrowser(initialBrowserLanguage),
   translatorSourceLanguage: "ru",
   translatorTargetLanguage: "en",
+  preserveTranslatorText: false,
   activationShortcut: {
     alt: false,
     code: "BracketRight",
@@ -111,6 +120,14 @@ export const defaultSettings: ExtensionSettings = {
     code: "Quote",
     ctrl: true,
     key: "'",
+    meta: false,
+    shift: true
+  },
+  reverseTranslationShortcut: {
+    alt: false,
+    code: "KeyS",
+    ctrl: true,
+    key: "S",
     meta: false,
     shift: true
   }
@@ -151,12 +168,26 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     meta: typeof storedTranslatorShortcut.meta === "boolean" ? storedTranslatorShortcut.meta : defaultSettings.translatorShortcut.meta,
     shift: typeof storedTranslatorShortcut.shift === "boolean" ? storedTranslatorShortcut.shift : defaultSettings.translatorShortcut.shift
   };
+  const storedReverseTranslationShortcut = settings.reverseTranslationShortcut && typeof settings.reverseTranslationShortcut === "object"
+    ? settings.reverseTranslationShortcut as Partial<ActivationShortcut>
+    : {};
+  const reverseTranslationShortcut: ActivationShortcut = {
+    alt: typeof storedReverseTranslationShortcut.alt === "boolean" ? storedReverseTranslationShortcut.alt : defaultSettings.reverseTranslationShortcut.alt,
+    code: typeof storedReverseTranslationShortcut.code === "string" && storedReverseTranslationShortcut.code ? storedReverseTranslationShortcut.code : defaultSettings.reverseTranslationShortcut.code,
+    ctrl: typeof storedReverseTranslationShortcut.ctrl === "boolean" ? storedReverseTranslationShortcut.ctrl : defaultSettings.reverseTranslationShortcut.ctrl,
+    key: typeof storedReverseTranslationShortcut.key === "string" && storedReverseTranslationShortcut.key ? storedReverseTranslationShortcut.key : defaultSettings.reverseTranslationShortcut.key,
+    meta: typeof storedReverseTranslationShortcut.meta === "boolean" ? storedReverseTranslationShortcut.meta : defaultSettings.reverseTranslationShortcut.meta,
+    shift: typeof storedReverseTranslationShortcut.shift === "boolean" ? storedReverseTranslationShortcut.shift : defaultSettings.reverseTranslationShortcut.shift
+  };
   return {
+    autoActivationEnabled: settings.autoActivationEnabled !== false,
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
+    contextMenuEnabled: settings.contextMenuEnabled === true,
     interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage, defaultSettings.interfaceLanguage),
     showSelectionTranslationModal: settings.showSelectionTranslationModal !== false,
+    selectionButtonEnabled: settings.selectionButtonEnabled === true,
     activationShortcut: hasModifier(activationShortcut) ? activationShortcut : defaultSettings.activationShortcut,
     speechEnabled: settings.speechEnabled !== false,
     transcriptionEnabled: settings.transcriptionEnabled !== false,
@@ -165,8 +196,10 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       ? String(settings.targetLanguage)
       : defaultSettings.targetLanguage,
     translatorShortcut: hasModifier(translatorShortcut) ? translatorShortcut : defaultSettings.translatorShortcut,
+    reverseTranslationShortcut: hasModifier(reverseTranslationShortcut) ? reverseTranslationShortcut : defaultSettings.reverseTranslationShortcut,
     translatorSourceLanguage: normalizeTranslationLanguage(settings.translatorSourceLanguage, defaultSettings.translatorSourceLanguage),
-    translatorTargetLanguage: normalizeTranslationLanguage(settings.translatorTargetLanguage, defaultSettings.translatorTargetLanguage)
+    translatorTargetLanguage: normalizeTranslationLanguage(settings.translatorTargetLanguage, defaultSettings.translatorTargetLanguage),
+    preserveTranslatorText: settings.preserveTranslatorText === true
   };
 }
 

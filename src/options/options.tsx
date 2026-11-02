@@ -16,6 +16,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
+import {isMobileDevice} from "../device";
 import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
@@ -47,13 +48,16 @@ const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, strin
   ["ar", "العربية"], ["fa", "فارسی"]
 ];
 
-function localizedLanguageOptions<T extends string>(options: ReadonlyArray<readonly [T, string]>, locale: string) {
+function localizedLanguageOptions<T extends string>(options: ReadonlyArray<readonly [T, string]>, locale: string, useSelfNames = false) {
   const displayNames = new Intl.DisplayNames([locale], {type: "language"});
   const collator = new Intl.Collator(locale, {sensitivity: "base"});
   return options
     .map(([code, fallback]) => {
       const displayCode = code === "tl" ? "fil" : code;
-      return [code, displayNames.of(displayCode) || fallback] as const;
+      const label = useSelfNames
+        ? new Intl.DisplayNames([displayCode], {type: "language"}).of(displayCode)
+        : displayNames.of(displayCode);
+      return [code, label || fallback] as const;
     })
     .sort((left, right) => collator.compare(left[1], right[1]));
 }
@@ -69,8 +73,8 @@ const settingsSectionIds = new Set(["overview", "general", "translation", "sound
 
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
-  {id: "general", label: "Горячие клавиши", icon: <SlidersIcon />},
-  {id: "translation", label: "Язык и перевод", icon: <LanguagesIcon />},
+  {id: "general", label: "Активация", icon: <SlidersIcon />},
+  {id: "translation", label: "Языки", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
 ];
@@ -96,6 +100,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState<ExportFormat | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     void getTranslationRecords()
@@ -185,39 +190,43 @@ function App() {
   };
 
   const settingsSectionTitle = settingsSection === "overview" ? "Настройки" : settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
+  const settingsSectionDescription = settingsSection === "overview" ? "Настройте работу расширения под себя." : "";
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${mobileMenuOpen ? " mobile-menu-open" : ""}`}>
       <header className="topbar">
         <div className="brand" aria-label="Context Translator">
           <span className="brand-mark" aria-hidden="true">A<span>а</span></span>
           <span>Context Translator</span>
         </div>
-
+        <button className="mobile-menu-toggle" type="button" aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"} aria-expanded={mobileMenuOpen} aria-controls="options-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>
+          {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+        </button>
       </header>
 
+      {mobileMenuOpen && <button className="mobile-menu-backdrop" type="button" aria-label="Закрыть меню" onClick={() => setMobileMenuOpen(false)} />}
       <div className="workspace">
-        <aside className="sidebar" aria-label="Навигация">
+        <aside className="sidebar" id="options-navigation" aria-label="Навигация">
           <div className="sidebar-heading">Переводы</div>
           <nav>
-            <button className={page === "history" && historySection === "records" ? "active" : ""} type="button" onClick={() => openHistorySection("records")}>
+            <button className={page === "history" && historySection === "records" ? "active" : ""} type="button" onClick={() => { openHistorySection("records"); setMobileMenuOpen(false); }}>
               <HistoryIcon /><span>История</span>
             </button>
-            <button className={page === "history" && historySection === "export" ? "active" : ""} type="button" onClick={() => openHistorySection("export")}>
+            <button className={page === "history" && historySection === "export" ? "active" : ""} type="button" onClick={() => { openHistorySection("export"); setMobileMenuOpen(false); }}>
               <DownloadIcon /><span>Экспорт</span>
             </button>
           </nav>
           <div className="sidebar-heading sidebar-section-heading">Настройки</div>
           <nav>
             {settingsSidebarItems.map((item) => (
-              <button key={item.id} className={page === "settings" && settingsSection === item.id ? "active" : ""} type="button" onClick={() => openSettingsSection(item.id)}>
+              <button key={item.id} className={page === "settings" && settingsSection === item.id ? "active" : ""} type="button" onClick={() => { openSettingsSection(item.id); setMobileMenuOpen(false); }}>
                 {item.icon}<span>{item.label}</span>
               </button>
             ))}
           </nav>
           <div className="sidebar-heading sidebar-section-heading">Помощь</div>
           <nav>
-            <button className={page === "help" ? "active" : ""} type="button" onClick={openHelp}>
+            <button className={page === "help" ? "active" : ""} type="button" onClick={() => { openHelp(); setMobileMenuOpen(false); }}>
               <HelpIcon /><span>Как пользоваться</span>
             </button>
           </nav>
@@ -229,7 +238,7 @@ function App() {
             <HelpView onOpenSettings={openSettingsSection} onOpenHistory={() => openHistorySection("records")} onOpenExport={() => openHistorySection("export")} />
           ) : page === "settings" ? (
             <>
-              <PageHeading title={settingsSectionTitle} description="Настройте работу расширения под себя." />
+              <PageHeading title={settingsSectionTitle} description={settingsSectionDescription} />
               {settingsSection === "overview"
                 ? <SettingsOverview onOpenSection={openSettingsSection} />
                 : settingsSection === "general"
@@ -266,8 +275,8 @@ function PageHeading({title, description, action}: {title: string; description: 
 
 function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
   const sections = [
-    {id: "general", title: "Горячие клавиши", description: "Управляйте переводом выделенного текста и быстрым вызовом переводчика.", icon: <SlidersIcon />, meta: "2 комбинации"},
-    {id: "translation", title: "Язык и перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
+    {id: "general", title: "Активация", description: "Управляйте автоматическим переводом, контекстным меню и горячими клавишами.", icon: <SlidersIcon />, meta: "Способы запуска"},
+    {id: "translation", title: "Языки", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
     {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
     {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
   ];
@@ -279,7 +288,7 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
           <span className="settings-banner-kicker">Персональная настройка</span>
           <h2>Переводчик, который работает по вашим правилам</h2>
           <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
-          <button type="button" onClick={() => onOpenSection("general")}>Начать с горячих клавиш<ArrowIcon /></button>
+          <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
         </div>
         <div className="settings-banner-visual" aria-hidden="true">
           <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
@@ -305,19 +314,27 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
         ))}
       </section>
 
-      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>Расширение не отправляет их разработчику. При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
+      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
     </div>
   );
 }
 
 function GeneralSettings() {
+  const [isMobile, setIsMobile] = useState(isMobileDevice);
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [recording, setRecording] = useState(false);
   const [translatorRecording, setTranslatorRecording] = useState(false);
+  const [reverseTranslationRecording, setReverseTranslationRecording] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
+  }, []);
+
+  useEffect(() => {
+    const updateDeviceType = () => setIsMobile(isMobileDevice());
+    window.addEventListener("resize", updateDeviceType);
+    return () => window.removeEventListener("resize", updateDeviceType);
   }, []);
 
   const persist = async (nextSettings: ExtensionSettings) => {
@@ -368,15 +385,102 @@ function GeneralSettings() {
     void persist({...settings, translatorShortcut: shortcut});
   };
 
+  const captureReverseTranslationShortcut = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (!reverseTranslationRecording || !settings) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === "Escape") {
+      setReverseTranslationRecording(false);
+      setError("");
+      return;
+    }
+    const shortcut = shortcutFromKeyboardEvent(event.nativeEvent);
+    if (!shortcut) return;
+    if (!shortcut.ctrl && !shortcut.alt && !shortcut.shift && !shortcut.meta) {
+      setError("Добавьте к клавише Ctrl, Alt, Shift или Meta");
+      return;
+    }
+    setReverseTranslationRecording(false);
+    void persist({...settings, reverseTranslationShortcut: shortcut});
+  };
+
   return (
     <>
       <div className="settings-group">
-        <h2 className="settings-group-title">Перевод выделенного текста</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Горячие клавиши перевода выделенного текста">
+        <h2 className="settings-group-title">Перевод выделенного текста (можно несколько)</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Параметры активации перевода выделенного текста">
       <div className="setting-row">
         <div className="setting-copy">
+          <h2>Показывать окно перевода</h2>
+          <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
+          <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.showSelectionTranslationModal ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, showSelectionTranslationModal: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Показывать окно перевода</span>
+        </label>
+      </div>
+      <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Автоматическая активация</h2>
+          <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.autoActivationEnabled ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, autoActivationEnabled: event.target.checked, ...(event.target.checked ? {selectionButtonEnabled: false} : {})})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить автоматическую активацию</span>
+        </label>
+      </div>
+
+      <div className="setting-row setting-row-secondary">
+        <div className="setting-copy">
+          <h2>Кнопка рядом с выделением</h2>
+          <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.selectionButtonEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, selectionButtonEnabled: event.target.checked, ...(event.target.checked ? {autoActivationEnabled: false} : {})})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить кнопку рядом с выделением</span>
+        </label>
+      </div>
+
+      {!isMobile && <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Активация через контекстное меню</h2>
+          <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.contextMenuEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, contextMenuEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить перевод через контекстное меню</span>
+        </label>
+      </div>}
+
+      {!isMobile && <div className="setting-row">
+        <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
-          <p>Перевод будет запускаться только после нажатия выбранной комбинации на выделенном тексте.</p>
+          <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
         </div>
         <label className="switch">
           <input
@@ -388,9 +492,9 @@ function GeneralSettings() {
           <span aria-hidden="true" />
           <span className="sr-only">Включить активацию горячими клавишами</span>
         </label>
-      </div>
+      </div>}
 
-      <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+      {!isMobile && <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
         <div className="setting-copy">
           <h2>Комбинация клавиш</h2>
           <p>Нажмите кнопку и введите новую комбинацию.</p>
@@ -405,10 +509,10 @@ function GeneralSettings() {
         >
           {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
         </button>
-      </div>
+      </div>}
         </section>
       </div>
-      <div className="settings-group settings-group-following">
+      {!isMobile && <div className="settings-group settings-group-following">
         <h2 className="settings-group-title">Переводчик</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Горячая клавиша переводчика">
           <div className="setting-row">
@@ -427,9 +531,41 @@ function GeneralSettings() {
               {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
             </button>
           </div>
+          <div className="setting-row setting-row-secondary">
+            <div className="setting-copy">
+              <h2>Горячая клавиша обратного перевода</h2>
+              <p>Меняет местами исходный язык и язык перевода.</p>
+            </div>
+            <button
+              className={reverseTranslationRecording ? "hotkey-button recording" : "hotkey-button"}
+              type="button"
+              disabled={!settings}
+              onClick={() => { setReverseTranslationRecording(true); setError(""); }}
+              onBlur={() => setReverseTranslationRecording(false)}
+              onKeyDown={captureReverseTranslationShortcut}
+            >
+              {reverseTranslationRecording ? "Нажмите клавиши…" : formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)}
+            </button>
+          </div>
+          <div className="setting-row setting-row-secondary">
+            <div className="setting-copy">
+              <h2>Сохранять предыдущий текст при повторном открытии переводчика</h2>
+              <p>При закрытии окна переводчика введенный текст и его перевод сохранятся и будут доступны при повторном открытии переводчика.</p>
+            </div>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={settings?.preserveTranslatorText ?? false}
+                disabled={!settings}
+                onChange={(event) => settings && void persist({...settings, preserveTranslatorText: event.target.checked})}
+              />
+              <span aria-hidden="true" />
+              <span className="sr-only">Сохранять предыдущий текст при повторном открытии переводчика</span>
+            </label>
+          </div>
           {error && <div className="settings-error" role="alert">{error}</div>}
         </section>
-      </div>
+      </div>}
     </>
   );
 }
@@ -473,7 +609,7 @@ function TranslationSettings() {
   const interfaceLocale = settings?.interfaceLanguage || "ru";
   const languageOptions = localizedLanguageOptions(TRANSLATION_LANGUAGES, interfaceLocale)
     .map(([code, label]) => <option key={code} value={code}>{label}</option>);
-  const sortedInterfaceLanguageOptions = localizedLanguageOptions(interfaceLanguageOptions, interfaceLocale);
+  const sortedInterfaceLanguageOptions = localizedLanguageOptions(interfaceLanguageOptions, interfaceLocale, true);
 
   return (
     <>
@@ -514,23 +650,6 @@ function TranslationSettings() {
           >
             {languageOptions}
           </select>
-        </div>
-        <div className="setting-row setting-row-secondary">
-          <div className="setting-copy">
-            <h2>Показывать окно перевода</h2>
-            <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
-            <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
-          </div>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={settings?.showSelectionTranslationModal ?? true}
-              disabled={!settings}
-              onChange={(event) => settings && void persist({...settings, showSelectionTranslationModal: event.target.checked})}
-            />
-            <span aria-hidden="true" />
-            <span className="sr-only">Показывать окно перевода</span>
-          </label>
         </div>
         </section>
       </div>
@@ -866,7 +985,7 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
   return (
     <div className="help-page">
-      <PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в Anki." />
+<PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в другие приложения" />
 
       <section className="help-hero" aria-labelledby="quick-start-title">
         <div className="help-hero-copy">
@@ -952,7 +1071,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
           <details><summary>Окно перевода не появляется после выделения</summary><p>Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения. На служебных страницах браузера вида <code>chrome://…</code> расширения не запускаются.</p></details>
           <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
           <details><summary>Новая запись не появилась в истории</summary><p>Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.</p></details>
-          <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Горячие клавиши», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
+          <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
           <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удалите данные расширения средствами браузера.</p></details>
         </div>
       </section>
@@ -1040,6 +1159,8 @@ function HistoryHelpExample() {
 }
 
 function Icon({children}: {children: ReactNode}) { return <svg viewBox="0 0 24 24" aria-hidden="true">{children}</svg>; }
+function MenuIcon() { return <Icon><path d="M4 6h16M4 12h16M4 18h16"/></Icon>; }
+function CloseIcon() { return <Icon><path d="m6 6 12 12M18 6 6 18"/></Icon>; }
 function HistoryIcon() { return <Icon><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></Icon>; }
 function SlidersIcon() { return <Icon><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></Icon>; }
 function SettingsIcon() { return <Icon><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1.4 1.6H9.55A1.7 1.7 0 0 0 8.4 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 4 15a1.7 1.7 0 0 0-1.6-1.4V9.55A1.7 1.7 0 0 0 4 8.4a1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.46 3.6l.06.06A1.7 1.7 0 0 0 8.4 4a1.7 1.7 0 0 0 1.4-1.6h4.05A1.7 1.7 0 0 0 15 4a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.4a1.7 1.7 0 0 0 1.6 1.4v4.05A1.7 1.7 0 0 0 19.4 15Z"/></Icon>; }

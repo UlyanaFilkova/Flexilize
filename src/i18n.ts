@@ -9,7 +9,6 @@ const loadedCatalogs: Partial<Record<InterfaceLanguage, Record<string, string>>>
 const en: Record<string, string> = englishCatalog;
 const ru: Record<string, string> = russianCatalog;
 const sourceToKey = Object.fromEntries(Object.entries(ru).map(([key, value]) => [value, key]));
-
 /*
  * The UI still contains Russian source text in JSX and HTML. Resolve that text
  * through the Russian catalog while keeping all locale catalogs keyed by IDs.
@@ -74,6 +73,8 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
     [/^Текущая скорость (.+)$/, (rate) => formatMessage("Текущая скорость {rate}", {rate}, language)],
     [/^Код языка: (.+)$/, (code) => formatMessage("Код языка: {code}", {code}, language)],
     [/^Озвучить \((.+)\)$/, (code) => formatMessage("Озвучить ({code})", {code}, language)],
+    [/^Обратный перевод \((.+)\)$/, (shortcut) => formatMessage("Обратный перевод ({shortcut})", {shortcut}, language)],
+    [/^Достигнут лимит в (\d+) символов\.$/, (count) => formatMessage("Достигнут лимит в {count} символов.", {count}, language)],
     [/^Ошибка озвучки: (.+)$/, (error) => formatMessage("Ошибка озвучки: {error}", {error}, language)],
     [/^Достигнут лимит в (\d+) переводов\. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые\.$/, (count) => formatMessage("Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.", {count}, language)],
     [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.", {count}, language)],

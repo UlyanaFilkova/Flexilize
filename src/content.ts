@@ -9,6 +9,7 @@ import {
 } from "./types";
 import {uniqueTranslationForms} from "./translation-variants";
 import {MAX_HISTORY_RECORDS} from "./history-config";
+import {isMobileDevice} from "./device";
 import {loadInterfaceLanguage, observeLocalizedDom} from "./i18n";
 import {
   defaultSettings,
@@ -54,10 +55,14 @@ import {
 
   let host: HTMLDivElement | null = null;
   let shadow: ShadowRoot | null = null;
+  let selectionActionHost: HTMLDivElement | null = null;
+  let selectionActionShadow: ShadowRoot | null = null;
+  let pendingSelectionAction: {text: string; rect: DOMRect} | null = null;
   let translatorHost: HTMLDivElement | null = null;
   let translatorShadow: ShadowRoot | null = null;
   let translatorTimer: ReturnType<typeof setTimeout> | undefined;
   let translatorRequest = 0;
+  let previousTranslatorText = "";
   let currentText = "";
   let currentSentence = "";
   let currentSourceLanguage = "en";
@@ -82,6 +87,7 @@ import {
   const deferredManualSaveRequests = new Set<number>();
 
   document.addEventListener("mouseup", scheduleSelection, true);
+  document.addEventListener("keydown", handleReverseTranslationKeydown, true);
   document.addEventListener("keydown", handleTranslatorKeydown, true);
   document.addEventListener("keydown", handleActivationKeydown, true);
   document.addEventListener("keyup", (event) => {
@@ -89,6 +95,7 @@ import {
     if (key.startsWith("Arrow") || key === "Shift") scheduleSelection();
   }, true);
   document.addEventListener("select", scheduleSelection, true);
+  document.addEventListener("selectionchange", scheduleSelection, true);
   document.addEventListener("pointerdown", handleOutsidePointerDown, true);
   document.addEventListener("scroll", closeModal, true);
   window.addEventListener("blur", closeModal);
@@ -106,8 +113,11 @@ import {
     const previousInterfaceLanguage = activationSettings.interfaceLanguage;
     activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
     activationSettingsReady = true;
+    if (!activationSettings.preserveTranslatorText) previousTranslatorText = "";
     const translatorShortcutHint = translatorShadow?.querySelector<HTMLElement>(".translator-shortcut-hint");
     if (translatorShortcutHint) translatorShortcutHint.textContent = formatShortcut(activationSettings.translatorShortcut);
+    const reverseTranslationButton = translatorShadow?.querySelector<HTMLButtonElement>(".swap");
+    if (reverseTranslationButton) reverseTranslationButton.title = `Обратный перевод (${formatShortcut(activationSettings.reverseTranslationShortcut)})`;
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
     if (saveButton) saveButton.hidden = activationSettings.autoSaveTranslations;
     if (activationSettings.historyRotationEnabled) shadow?.querySelector(".storage-limit")?.remove();
@@ -127,6 +137,15 @@ import {
         activationSettingsReady = true;
       });
     }
+    scheduleSelection();
+  });
+
+  extensionApi.runtime.onMessage.addListener((message: unknown) => {
+    if (!message || typeof message !== "object" || !("type" in message)
+      || message.type !== "translate-context-selection" || !("text" in message) || typeof message.text !== "string") return undefined;
+    clearTimeout(selectionTimer);
+    void processSelection(message.text);
+    return undefined;
   });
 
   if (window.speechSynthesis) {
@@ -135,9 +154,23 @@ import {
   }
 
   function scheduleSelection() {
-    if (!isCurrentInstance() || !activationSettingsReady || activationSettings.hotkeyActivationEnabled) return;
+    if (!isCurrentInstance() || !activationSettingsReady) return;
     clearTimeout(selectionTimer);
-    selectionTimer = setTimeout(processSelection, 60);
+    selectionTimer = setTimeout(() => {
+      const details = readSelection();
+      if (!details) {
+        removeSelectionAction();
+        return;
+      }
+      if (activationSettings.selectionButtonEnabled) {
+        showSelectionAction(details.text, details.rect);
+      } else if (activationSettings.autoActivationEnabled
+        && (!activationSettings.hotkeyActivationEnabled || isMobileDevice())) {
+        void processSelection();
+      } else {
+        removeSelectionAction();
+      }
+    }, 100);
   }
 
   function handleTranslatorKeydown(event: KeyboardEvent) {
@@ -150,6 +183,14 @@ import {
     } else {
       showTranslator();
     }
+  }
+
+  function handleReverseTranslationKeydown(event: KeyboardEvent) {
+    if (!isCurrentInstance() || !activationSettingsReady || event.repeat || !translatorShadow
+      || !matchesShortcut(event, activationSettings.reverseTranslationShortcut)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    translatorShadow.querySelector<HTMLButtonElement>(".swap")?.click();
   }
 
   function showTranslator() {
@@ -170,12 +211,13 @@ import {
           <header><strong>Переводчик</strong><span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 18 12"><circle cx="5" cy="3" r="1.4"/><circle cx="9" cy="3" r="1.4"/><circle cx="13" cy="3" r="1.4"/><circle cx="5" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="13" cy="9" r="1.4"/></svg></span><span class="translator-header-actions"><span class="translator-shortcut-hint" title="Горячая клавиша переводчика"></span><button class="close" type="button" aria-label="Закрыть">×</button></span></header>
           <div class="languages">
             <select class="source-language" aria-label="Исходный язык">${languageOptions}</select>
-            <button class="swap" type="button" aria-label="Поменять языки местами" title="Поменять языки местами">⇄</button>
+            <button class="swap" type="button" aria-label="Обратный перевод" title="Обратный перевод (${formatShortcut(activationSettings.reverseTranslationShortcut)})">⇄</button>
             <select class="target-language" aria-label="Язык перевода">${languageOptions}</select>
           </div>
           <div class="panes">
             <div class="translator-pane">
-              <textarea class="translator-input" maxlength="1000" placeholder="Введите текст" aria-label="Текст для перевода"></textarea>
+              <textarea class="translator-input" maxlength="2000" placeholder="Введите текст" aria-label="Текст для перевода"></textarea>
+              <button class="clear-input" type="button" aria-label="Очистить ввод" title="Очистить">×</button>
               <button class="copy copy-input" type="button" aria-label="Копировать весь исходный текст" title="Копировать всё"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
             </div>
             <div class="translator-pane">
@@ -183,7 +225,7 @@ import {
               <button class="copy copy-output" type="button" aria-label="Копировать весь перевод" title="Копировать всё"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
             </div>
           </div>
-          <div class="translator-status"></div>
+          <div class="translator-status"><span class="translator-limit-status"></span><span class="translator-message"></span></div>
         </section>
       </div>`;
     observeLocalizedDom(translatorShadow, activationSettings.interfaceLanguage);
@@ -195,9 +237,17 @@ import {
     const input = translatorShadow.querySelector<HTMLTextAreaElement>(".translator-input")!;
     const source = translatorShadow.querySelector<HTMLSelectElement>(".source-language")!;
     const target = translatorShadow.querySelector<HTMLSelectElement>(".target-language")!;
+    const limitStatus = translatorShadow.querySelector<HTMLElement>(".translator-limit-status")!;
     translatorShadow.querySelector<HTMLElement>(".translator-shortcut-hint")!.textContent = formatShortcut(activationSettings.translatorShortcut);
     source.value = activationSettings.translatorSourceLanguage;
     target.value = activationSettings.translatorTargetLanguage;
+    input.value = activationSettings.preserveTranslatorText ? previousTranslatorText : "";
+    const updateLimitStatus = () => {
+      limitStatus.textContent = input.value.length >= input.maxLength
+        ? `Достигнут лимит в ${input.maxLength} символов.`
+        : "";
+    };
+    updateLimitStatus();
 
     const resizeTranslatorPanes = () => {
       input.style.height = "0px";
@@ -251,14 +301,20 @@ import {
     });
     translatorShadow.querySelector(".close")?.addEventListener("click", closeTranslator);
     translatorShadow.querySelector(".swap")?.addEventListener("click", () => {
-      const selectionStart = input.selectionStart;
-      const selectionEnd = input.selectionEnd;
+      const output = translatorShadow?.querySelector<HTMLElement>(".translator-output");
+      const translatedText = input.value.trim() ? output?.textContent?.trim() || "" : "";
       const previousSource = source.value;
       source.value = target.value;
       target.value = previousSource;
+      if (translatedText) {
+        input.value = translatedText;
+        previousTranslatorText = activationSettings.preserveTranslatorText ? translatedText : "";
+        if (output) output.textContent = "";
+      }
       scheduleTranslation(true);
+      resizeTranslatorPanes();
       input.focus();
-      input.setSelectionRange(selectionStart, selectionEnd);
+      input.setSelectionRange(input.value.length, input.value.length);
     });
     const bindCopyButton = (selector: string, readText: () => string) => {
       const button = translatorShadow?.querySelector<HTMLButtonElement>(selector);
@@ -280,9 +336,27 @@ import {
     };
     bindCopyButton(".copy-input", () => input.value);
     bindCopyButton(".copy-output", () => translatorShadow?.querySelector<HTMLElement>(".translator-output")?.textContent || "");
+    translatorShadow.querySelector<HTMLButtonElement>(".clear-input")?.addEventListener("click", () => {
+      input.value = "";
+      updateLimitStatus();
+      previousTranslatorText = "";
+      clearTimeout(translatorTimer);
+      translatorRequest += 1;
+      translatorShadow?.querySelector<HTMLElement>(".translator-output")?.replaceChildren();
+      const status = translatorShadow?.querySelector<HTMLElement>(".translator-message");
+      if (status) {
+        status.textContent = "";
+        status.classList.remove("error");
+      }
+      translatorShadow?.querySelector<HTMLElement>(".translator-output")?.classList.remove("loading");
+      resizeTranslatorPanes();
+      input.focus();
+    });
     source.addEventListener("change", () => scheduleTranslation(true));
     target.addEventListener("change", () => scheduleTranslation(true));
     input.addEventListener("input", () => {
+      previousTranslatorText = activationSettings.preserveTranslatorText ? input.value : "";
+      updateLimitStatus();
       resizeTranslatorPanes();
       scheduleTranslation();
     });
@@ -299,12 +373,13 @@ import {
       resizeTranslatorPanes();
       input.focus();
     });
+    if (input.value) scheduleTranslation(true);
   }
 
   async function translateTypedText() {
     const input = translatorShadow?.querySelector<HTMLTextAreaElement>(".translator-input");
     const output = translatorShadow?.querySelector<HTMLElement>(".translator-output");
-    const status = translatorShadow?.querySelector<HTMLElement>(".translator-status");
+    const status = translatorShadow?.querySelector<HTMLElement>(".translator-message");
     const source = translatorShadow?.querySelector<HTMLSelectElement>(".source-language");
     const target = translatorShadow?.querySelector<HTMLSelectElement>(".target-language");
     if (!input || !output || !status || !source || !target) return;
@@ -339,6 +414,8 @@ import {
   }
 
   function closeTranslator() {
+    const input = translatorShadow?.querySelector<HTMLTextAreaElement>(".translator-input");
+    previousTranslatorText = activationSettings.preserveTranslatorText ? input?.value || "" : "";
     clearTimeout(translatorTimer);
     translatorRequest += 1;
     translatorHost?.remove();
@@ -374,9 +451,18 @@ import {
     void processSelection();
   }
 
-  async function processSelection() {
+  async function processSelection(selectedText?: string, selectedRect?: DOMRect) {
     if (!isCurrentInstance()) return;
-    const details = readSelection();
+    removeSelectionAction();
+    const selectionDetails = readSelection();
+    const normalizedSelectedText = selectedText ? clean(selectedText).slice(0, MAX_SELECTION_LENGTH) : "";
+    const details = normalizedSelectedText
+      ? {
+          text: normalizedSelectedText,
+          sentence: selectionDetails?.sentence || normalizedSelectedText,
+          rect: selectionDetails?.rect || selectedRect || new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 0, 0)
+        }
+      : selectionDetails;
     if (!details || details.text === currentText) return;
 
     currentText = details.text;
@@ -1354,12 +1440,15 @@ import {
 
   function handleOutsidePointerDown(event) {
     if (!isCurrentInstance()) return;
-    if (!host) return;
     const path = event.composedPath();
+    if (selectionActionHost && path.includes(selectionActionHost)) return;
+    removeSelectionAction();
+    if (!host) return;
     if (!path.includes(host)) closeModal();
   }
 
   function closeModal() {
+    removeSelectionAction();
     if (!isCurrentInstance()) {
       host?.remove();
       host = null;
@@ -1377,6 +1466,50 @@ import {
     shadow = null;
     selectionRect = null;
     if (window.speechSynthesis) stopSpeaking();
+  }
+
+  function showSelectionAction(text: string, rect: DOMRect) {
+    if (!activationSettings.selectionButtonEnabled || !isCurrentInstance()) {
+      removeSelectionAction();
+      return;
+    }
+    pendingSelectionAction = {text, rect};
+    if (!selectionActionHost) {
+      selectionActionHost = document.createElement("div");
+      selectionActionHost.id = `${HOST_ID}-selection-action`;
+      selectionActionHost.style.cssText = "all:initial;position:fixed;z-index:2147483646;inset:0;pointer-events:none";
+      selectionActionShadow = selectionActionHost.attachShadow({mode: "closed"});
+      selectionActionShadow.innerHTML = `<style>${selectionActionStyles()}</style><button type="button" aria-label="Перевести выделенный текст" title="Перевести выделенный текст"><span class="logo">A<span>а</span></span></button>`;
+      selectionActionShadow.querySelector("button")!.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const selectionAction = pendingSelectionAction;
+        removeSelectionAction();
+        if (selectionAction) void processSelection(selectionAction.text, selectionAction.rect);
+      });
+      document.documentElement.append(selectionActionHost);
+    }
+    positionSelectionAction(rect);
+  }
+
+  function positionSelectionAction(rect: DOMRect) {
+    const button = selectionActionShadow?.querySelector<HTMLButtonElement>("button");
+    if (!button) return;
+    const width = 48;
+    const height = 48;
+    const left = Math.max(12, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 12));
+    const below = rect.bottom + 8;
+    const top = below + height <= window.innerHeight - 8
+      ? below
+      : Math.max(8, rect.top - height - 8);
+    button.style.left = `${left}px`;
+    button.style.top = `${top}px`;
+  }
+
+  function removeSelectionAction() {
+    selectionActionHost?.remove();
+    selectionActionHost = null;
+    selectionActionShadow = null;
+    pendingSelectionAction = null;
   }
 
   function clean(value) {
@@ -1399,13 +1532,24 @@ import {
     return document.documentElement.getAttribute(INSTANCE_ATTRIBUTE) === instanceId;
   }
 
+  function selectionActionStyles() {
+    return `
+      :host { color-scheme: light; }
+      button { position: fixed; z-index: 2147483646; display: grid; width: 48px; height: 48px; padding: 0; place-items: center; border: 1px solid rgba(255,255,255,.34); border-radius: 15px; background: linear-gradient(145deg,#315be8,#5a80ff); box-shadow: 0 5px 18px rgba(15,23,42,.28); color: #fff; cursor: pointer; font: 700 17px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; pointer-events: auto; }
+      button:active { filter: brightness(.92); transform: scale(.97); }
+      button:focus-visible { outline: 3px solid rgba(75,115,255,.45); outline-offset: 3px; }
+      .logo { position: relative; }
+      .logo span { position: absolute; right: -6px; bottom: -5px; font-size: 9px; opacity: .82; }
+    `;
+  }
+
   function translatorStyles() {
     return `
       :host { color-scheme: light; }
       * { box-sizing: border-box; }
       button, select, textarea { font: inherit; }
       .backdrop { position: fixed; inset: 0; display: grid; padding: 24px; place-items: center; background: rgba(15,23,42,.28); font: 14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-      .translator { display: flex; width: min(780px,100%); max-height: calc(100vh - 48px); overflow: hidden; flex-direction: column; border: 1px solid rgba(15,23,42,.1); border-radius: 16px; background: #fff; box-shadow: 0 24px 70px rgba(15,23,42,.3); color: #172033; }
+      .translator { display: flex; width: min(820px,100%); max-height: calc(100vh - 48px); overflow: hidden; flex-direction: column; border: 1px solid rgba(15,23,42,.1); border-radius: 16px; background: #fff; box-shadow: 0 24px 70px rgba(15,23,42,.3); color: #172033; }
       header { position: relative; display: flex; height: 54px; flex: none; align-items: center; justify-content: space-between; padding: 0 16px 0 20px; border-bottom: 1px solid #e8ecf2; cursor: grab; touch-action: none; user-select: none; }
       .translator.dragging header { cursor: grabbing; }
       header strong { font-size: 16px; }
@@ -1422,17 +1566,21 @@ import {
       .panes { display: grid; grid-template-columns: 1fr 1fr; height: 250px; min-height: 0; overflow: hidden; flex: 0 1 auto; }
       .translator-pane { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; }
       .translator-input, .translator-output { width: 100%; height: 100%; min-height: 0; padding: 18px; border: 0; background: #fff; color: #172033; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-wrap; }
-      .translator-input { padding-bottom: 52px; overflow-y: auto; resize: none; outline: none; }
-      .translator-output { padding-bottom: 52px; overflow-y: auto; border-left: 1px solid #e8ecf2; background: #fafbfe; }
+      .translator-input { padding-right: 48px; overflow-y: auto; resize: none; outline: none; }
+      .translator-output { padding-right: 48px; overflow-y: auto; border-left: 1px solid #e8ecf2; background: #fafbfe; }
       .translator-output:empty::before { color: #9aa3b1; content: attr(data-placeholder); }
       .translator-output.loading { color: #8792a4; }
       .copy { position: absolute; right: 12px; bottom: 12px; display: grid; width: 38px; height: 38px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #667386; cursor: pointer; font-size: 22px; }
+      .clear-input { position: absolute; top: 10px; right: 10px; display: grid; width: 38px; height: 38px; padding: 0; place-items: center; border: 0; border-radius: 9px; background: #fff; color: #667386; cursor: pointer; font-size: 24px; line-height: 1; }
+      .clear-input:hover { background: #f1f4f8; color: #315be8; }
       .copy-input { background: #fff; }
       .copy-output { background: #fafbfe; }
       .copy:hover { color: #315be8; }
       .copy svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-      .translator-status { min-height: 35px; flex: none; padding: 8px 18px; border-top: 1px solid #e8ecf2; color: #8792a4; font-size: 12px; }
-      .translator-status.error { color: #b42318; }
+      .translator-status { display: flex; min-height: 35px; flex: none; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 18px; border-top: 1px solid #e8ecf2; color: #8792a4; font-size: 12px; }
+      .translator-limit-status { flex: none; }
+      .translator-message { min-width: 0; text-align: right; }
+      .translator-message.error { color: #b42318; }
       @media (max-width: 620px) { .backdrop { padding: 12px; } .translator-shortcut-hint { font-size: 9px; } .panes { grid-template-columns: 1fr; height: auto !important; max-height: calc(100vh - 190px); overflow-y: auto; } .translator-input, .translator-output { min-height: 150px; } .translator-output { border-top: 1px solid #e8ecf2; border-left: 0; } }
     `;
   }
