@@ -183,7 +183,7 @@ extensionApi.runtime.onMessage.addListener((message: unknown) => {
 });
 
 async function handleTranslationPreview(payload: {sentence?: unknown; sourceLanguage?: unknown; targetLanguage?: unknown; text?: unknown}) {
-  const text = normalizeText(payload?.text, 1000);
+  const text = normalizeText(payload?.text, 2000);
   if (!text) throw new Error("Не удалось прочитать выделенный текст");
 
   const sentence = normalizeText(payload?.sentence, 3000);

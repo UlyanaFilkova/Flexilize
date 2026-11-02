@@ -514,6 +514,7 @@ function GeneralSettings() {
           <div className="setting-row setting-row-secondary">
             <div className="setting-copy">
               <h2>Сохранять предыдущий текст при повторном открытии переводчика</h2>
+              <p>При закрытии окна переводчика введенный текст и его перевод сохранятся и будут доступны при повторном открытии переводчика.</p>
             </div>
             <label className="switch">
               <input
