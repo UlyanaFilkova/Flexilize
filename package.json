@@ -2,7 +2,7 @@
   "private": true,
   "name": "context-translator",
   "version": "1.1.3",
-  "description": "Контекстный переводчик выделенного текста на русский язык для Chrome и Firefox.",
+  "description": "Браузерное расширение для перевода выделенного текста с контекстом, транскрипцией и локальной историей.",
   "license": "MIT",
   "type": "module",
   "engines": {
