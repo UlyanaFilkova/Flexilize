@@ -314,7 +314,7 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
         ))}
       </section>
 
-      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>Расширение не отправляет их разработчику. При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
+      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
     </div>
   );
 }
@@ -387,8 +387,25 @@ function GeneralSettings() {
   return (
     <>
       <div className="settings-group">
-        <h2 className="settings-group-title">Перевод выделенного текста</h2>
+        <h2 className="settings-group-title">Перевод выделенного текста (можно несколько)</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Параметры активации перевода выделенного текста">
+      <div className="setting-row">
+        <div className="setting-copy">
+          <h2>Показывать окно перевода</h2>
+          <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
+          <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
+        </div>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.showSelectionTranslationModal ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, showSelectionTranslationModal: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Показывать окно перевода</span>
+        </label>
+      </div>
       <div className="setting-row">
         <div className="setting-copy">
           <h2>Автоматическая активация</h2>
@@ -581,23 +598,6 @@ function TranslationSettings() {
           >
             {languageOptions}
           </select>
-        </div>
-        <div className="setting-row setting-row-secondary">
-          <div className="setting-copy">
-            <h2>Показывать окно перевода</h2>
-            <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
-            <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
-          </div>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={settings?.showSelectionTranslationModal ?? true}
-              disabled={!settings}
-              onChange={(event) => settings && void persist({...settings, showSelectionTranslationModal: event.target.checked})}
-            />
-            <span aria-hidden="true" />
-            <span className="sr-only">Показывать окно перевода</span>
-          </label>
         </div>
         </section>
       </div>
