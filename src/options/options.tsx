@@ -74,7 +74,7 @@ const settingsSectionIds = new Set(["overview", "general", "translation", "sound
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Активация", icon: <SlidersIcon />},
-  {id: "translation", label: "Язык и перевод", icon: <LanguagesIcon />},
+  {id: "translation", label: "Языки", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
 ];
@@ -190,6 +190,7 @@ function App() {
   };
 
   const settingsSectionTitle = settingsSection === "overview" ? "Настройки" : settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
+  const settingsSectionDescription = settingsSection === "overview" ? "Настройте работу расширения под себя." : "";
 
   return (
     <div className={`app-shell${mobileMenuOpen ? " mobile-menu-open" : ""}`}>
@@ -237,7 +238,7 @@ function App() {
             <HelpView onOpenSettings={openSettingsSection} onOpenHistory={() => openHistorySection("records")} onOpenExport={() => openHistorySection("export")} />
           ) : page === "settings" ? (
             <>
-              <PageHeading title={settingsSectionTitle} description="Настройте работу расширения под себя." />
+              <PageHeading title={settingsSectionTitle} description={settingsSectionDescription} />
               {settingsSection === "overview"
                 ? <SettingsOverview onOpenSection={openSettingsSection} />
                 : settingsSection === "general"
@@ -275,7 +276,7 @@ function PageHeading({title, description, action}: {title: string; description: 
 function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
   const sections = [
     {id: "general", title: "Активация", description: "Управляйте автоматическим переводом, контекстным меню и горячими клавишами.", icon: <SlidersIcon />, meta: "Способы запуска"},
-    {id: "translation", title: "Язык и перевод", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
+    {id: "translation", title: "Языки", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
     {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
     {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
   ];
