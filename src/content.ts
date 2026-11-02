@@ -62,6 +62,7 @@ import {
   let translatorShadow: ShadowRoot | null = null;
   let translatorTimer: ReturnType<typeof setTimeout> | undefined;
   let translatorRequest = 0;
+  let previousTranslatorText = "";
   let currentText = "";
   let currentSentence = "";
   let currentSourceLanguage = "en";
@@ -111,6 +112,7 @@ import {
     const previousInterfaceLanguage = activationSettings.interfaceLanguage;
     activationSettings = normalizeSettings(changes[SETTINGS_KEY].newValue);
     activationSettingsReady = true;
+    if (!activationSettings.preserveTranslatorText) previousTranslatorText = "";
     const translatorShortcutHint = translatorShadow?.querySelector<HTMLElement>(".translator-shortcut-hint");
     if (translatorShortcutHint) translatorShortcutHint.textContent = formatShortcut(activationSettings.translatorShortcut);
     const saveButton = shadow?.querySelector<HTMLButtonElement>(".save-translation");
@@ -226,6 +228,7 @@ import {
     translatorShadow.querySelector<HTMLElement>(".translator-shortcut-hint")!.textContent = formatShortcut(activationSettings.translatorShortcut);
     source.value = activationSettings.translatorSourceLanguage;
     target.value = activationSettings.translatorTargetLanguage;
+    input.value = activationSettings.preserveTranslatorText ? previousTranslatorText : "";
 
     const resizeTranslatorPanes = () => {
       input.style.height = "0px";
@@ -311,6 +314,7 @@ import {
     source.addEventListener("change", () => scheduleTranslation(true));
     target.addEventListener("change", () => scheduleTranslation(true));
     input.addEventListener("input", () => {
+      previousTranslatorText = activationSettings.preserveTranslatorText ? input.value : "";
       resizeTranslatorPanes();
       scheduleTranslation();
     });
@@ -327,6 +331,7 @@ import {
       resizeTranslatorPanes();
       input.focus();
     });
+    if (input.value) scheduleTranslation(true);
   }
 
   async function translateTypedText() {
@@ -367,6 +372,8 @@ import {
   }
 
   function closeTranslator() {
+    const input = translatorShadow?.querySelector<HTMLTextAreaElement>(".translator-input");
+    previousTranslatorText = activationSettings.preserveTranslatorText ? input?.value || "" : "";
     clearTimeout(translatorTimer);
     translatorRequest += 1;
     translatorHost?.remove();

@@ -29,6 +29,7 @@ export interface ExtensionSettings {
   translatorShortcut: ActivationShortcut
   translatorSourceLanguage: string
   translatorTargetLanguage: string
+  preserveTranslatorText: boolean
 }
 
 export const MIN_SPEECH_RATE = 0.3;
@@ -104,6 +105,7 @@ export const defaultSettings: ExtensionSettings = {
   targetLanguage: targetLanguageFromBrowser(initialBrowserLanguage),
   translatorSourceLanguage: "ru",
   translatorTargetLanguage: "en",
+  preserveTranslatorText: false,
   activationShortcut: {
     alt: false,
     code: "BracketRight",
@@ -175,7 +177,8 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
       : defaultSettings.targetLanguage,
     translatorShortcut: hasModifier(translatorShortcut) ? translatorShortcut : defaultSettings.translatorShortcut,
     translatorSourceLanguage: normalizeTranslationLanguage(settings.translatorSourceLanguage, defaultSettings.translatorSourceLanguage),
-    translatorTargetLanguage: normalizeTranslationLanguage(settings.translatorTargetLanguage, defaultSettings.translatorTargetLanguage)
+    translatorTargetLanguage: normalizeTranslationLanguage(settings.translatorTargetLanguage, defaultSettings.translatorTargetLanguage),
+    preserveTranslatorText: settings.preserveTranslatorText === true
   };
 }
 

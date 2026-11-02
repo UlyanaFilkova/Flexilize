@@ -511,6 +511,21 @@ function GeneralSettings() {
               {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
             </button>
           </div>
+          <div className="setting-row setting-row-secondary">
+            <div className="setting-copy">
+              <h2>Сохранять предыдущий текст при повторном открытии переводчика</h2>
+            </div>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={settings?.preserveTranslatorText ?? false}
+                disabled={!settings}
+                onChange={(event) => settings && void persist({...settings, preserveTranslatorText: event.target.checked})}
+              />
+              <span aria-hidden="true" />
+              <span className="sr-only">Сохранять предыдущий текст при повторном открытии переводчика</span>
+            </label>
+          </div>
           {error && <div className="settings-error" role="alert">{error}</div>}
         </section>
       </div>}
