@@ -45,7 +45,8 @@ const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, strin
   ["zh-CN", "简体中文"], ["zh-TW", "繁體中文"], ["ko", "한국어"], ["tr", "Türkçe"],
   ["vi", "Tiếng Việt"], ["cs", "Čeština"], ["ro", "Română"], ["sv", "Svenska"], ["da", "Dansk"],
   ["no", "Norsk"], ["fi", "Suomi"], ["hu", "Magyar"], ["el", "Ελληνικά"], ["ms", "Bahasa Melayu"], ["fil", "Filipino"],
-  ["ar", "العربية"], ["fa", "فارسی"]
+  ["ar", "العربية"], ["fa", "فارسی"], ["he", "עברית"], ["ka", "ქართული"], ["hr", "Hrvatski"],
+  ["sl", "Slovenščina"], ["sk", "Slovenčina"], ["sq", "Shqip"], ["sr", "Српски"]
 ];
 
 function localizedLanguageOptions<T extends string>(options: ReadonlyArray<readonly [T, string]>, locale: string, useSelfNames = false) {
@@ -69,14 +70,14 @@ const routeHashes: Record<Route, string> = {
   help: "#help"
 };
 
-const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving"]);
+const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving", "advanced"]);
 
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
-  {id: "general", label: "Активация", icon: <SlidersIcon />},
+  {id: "general", label: "Активация", icon: <LightningIcon />},
   {id: "translation", label: "Языки", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
-  {id: "saving", label: "Сохранение", icon: <BookmarkIcon />}
+  {id: "advanced", label: "Расширенные настройки", icon: <SlidersIcon />}
 ];
 
 function routeFromHash(): Route {
@@ -89,6 +90,12 @@ function settingsSectionFromHash() {
     ? location.hash.slice(`${routeHashes.settings}/`.length)
     : "overview";
   return settingsSectionIds.has(section) ? section : "overview";
+}
+
+function resetScrollPosition() {
+  if (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop) {
+    window.scrollTo(0, 0);
+  }
 }
 
 function App() {
@@ -116,18 +123,21 @@ function App() {
   }, [notice]);
 
   const openHistorySection = (section: HistorySection) => {
+    resetScrollPosition();
     setPage("history");
     setHistorySection(section);
     window.history.replaceState(null, "", routeHashes[section === "records" ? "history" : "export"]);
   };
 
   const openSettingsSection = (section: string) => {
+    resetScrollPosition();
     setPage("settings");
     setSettingsSection(section);
     window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
   };
 
   const openHelp = () => {
+    resetScrollPosition();
     setPage("help");
     window.history.replaceState(null, "", routeHashes.help);
   };
@@ -247,8 +257,10 @@ function App() {
                   ? <TranslationSettings />
                 : settingsSection === "sound"
                   ? <SoundSettings />
+                : settingsSection === "advanced"
+                  ? <AdvancedSettings />
                 : settingsSection === "saving"
-                  ? <SavingSettings />
+                  ? <AdvancedSettings />
                   : <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>}
             </>
           ) : historySection === "records" ? (
@@ -278,7 +290,7 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
     {id: "general", title: "Активация", description: "Управляйте автоматическим переводом, контекстным меню и горячими клавишами.", icon: <SlidersIcon />, meta: "Способы запуска"},
     {id: "translation", title: "Языки", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
     {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
-    {id: "saving", title: "Сохранение", description: "Определите, какие переводы попадут в историю и как управлять лимитом.", icon: <BookmarkIcon />, meta: "До 5000 записей"}
+    {id: "advanced", title: "Расширенные настройки", description: "Управляйте показом окна перевода и сохранением истории.", icon: <BookmarkIcon />, meta: "Дополнительные параметры"}
   ];
 
   return (
@@ -406,31 +418,15 @@ function GeneralSettings() {
 
   return (
     <>
-      <div className="settings-group">
-        <h2 className="settings-group-title">Перевод выделенного текста (можно несколько)</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Параметры активации перевода выделенного текста">
-      <div className="setting-row">
-        <div className="setting-copy">
-          <h2>Показывать окно перевода</h2>
-          <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
-          <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
-        </div>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.showSelectionTranslationModal ?? true}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, showSelectionTranslationModal: event.target.checked})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Показывать окно перевода</span>
-        </label>
-      </div>
-      <div className="setting-row">
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Перевод по выделению</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Перевод по выделению">
+      <div className="setting-row activation-setting-row">
         <div className="setting-copy">
           <h2>Автоматическая активация</h2>
           <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
         </div>
+        <ActivationIllustration kind="automatic" />
         <label className="switch">
           <input
             type="checkbox"
@@ -443,11 +439,12 @@ function GeneralSettings() {
         </label>
       </div>
 
-      <div className="setting-row setting-row-secondary">
+      <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
           <h2>Кнопка рядом с выделением</h2>
           <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
         </div>
+        <ActivationIllustration kind="button" />
         <label className="switch">
           <input
             type="checkbox"
@@ -459,12 +456,12 @@ function GeneralSettings() {
           <span className="sr-only">Включить кнопку рядом с выделением</span>
         </label>
       </div>
-
-      {!isMobile && <div className="setting-row">
+      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
           <h2>Активация через контекстное меню</h2>
           <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
         </div>
+        <ActivationIllustration kind="context" />
         <label className="switch">
           <input
             type="checkbox"
@@ -477,11 +474,12 @@ function GeneralSettings() {
         </label>
       </div>}
 
-      {!isMobile && <div className="setting-row">
+      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
           <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
         </div>
+        <ActivationIllustration kind="shortcut" shortcut={formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)} />
         <label className="switch">
           <input
             type="checkbox"
@@ -494,7 +492,7 @@ function GeneralSettings() {
         </label>
       </div>}
 
-      {!isMobile && <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+      {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
         <div className="setting-copy">
           <h2>Комбинация клавиш</h2>
           <p>Нажмите кнопку и введите новую комбинацию.</p>
@@ -514,12 +512,13 @@ function GeneralSettings() {
       </div>
       {!isMobile && <div className="settings-group settings-group-following">
         <h2 className="settings-group-title">Переводчик</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Горячая клавиша переводчика">
-          <div className="setting-row">
+        <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
+          <div className="setting-row activation-setting-row">
             <div className="setting-copy">
               <h2>Горячая клавиша переводчика</h2>
               <p>Открывает отдельное окно для ввода и перевода текста.</p>
             </div>
+            <ActivationIllustration kind="translator" shortcut={formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)} />
             <button
               className={translatorRecording ? "hotkey-button recording" : "hotkey-button"}
               type="button"
@@ -531,11 +530,12 @@ function GeneralSettings() {
               {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
             </button>
           </div>
-          <div className="setting-row setting-row-secondary">
+          <div className="setting-row setting-row-secondary activation-setting-row">
             <div className="setting-copy">
               <h2>Горячая клавиша обратного перевода</h2>
               <p>Меняет местами исходный язык и язык перевода.</p>
             </div>
+            <ActivationIllustration kind="reverse" shortcut={formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)} />
             <button
               className={reverseTranslationRecording ? "hotkey-button recording" : "hotkey-button"}
               type="button"
@@ -567,6 +567,50 @@ function GeneralSettings() {
         </section>
       </div>}
     </>
+  );
+}
+
+function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "window" | "automatic" | "button" | "context" | "shortcut" | "translator" | "reverse"; shortcut?: string}) {
+  return (
+    <div className={`activation-illustration activation-illustration-${kind}`} aria-hidden="true">
+      <div className="activation-preview-scene" aria-hidden="true">
+        {kind === "translator" ? (
+          <div className="activation-preview-translator-backdrop">
+            <div className="activation-preview-translator">
+              <div className="activation-preview-translator-title"><strong>Context Translator</strong><b>{shortcut}</b><i>×</i></div>
+              <div className="activation-preview-languages"><i>Russian</i><b>⇄</b><i>English</i></div>
+              <div className="activation-preview-panes"><div /><div /></div>
+            </div>
+          </div>
+        ) : kind === "reverse" ? (
+          <div className="activation-preview-reverse">
+            <p><span>Russian</span><b>→</b><span>English</span></p>
+            <p><span>English</span><b>→</b><span>Russian</span></p>
+            <i>{shortcut}</i>
+          </div>
+        ) : (
+          <>
+            <div className="activation-preview-toolbar"><i /><i /><i /><span /></div>
+            <div className="activation-preview-page">
+              <b />
+              <p>{kind === "button" ? <mark>Context</mark> : <><mark>Context</mark> can change meaning.</>}</p>
+              <i className="line-long" /><i className="line-medium" />
+              <i className="line-short" />
+            </div>
+            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong>Context</strong><span /><b>{translate("Контекст")}</b></div>}
+            {kind === "button" && <>
+              <div className="activation-preview-selection-button"><strong>A<span>a</span></strong></div>
+              <svg className="activation-preview-selection-arrow" viewBox="0 0 24 12" aria-hidden="true">
+                <path d="M1 6h21M17 1l5 5-5 5" />
+              </svg>
+              <div className="activation-preview-result activation-preview-button-result"><strong>Context</strong><span /><b>{translate("Контекст")}</b></div>
+            </>}
+            {kind === "context" && <div className="activation-preview-context-menu"><span>Копировать</span><b><img className="activation-preview-brand-icon" src="../icons/icon-32.png" alt="" />Context Translator</b><span>Искать в интернете</span></div>}
+            {kind === "shortcut" && <div className="activation-preview-shortcut">{shortcut.split(" + ").map((key) => <span key={key}>{key}</span>)}<i>↵</i></div>}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -614,7 +658,8 @@ function TranslationSettings() {
   return (
     <>
       <div className="settings-group">
-        <section className="settings-panel" aria-label="Язык интерфейса">
+        <h2 className="settings-group-title">Интерфейс</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Язык интерфейса">
           <div className="setting-row">
             <div className="setting-copy">
               <h2>Язык интерфейса</h2>
@@ -681,7 +726,7 @@ function TranslationSettings() {
   );
 }
 
-function SavingSettings() {
+function AdvancedSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [error, setError] = useState("");
 
@@ -703,42 +748,70 @@ function SavingSettings() {
   };
 
   return (
-    <section className="settings-panel" aria-label="Настройки сохранения">
-      <div className="setting-row">
-        <div className="setting-copy">
-          <h2>Автоматическое сохранение</h2>
-          <p>Сохранять каждый выполненный перевод в истории автоматически.<br/>Если выключено, то сохранение происходит только по нажатию кнопки "Сохранить".</p>
-        </div>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.autoSaveTranslations ?? true}
-            disabled={!settings}
-            onChange={(event) => settings && void saveSetting({...settings, autoSaveTranslations: event.target.checked})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить автоматическое сохранение</span>
-        </label>
+    <>
+      <div className="settings-group">
+        <h2 className="settings-group-title">Перевод</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Перевод">
+          <div className="setting-row activation-setting-row">
+            <div className="setting-copy">
+              <h2>Показывать окно перевода</h2>
+              <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
+              <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
+            </div>
+            <ActivationIllustration kind="window" />
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={settings?.showSelectionTranslationModal ?? true}
+                disabled={!settings}
+                onChange={(event) => settings && void saveSetting({...settings, showSelectionTranslationModal: event.target.checked})}
+              />
+              <span aria-hidden="true" />
+              <span className="sr-only">Показывать окно перевода</span>
+            </label>
+          </div>
+        </section>
       </div>
-      <div className="setting-row setting-row-secondary">
-        <div className="setting-copy">
-          <h2>Ротация истории</h2>
-          <p>{`При добавлении новых переводов сверх лимита в ${MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным ${MAX_HISTORY_RECORDS}.`}</p>
-          <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${MAX_HISTORY_RECORDS}.`}</p>
-        </div>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.historyRotationEnabled ?? true}
-            disabled={!settings}
-            onChange={(event) => settings && void saveSetting({...settings, historyRotationEnabled: event.target.checked})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить ротацию истории</span>
-        </label>
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Сохранение истории</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Настройки сохранения">
+          <div className="setting-row">
+            <div className="setting-copy">
+              <h2>Автоматическое сохранение</h2>
+              <p>Сохранять каждый выполненный перевод в истории автоматически.<br/>Если выключено, то сохранение происходит только по нажатию кнопки "Сохранить".</p>
+            </div>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={settings?.autoSaveTranslations ?? true}
+                disabled={!settings}
+                onChange={(event) => settings && void saveSetting({...settings, autoSaveTranslations: event.target.checked})}
+              />
+              <span aria-hidden="true" />
+              <span className="sr-only">Включить автоматическое сохранение</span>
+            </label>
+          </div>
+          <div className="setting-row setting-row-secondary">
+            <div className="setting-copy">
+              <h2>Ротация истории</h2>
+              <p>{`При добавлении новых переводов сверх лимита в ${MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным ${MAX_HISTORY_RECORDS}.`}</p>
+              <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${MAX_HISTORY_RECORDS}.`}</p>
+            </div>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={settings?.historyRotationEnabled ?? true}
+                disabled={!settings}
+                onChange={(event) => settings && void saveSetting({...settings, historyRotationEnabled: event.target.checked})}
+              />
+              <span aria-hidden="true" />
+              <span className="sr-only">Включить ротацию истории</span>
+            </label>
+          </div>
+        </section>
       </div>
       {error && <div className="settings-error" role="alert">{error}</div>}
-    </section>
+    </>
   );
 }
 
@@ -1174,6 +1247,7 @@ function HelpIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M9.7 
 function ReadingIcon() { return <Icon><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4V5.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v18a3 3 0 0 1 3-3h3V5.5Z"/></Icon>; }
 function KeyboardIcon() { return <Icon><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M18 10h.01M7 14h.01M10 14h7"/></Icon>; }
 function CursorIcon() { return <Icon><path d="m5 3 6.5 16 2.2-5.3L19 11.5 5 3Z"/></Icon>; }
+function LightningIcon() { return <Icon><path d="m13 2-9 12h7l-1 8 11-13h-7l-1-7Z"/></Icon>; }
 function TextIcon() { return <Icon><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></Icon>; }
 function InfoIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></Icon>; }
 function CheckIcon() { return <Icon><path d="m5 12 4 4L19 6"/></Icon>; }

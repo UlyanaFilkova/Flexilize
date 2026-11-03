@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "ترجمه معکوس ({shortcut})",
   "ui.character-limit-count": "به حد مجاز {count} کاراکتر رسیده است.",
   "ui.set-up-activation": "فعال سازی را تنظیم کنید",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "اگر داده های برنامه افزودنی حذف شوند، تنظیمات به حالت پیش فرض خود باز می گردند."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "اگر داده های برنامه افزودنی حذف شوند، تنظیمات به حالت پیش فرض خود باز می گردند.",
+  "ui.advanced-settings": "تنظیمات پیشرفته",
+  "ui.manage-translation-window-and-history-saving": "پنجره ترجمه و ذخیره تاریخچه را مدیریت کنید.",
+  "ui.additional-options": "گزینه های اضافی",
+  "ui.interface": "رابط",
+  "ui.history-saving": "صرفه جویی در تاریخچه",
+  "ui.context-copy": "کپی",
+  "ui.search-the-web": "جستجو در وب"
 }

@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "反向翻譯（{shortcut}）",
   "ui.character-limit-count": "已達到{count}個字元的限制。",
   "ui.set-up-activation": "設定啟動",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "如果刪除擴展數據，設定將恢復為預設值。"
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "如果刪除擴展數據，設定將恢復為預設值。",
+  "ui.advanced-settings": "進階設定",
+  "ui.manage-translation-window-and-history-saving": "管理翻譯視窗和歷史保存。 ",
+  "ui.additional-options": "其他選項",
+  "ui.interface": "介面",
+  "ui.history-saving": "歷史保存",
+  "ui.context-copy": "複製",
+  "ui.search-the-web": "搜尋網路"
 }

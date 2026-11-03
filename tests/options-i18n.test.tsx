@@ -17,14 +17,15 @@ describe("English options interface", () => {
 
   it("localizes navigation, settings, language names, and help", async () => {
     expect(screen.getByRole("button", {name: /^Activation$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Advanced settings$/})).toBeTruthy();
     expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
     await userEvent.click(screen.getByRole("button", {name: /^Languages$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
     const interfaceSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
     expect([...interfaceSelect.options].map((option) => option.textContent)).toEqual([
-      "čeština", "dansk", "Deutsch", "English", "español", "Filipino", "français", "Indonesia", "italiano", "magyar",
-      "Melayu", "Nederlands", "norsk", "polski", "português", "română", "suomi", "svenska", "Tiếng Việt", "Türkçe",
-      "Ελληνικά", "русский", "العربية", "فارسی", "हिन्दी", "한국어", "中文（中国）", "中文（台灣）", "日本語"
+      "čeština", "dansk", "Deutsch", "English", "español", "Filipino", "français", "hrvatski", "Indonesia", "italiano", "magyar",
+      "Melayu", "Nederlands", "norsk", "polski", "português", "română", "shqip", "slovenčina", "slovenščina", "suomi",
+      "svenska", "Tiếng Việt", "Türkçe", "Ελληνικά", "русский", "српски", "ქართული", "עברית", "العربية", "فارسی", "हिन्दी", "한국어", "中文（中国）", "中文（台灣）", "日本語"
     ]);
     const collator = new Intl.Collator("en", {sensitivity: "base"});
     for (const select of [...document.querySelectorAll("select")]) {
@@ -33,7 +34,7 @@ describe("English options interface", () => {
     }
     expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(3);
     expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
-    for (const section of ["Activation", "Sound", "Saving"]) {
+    for (const section of ["Activation", "Sound", "Advanced settings"]) {
       await userEvent.click(screen.getByRole("button", {name: new RegExp(`^${section}$`)}));
       await waitFor(() => expect(screen.getByRole("heading", {name: section})).toBeTruthy());
       expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);

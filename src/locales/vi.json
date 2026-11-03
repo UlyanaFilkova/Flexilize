@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Dịch ngược ({shortcut})",
   "ui.character-limit-count": "Đã đạt đến giới hạn {count} ký tự.",
   "ui.set-up-activation": "Thiết lập kích hoạt",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Nếu dữ liệu tiện ích mở rộng bị xóa, cài đặt sẽ trở về mặc định."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Nếu dữ liệu tiện ích mở rộng bị xóa, cài đặt sẽ trở về mặc định.",
+  "ui.advanced-settings": "Cài đặt nâng cao",
+  "ui.manage-translation-window-and-history-saving": "Quản lý cửa sổ dịch và lưu lịch sử.",
+  "ui.additional-options": "Tùy chọn bổ sung",
+  "ui.interface": "Giao diện",
+  "ui.history-saving": "Lưu lịch sử",
+  "ui.context-copy": "Sao chép",
+  "ui.search-the-web": "Tìm kiếm trên web"
 }

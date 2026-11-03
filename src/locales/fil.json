@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Baliktad na pagsasalin ({shortcut})",
   "ui.character-limit-count": "Naabot na ang limitasyon ng {count} na mga character.",
   "ui.set-up-activation": "I-set up ang activation",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Kung tatanggalin ang data ng extension, babalik ang mga setting sa kanilang mga default."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Kung tatanggalin ang data ng extension, babalik ang mga setting sa kanilang mga default.",
+  "ui.advanced-settings": "Mga advanced na setting",
+  "ui.manage-translation-window-and-history-saving": "Pamahalaan ang window ng pagsasalin at pag-save ng kasaysayan.",
+  "ui.additional-options": "Mga karagdagang opsyon",
+  "ui.interface": "Interface",
+  "ui.history-saving": "Pag-save ng kasaysayan",
+  "ui.context-copy": "Kopyahin",
+  "ui.search-the-web": "Maghanap sa web"
 }

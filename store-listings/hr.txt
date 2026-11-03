@@ -1,0 +1,57 @@
+Proširenje automatski prepoznaje jezik označenog teksta na web-stranici te prikazuje prijevod, transkripciju, prijevod cijele rečenice ili odlomka u kontekstu i zvučni zapis izvornog teksta. Prevoditelj možete odmah otvoriti tipkovničkim prečacem.
+
+ČEMU SLUŽI?
+
+1) Odmah prevedite nepoznate riječi ili cijele rečenice. Označite tekst i pogledajte prijevod bez kopiranja, otvaranja nove kartice ili traženja prevoditelja ili rječnika.
+
+2) Prevedite vlastiti tekst bez napuštanja trenutačne kartice. Tipkovničkim prečacem otvorite skočni prozor prevoditelja pa upišite ili zalijepite tekst.
+
+3) Učite jezike u kontekstu. Dok čitate na drugom jeziku, brzo provjerite nepoznatu riječ i nastavite čitati. Spremite riječ zajedno s kontekstom u kojem se pojavila, bez prekidanja čitanja radi sastavljanja popisa riječi.
+
+4) Izgradite vlastiti rječnik. Automatski spremajte korisne podatke i izvezite ih u datoteku za izradu popisa riječi ili materijala za učenje.
+
+MOGUĆNOSTI PROŠIRENJA
+
+ZNAČAJKE:
+
+- Automatsko prepoznavanje jezika označenog teksta.
+- Prijevod označene riječi, izraza, rečenice ili odlomka na odabrani jezik.
+- Zaseban prozor prevoditelja za unos teksta.
+- Prijevod rečenice ili odlomka oko označenog teksta.
+- Prikaz transkripcije i alternativnih prijevoda.
+- Preslušavanje izvornog teksta.
+- Automatsko ili ručno spremanje prijevoda s kontekstom, transkripcijom, URL-om i naslovom stranice.
+- Pregled povijesti do 5000 prijevoda.
+- Uređivanje, brisanje i vraćanje zapisa ili brisanje cijele povijesti.
+- Izvoz cijele povijesti.
+- Lokalna pohrana povijesti i postavki na uređaju.
+
+PRILAGODLJIVE POSTAVKE
+
+- Ručno odaberite izvorni i ciljni jezik.
+- Postavite prijevod označenog teksta tako da radi samo uz tipkovnički prečac.
+- Prilagodite tipkovničke prečace.
+- Uključite ili isključite transkripciju.
+- Uključite ili isključite izgovor.
+- Prilagodite brzinu izgovora od 0,3× do 2×.
+- Uključite automatsko spremanje ili spremite prijevod gumbom.
+- Odaberite rotaciju povijesti: kad se dosegne ograničenje, najstariji se zapisi automatski zamjenjuju. Ako je rotacija isključena, novi se zapisi ne spremaju dok ne oslobodite prostor.
+
+KOME JE NAMIJENJEN CONTEXT TRANSLATOR?
+
+Context Translator koristan je ako:
+
+- čitate članke, vijesti ili dokumentaciju na drugim jezicima;
+- učite nove riječi u njihovu prirodnom kontekstu;
+- želite provjeriti značenje izraza bez napuštanja stranice;
+- sastavljate osobni popis riječi;
+- izrađujete kartice za učenje s razmaknutim ponavljanjem;
+- radite s višejezičnim sadržajem.
+
+PRIVATNOST I POHRANA PODATAKA
+
+Povijest prijevoda i postavke pohranjuju se lokalno u vašem pregledniku. Radi prevođenja teksta i dohvaćanja transkripcije označeni se tekst može poslati prevoditeljskim uslugama i rječničkim izvorima koje proširenje koristi. Za te je značajke potrebna internetska veza.
+
+Proširenje ne prodaje korisničke podatke niti ih upotrebljava za oglašavanje, donošenje odluka o kreditima ili druge svrhe koje nisu povezane s njegovim osnovnim značajkama. Pojedinačne zapise možete izbrisati ili očistiti povijest u proširenju. Za uklanjanje cijele povijesti, postavki i lokalne predmemorije deinstalirajte proširenje ili izbrišite njegove podatke u pregledniku.
+
+Context Translator pojednostavljuje postupak: označite tekst, odmah saznajte značenje i po potrebi spremite prijevod za kasnije učenje.

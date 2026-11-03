@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "उलटा अनुवाद ({shortcut})",
   "ui.character-limit-count": "{count} वर्णों की सीमा पूरी हो चुकी है.",
   "ui.set-up-activation": "सक्रियण सेट करें",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "यदि एक्सटेंशन डेटा हटा दिया जाता है, तो सेटिंग्स अपने डिफ़ॉल्ट पर वापस आ जाती हैं।"
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "यदि एक्सटेंशन डेटा हटा दिया जाता है, तो सेटिंग्स अपने डिफ़ॉल्ट पर वापस आ जाती हैं।",
+  "ui.advanced-settings": "एडवांस सेटिंग",
+  "ui.manage-translation-window-and-history-saving": "अनुवाद विंडो और इतिहास सहेजने का प्रबंधन करें।",
+  "ui.additional-options": "अतिरिक्त विकल्प",
+  "ui.interface": "इंटरफ़ेस",
+  "ui.history-saving": "इतिहास सहेजा जा रहा है",
+  "ui.context-copy": "कॉपी करें",
+  "ui.search-the-web": "वेब पर खोजें"
 }

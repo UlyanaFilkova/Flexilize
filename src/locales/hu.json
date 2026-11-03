@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Fordítás ({shortcut})",
   "ui.character-limit-count": "Elérte a {count} karakteres korlátot.",
   "ui.set-up-activation": "Aktiválás beállítása",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "A bővítményadatok törlése esetén a beállítások visszaállnak az alapértelmezett értékekre."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "A bővítményadatok törlése esetén a beállítások visszaállnak az alapértelmezett értékekre.",
+  "ui.advanced-settings": "Speciális beállítások",
+  "ui.manage-translation-window-and-history-saving": "Kezelje a fordítási ablakot és az előzmények mentését.",
+  "ui.additional-options": "További lehetőségek",
+  "ui.interface": "Interfész",
+  "ui.history-saving": "Előzmények mentése",
+  "ui.context-copy": "Másolás",
+  "ui.search-the-web": "Keresés az interneten"
 }

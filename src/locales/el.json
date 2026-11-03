@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Αντίστροφη μετάφραση ({shortcut})",
   "ui.character-limit-count": "Το όριο των {count} χαρακτήρων έχει συμπληρωθεί.",
   "ui.set-up-activation": "Ρύθμιση ενεργοποίησης",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Εάν διαγραφούν τα δεδομένα επέκτασης, οι ρυθμίσεις επιστρέφουν στις προεπιλογές τους."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Εάν διαγραφούν τα δεδομένα επέκτασης, οι ρυθμίσεις επιστρέφουν στις προεπιλογές τους.",
+  "ui.advanced-settings": "Προηγμένες ρυθμίσεις",
+  "ui.manage-translation-window-and-history-saving": "Διαχειριστείτε το παράθυρο μετάφρασης και την αποθήκευση ιστορικού.",
+  "ui.additional-options": "Πρόσθετες επιλογές",
+  "ui.interface": "Διεπαφή",
+  "ui.history-saving": "Αποθήκευση ιστορικού",
+  "ui.context-copy": "Αντιγραφή",
+  "ui.search-the-web": "Αναζήτηση στον ιστό"
 }

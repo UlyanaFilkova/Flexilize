@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Omvänd översättning ({shortcut})",
   "ui.character-limit-count": "Gränsen på {count} tecken har nåtts.",
   "ui.set-up-activation": "Ställ in aktivering",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Om tilläggsdata raderas återgår inställningarna till standardinställningarna."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Om tilläggsdata raderas återgår inställningarna till standardinställningarna.",
+  "ui.advanced-settings": "Avancerade inställningar",
+  "ui.manage-translation-window-and-history-saving": "Hantera översättningsfönstret och spara historik.",
+  "ui.additional-options": "Ytterligare alternativ",
+  "ui.interface": "Gränssnitt",
+  "ui.history-saving": "Spara historik",
+  "ui.context-copy": "Kopiera",
+  "ui.search-the-web": "Sök på webben"
 }

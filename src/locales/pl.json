@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Tłumaczenie odwrotne ({shortcut})",
   "ui.character-limit-count": "Osiągnięto limit {count} znaków.",
   "ui.set-up-activation": "Skonfiguruj aktywację",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jeśli dane rozszerzenia zostaną usunięte, ustawienia powrócą do wartości domyślnych."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jeśli dane rozszerzenia zostaną usunięte, ustawienia powrócą do wartości domyślnych.",
+  "ui.advanced-settings": "Ustawienia zaawansowane",
+  "ui.manage-translation-window-and-history-saving": "Zarządzaj oknem tłumaczeń i zapisywaniem historii.",
+  "ui.additional-options": "Dodatkowe opcje",
+  "ui.interface": "Interfejs",
+  "ui.history-saving": "Zapisywanie historii",
+  "ui.context-copy": "Kopiuj",
+  "ui.search-the-web": "Szukaj w internecie"
 }

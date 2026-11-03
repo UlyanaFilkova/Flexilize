@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Omvendt oversettelse ({shortcut})",
   "ui.character-limit-count": "Grensen på {count} tegn er nådd.",
   "ui.set-up-activation": "Konfigurer aktivering",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Hvis utvidelsesdata slettes, går innstillingene tilbake til standardinnstillingene."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Hvis utvidelsesdata slettes, går innstillingene tilbake til standardinnstillingene.",
+  "ui.advanced-settings": "Avanserte innstillinger",
+  "ui.manage-translation-window-and-history-saving": "Administrer oversettelsesvinduet og logglagring.",
+  "ui.additional-options": "Tilleggsalternativer",
+  "ui.interface": "Grensesnitt",
+  "ui.history-saving": "Logglagring",
+  "ui.context-copy": "Kopier",
+  "ui.search-the-web": "Søk på nettet"
 }

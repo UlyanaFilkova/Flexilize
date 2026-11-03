@@ -406,5 +406,12 @@
   "ui.reverse-translation-action-shortcut": "Umgekehrte Übersetzung ({shortcut})",
   "ui.character-limit-count": "Das Limit von {count} Zeichen wurde erreicht.",
   "ui.set-up-activation": "Aktivierung einrichten",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Wenn Erweiterungsdaten gelöscht werden, werden die Einstellungen auf ihre Standardwerte zurückgesetzt."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Wenn Erweiterungsdaten gelöscht werden, werden die Einstellungen auf ihre Standardwerte zurückgesetzt.",
+  "ui.advanced-settings": "Erweiterte Einstellungen",
+  "ui.manage-translation-window-and-history-saving": "Verwalten Sie das Übersetzungsfenster und die Verlaufsspeicherung.",
+  "ui.additional-options": "Zusätzliche Optionen",
+  "ui.interface": "Schnittstelle",
+  "ui.history-saving": "Verlaufsspeicherung",
+  "ui.context-copy": "Kopieren",
+  "ui.search-the-web": "Im Web suchen"
 }
