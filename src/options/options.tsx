@@ -74,7 +74,7 @@ const settingsSectionIds = new Set(["overview", "general", "translation", "sound
 
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
-  {id: "general", label: "Активация", icon: <SlidersIcon />},
+  {id: "general", label: "Активация", icon: <LightningIcon />},
   {id: "translation", label: "Языки", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "advanced", label: "Расширенные настройки", icon: <SlidersIcon />}
@@ -117,18 +117,21 @@ function App() {
   }, [notice]);
 
   const openHistorySection = (section: HistorySection) => {
+    window.scrollTo(0, 0);
     setPage("history");
     setHistorySection(section);
     window.history.replaceState(null, "", routeHashes[section === "records" ? "history" : "export"]);
   };
 
   const openSettingsSection = (section: string) => {
+    window.scrollTo(0, 0);
     setPage("settings");
     setSettingsSection(section);
     window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
   };
 
   const openHelp = () => {
+    window.scrollTo(0, 0);
     setPage("help");
     window.history.replaceState(null, "", routeHashes.help);
   };
@@ -1238,6 +1241,7 @@ function HelpIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M9.7 
 function ReadingIcon() { return <Icon><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4V5.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v18a3 3 0 0 1 3-3h3V5.5Z"/></Icon>; }
 function KeyboardIcon() { return <Icon><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M18 10h.01M7 14h.01M10 14h7"/></Icon>; }
 function CursorIcon() { return <Icon><path d="m5 3 6.5 16 2.2-5.3L19 11.5 5 3Z"/></Icon>; }
+function LightningIcon() { return <Icon><path d="m13 2-9 12h7l-1 8 11-13h-7l-1-7Z"/></Icon>; }
 function TextIcon() { return <Icon><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></Icon>; }
 function InfoIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></Icon>; }
 function CheckIcon() { return <Icon><path d="m5 12 4 4L19 6"/></Icon>; }
