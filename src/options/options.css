@@ -294,6 +294,8 @@ h1 {
   text-transform: uppercase;
 }
 
+.settings-group-title-attached { margin-bottom: 0; }
+
 .settings-panel-grouped {
   margin-top: 0;
 }
@@ -527,12 +529,12 @@ h1 {
 .activation-preview-languages b { font-size: 7px; }
 .activation-preview-panes { gap: 3px; height: 30px; margin-top: 4px; }
 
-.activation-illustration-reverse { width: clamp(132px, 14vw, 160px); justify-self: end; }
+.activation-illustration-reverse { justify-self: end; }
 .activation-illustration-reverse .activation-preview-scene { height: 80px; }
 .activation-preview-reverse { display: grid; height: 100%; align-content: center; gap: 4px; padding: 5px; }
-.activation-preview-reverse p { display: grid; grid-template-columns: 1fr 14px 1fr; align-items: center; gap: 4px; margin: 0; color: #59667a; font-size: 8px; text-align: center; }
-.activation-preview-reverse b { color: #315be8; font-size: 10px; }
-.activation-preview-reverse i { justify-self: center; margin-top: 2px; padding: 3px 5px; border-radius: 4px; background: #edf2ff; color: #315be8; font-size: 7px; font-style: normal; white-space: nowrap; }
+.activation-preview-reverse p { display: grid; grid-template-columns: 1fr 14px 1fr; align-items: center; gap: 4px; margin: 0; color: #59667a; font-size: 11px; text-align: center; }
+.activation-preview-reverse b { color: #315be8; font-size: 13px; }
+.activation-preview-reverse i { justify-self: center; margin-top: 2px; padding: 3px 5px; border-radius: 4px; background: #edf2ff; color: #315be8; font-size: 9px; font-style: normal; white-space: nowrap; }
 
 .setting-row {
   display: flex;
@@ -558,7 +560,7 @@ h1 {
 }
 
 .setting-copy p {
-  max-width: 600px;
+  max-width: 560px;
   margin: 7px 0 0;
   color: #7b8595;
   font-size: 13px;
@@ -2316,6 +2318,9 @@ h1 {
   .activation-setting-row .activation-illustration { grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 120px; }
   .activation-setting-row .activation-illustration-button { width: 150px; }
   .activation-setting-row .activation-illustration-reverse { width: 120px; }
+  .activation-preview-reverse p { font-size: 9px; }
+  .activation-preview-reverse b { font-size: 11px; }
+  .activation-preview-reverse i { font-size: 8px; }
   .activation-preview-selection-button { top: 52px; left: 35%; width: 24px; height: 24px; border-radius: 8px; font-size: 11px; }
   .activation-preview-selection-arrow { top: 60px; left: calc(47.5% + 12px); width: 10px; height: 8px; }
   .activation-preview-button-result { left: 60%; }

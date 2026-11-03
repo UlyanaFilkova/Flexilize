@@ -25,7 +25,8 @@ describe("options page", () => {
     expect(screen.getByRole("button", {name: /^Активация$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Языки$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Звук$/})).toBeTruthy();
-    expect(screen.getByRole("button", {name: /^Сохранение$/})).toBeTruthy();
+    expect(screen.queryByRole("button", {name: /^Сохранение$/})).toBeNull();
+    expect(screen.getByRole("button", {name: /^Расширенные настройки$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Как пользоваться/})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
     expect(screen.getByRole("heading", {name: "Звук"})).toBeTruthy();
@@ -85,9 +86,9 @@ describe("options page", () => {
   });
 
   it("can hide the selection translation window", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Активация$/}));
-    const groups = ["Перевод", "Перевод по выделению", "Способы запуска", "Переводчик"];
-    expect(groups.map((name) => screen.getByRole("region", {name}).querySelectorAll(".setting-row").length)).toEqual([1, 2, 3, 3]);
+    await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
+    expect(screen.getByRole("region", {name: "Перевод"}).querySelectorAll(".setting-row").length).toBe(1);
+    expect(screen.getByRole("region", {name: "Настройки сохранения"}).querySelectorAll(".setting-row").length).toBe(1);
     await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
   });
