@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "נהל את חלון התרגום ושמירת ההיסטוריה.",
   "ui.additional-options": "אפשרויות נוספות",
   "ui.interface": "ממשק",
-  "ui.history-saving": "שמירת היסטוריה"
+  "ui.history-saving": "שמירת היסטוריה",
+  "ui.context-copy": "העתק",
+  "ui.search-the-web": "חיפוש באינטרנט"
 }

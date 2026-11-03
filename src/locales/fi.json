@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Hallinnoi käännösikkunaa ja historian tallentamista.",
   "ui.additional-options": "Lisäasetukset",
   "ui.interface": "Liitäntä",
-  "ui.history-saving": "Historian tallennus"
+  "ui.history-saving": "Historian tallennus",
+  "ui.context-copy": "Kopioi",
+  "ui.search-the-web": "Hae verkosta"
 }

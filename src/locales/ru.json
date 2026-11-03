@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Управляйте показом окна перевода и сохранением истории.",
   "ui.additional-options": "Дополнительные параметры",
   "ui.interface": "Интерфейс",
-  "ui.history-saving": "Сохранение истории"
+  "ui.history-saving": "Сохранение истории",
+  "ui.context-copy": "Копировать",
+  "ui.search-the-web": "Искать в интернете"
 }

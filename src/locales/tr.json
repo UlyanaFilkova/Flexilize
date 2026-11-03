@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Çeviri penceresini ve geçmiş kaydetmeyi yönetin.",
   "ui.additional-options": "Ek seçenekler",
   "ui.interface": "Arayüz",
-  "ui.history-saving": "Geçmişi kaydetme"
+  "ui.history-saving": "Geçmişi kaydetme",
+  "ui.context-copy": "Kopyala",
+  "ui.search-the-web": "Webde ara"
 }

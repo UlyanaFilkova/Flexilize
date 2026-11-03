@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Zarządzaj oknem tłumaczeń i zapisywaniem historii.",
   "ui.additional-options": "Dodatkowe opcje",
   "ui.interface": "Interfejs",
-  "ui.history-saving": "Zapisywanie historii"
+  "ui.history-saving": "Zapisywanie historii",
+  "ui.context-copy": "Kopiuj",
+  "ui.search-the-web": "Szukaj w internecie"
 }

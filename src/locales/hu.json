@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Kezelje a fordítási ablakot és az előzmények mentését.",
   "ui.additional-options": "További lehetőségek",
   "ui.interface": "Interfész",
-  "ui.history-saving": "Előzmények mentése"
+  "ui.history-saving": "Előzmények mentése",
+  "ui.context-copy": "Másolás",
+  "ui.search-the-web": "Keresés az interneten"
 }

@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Upravljanje okna za prevajanje in shranjevanje zgodovine.",
   "ui.additional-options": "Dodatne možnosti",
   "ui.interface": "Vmesnik",
-  "ui.history-saving": "Shranjevanje zgodovine"
+  "ui.history-saving": "Shranjevanje zgodovine",
+  "ui.context-copy": "Kopiraj",
+  "ui.search-the-web": "Išči v spletu"
 }

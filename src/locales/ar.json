@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "إدارة نافذة الترجمة وحفظ التاريخ.",
   "ui.additional-options": "خيارات إضافية",
   "ui.interface": "واجهة",
-  "ui.history-saving": "حفظ التاريخ"
+  "ui.history-saving": "حفظ التاريخ",
+  "ui.context-copy": "نسخ",
+  "ui.search-the-web": "البحث في الويب"
 }

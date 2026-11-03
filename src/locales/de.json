@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Verwalten Sie das Übersetzungsfenster und die Verlaufsspeicherung.",
   "ui.additional-options": "Zusätzliche Optionen",
   "ui.interface": "Schnittstelle",
-  "ui.history-saving": "Verlaufsspeicherung"
+  "ui.history-saving": "Verlaufsspeicherung",
+  "ui.context-copy": "Kopieren",
+  "ui.search-the-web": "Im Web suchen"
 }

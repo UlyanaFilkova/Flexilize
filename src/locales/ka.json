@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "მართეთ თარგმანის ფანჯარა და ისტორიის შენახვა.",
   "ui.additional-options": "დამატებითი ვარიანტები",
   "ui.interface": "ინტერფეისი",
-  "ui.history-saving": "ისტორიის შენახვა"
+  "ui.history-saving": "ისტორიის შენახვა",
+  "ui.context-copy": "კოპირება",
+  "ui.search-the-web": "ვებში ძიება"
 }

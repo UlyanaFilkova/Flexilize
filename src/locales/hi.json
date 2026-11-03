@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "अनुवाद विंडो और इतिहास सहेजने का प्रबंधन करें।",
   "ui.additional-options": "अतिरिक्त विकल्प",
   "ui.interface": "इंटरफ़ेस",
-  "ui.history-saving": "इतिहास सहेजा जा रहा है"
+  "ui.history-saving": "इतिहास सहेजा जा रहा है",
+  "ui.context-copy": "कॉपी करें",
+  "ui.search-the-web": "वेब पर खोजें"
 }

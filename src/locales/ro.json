@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Gestionați fereastra de traducere și salvarea istoricului.",
   "ui.additional-options": "Opțiuni suplimentare",
   "ui.interface": "Interfață",
-  "ui.history-saving": "Salvarea istoricului"
+  "ui.history-saving": "Salvarea istoricului",
+  "ui.context-copy": "Copiază",
+  "ui.search-the-web": "Caută pe web"
 }

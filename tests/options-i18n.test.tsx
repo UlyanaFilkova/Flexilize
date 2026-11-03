@@ -17,6 +17,7 @@ describe("English options interface", () => {
 
   it("localizes navigation, settings, language names, and help", async () => {
     expect(screen.getByRole("button", {name: /^Activation$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Advanced settings$/})).toBeTruthy();
     expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
     await userEvent.click(screen.getByRole("button", {name: /^Languages$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
@@ -33,7 +34,7 @@ describe("English options interface", () => {
     }
     expect(screen.getAllByRole("option", {name: "German"})).toHaveLength(3);
     expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
-    for (const section of ["Activation", "Sound", "Saving"]) {
+    for (const section of ["Activation", "Sound", "Advanced settings"]) {
       await userEvent.click(screen.getByRole("button", {name: new RegExp(`^${section}$`)}));
       await waitFor(() => expect(screen.getByRole("heading", {name: section})).toBeTruthy());
       expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);

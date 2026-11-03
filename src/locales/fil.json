@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Pamahalaan ang window ng pagsasalin at pag-save ng kasaysayan.",
   "ui.additional-options": "Mga karagdagang opsyon",
   "ui.interface": "Interface",
-  "ui.history-saving": "Pag-save ng kasaysayan"
+  "ui.history-saving": "Pag-save ng kasaysayan",
+  "ui.context-copy": "Kopyahin",
+  "ui.search-the-web": "Maghanap sa web"
 }

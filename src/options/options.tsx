@@ -92,6 +92,12 @@ function settingsSectionFromHash() {
   return settingsSectionIds.has(section) ? section : "overview";
 }
 
+function resetScrollPosition() {
+  if (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop) {
+    window.scrollTo(0, 0);
+  }
+}
+
 function App() {
   const initialRoute = routeFromHash();
   const [page, setPage] = useState<Page>(initialRoute === "help" ? "help" : initialRoute === "settings" ? "settings" : "history");
@@ -117,21 +123,21 @@ function App() {
   }, [notice]);
 
   const openHistorySection = (section: HistorySection) => {
-    window.scrollTo(0, 0);
+    resetScrollPosition();
     setPage("history");
     setHistorySection(section);
     window.history.replaceState(null, "", routeHashes[section === "records" ? "history" : "export"]);
   };
 
   const openSettingsSection = (section: string) => {
-    window.scrollTo(0, 0);
+    resetScrollPosition();
     setPage("settings");
     setSettingsSection(section);
     window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
   };
 
   const openHelp = () => {
-    window.scrollTo(0, 0);
+    resetScrollPosition();
     setPage("help");
     window.history.replaceState(null, "", routeHashes.help);
   };
@@ -572,14 +578,14 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
           <div className="activation-preview-translator-backdrop">
             <div className="activation-preview-translator">
               <div className="activation-preview-translator-title"><strong>Context Translator</strong><b>{shortcut}</b><i>×</i></div>
-              <div className="activation-preview-languages"><i>Русский</i><b>⇄</b><i>English</i></div>
+              <div className="activation-preview-languages"><i>Russian</i><b>⇄</b><i>English</i></div>
               <div className="activation-preview-panes"><div /><div /></div>
             </div>
           </div>
         ) : kind === "reverse" ? (
           <div className="activation-preview-reverse">
-            <p><span>Русский</span><b>→</b><span>English</span></p>
-            <p><span>English</span><b>→</b><span>Русский</span></p>
+            <p><span>Russian</span><b>→</b><span>English</span></p>
+            <p><span>English</span><b>→</b><span>Russian</span></p>
             <i>{shortcut}</i>
           </div>
         ) : (
@@ -591,13 +597,13 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
               <i className="line-long" /><i className="line-medium" />
               <i className="line-short" />
             </div>
-            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong>Context</strong><span /><b>контекст</b></div>}
+            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong>Context</strong><span /><b>{translate("Контекст")}</b></div>}
             {kind === "button" && <>
-              <div className="activation-preview-selection-button"><strong>A<span>а</span></strong></div>
+              <div className="activation-preview-selection-button"><strong>A<span>a</span></strong></div>
               <svg className="activation-preview-selection-arrow" viewBox="0 0 24 12" aria-hidden="true">
                 <path d="M1 6h21M17 1l5 5-5 5" />
               </svg>
-              <div className="activation-preview-result activation-preview-button-result"><strong>Context</strong><span /><b>контекст</b></div>
+              <div className="activation-preview-result activation-preview-button-result"><strong>Context</strong><span /><b>{translate("Контекст")}</b></div>
             </>}
             {kind === "context" && <div className="activation-preview-context-menu"><span>Копировать</span><b><img className="activation-preview-brand-icon" src="../icons/icon-32.png" alt="" />Context Translator</b><span>Искать в интернете</span></div>}
             {kind === "shortcut" && <div className="activation-preview-shortcut">{shortcut.split(" + ").map((key) => <span key={key}>{key}</span>)}<i>↵</i></div>}

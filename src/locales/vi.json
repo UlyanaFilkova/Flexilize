@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Quản lý cửa sổ dịch và lưu lịch sử.",
   "ui.additional-options": "Tùy chọn bổ sung",
   "ui.interface": "Giao diện",
-  "ui.history-saving": "Lưu lịch sử"
+  "ui.history-saving": "Lưu lịch sử",
+  "ui.context-copy": "Sao chép",
+  "ui.search-the-web": "Tìm kiếm trên web"
 }

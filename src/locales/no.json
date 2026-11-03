@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Administrer oversettelsesvinduet og logglagring.",
   "ui.additional-options": "Tilleggsalternativer",
   "ui.interface": "Grensesnitt",
-  "ui.history-saving": "Logglagring"
+  "ui.history-saving": "Logglagring",
+  "ui.context-copy": "Kopier",
+  "ui.search-the-web": "Søk på nettet"
 }

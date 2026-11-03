@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Manage the translation window and history saving.",
   "ui.additional-options": "Additional options",
   "ui.interface": "Interface",
-  "ui.history-saving": "History saving"
+  "ui.history-saving": "History saving",
+  "ui.context-copy": "Copy",
+  "ui.search-the-web": "Search the web"
 }

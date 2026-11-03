@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Διαχειριστείτε το παράθυρο μετάφρασης και την αποθήκευση ιστορικού.",
   "ui.additional-options": "Πρόσθετες επιλογές",
   "ui.interface": "Διεπαφή",
-  "ui.history-saving": "Αποθήκευση ιστορικού"
+  "ui.history-saving": "Αποθήκευση ιστορικού",
+  "ui.context-copy": "Αντιγραφή",
+  "ui.search-the-web": "Αναζήτηση στον ιστό"
 }

@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "管理翻譯視窗和歷史保存。 ",
   "ui.additional-options": "其他選項",
   "ui.interface": "介面",
-  "ui.history-saving": "歷史保存"
+  "ui.history-saving": "歷史保存",
+  "ui.context-copy": "複製",
+  "ui.search-the-web": "搜尋網路"
 }

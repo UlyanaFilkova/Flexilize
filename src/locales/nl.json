@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Beheer het vertaalvenster en het opslaan van geschiedenis.",
   "ui.additional-options": "Extra opties",
   "ui.interface": "Interface",
-  "ui.history-saving": "Geschiedenis opslaan"
+  "ui.history-saving": "Geschiedenis opslaan",
+  "ui.context-copy": "Kopiëren",
+  "ui.search-the-web": "Zoeken op internet"
 }

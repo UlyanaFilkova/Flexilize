@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Menaxho dritaren e përkthimit dhe ruajtjen e historisë.",
   "ui.additional-options": "Opsione shtesë",
   "ui.interface": "Ndërfaqja",
-  "ui.history-saving": "Ruajtja e historisë"
+  "ui.history-saving": "Ruajtja e historisë",
+  "ui.context-copy": "Kopjo",
+  "ui.search-the-web": "Kërko në ueb"
 }

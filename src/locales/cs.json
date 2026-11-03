@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Správa okna překladu a ukládání historie.",
   "ui.additional-options": "Další možnosti",
   "ui.interface": "Rozhraní",
-  "ui.history-saving": "Ukládání historie"
+  "ui.history-saving": "Ukládání historie",
+  "ui.context-copy": "Kopírovat",
+  "ui.search-the-web": "Hledat na webu"
 }

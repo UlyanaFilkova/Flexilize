@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "پنجره ترجمه و ذخیره تاریخچه را مدیریت کنید.",
   "ui.additional-options": "گزینه های اضافی",
   "ui.interface": "رابط",
-  "ui.history-saving": "صرفه جویی در تاریخچه"
+  "ui.history-saving": "صرفه جویی در تاریخچه",
+  "ui.context-copy": "کپی",
+  "ui.search-the-web": "جستجو در وب"
 }

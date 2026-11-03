@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "翻訳ウィンドウと履歴の保存を管理します。",
   "ui.additional-options": "追加オプション",
   "ui.interface": "インターフェース",
-  "ui.history-saving": "履歴の保存"
+  "ui.history-saving": "履歴の保存",
+  "ui.context-copy": "コピー",
+  "ui.search-the-web": "ウェブを検索"
 }

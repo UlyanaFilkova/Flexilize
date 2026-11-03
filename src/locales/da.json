@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Administrer oversættelsesvinduet og lagring af historik.",
   "ui.additional-options": "Yderligere muligheder",
   "ui.interface": "Grænseflade",
-  "ui.history-saving": "Gemme historik"
+  "ui.history-saving": "Gemme historik",
+  "ui.context-copy": "Kopiér",
+  "ui.search-the-web": "Søg på nettet"
 }

@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Upravljajte prozorom prijevoda i spremanjem povijesti.",
   "ui.additional-options": "Dodatne opcije",
   "ui.interface": "Sučelje",
-  "ui.history-saving": "Spremanje povijesti"
+  "ui.history-saving": "Spremanje povijesti",
+  "ui.context-copy": "Kopiraj",
+  "ui.search-the-web": "Pretraži web"
 }

@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Kelola jendela terjemahan dan penyimpanan riwayat.",
   "ui.additional-options": "Opsi tambahan",
   "ui.interface": "Antarmuka",
-  "ui.history-saving": "Penyimpanan riwayat"
+  "ui.history-saving": "Penyimpanan riwayat",
+  "ui.context-copy": "Salin",
+  "ui.search-the-web": "Telusuri web"
 }

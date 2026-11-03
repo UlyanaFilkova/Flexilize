@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Administre la ventana de traducción y el guardado del historial.",
   "ui.additional-options": "Opciones adicionales",
   "ui.interface": "Interfaz",
-  "ui.history-saving": "Guardado del historial"
+  "ui.history-saving": "Guardado del historial",
+  "ui.context-copy": "Copiar",
+  "ui.search-the-web": "Buscar en la web"
 }

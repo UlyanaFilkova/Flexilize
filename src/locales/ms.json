@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Urus tetingkap terjemahan dan penjimatan sejarah.",
   "ui.additional-options": "Pilihan tambahan",
   "ui.interface": "Antara muka",
-  "ui.history-saving": "Penyimpanan sejarah"
+  "ui.history-saving": "Penyimpanan sejarah",
+  "ui.context-copy": "Salin",
+  "ui.search-the-web": "Cari di web"
 }

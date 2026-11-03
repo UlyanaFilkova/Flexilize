@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "번역 창 및 이력 저장을 관리합니다.",
   "ui.additional-options": "추가 옵션",
   "ui.interface": "인터페이스",
-  "ui.history-saving": "이력 저장"
+  "ui.history-saving": "이력 저장",
+  "ui.context-copy": "복사",
+  "ui.search-the-web": "웹 검색"
 }

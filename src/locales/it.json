@@ -411,5 +411,7 @@
   "ui.manage-translation-window-and-history-saving": "Gestisci la finestra di traduzione e il salvataggio della cronologia.",
   "ui.additional-options": "Opzioni aggiuntive",
   "ui.interface": "Interfaccia",
-  "ui.history-saving": "Salvataggio della cronologia"
+  "ui.history-saving": "Salvataggio della cronologia",
+  "ui.context-copy": "Copia",
+  "ui.search-the-web": "Cerca sul Web"
 }
