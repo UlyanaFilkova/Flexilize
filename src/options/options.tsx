@@ -1,5 +1,6 @@
 import {useEffect, useState, type ReactNode} from "react";
 import {createRoot} from "react-dom/client";
+import {useDropzone} from "react-dropzone";
 import type {ExportFormat} from "../export";
 import {
   clearTranslationRecords,
@@ -321,8 +322,8 @@ function ReviewView() {
 }
 
 const feedbackEndpoint = ((import.meta as ImportMeta & {env?: Record<string, string | undefined>}).env?.VITE_FEEDBACK_ENDPOINT || "").trim();
-const feedbackMaxFiles = 5;
-const feedbackMaxBytes = 8 * 1024 * 1024;
+const feedbackMaxFiles = 10;
+const feedbackMaxBytes = 20 * 1024 * 1024;
 
 function FeedbackForm() {
   const [message, setMessage] = useState("");
@@ -331,23 +332,35 @@ function FeedbackForm() {
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
 
-  const chooseFiles = (selection: FileList | null) => {
-    const selected = Array.from(selection || []);
-    if (selected.length > feedbackMaxFiles) {
-      setStatus(translate("Можно приложить не более 5 скриншотов."));
-      return;
+  const onDrop = (accepted: File[], rejected: Array<{errors: Array<{code: string}>}>) => {
+    if (rejected.length) {
+      const codes = rejected.flatMap((item) => item.errors.map((error) => error.code));
+      setStatus(codes.includes("file-too-large")
+        ? translate("Общий размер скриншотов не должен превышать 20 МБ.")
+        : codes.includes("too-many-files")
+          ? translate("Можно приложить не более 10 скриншотов.")
+          : translate("Прикрепляйте изображения PNG, JPEG или WebP."));
     }
-    if (selected.some((file) => !["image/png", "image/jpeg", "image/webp"].includes(file.type))) {
-      setStatus(translate("Прикрепляйте изображения PNG, JPEG или WebP."));
+    if (!accepted.length) return;
+    const selected = [...files, ...accepted];
+    if (selected.length > feedbackMaxFiles) {
+      setStatus(translate("Можно приложить не более 10 скриншотов."));
       return;
     }
     if (selected.reduce((total, file) => total + file.size, 0) > feedbackMaxBytes) {
-      setStatus(translate("Общий размер скриншотов не должен превышать 8 МБ."));
+      setStatus(translate("Общий размер скриншотов не должен превышать 20 МБ."));
       return;
     }
     setFiles(selected);
     setStatus("");
   };
+  const {getRootProps, getInputProps, isDragActive, isDragReject} = useDropzone({
+    onDrop,
+    accept: {"image/png": [], "image/jpeg": [], "image/webp": []},
+    maxFiles: feedbackMaxFiles,
+    maxSize: feedbackMaxBytes,
+    multiple: true
+  });
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -378,29 +391,54 @@ function FeedbackForm() {
       <div className="feedback-icon"><MessageIcon /></div>
       <div className="feedback-content">
         <h2>{translate("Обратная связь")}</h2>
-        <p>{translate("Напишите нам о проблеме или предложении. При желании приложите скриншоты.")}</p>
+        <p>{translate("Опишите проблему или предложение. При желании приложите скриншоты.")}</p>
         <form onSubmit={(event) => void submit(event)}>
           <label>{translate("Сообщение")}
-            <textarea required rows={5} maxLength={5000} value={message} onChange={(event) => setMessage(event.target.value)} />
+            <textarea required rows={2} maxLength={5000} value={message} onChange={(event) => setMessage(event.target.value)} onInput={(event) => {
+              const textarea = event.currentTarget;
+              textarea.style.height = "auto";
+              textarea.style.height = `${textarea.scrollHeight}px`;
+            }} />
           </label>
-          <label>{translate("Электронная почта для ответа (необязательно)")}
+          <label>{translate("Электронная почта / контактная информация для получения ответа (необязательно)")}
             <input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
           </label>
           <label className="feedback-honeypot" aria-hidden="true" tabIndex={-1}>Website
             <input tabIndex={-1} autoComplete="off" value="" onChange={() => undefined} />
           </label>
-          <label>{translate("Скриншоты (до 5 файлов, PNG, JPEG или WebP; всего до 8 МБ)")}
-            <input type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={(event) => chooseFiles(event.target.files)} />
-          </label>
-          {files.length > 0 && <p className="feedback-files">{files.map((file) => file.name).join(", ")}</p>}
-          <button className="review-store-action" type="submit" disabled={!feedbackEndpoint || sending || !message.trim()}>
-            {sending ? translate("Отправка…") : translate("Отправить сообщение")}
-          </button>
-          {!feedbackEndpoint && <p className="feedback-note">{translate("Отправка станет доступна после настройки защищённого сервера.")}</p>}
+          <div className="feedback-upload-label">{translate("Изображения")}</div>
+          <div {...getRootProps({className: `feedback-dropzone${isDragActive ? " is-drag-active" : ""}${isDragReject ? " is-drag-reject" : ""}`})}>
+            <input {...getInputProps()} />
+            <UploadIcon />
+            <strong>{isDragActive ? translate("Перетащите файлы сюда") : translate("Перетащите изображения сюда или нажмите, чтобы выбрать")}</strong>
+            <span>{translate("PNG, JPEG или WebP · до 10 файлов · всего до 20 МБ")}</span>
+          </div>
           {status && <p className="feedback-status" role="status">{status}</p>}
+          {files.length > 0 && <div className="feedback-preview-grid">
+            {files.map((file, index) => <ScreenshotPreview key={`${file.name}-${file.size}-${file.lastModified}-${index}`} file={file} onRemove={() => setFiles((current) => current.filter((item) => item !== file))} />)}
+          </div>}
+          <button className="review-store-action" type="submit" disabled={!feedbackEndpoint || sending || !message.trim()}>
+            {sending ? translate("Отправка…") : translate("Отправить")}
+          </button>
         </form>
       </div>
     </section>
+  );
+}
+
+function ScreenshotPreview({file, onRemove}: {file: File; onRemove: () => void}) {
+  const [previewUrl, setPreviewUrl] = useState("");
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+  return (
+    <div className="feedback-preview-item">
+      {previewUrl && <img src={previewUrl} alt={file.name} />}
+      <span title={file.name}>{file.name}</span>
+      <button type="button" aria-label={`${translate("Удалить файл")}: ${file.name}`} onClick={onRemove}><CloseIcon /></button>
+    </div>
   );
 }
 
@@ -1365,6 +1403,7 @@ function TrashIcon() { return <Icon><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M
 function HelpIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.5 2.1c-.8.4-1.2 1-1.2 1.9M12 17h.01"/></Icon>; }
 function StarIcon() { return <Icon><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></Icon>; }
 function MessageIcon() { return <Icon><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.6-3.2A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h.01M12.5 11.5h.01M16.5 11.5h.01"/></Icon>; }
+function UploadIcon() { return <Icon><path d="M12 16V4M7 9l5-5 5 5M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></Icon>; }
 function ReadingIcon() { return <Icon><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4V5.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v18a3 3 0 0 1 3-3h3V5.5Z"/></Icon>; }
 function KeyboardIcon() { return <Icon><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M18 10h.01M7 14h.01M10 14h7"/></Icon>; }
 function CursorIcon() { return <Icon><path d="m5 3 6.5 16 2.2-5.3L19 11.5 5 3Z"/></Icon>; }

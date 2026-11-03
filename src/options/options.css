@@ -274,15 +274,28 @@ a:focus-visible {
 
 .feedback-icon { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 14px; background: #eef3ff; color: #315be8; }
 .feedback-icon svg { width: 23px; height: 23px; }
-.feedback-card h2 { margin: 2px 0 8px; color: #273245; font-size: 18px; }
+.feedback-card h2 { margin: 2px 0 8px; color: #273245; font-size: 20px; }
 .feedback-content > p, .feedback-note, .feedback-status, .feedback-files { color: #69758a; font-size: 13px; line-height: 1.55; }
 .feedback-content > p { margin: 0; }
 .feedback-card form { display: grid; gap: 15px; margin-top: 18px; }
-.feedback-card form label { display: grid; gap: 7px; color: #344054; font-size: 13px; font-weight: 600; }
-.feedback-card textarea, .feedback-card input[type="email"] { width: 100%; box-sizing: border-box; padding: 11px 12px; border: 1px solid #d7dce5; border-radius: 9px; color: #273245; font: inherit; font-weight: 400; }
-.feedback-card textarea { resize: vertical; }
+.feedback-card form label { display: grid; gap: 8px; color: #344054; font-size: 15px; font-weight: 600; }
+.feedback-card textarea, .feedback-card input[type="email"] { width: 100%; box-sizing: border-box; padding: 12px 13px; border: 1px solid #d7dce5; border-radius: 9px; color: #273245; font-family: inherit; font-size: 16px; font-weight: 400; line-height: 1.5; }
+.feedback-card textarea { min-height: 60px; overflow-y: hidden; resize: none; }
 .feedback-card input[type="file"] { max-width: 100%; font-size: 12px; font-weight: 400; }
-.feedback-card .review-store-action { justify-self: start; margin-top: 0; border: 0; cursor: pointer; font: inherit; }
+.feedback-upload-label { color: #344054; font-size: 15px; font-weight: 600; }
+.feedback-dropzone { display: grid; min-height: 84px; place-content: center; justify-items: center; gap: 5px; padding: 12px; border: 1.5px dashed #c8d0df; border-radius: 12px; background: #fafbfe; color: #69758a; text-align: center; cursor: pointer; transition: border-color .16s ease, background .16s ease, color .16s ease; }
+.feedback-dropzone svg { width: 20px; height: 20px; color: #315be8; }
+.feedback-dropzone strong { color: #344054; font-size: 13px; font-weight: 600; }
+.feedback-dropzone span { font-size: 11px; }
+.feedback-dropzone.is-drag-active { border-color: #315be8; background: #f0f4ff; }
+.feedback-dropzone.is-drag-reject { border-color: #d04444; background: #fff4f4; }
+.feedback-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+.feedback-preview-item { position: relative; display: grid; min-width: 0; gap: 6px; padding: 6px; border: 1px solid #e4e8ef; border-radius: 10px; background: #fff; }
+.feedback-preview-item img { width: 100%; height: 84px; border-radius: 6px; background: #f1f3f7; object-fit: cover; }
+.feedback-preview-item > span { overflow: hidden; padding: 0 3px 2px; color: #596579; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.feedback-preview-item button { position: absolute; top: 10px; right: 10px; display: grid; width: 26px; height: 26px; place-items: center; border: 0; border-radius: 7px; background: rgba(31, 41, 55, .78); color: #fff; cursor: pointer; }
+.feedback-preview-item button svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; }
+.feedback-card .review-store-action { justify-self: start; margin-top: 0; border: 0; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; }
 .feedback-card .review-store-action:disabled { cursor: not-allowed; opacity: .55; transform: none; }
 .feedback-card .feedback-note, .feedback-card .feedback-status, .feedback-card .feedback-files { margin: 0; }
 .feedback-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
