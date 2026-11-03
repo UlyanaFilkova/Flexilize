@@ -183,9 +183,13 @@ a:focus-visible {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   align-items: center;
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
   gap: 18px;
   margin-top: 24px;
   padding: 26px;
+  padding-right: 34px;
   border: 1px solid #e4e8ef;
   border-radius: 17px;
   background: #fff;
@@ -260,13 +264,19 @@ a:focus-visible {
   height: 16px;
 }
 
+.review-rating-star { color: #ffd166; font-size: 19px; line-height: 1; }
+
 .feedback-card {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   align-items: start;
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
   gap: 18px;
   margin-top: 28px;
   padding: 24px;
+  padding-right: 32px;
   border: 1px solid #e4e8ef;
   border-radius: 17px;
   background: #fff;
@@ -280,7 +290,7 @@ a:focus-visible {
 .feedback-card form { display: grid; gap: 15px; margin-top: 18px; }
 .feedback-card form label { display: grid; gap: 8px; color: #344054; font-size: 15px; font-weight: 600; }
 .feedback-card textarea, .feedback-card input[type="email"] { width: 100%; box-sizing: border-box; padding: 12px 13px; border: 1px solid #d7dce5; border-radius: 9px; color: #273245; font-family: inherit; font-size: 16px; font-weight: 400; line-height: 1.5; }
-.feedback-card textarea { min-height: 60px; overflow-y: hidden; resize: none; }
+.feedback-card textarea { min-height: 60px; overflow-y: auto; resize: vertical; }
 .feedback-card input[type="file"] { max-width: 100%; font-size: 12px; font-weight: 400; }
 .feedback-upload-label { color: #344054; font-size: 15px; font-weight: 600; }
 .feedback-dropzone { display: grid; min-height: 84px; place-content: center; justify-items: center; gap: 5px; padding: 12px; border: 1.5px dashed #c8d0df; border-radius: 12px; background: #fafbfe; color: #69758a; text-align: center; cursor: pointer; transition: border-color .16s ease, background .16s ease, color .16s ease; }
@@ -2386,7 +2396,7 @@ h1 {
 @media (max-width: 680px) {
   .review-store-copy { grid-template-columns: 1fr; gap: 14px; }
   .review-store-action { justify-self: start; }
-  .feedback-card { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 20px 16px; }
+  .feedback-card { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 20px 22px 20px 16px; }
   .feedback-icon { width: 40px; height: 40px; border-radius: 12px; }
   .topbar { position: sticky; height: 64px; justify-content: space-between; padding-right: 16px; padding-left: 16px; }
   .brand { gap: 10px; min-width: 0; }

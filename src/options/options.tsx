@@ -312,7 +312,8 @@ function ReviewView() {
         <div className="review-store-copy">
           <h2>{translate("Оцените Context Translator")}</h2>
           <a className="review-store-action" href={store.url} target="_blank" rel="noreferrer">
-            {translate("Оценить в магазине расширений")}
+            <span className="review-rating-star" aria-hidden="true">★</span>
+            {translate("Оценить")}
           </a>
         </div>
       </section>
@@ -396,8 +397,7 @@ function FeedbackForm() {
           <label>{translate("Сообщение")}
             <textarea required rows={2} maxLength={5000} value={message} onChange={(event) => setMessage(event.target.value)} onInput={(event) => {
               const textarea = event.currentTarget;
-              textarea.style.height = "auto";
-              textarea.style.height = `${textarea.scrollHeight}px`;
+              textarea.style.height = `${Math.max(textarea.scrollHeight, textarea.clientHeight)}px`;
             }} />
           </label>
           <label>{translate("Электронная почта / контактная информация для получения ответа (необязательно)")}
