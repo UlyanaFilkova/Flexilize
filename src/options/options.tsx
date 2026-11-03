@@ -297,8 +297,8 @@ function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => 
     <div className="settings-overview">
       <section className="settings-banner">
         <div className="settings-banner-copy">
-          <span className="settings-banner-kicker">Персональная настройка</span>
-          <h2>Переводчик, который работает по вашим правилам</h2>
+          <span className="settings-banner-kicker">Персональные настройки</span>
+          <h2>Context Translator</h2>
           <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
           <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
         </div>

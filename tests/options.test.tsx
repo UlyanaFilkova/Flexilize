@@ -33,7 +33,7 @@ describe("options page", () => {
   });
 
   it("opens settings sections from the overview", async () => {
-    expect(screen.getByRole("heading", {name: "Переводчик, который работает по вашим правилам"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Context Translator"})).toBeTruthy();
     expect(screen.getByRole("region", {name: "Разделы настроек"})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /Языки.*Языки и интерфейс/}));
     expect(screen.getByRole("heading", {name: "Языки"})).toBeTruthy();
