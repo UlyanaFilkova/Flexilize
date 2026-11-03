@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Обратный перевод ({shortcut})",
   "ui.character-limit-count": "Достигнут лимит в {count} символов.",
   "ui.set-up-activation": "Настроить активацию",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "При удалении данных расширения параметры вернутся к значениям по умолчанию."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "При удалении данных расширения параметры вернутся к значениям по умолчанию.",
+  "ui.advanced-settings": "Расширенные настройки",
+  "ui.manage-translation-window-and-history-saving": "Управляйте показом окна перевода и сохранением истории.",
+  "ui.additional-options": "Дополнительные параметры",
+  "ui.interface": "Интерфейс",
+  "ui.history-saving": "Сохранение истории"
 }

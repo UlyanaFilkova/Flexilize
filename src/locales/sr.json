@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Обрнути превод ({shortcut})",
   "ui.character-limit-count": "Ограничење од {count} знакова је достигнуто.",
   "ui.set-up-activation": "Подесите активацију",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Ако се подаци екстензије избришу, подешавања се враћају на подразумеване вредности."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Ако се подаци екстензије избришу, подешавања се враћају на подразумеване вредности.",
+  "ui.advanced-settings": "Напредна подешавања",
+  "ui.manage-translation-window-and-history-saving": "Управљајте прозором превода и чувањем историје.",
+  "ui.additional-options": "Додатне опције",
+  "ui.interface": "Интерфејс",
+  "ui.history-saving": "Чување историје"
 }

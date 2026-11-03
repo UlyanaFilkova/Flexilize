@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Përkthimi i kundërt ({shortcut})",
   "ui.character-limit-count": "Kufiri i {count} karaktereve është arritur.",
   "ui.set-up-activation": "Konfiguro aktivizimin",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Nëse të dhënat e shtesës fshihen, cilësimet kthehen në standardet e tyre."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Nëse të dhënat e shtesës fshihen, cilësimet kthehen në standardet e tyre.",
+  "ui.advanced-settings": "Cilësimet e avancuara",
+  "ui.manage-translation-window-and-history-saving": "Menaxho dritaren e përkthimit dhe ruajtjen e historisë.",
+  "ui.additional-options": "Opsione shtesë",
+  "ui.interface": "Ndërfaqja",
+  "ui.history-saving": "Ruajtja e historisë"
 }

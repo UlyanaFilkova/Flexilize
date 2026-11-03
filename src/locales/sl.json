@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Obratno prevajanje ({shortcut})",
   "ui.character-limit-count": "Dosežena je omejitev {count} znakov.",
   "ui.set-up-activation": "Nastavitev aktivacije",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Če so podatki razširitve izbrisani, se nastavitve vrnejo na privzete."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Če so podatki razširitve izbrisani, se nastavitve vrnejo na privzete.",
+  "ui.advanced-settings": "Napredne nastavitve",
+  "ui.manage-translation-window-and-history-saving": "Upravljanje okna za prevajanje in shranjevanje zgodovine.",
+  "ui.additional-options": "Dodatne možnosti",
+  "ui.interface": "Vmesnik",
+  "ui.history-saving": "Shranjevanje zgodovine"
 }

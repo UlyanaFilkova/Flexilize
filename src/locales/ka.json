@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "შებრუნებული თარგმანი ({shortcut})",
   "ui.character-limit-count": "მიღწეულია {count} სიმბოლოს ლიმიტი.",
   "ui.set-up-activation": "გააქტიურების დაყენება",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "თუ გაფართოების მონაცემები წაიშლება, პარამეტრები უბრუნდება ნაგულისხმევს."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "თუ გაფართოების მონაცემები წაიშლება, პარამეტრები უბრუნდება ნაგულისხმევს.",
+  "ui.advanced-settings": "გაფართოებული პარამეტრები",
+  "ui.manage-translation-window-and-history-saving": "მართეთ თარგმანის ფანჯარა და ისტორიის შენახვა.",
+  "ui.additional-options": "დამატებითი ვარიანტები",
+  "ui.interface": "ინტერფეისი",
+  "ui.history-saving": "ისტორიის შენახვა"
 }

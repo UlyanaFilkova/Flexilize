@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "逆翻訳 ({shortcut})",
   "ui.character-limit-count": "{count} 文字の制限に達しました。",
   "ui.set-up-activation": "アクティベーションの設定",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "拡張データを削除すると、設定はデフォルトに戻ります。"
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "拡張データを削除すると、設定はデフォルトに戻ります。",
+  "ui.advanced-settings": "詳細設定",
+  "ui.manage-translation-window-and-history-saving": "翻訳ウィンドウと履歴の保存を管理します。",
+  "ui.additional-options": "追加オプション",
+  "ui.interface": "インターフェース",
+  "ui.history-saving": "履歴の保存"
 }

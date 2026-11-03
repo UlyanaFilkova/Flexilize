@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Omgekeerde vertaling ({shortcut})",
   "ui.character-limit-count": "De limiet van {count} tekens is bereikt.",
   "ui.set-up-activation": "Activering instellen",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Als de extensiegegevens worden verwijderd, worden de instellingen teruggezet naar de standaardwaarden."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Als de extensiegegevens worden verwijderd, worden de instellingen teruggezet naar de standaardwaarden.",
+  "ui.advanced-settings": "Geavanceerde instellingen",
+  "ui.manage-translation-window-and-history-saving": "Beheer het vertaalvenster en het opslaan van geschiedenis.",
+  "ui.additional-options": "Extra opties",
+  "ui.interface": "Interface",
+  "ui.history-saving": "Geschiedenis opslaan"
 }

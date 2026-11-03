@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Traducción inversa ({shortcut})",
   "ui.character-limit-count": "Se ha alcanzado el límite de {count} caracteres.",
   "ui.set-up-activation": "Configurar la activación",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Si se eliminan los datos de la extensión, la configuración vuelve a sus valores predeterminados."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Si se eliminan los datos de la extensión, la configuración vuelve a sus valores predeterminados.",
+  "ui.advanced-settings": "Configuraciones avanzadas",
+  "ui.manage-translation-window-and-history-saving": "Administre la ventana de traducción y el guardado del historial.",
+  "ui.additional-options": "Opciones adicionales",
+  "ui.interface": "Interfaz",
+  "ui.history-saving": "Guardado del historial"
 }

@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Ters çeviri ({shortcut})",
   "ui.character-limit-count": "{count} karakter sınırına ulaşıldı.",
   "ui.set-up-activation": "Aktivasyonu ayarlayın",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Uzantı verileri silinirse ayarlar varsayılan değerlerine döner."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Uzantı verileri silinirse ayarlar varsayılan değerlerine döner.",
+  "ui.advanced-settings": "Gelişmiş ayarlar",
+  "ui.manage-translation-window-and-history-saving": "Çeviri penceresini ve geçmiş kaydetmeyi yönetin.",
+  "ui.additional-options": "Ek seçenekler",
+  "ui.interface": "Arayüz",
+  "ui.history-saving": "Geçmişi kaydetme"
 }

@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Terjemahan songsang ({shortcut})",
   "ui.character-limit-count": "Had {count} aksara telah dicapai.",
   "ui.set-up-activation": "Sediakan pengaktifan",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jika data sambungan dipadamkan, tetapan kembali kepada lalainya."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jika data sambungan dipadamkan, tetapan kembali kepada lalainya.",
+  "ui.advanced-settings": "Tetapan lanjutan",
+  "ui.manage-translation-window-and-history-saving": "Urus tetingkap terjemahan dan penjimatan sejarah.",
+  "ui.additional-options": "Pilihan tambahan",
+  "ui.interface": "Antara muka",
+  "ui.history-saving": "Penyimpanan sejarah"
 }

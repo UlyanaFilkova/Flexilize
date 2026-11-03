@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Traducerea inversă ({shortcut})",
   "ui.character-limit-count": "Limita de {count} caractere a fost atinsă.",
   "ui.set-up-activation": "Configurați activarea",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Dacă datele de extensie sunt șterse, setările revin la valorile implicite."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Dacă datele de extensie sunt șterse, setările revin la valorile implicite.",
+  "ui.advanced-settings": "Setări avansate",
+  "ui.manage-translation-window-and-history-saving": "Gestionați fereastra de traducere și salvarea istoricului.",
+  "ui.additional-options": "Opțiuni suplimentare",
+  "ui.interface": "Interfață",
+  "ui.history-saving": "Salvarea istoricului"
 }

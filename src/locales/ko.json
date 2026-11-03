@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "역번역({shortcut})",
   "ui.character-limit-count": "최대 {count}자에 도달했습니다.",
   "ui.set-up-activation": "활성화 설정",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "확장 데이터가 삭제되면 설정이 기본값으로 돌아갑니다."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "확장 데이터가 삭제되면 설정이 기본값으로 돌아갑니다.",
+  "ui.advanced-settings": "고급 설정",
+  "ui.manage-translation-window-and-history-saving": "번역 창 및 이력 저장을 관리합니다.",
+  "ui.additional-options": "추가 옵션",
+  "ui.interface": "인터페이스",
+  "ui.history-saving": "이력 저장"
 }

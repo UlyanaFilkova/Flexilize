@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Obrácený překlad ({shortcut})",
   "ui.character-limit-count": "Byl dosažen limit {count} znaků.",
   "ui.set-up-activation": "Nastavit aktivaci",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Pokud jsou data rozšíření smazána, nastavení se vrátí na výchozí hodnoty."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Pokud jsou data rozšíření smazána, nastavení se vrátí na výchozí hodnoty.",
+  "ui.advanced-settings": "Pokročilá nastavení",
+  "ui.manage-translation-window-and-history-saving": "Správa okna překladu a ukládání historie.",
+  "ui.additional-options": "Další možnosti",
+  "ui.interface": "Rozhraní",
+  "ui.history-saving": "Ukládání historie"
 }

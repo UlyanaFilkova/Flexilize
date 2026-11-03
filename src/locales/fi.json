@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Käänteinen käännös ({shortcut})",
   "ui.character-limit-count": "{count} merkin raja on saavutettu.",
   "ui.set-up-activation": "Määritä aktivointi",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jos laajennustiedot poistetaan, asetukset palautuvat oletusarvoihinsa."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jos laajennustiedot poistetaan, asetukset palautuvat oletusarvoihinsa.",
+  "ui.advanced-settings": "Lisäasetukset",
+  "ui.manage-translation-window-and-history-saving": "Hallinnoi käännösikkunaa ja historian tallentamista.",
+  "ui.additional-options": "Lisäasetukset",
+  "ui.interface": "Liitäntä",
+  "ui.history-saving": "Historian tallennus"
 }

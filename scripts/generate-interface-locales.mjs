@@ -28,6 +28,7 @@ for (const entry of entries) {
 if (chunk.length) chunks.push(chunk);
 
 async function translateChunk(locale, values) {
+  const targetLanguage = locale;
   const protectedValues = values.map((value) => value.replaceAll("Context Translator", "ZXQBRANDQXZ"));
   if (locale === "ar" || locale === "fa") {
     const translated = [];

@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "Terjemahan terbalik ({shortcut})",
   "ui.character-limit-count": "Batas {count} karakter telah tercapai.",
   "ui.set-up-activation": "Siapkan aktivasi",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jika data ekstensi dihapus, pengaturan akan kembali ke default."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "Jika data ekstensi dihapus, pengaturan akan kembali ke default.",
+  "ui.advanced-settings": "Pengaturan lanjutan",
+  "ui.manage-translation-window-and-history-saving": "Kelola jendela terjemahan dan penyimpanan riwayat.",
+  "ui.additional-options": "Opsi tambahan",
+  "ui.interface": "Antarmuka",
+  "ui.history-saving": "Penyimpanan riwayat"
 }

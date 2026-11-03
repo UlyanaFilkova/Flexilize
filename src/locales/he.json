@@ -406,5 +406,10 @@
   "ui.reverse-translation-action-shortcut": "תרגום הפוך ({shortcut})",
   "ui.character-limit-count": "הגיעה למגבלה של {count} תווים.",
   "ui.set-up-activation": "הגדר הפעלה",
-  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "אם נתוני ההרחבה נמחקים, ההגדרות חוזרות לברירות המחדל שלהן."
+  "ui.if-extension-data-is-deleted-settings-return-to-defaults": "אם נתוני ההרחבה נמחקים, ההגדרות חוזרות לברירות המחדל שלהן.",
+  "ui.advanced-settings": "הגדרות מתקדמות",
+  "ui.manage-translation-window-and-history-saving": "נהל את חלון התרגום ושמירת ההיסטוריה.",
+  "ui.additional-options": "אפשרויות נוספות",
+  "ui.interface": "ממשק",
+  "ui.history-saving": "שמירת היסטוריה"
 }
