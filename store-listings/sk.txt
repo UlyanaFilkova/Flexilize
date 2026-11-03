@@ -1,0 +1,57 @@
+Rozšírenie automaticky rozpozná jazyk označeného textu na webovej stránke a zobrazí preklad, prepis výslovnosti, kontextový preklad celej vety alebo odseku a zvukové prehratie pôvodného textu. Prekladač môžete okamžite otvoriť klávesovou skratkou.
+
+NA ČO SLÚŽI?
+
+1) Okamžite preložte neznáme slová alebo celé vety. Označte text a zobrazte preklad bez kopírovania, otvárania novej karty či hľadania prekladača alebo slovníka.
+
+2) Preložte vlastný text bez opustenia aktuálnej karty. Klávesovou skratkou otvorte vyskakovacie okno prekladača a text napíšte alebo vložte.
+
+3) Učte sa jazyky v kontexte. Pri čítaní v inom jazyku si rýchlo overte neznáme slovo a pokračujte v čítaní. Slovo uložte spolu s kontextom, v ktorom sa objavilo, bez prerušovania čítania kvôli tvorbe zoznamu slovíčok.
+
+4) Vytvorte si vlastný slovník. Automaticky ukladajte užitočné informácie a exportujte ich do súboru na vytvorenie zoznamu slovíčok alebo študijných materiálov.
+
+MOŽNOSTI ROZŠÍRENIA
+
+FUNKCIE:
+
+- Automatické rozpoznanie jazyka označeného textu.
+- Preklad označeného slova, frázy, vety alebo odseku do zvoleného jazyka.
+- Samostatné okno prekladača na zadanie textu.
+- Preklad vety alebo odseku okolo označeného textu.
+- Zobrazenie prepisu výslovnosti a alternatívnych prekladov.
+- Vypočutie pôvodného textu.
+- Automatické alebo ručné ukladanie prekladov s kontextom, prepisom výslovnosti, URL adresou a názvom stránky.
+- Prehliadanie histórie až 5000 prekladov.
+- Úprava, mazanie a obnovenie záznamov alebo vymazanie celej histórie.
+- Export celej histórie.
+- Lokálne ukladanie histórie a nastavení v zariadení.
+
+PRISPÔSOBITEĽNÉ NASTAVENIA
+
+- Manuálne vyberte zdrojový a cieľový jazyk.
+- Nastavte, aby preklad označeného textu fungoval iba po stlačení klávesovej skratky.
+- Prispôsobte klávesové skratky.
+- Zapnite alebo vypnite prepis výslovnosti.
+- Zapnite alebo vypnite hlasové čítanie.
+- Nastavte rýchlosť hlasového čítania od 0,3× do 2×.
+- Zapnite automatické ukladanie alebo ukladajte preklady tlačidlom.
+- Vyberte, či sa má história obmieňať: po dosiahnutí limitu sa najstaršie záznamy automaticky nahradia. Ak je obmieňanie vypnuté, nové záznamy sa neukladajú, kým neuvoľníte miesto.
+
+PRE KOHO JE CONTEXT TRANSLATOR?
+
+Context Translator sa hodí, ak:
+
+- čítate články, správy alebo dokumentáciu v iných jazykoch;
+- učíte sa nové slová v ich prirodzenom kontexte;
+- chcete si overiť význam frázy bez opustenia stránky;
+- vytvárate si vlastný zoznam slovíčok;
+- pripravujete kartičky na opakovanie s časovými odstupmi;
+- pracujete s viacjazyčným obsahom.
+
+SÚKROMIE A UKLADANIE ÚDAJOV
+
+História prekladov a nastavenia sa ukladajú lokálne vo vašom prehliadači. Na preklad textu a získanie prepisu výslovnosti sa označený text môže odoslať prekladateľským službám a slovníkovým zdrojom, ktoré rozšírenie používa. Tieto funkcie vyžadujú internetové pripojenie.
+
+Rozšírenie nepredáva údaje používateľov ani ich nepoužíva na reklamu, rozhodovanie o úveroch či účely nesúvisiace s jeho hlavnými funkciami. Jednotlivé záznamy môžete odstrániť alebo v rozšírení vymazať históriu. Ak chcete odstrániť celú históriu, nastavenia a miestnu vyrovnávaciu pamäť, odinštalujte rozšírenie alebo vymažte jeho údaje v prehliadači.
+
+Context Translator zjednodušuje postup: označte text, hneď zistite jeho význam a podľa potreby si preklad uložte na neskoršie štúdium.

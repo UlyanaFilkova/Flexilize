@@ -1,0 +1,57 @@
+Shtesa zbulon automatikisht gjuhën e tekstit të përzgjedhur në një faqe interneti dhe shfaq përkthimin, transkriptimin, përkthimin në kontekst të gjithë fjalisë ose paragrafit, si dhe shqiptimin me zë të tekstit origjinal. Hapeni përkthyesin menjëherë me një shkurtore tastiere.
+
+PËR ÇFARË SHËRBEN?
+
+1) Përktheni menjëherë fjalë të panjohura ose fjali të tëra. Përzgjidhni tekstin dhe shihni përkthimin pa e kopjuar, pa hapur një skedë të re dhe pa kërkuar një përkthyes ose fjalor.
+
+2) Përktheni tekstin tuaj pa u larguar nga skeda aktuale. Shtypni shkurtoren e tastierës për të hapur dritaren e përkthyesit, pastaj shkruani ose ngjitni tekstin.
+
+3) Mësoni gjuhë në kontekst. Gjatë leximit në një gjuhë tjetër, kontrolloni shpejt një fjalë të panjohur dhe vazhdoni leximin. Ruajeni fjalën bashkë me kontekstin ku u shfaq, pa e ndërprerë leximin për të krijuar një listë fjalësh.
+
+4) Krijoni fjalorin tuaj. Ruani automatikisht informacionet e dobishme dhe eksportojini në një skedar për të përgatitur një listë fjalësh ose materiale mësimore.
+
+MUNDËSITË E SHTESËS
+
+FUNKSIONET:
+
+- Zbulimi automatik i gjuhës së tekstit të përzgjedhur.
+- Përkthimi i një fjale, shprehjeje, fjalie ose paragrafi të përzgjedhur në gjuhën e zgjedhur.
+- Dritare e veçantë përkthyesi për të futur tekst.
+- Përkthimi i fjalisë ose paragrafit përreth tekstit të përzgjedhur.
+- Shfaqja e transkriptimit dhe përkthimeve alternative.
+- Dëgjimi i tekstit origjinal.
+- Ruajtja automatike ose manuale e përkthimeve bashkë me kontekstin, transkriptimin, URL-në dhe titullin e faqes.
+- Shfletimi i historikut me deri në 5000 përkthime.
+- Ndryshimi, fshirja dhe rikthimi i regjistrimeve, ose pastrimi i gjithë historikut.
+- Eksportimi i gjithë historikut.
+- Ruajtja lokale e historikut dhe cilësimeve në pajisjen tuaj.
+
+CILËSIME TË PËRSHTATSHME
+
+- Zgjidhni manualisht gjuhën burimore dhe gjuhën e synuar.
+- Caktoni që përkthimi i tekstit të përzgjedhur të aktivizohet vetëm me shkurtore tastiere.
+- Përshtatni shkurtoret e tastierës.
+- Aktivizoni ose çaktivizoni transkriptimin.
+- Aktivizoni ose çaktivizoni leximin me zë.
+- Rregulloni shpejtësinë e leximit me zë nga 0,3× në 2×.
+- Aktivizoni ruajtjen automatike ose ruani përkthimet me një buton.
+- Zgjidhni nëse historiku do të rrotullohet: kur arrihet kufiri, regjistrimet më të vjetra zëvendësohen automatikisht. Nëse rrotullimi është i çaktivizuar, regjistrimet e reja nuk ruhen derisa të lironi vend.
+
+PËR KË ËSHTË CONTEXT TRANSLATOR?
+
+Context Translator ju ndihmon nëse:
+
+- lexoni artikuj, lajme ose dokumentacion në gjuhë të tjera;
+- mësoni fjalë të reja në kontekstin e tyre natyror;
+- dëshironi të kontrolloni kuptimin e një shprehjeje pa u larguar nga faqja;
+- krijoni një fjalor personal;
+- përgatisni kartela mësimore për përsëritje me intervale;
+- punoni me përmbajtje në shumë gjuhë.
+
+PRIVATËSIA DHE RUAJTJA E TË DHËNAVE
+
+Historiku i përkthimeve dhe cilësimet ruhen lokalisht në shfletuesin tuaj. Për të përkthyer tekstin dhe për të marrë transkriptimin, teksti i përzgjedhur mund t'u dërgohet shërbimeve të përkthimit dhe burimeve të fjalorëve që përdor shtesa. Këto funksione kërkojnë lidhje me internetin.
+
+Shtesa nuk i shet të dhënat e përdoruesve dhe nuk i përdor ato për reklama, vendime kredie ose qëllime që nuk lidhen me funksionet e saj kryesore. Mund të fshini regjistrime të veçanta ose të pastroni historikun brenda shtesës. Për të hequr të gjithë historikun, cilësimet dhe memorien lokale të përkohshme, çinstaloni shtesën ose fshini të dhënat e saj përmes shfletuesit.
+
+Context Translator e bën procesin të thjeshtë: përzgjidhni tekstin, kuptojeni menjëherë dhe ruajeni përkthimin për ta studiuar më vonë kur ju nevojitet.
