@@ -29,6 +29,7 @@ describe("settings", () => {
     ["pt_BR", "pt", "pt"],
     ["id-ID", "id", "id"],
     ["hi-IN", "hi", "hi"],
+    ["uk-UA", "en", "uk"],
     ["zh-TW", "zh-TW", "zh-TW"],
     ["zh-Hans-CN", "zh-CN", "zh-CN"],
     ["fil-PH", "fil", "tl"],

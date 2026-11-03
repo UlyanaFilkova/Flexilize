@@ -4,7 +4,7 @@ import {promisify} from "node:util";
 
 const execFile = promisify(execFileCallback);
 
-const targets = ["de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi", "pl", "zh-CN", "zh-TW", "ko", "tr", "vi", "cs", "ro", "sv", "da", "no", "fi", "hu", "el", "ms", "fil", "ar", "fa"];
+const targets = ["de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi", "pl", "zh-CN", "zh-TW", "ko", "tr", "vi", "cs", "ro", "sv", "da", "no", "fi", "hu", "el", "ms", "fil", "ar", "fa", "he", "ka", "hr", "sl", "sk", "sq", "sr"];
 const sourcePath = new URL("../src/locales/en.json", import.meta.url);
 const outputUrl = (locale) => new URL(`../src/locales/${locale}.json`, import.meta.url);
 const english = JSON.parse(await readFile(sourcePath, "utf8"));
@@ -37,7 +37,7 @@ async function translateChunk(locale, values) {
         const {stdout} = await execFile("/usr/bin/curl", [
           "-sS", "--fail", "--max-time", "30", "--get",
           "--data-urlencode", "client=gtx", "--data-urlencode", "sl=en",
-          "--data-urlencode", `tl=${locale}`, "--data-urlencode", "dt=t",
+          "--data-urlencode", `tl=${targetLanguage}`, "--data-urlencode", "dt=t",
           "--data-urlencode", `q=${value}`,
           "https://translate.google.com/translate_a/single"
         ], {maxBuffer: 2_000_000});
@@ -52,7 +52,7 @@ async function translateChunk(locale, values) {
       const {stdout} = await execFile("/usr/bin/curl", [
         "-sS", "--fail", "--max-time", "30", "--get",
         "--data-urlencode", "client=gtx", "--data-urlencode", "sl=en",
-        "--data-urlencode", `tl=${locale}`, "--data-urlencode", "dt=t",
+        "--data-urlencode", `tl=${targetLanguage}`, "--data-urlencode", "dt=t",
         "--data-urlencode", `q=${protectedValues.join(separator)}`,
         "https://translate.google.com/translate_a/single"
       ], {maxBuffer: 2_000_000});
@@ -65,7 +65,7 @@ async function translateChunk(locale, values) {
           const {stdout: singleOutput} = await execFile("/usr/bin/curl", [
             "-sS", "--fail", "--max-time", "30", "--get",
             "--data-urlencode", "client=gtx", "--data-urlencode", "sl=en",
-            "--data-urlencode", `tl=${locale}`, "--data-urlencode", "dt=t",
+            "--data-urlencode", `tl=${targetLanguage}`, "--data-urlencode", "dt=t",
             "--data-urlencode", `q=${value}`,
             "https://translate.google.com/translate_a/single"
           ], {maxBuffer: 2_000_000});

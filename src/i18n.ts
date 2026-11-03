@@ -1,7 +1,7 @@
 import englishCatalog from "./locales/en.json";
 import russianCatalog from "./locales/ru.json";
 
-export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi", "pl", "zh-CN", "zh-TW", "ko", "tr", "vi", "cs", "ro", "sv", "da", "no", "fi", "hu", "el", "ms", "fil", "ar", "fa"] as const;
+export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "it", "pt", "id", "hi", "pl", "zh-CN", "zh-TW", "ko", "tr", "vi", "cs", "ro", "sv", "da", "no", "fi", "hu", "el", "ms", "fil", "ar", "fa", "he", "ka", "hr", "sl", "sk", "sq", "sr"] as const;
 export type InterfaceLanguage = typeof INTERFACE_LANGUAGES[number];
 
 let activeLanguage: InterfaceLanguage = "ru";
@@ -43,7 +43,10 @@ export async function loadInterfaceLanguage(language: InterfaceLanguage) {
     sv: () => import("./locales/sv.json"), da: () => import("./locales/da.json"), no: () => import("./locales/no.json"),
     fi: () => import("./locales/fi.json"), hu: () => import("./locales/hu.json"), el: () => import("./locales/el.json"),
     ms: () => import("./locales/ms.json"), fil: () => import("./locales/fil.json"), ar: () => import("./locales/ar.json"),
-    fa: () => import("./locales/fa.json")
+    fa: () => import("./locales/fa.json"), he: () => import("./locales/he.json"), ka: () => import("./locales/ka.json"),
+    hr: () => import("./locales/hr.json"),
+    sl: () => import("./locales/sl.json"), sk: () => import("./locales/sk.json"), sq: () => import("./locales/sq.json"),
+    sr: () => import("./locales/sr.json")
   };
   loadedCatalogs[language] = (await loaders[language]()).default;
 }
@@ -102,7 +105,10 @@ export function formatRecordCount(count: number, language: InterfaceLanguage = a
     cs: ["záznam", "záznamů"], ro: ["înregistrare", "înregistrări"], sv: ["post", "poster"], da: ["post", "poster"],
     no: ["oppføring", "oppføringer"], fi: ["merkintä", "merkintää"], hu: ["bejegyzés", "bejegyzés"],
     el: ["εγγραφή", "εγγραφές"], ms: ["catatan", "catatan"], fil: ["talaan", "talaan"],
-    ar: ["سجل", "سجلات"], fa: ["رکورد", "رکورد"]
+    ar: ["سجل", "سجلات"], fa: ["رکورد", "رکورد"], he: ["רשומה", "רשומות"],
+    ka: ["ჩანაწერი", "ჩანაწერები"], hr: ["zapis", "zapisa"],
+    sl: ["zapis", "zapisi"], sk: ["záznam", "záznamov"],
+    sq: ["regjistrim", "regjistrime"], sr: ["запис", "записа"]
   };
   if (language === "ar") {
     if (count === 2) return `${count} سجلان`;
@@ -142,12 +148,12 @@ export function localizeDom(root: Document | ShadowRoot, language: InterfaceLang
   if (isDocument) {
     const documentRoot = root as Document;
     documentRoot.documentElement.lang = language;
-    documentRoot.documentElement.dir = language === "ar" || language === "fa" ? "rtl" : "ltr";
+    documentRoot.documentElement.dir = language === "ar" || language === "fa" || language === "he" ? "rtl" : "ltr";
     documentRoot.title = translate(documentRoot.title, language);
   } else {
     const host = (root as ShadowRoot).host;
     host.setAttribute("lang", language);
-    host.setAttribute("dir", language === "ar" || language === "fa" ? "rtl" : "ltr");
+    host.setAttribute("dir", language === "ar" || language === "fa" || language === "he" ? "rtl" : "ltr");
   }
 }
 

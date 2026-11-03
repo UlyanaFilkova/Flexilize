@@ -6,6 +6,7 @@ describe("interface localization", () => {
     expect(normalizeInterfaceLanguage("en")).toBe("en");
     expect(normalizeInterfaceLanguage("ru")).toBe("ru");
     expect(normalizeInterfaceLanguage("de")).toBe("de");
+    expect(normalizeInterfaceLanguage("uk", "en")).toBe("en");
     expect(normalizeInterfaceLanguage("unsupported")).toBe("ru");
   });
 
@@ -46,5 +47,7 @@ describe("interface localization", () => {
     expect(document.querySelector("button")?.getAttribute("aria-label")).toBe("Open settings");
     expect(document.querySelector(".record-original")?.textContent).toBe("Перевод");
     expect(document.documentElement.lang).toBe("en");
+    localizeDom(document, "he");
+    expect(document.documentElement.dir).toBe("rtl");
   });
 });

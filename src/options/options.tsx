@@ -45,7 +45,8 @@ const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, strin
   ["zh-CN", "简体中文"], ["zh-TW", "繁體中文"], ["ko", "한국어"], ["tr", "Türkçe"],
   ["vi", "Tiếng Việt"], ["cs", "Čeština"], ["ro", "Română"], ["sv", "Svenska"], ["da", "Dansk"],
   ["no", "Norsk"], ["fi", "Suomi"], ["hu", "Magyar"], ["el", "Ελληνικά"], ["ms", "Bahasa Melayu"], ["fil", "Filipino"],
-  ["ar", "العربية"], ["fa", "فارسی"]
+  ["ar", "العربية"], ["fa", "فارسی"], ["he", "עברית"], ["ka", "ქართული"], ["hr", "Hrvatski"],
+  ["sl", "Slovenščina"], ["sk", "Slovenčina"], ["sq", "Shqip"], ["sr", "Српски"]
 ];
 
 function localizedLanguageOptions<T extends string>(options: ReadonlyArray<readonly [T, string]>, locale: string, useSelfNames = false) {

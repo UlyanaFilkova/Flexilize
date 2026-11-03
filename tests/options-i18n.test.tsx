@@ -22,9 +22,9 @@ describe("English options interface", () => {
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
     const interfaceSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
     expect([...interfaceSelect.options].map((option) => option.textContent)).toEqual([
-      "čeština", "dansk", "Deutsch", "English", "español", "Filipino", "français", "Indonesia", "italiano", "magyar",
-      "Melayu", "Nederlands", "norsk", "polski", "português", "română", "suomi", "svenska", "Tiếng Việt", "Türkçe",
-      "Ελληνικά", "русский", "العربية", "فارسی", "हिन्दी", "한국어", "中文（中国）", "中文（台灣）", "日本語"
+      "čeština", "dansk", "Deutsch", "English", "español", "Filipino", "français", "hrvatski", "Indonesia", "italiano", "magyar",
+      "Melayu", "Nederlands", "norsk", "polski", "português", "română", "shqip", "slovenčina", "slovenščina", "suomi",
+      "svenska", "Tiếng Việt", "Türkçe", "Ελληνικά", "русский", "српски", "ქართული", "עברית", "العربية", "فارسی", "हिन्दी", "한국어", "中文（中国）", "中文（台灣）", "日本語"
     ]);
     const collator = new Intl.Collator("en", {sensitivity: "base"});
     for (const select of [...document.querySelectorAll("select")]) {
