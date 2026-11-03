@@ -649,7 +649,7 @@ function TranslationSettings() {
   return (
     <>
       <div className="settings-group">
-        <h2 className="settings-group-title settings-group-title-attached">Интерфейс</h2>
+        <h2 className="settings-group-title">Интерфейс</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Язык интерфейса">
           <div className="setting-row">
             <div className="setting-copy">

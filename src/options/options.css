@@ -188,7 +188,7 @@ a:focus-visible {
   width: 100%;
   min-width: 0;
   max-width: 1240px;
-  padding: 62px clamp(42px, 6vw, 92px) 80px;
+  padding: 32px clamp(42px, 6vw, 92px) 80px;
 }
 
 .content-heading-row {
@@ -196,6 +196,7 @@ a:focus-visible {
   align-items: flex-end;
   justify-content: space-between;
   gap: 28px;
+  padding-bottom: 12px;
 }
 
 .content-heading {
@@ -226,6 +227,8 @@ h1 {
   font-size: 15px;
   line-height: 1.6;
 }
+
+.content-heading p:empty { display: none; }
 
 .empty-panel {
   position: relative;
@@ -2213,7 +2216,7 @@ h1 {
   }
 
   .content {
-    padding: 44px clamp(22px, 4vw, 34px) 64px;
+    padding: 38px clamp(22px, 4vw, 34px) 64px;
   }
 
   .setting-row { gap: 22px; padding: 22px; }
@@ -2308,7 +2311,7 @@ h1 {
   .sidebar nav { display: grid; gap: 4px; margin: 0; }
   .sidebar nav button { width: 100%; min-height: 44px; }
 
-  .content { padding: 32px 16px 48px; }
+  .content { padding: 28px 16px 48px; }
   .content-heading-row { align-items: flex-start; flex-direction: column; gap: 18px; }
   .content-heading p { font-size: 14px; }
   h1 { font-size: clamp(29px, 8vw, 38px); }
