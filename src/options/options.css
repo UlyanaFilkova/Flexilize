@@ -450,11 +450,12 @@ h1 {
 .activation-preview-panes div { border: 1px solid #edf0f4; border-radius: 5px; background: linear-gradient(#fff 20%, #f0f2f6 20% 25%, #fff 25% 46%, #f0f2f6 46% 51%, #fff 51%); }
 .activation-preview-panes div + div { border-color: #e4eaff; background: linear-gradient(#fbfcff 20%, #dce6ff 20% 26%, #fbfcff 26% 48%, #dce6ff 48% 54%, #fbfcff 54%); }
 
-.setting-row.activation-setting-row {
+.setting-row.activation-setting-row:has(.activation-illustration) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(176px, 19vw, 220px) auto;
   align-items: center;
   gap: clamp(28px, 3vw, 42px);
+  padding-block: 22px;
 }
 
 .activation-setting-row .setting-copy { min-width: 0; }
@@ -2313,6 +2314,7 @@ h1 {
   h1 { font-size: clamp(29px, 8vw, 38px); }
   .setting-row { align-items: stretch; flex-direction: column; gap: 14px; padding: 20px 18px; }
   .setting-row.activation-setting-row { grid-template-columns: minmax(0, 1fr) 120px; gap: 14px; }
+  .setting-row.activation-setting-row:has(.activation-illustration) { padding-block: 16px; }
   .setting-row.activation-setting-row:has(.activation-illustration-button) { grid-template-columns: minmax(0, 1fr) 150px; }
   .activation-setting-row .setting-copy { grid-column: 1; grid-row: 1; }
   .activation-setting-row .activation-illustration { grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 120px; }
