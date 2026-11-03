@@ -38,6 +38,21 @@ describe("interface localization", () => {
     }
   });
 
+  it.each(INTERFACE_LANGUAGES.filter((language) => language !== "ru"))("translates the new settings and context menu labels in %s", async (language) => {
+    await loadInterfaceLanguage(language);
+    for (const source of [
+      "Расширенные настройки",
+      "Управляйте показом окна перевода и сохранением истории.",
+      "Дополнительные параметры",
+      "Интерфейс",
+      "Сохранение истории",
+      "Копировать",
+      "Искать в интернете"
+    ]) {
+      expect(translate(source, language), `${language}: ${source}`).not.toBe(source);
+    }
+  });
+
   it("localizes text and accessibility attributes without changing translated records", () => {
     document.body.innerHTML = `
       <main><h1>Настройки</h1><button aria-label="Открыть настройки">Настройки</button>
