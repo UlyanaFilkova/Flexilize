@@ -39,6 +39,37 @@ describe("options page", () => {
     expect(screen.getByRole("heading", {name: "Языки"})).toBeTruthy();
   });
 
+  it("opens advanced settings from the overview and saves its options", async () => {
+    const overview = screen.getByRole("region", {name: "Разделы настроек"});
+    await userEvent.click(within(overview).getByRole("button", {name: /Расширенные настройки/}));
+    expect(screen.getByRole("heading", {name: "Расширенные настройки"})).toBeTruthy();
+    expect(location.hash).toBe("#settings/advanced");
+
+    await userEvent.click(screen.getByRole("checkbox", {name: "Включить автоматическое сохранение"}));
+    await waitFor(() => expect(storageData[SETTINGS_KEY].autoSaveTranslations).toBe(false));
+    await userEvent.click(screen.getByRole("checkbox", {name: "Включить ротацию истории"}));
+    await waitFor(() => expect(storageData[SETTINGS_KEY].historyRotationEnabled).toBe(false));
+  });
+
+  it("resets page scroll when switching settings tabs", async () => {
+    const scrollYDescriptor = Object.getOwnPropertyDescriptor(window, "scrollY");
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    Object.defineProperty(window, "scrollY", {configurable: true, value: 480});
+
+    try {
+      await userEvent.click(screen.getByRole("button", {name: /^Активация$/}));
+      expect(scrollTo).toHaveBeenCalledWith(0, 0);
+
+      scrollTo.mockClear();
+      Object.defineProperty(window, "scrollY", {configurable: true, value: 0});
+      await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
+      expect(scrollTo).not.toHaveBeenCalled();
+    } finally {
+      if (scrollYDescriptor) Object.defineProperty(window, "scrollY", scrollYDescriptor);
+      else Reflect.deleteProperty(window, "scrollY");
+    }
+  });
+
   it("shows a detailed help section and links it to settings", async () => {
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
     expect(screen.getByRole("heading", {name: "Как пользоваться"})).toBeTruthy();
