@@ -86,6 +86,8 @@ describe("options page", () => {
 
   it("can hide the selection translation window", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Активация$/}));
+    const groups = ["Перевод", "Перевод по выделению", "Способы запуска", "Переводчик"];
+    expect(groups.map((name) => screen.getByRole("region", {name}).querySelectorAll(".setting-row").length)).toEqual([1, 2, 3, 3]);
     await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
   });

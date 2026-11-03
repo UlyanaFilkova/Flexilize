@@ -408,14 +408,15 @@ function GeneralSettings() {
   return (
     <>
       <div className="settings-group">
-        <h2 className="settings-group-title">Перевод выделенного текста (можно несколько)</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Параметры активации перевода выделенного текста">
-      <div className="setting-row">
+        <h2 className="settings-group-title">Перевод</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Перевод">
+      <div className="setting-row activation-setting-row">
         <div className="setting-copy">
           <h2>Показывать окно перевода</h2>
           <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
           <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
         </div>
+        <ActivationIllustration kind="window" />
         <label className="switch">
           <input
             type="checkbox"
@@ -427,11 +428,17 @@ function GeneralSettings() {
           <span className="sr-only">Показывать окно перевода</span>
         </label>
       </div>
-      <div className="setting-row">
+        </section>
+      </div>
+      <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Перевод по выделению</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Перевод по выделению">
+      <div className="setting-row activation-setting-row">
         <div className="setting-copy">
           <h2>Автоматическая активация</h2>
           <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
         </div>
+        <ActivationIllustration kind="automatic" />
         <label className="switch">
           <input
             type="checkbox"
@@ -444,11 +451,12 @@ function GeneralSettings() {
         </label>
       </div>
 
-      <div className="setting-row setting-row-secondary">
+      <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
           <h2>Кнопка рядом с выделением</h2>
           <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
         </div>
+        <ActivationIllustration kind="button" />
         <label className="switch">
           <input
             type="checkbox"
@@ -460,12 +468,17 @@ function GeneralSettings() {
           <span className="sr-only">Включить кнопку рядом с выделением</span>
         </label>
       </div>
-
-      {!isMobile && <div className="setting-row">
+        </section>
+      </div>
+      {!isMobile && <div className="settings-group settings-group-following">
+        <h2 className="settings-group-title">Способы запуска</h2>
+        <section className="settings-panel settings-panel-grouped" aria-label="Способы запуска">
+      <div className="setting-row activation-setting-row">
         <div className="setting-copy">
           <h2>Активация через контекстное меню</h2>
           <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
         </div>
+        <ActivationIllustration kind="context" />
         <label className="switch">
           <input
             type="checkbox"
@@ -476,13 +489,14 @@ function GeneralSettings() {
           <span aria-hidden="true" />
           <span className="sr-only">Включить перевод через контекстное меню</span>
         </label>
-      </div>}
+      </div>
 
-      {!isMobile && <div className="setting-row">
+      <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
           <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
         </div>
+        <ActivationIllustration kind="shortcut" shortcut={formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)} />
         <label className="switch">
           <input
             type="checkbox"
@@ -493,9 +507,9 @@ function GeneralSettings() {
           <span aria-hidden="true" />
           <span className="sr-only">Включить активацию горячими клавишами</span>
         </label>
-      </div>}
+      </div>
 
-      {!isMobile && <div className={`setting-row setting-row-secondary${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+      <div className={`setting-row setting-row-secondary activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
         <div className="setting-copy">
           <h2>Комбинация клавиш</h2>
           <p>Нажмите кнопку и введите новую комбинацию.</p>
@@ -510,17 +524,18 @@ function GeneralSettings() {
         >
           {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
         </button>
-      </div>}
-        </section>
       </div>
+        </section>
+      </div>}
       {!isMobile && <div className="settings-group settings-group-following">
         <h2 className="settings-group-title">Переводчик</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Горячая клавиша переводчика">
-          <div className="setting-row">
+        <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
+          <div className="setting-row activation-setting-row">
             <div className="setting-copy">
               <h2>Горячая клавиша переводчика</h2>
               <p>Открывает отдельное окно для ввода и перевода текста.</p>
             </div>
+            <ActivationIllustration kind="translator" shortcut={formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)} />
             <button
               className={translatorRecording ? "hotkey-button recording" : "hotkey-button"}
               type="button"
@@ -532,11 +547,12 @@ function GeneralSettings() {
               {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
             </button>
           </div>
-          <div className="setting-row setting-row-secondary">
+          <div className="setting-row setting-row-secondary activation-setting-row">
             <div className="setting-copy">
               <h2>Горячая клавиша обратного перевода</h2>
               <p>Меняет местами исходный язык и язык перевода.</p>
             </div>
+            <ActivationIllustration kind="reverse" shortcut={formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)} />
             <button
               className={reverseTranslationRecording ? "hotkey-button recording" : "hotkey-button"}
               type="button"
@@ -568,6 +584,50 @@ function GeneralSettings() {
         </section>
       </div>}
     </>
+  );
+}
+
+function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "window" | "automatic" | "button" | "context" | "shortcut" | "translator" | "reverse"; shortcut?: string}) {
+  return (
+    <div className={`activation-illustration activation-illustration-${kind}`} aria-hidden="true">
+      <div className="activation-preview-scene" aria-hidden="true">
+        {kind === "translator" ? (
+          <div className="activation-preview-translator-backdrop">
+            <div className="activation-preview-translator">
+              <div className="activation-preview-translator-title"><strong>Context Translator</strong><b>{shortcut}</b><i>×</i></div>
+              <div className="activation-preview-languages"><i>Русский</i><b>⇄</b><i>English</i></div>
+              <div className="activation-preview-panes"><div /><div /></div>
+            </div>
+          </div>
+        ) : kind === "reverse" ? (
+          <div className="activation-preview-reverse">
+            <p><span>Русский</span><b>→</b><span>English</span></p>
+            <p><span>English</span><b>→</b><span>Русский</span></p>
+            <i>{shortcut}</i>
+          </div>
+        ) : (
+          <>
+            <div className="activation-preview-toolbar"><i /><i /><i /><span /></div>
+            <div className="activation-preview-page">
+              <b />
+              <p>{kind === "button" ? <mark>Context</mark> : <><mark>Context</mark> can change meaning.</>}</p>
+              <i className="line-long" /><i className="line-medium" />
+              <i className="line-short" />
+            </div>
+            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong>Context</strong><span /><b>контекст</b></div>}
+            {kind === "button" && <>
+              <div className="activation-preview-selection-button"><strong>A<span>а</span></strong></div>
+              <svg className="activation-preview-selection-arrow" viewBox="0 0 24 12" aria-hidden="true">
+                <path d="M1 6h21M17 1l5 5-5 5" />
+              </svg>
+              <div className="activation-preview-result activation-preview-button-result"><strong>Context</strong><span /><b>контекст</b></div>
+            </>}
+            {kind === "context" && <div className="activation-preview-context-menu"><span>Копировать</span><b><img className="activation-preview-brand-icon" src="../icons/icon-32.png" alt="" />Context Translator</b><span>Искать в интернете</span></div>}
+            {kind === "shortcut" && <div className="activation-preview-shortcut">{shortcut.split(" + ").map((key) => <span key={key}>{key}</span>)}<i>↵</i></div>}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
