@@ -70,6 +70,7 @@ import {
   let languageInputDirty = false;
   let requestNumber = 0;
   let selectionTimer: ReturnType<typeof setTimeout> | undefined;
+  let selectionGestureActive = false;
   let availableVoices: SpeechSynthesisVoice[] = [];
   let selectionRect: DOMRect | null = null;
   let speechRun = 0;
@@ -87,6 +88,12 @@ import {
   const deferredManualSaveRequests = new Set<number>();
 
   document.addEventListener("mouseup", scheduleSelection, true);
+  document.addEventListener("pointerdown", beginSelectionGesture, true);
+  document.addEventListener("pointerup", finishSelectionGesture, true);
+  document.addEventListener("pointercancel", finishSelectionGesture, true);
+  document.addEventListener("touchstart", beginSelectionGesture, true);
+  document.addEventListener("touchend", finishSelectionGesture, true);
+  document.addEventListener("touchcancel", finishSelectionGesture, true);
   document.addEventListener("keydown", handleReverseTranslationKeydown, true);
   document.addEventListener("keydown", handleTranslatorKeydown, true);
   document.addEventListener("keydown", handleActivationKeydown, true);
@@ -98,7 +105,7 @@ import {
   document.addEventListener("selectionchange", scheduleSelection, true);
   document.addEventListener("pointerdown", handleOutsidePointerDown, true);
   document.addEventListener("scroll", closeModal, true);
-  window.addEventListener("blur", closeModal);
+  window.addEventListener("blur", handleWindowBlur);
 
   void getExtensionSettings()
     .then(async (settings) => {
@@ -156,6 +163,7 @@ import {
   function scheduleSelection() {
     if (!isCurrentInstance() || !activationSettingsReady) return;
     clearTimeout(selectionTimer);
+    if (selectionGestureActive) return;
     selectionTimer = setTimeout(() => {
       const details = readSelection();
       if (!details) {
@@ -170,7 +178,23 @@ import {
       } else {
         removeSelectionAction();
       }
-    }, 100);
+    }, 0);
+  }
+
+  function beginSelectionGesture() {
+    if (!isCurrentInstance()) return;
+    selectionGestureActive = true;
+    clearTimeout(selectionTimer);
+  }
+
+  function finishSelectionGesture() {
+    selectionGestureActive = false;
+    scheduleSelection();
+  }
+
+  function handleWindowBlur() {
+    selectionGestureActive = false;
+    closeModal();
   }
 
   function handleTranslatorKeydown(event: KeyboardEvent) {
@@ -1443,8 +1467,8 @@ import {
     const path = event.composedPath();
     if (selectionActionHost && path.includes(selectionActionHost)) return;
     removeSelectionAction();
-    if (!host) return;
-    if (!path.includes(host)) closeModal();
+    if (host && path.includes(host)) return;
+    if (host) closeModal();
   }
 
   function closeModal() {
@@ -1588,8 +1612,10 @@ import {
   function modalStyles() {
     return `
       :host { color-scheme: light; }
-      .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .card { position: fixed; box-sizing: border-box; max-height: calc(100vh - 24px); padding: 12px 14px; border: 1px solid rgba(15,23,42,.09); border-radius: 14px; background: #fff; box-shadow: 0 18px 50px rgba(15,23,42,.22), 0 3px 10px rgba(15,23,42,.1); color: #172033; font: 14px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; pointer-events: none; }
+      .card button, .card input { pointer-events: auto; }
       .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
+      .card.long .source, .card.long .translation { pointer-events: auto; }
       .card.long.language-open { overflow: visible; }
       .top { display: flex; align-items: flex-start; gap: 9px; }
       .term-details { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; min-width: 0; gap: 9px; }

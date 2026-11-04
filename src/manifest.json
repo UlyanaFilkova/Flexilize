@@ -22,7 +22,8 @@
     "https://en.wiktionary.org/*",
     "https://clients5.google.com/*",
     "https://translate.googleapis.com/*",
-    "https://translate.google.com/*"
+    "https://translate.google.com/*",
+    "https://feedback.context-translator.workers.dev/*"
   ],
   "background": {
     "chromium:service_worker": "background.ts",

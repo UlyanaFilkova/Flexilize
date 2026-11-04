@@ -786,19 +786,30 @@ async function translateChunk(text, sourceLanguage = "en", targetLanguage = "ru"
   }
 }
 
+function normalizeTranslationResult(result: {text: string; alternatives: string[]; warning: string | null}, targetLanguage: string) {
+  if (targetLanguage !== "en") return result;
+  const capitalizeEnglishI = (text: string) => text.replace(/\bi\b/g, "I");
+  return {
+    ...result,
+    text: capitalizeEnglishI(result.text),
+    alternatives: result.alternatives.map(capitalizeEnglishI)
+  };
+}
+
 async function resolveTranslationChunk(text: string, sourceLanguage: string, targetLanguage: string) {
   if (sourceLanguage === targetLanguage) {
     return { text, alternatives: [text], warning: null };
   }
   const saved = await findSavedTranslation(text, sourceLanguage, targetLanguage);
-  if (saved) return saved;
+  if (saved) return normalizeTranslationResult(saved, targetLanguage);
 
   const persisted = await getPersistedTranslation(text, sourceLanguage, targetLanguage);
-  if (persisted) return persisted;
+  if (persisted) return normalizeTranslationResult(persisted, targetLanguage);
 
   const result = await requestTranslationChunk(text, sourceLanguage, targetLanguage);
-  await persistTranslation(text, sourceLanguage, targetLanguage, result);
-  return result;
+  const normalized = normalizeTranslationResult(result, targetLanguage);
+  await persistTranslation(text, sourceLanguage, targetLanguage, normalized);
+  return normalized;
 }
 
 async function findSavedTranslation(text: string, sourceLanguage: string, targetLanguage: string) {

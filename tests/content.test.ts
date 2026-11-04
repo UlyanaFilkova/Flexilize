@@ -108,6 +108,33 @@ describe("standalone translator content UI", () => {
     expect(browserMock.runtime.sendMessage.mock.calls.map(([message]) => message.type)).toContain("translate-selection");
   }, 5000);
 
+  it("waits until the pointer is released before opening a selection translation", async () => {
+    vi.resetModules();
+    const {storageData} = await import("./mocks/browser");
+    document.body.innerHTML = "";
+    storageData[SETTINGS_KEY] = structuredClone(defaultSettings);
+    const text = document.createElement("textarea");
+    text.value = "A paragraph with several lines to select.";
+    document.body.append(text);
+    text.focus();
+    text.setSelectionRange(0, text.value.length);
+    vi.spyOn(text, "getBoundingClientRect").mockReturnValue({
+      x: 20, y: 20, left: 20, top: 20, right: 320, bottom: 100, width: 300, height: 80, toJSON: () => ({})
+    });
+
+    await import("../src/content");
+    await waitFor(() => expect(document.documentElement.hasAttribute("data-context-translator-instance")).toBe(true));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    fireEvent.pointerDown(text, {pointerId: 1, button: 0});
+    document.dispatchEvent(new Event("selectionchange"));
+    await new Promise((resolve) => setTimeout(resolve, 550));
+    expect(document.querySelector("#context-translator-extension-host")).toBeNull();
+
+    fireEvent.pointerUp(text, {pointerId: 1});
+    await waitFor(() => expect(document.querySelector("#context-translator-extension-host")).not.toBeNull(), {timeout: 1500});
+  }, 3000);
+
   it("shows one final translation for long selections that cover their context", async () => {
     vi.resetModules();
     const {browserMock, storageData} = await import("./mocks/browser");

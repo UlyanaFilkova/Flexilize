@@ -46,6 +46,7 @@ describe("English options interface", () => {
     expect(screen.getByText("Standalone translator example")).toBeTruthy();
     const helpPage = document.querySelector(".help-page")!.cloneNode(true) as HTMLElement;
     helpPage.querySelectorAll(".brand-mark").forEach((element) => element.remove());
+    expect(helpPage.textContent).toContain("Extensions cannot run on internal browser pages such as chrome://…");
     expect(helpPage.textContent).not.toMatch(/[А-Яа-яЁё]/u);
   });
 });

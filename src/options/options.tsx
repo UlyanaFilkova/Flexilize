@@ -1,5 +1,6 @@
 import {useEffect, useState, type ReactNode} from "react";
 import {createRoot} from "react-dom/client";
+import {useDropzone} from "react-dropzone";
 import type {ExportFormat} from "../export";
 import {
   clearTranslationRecords,
@@ -17,7 +18,8 @@ import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS} from "../history-config";
 import {isMobileDevice} from "../device";
-import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {getReviewStore} from "../review-store";
+import {getActiveLanguage, loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -33,9 +35,9 @@ import {
 } from "../settings";
 import "./options.css";
 
-type Page = "settings" | "history" | "help";
+type Page = "settings" | "history" | "help" | "review";
 type HistorySection = "records" | "export";
-type Route = "settings" | "history" | "export" | "help";
+type Route = "settings" | "history" | "export" | "help" | "review";
 type Notice = {message: string; undo?: () => Promise<void>};
 
 const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, string]> = [
@@ -67,7 +69,8 @@ const routeHashes: Record<Route, string> = {
   settings: "#settings",
   history: "#history",
   export: "#export",
-  help: "#help"
+  help: "#help",
+  review: "#review"
 };
 
 const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving", "advanced"]);
@@ -100,7 +103,7 @@ function resetScrollPosition() {
 
 function App() {
   const initialRoute = routeFromHash();
-  const [page, setPage] = useState<Page>(initialRoute === "help" ? "help" : initialRoute === "settings" ? "settings" : "history");
+  const [page, setPage] = useState<Page>(initialRoute === "help" || initialRoute === "review" ? initialRoute : initialRoute === "settings" ? "settings" : "history");
   const [settingsSection, setSettingsSection] = useState(settingsSectionFromHash);
   const [historySection, setHistorySection] = useState<HistorySection>(initialRoute === "export" ? "export" : "records");
   const [records, setRecords] = useState<TranslationRecord[]>([]);
@@ -140,6 +143,12 @@ function App() {
     resetScrollPosition();
     setPage("help");
     window.history.replaceState(null, "", routeHashes.help);
+  };
+
+  const openReview = () => {
+    resetScrollPosition();
+    setPage("review");
+    window.history.replaceState(null, "", routeHashes.review);
   };
 
   const removeRecord = async (record: TranslationRecord) => {
@@ -239,12 +248,17 @@ function App() {
             <button className={page === "help" ? "active" : ""} type="button" onClick={() => { openHelp(); setMobileMenuOpen(false); }}>
               <HelpIcon /><span>Как пользоваться</span>
             </button>
+            <button className={page === "review" ? "active" : ""} type="button" onClick={() => { openReview(); setMobileMenuOpen(false); }}>
+              <StarIcon /><span>{translate("Оценка и отзыв")}</span>
+            </button>
           </nav>
           <div className="sidebar-footer"><span className="status-dot" aria-hidden="true" />Расширение активно</div>
         </aside>
 
         <main className="content">
-          {page === "help" ? (
+          {page === "review" ? (
+            <ReviewView />
+          ) : page === "help" ? (
             <HelpView onOpenSettings={openSettingsSection} onOpenHistory={() => openHistorySection("records")} onOpenExport={() => openHistorySection("export")} />
           ) : page === "settings" ? (
             <>
@@ -283,6 +297,163 @@ function App() {
 
 function PageHeading({title, description, action}: {title: string; description: string; action?: ReactNode}) {
   return <div className="content-heading-row"><div className="content-heading"><span className="eyebrow">Context Translator</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;
+}
+
+function ReviewView() {
+  const store = getReviewStore(navigator.userAgent, getActiveLanguage());
+  return (
+    <div className="review-page">
+      <PageHeading
+        title={translate("Оценка и отзыв")}
+        description={translate("Расскажите, как вам Context Translator. Ваша оценка и отзыв помогут другим пользователям и поддержат развитие расширения.")}
+      />
+      <section className="review-store-card">
+        <div className="review-store-icon"><StarIcon /></div>
+        <div className="review-store-copy">
+          <h2>{translate("Оцените Context Translator")}</h2>
+          <a className="review-store-action" href={store.url} target="_blank" rel="noreferrer">
+            <span className="review-rating-star" aria-hidden="true">★</span>
+            {translate("Оценить")}
+          </a>
+        </div>
+      </section>
+      <FeedbackForm />
+    </div>
+  );
+}
+
+const feedbackEndpoint = ((import.meta as ImportMeta & {env?: Record<string, string | undefined>}).env?.EXTENSION_PUBLIC_FEEDBACK_ENDPOINT || "").trim();
+const feedbackMaxFiles = 10;
+const feedbackMaxBytes = 20 * 1024 * 1024;
+
+function FeedbackForm() {
+  const [message, setMessage] = useState("");
+  const [contact, setContact] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [status, setStatus] = useState("");
+  const [toast, setToast] = useState<{type: "success" | "error"; message: string} | null>(null);
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  const onDrop = (accepted: File[], rejected: Array<{errors: ReadonlyArray<{code: string}>}>) => {
+    if (rejected.length) {
+      const codes = rejected.flatMap((item) => item.errors.map((error) => error.code));
+      setStatus(codes.includes("file-too-large")
+        ? translate("Общий размер скриншотов не должен превышать 20 МБ.")
+        : codes.includes("too-many-files")
+          ? translate("Можно приложить не более 10 скриншотов.")
+          : translate("Прикрепляйте изображения PNG, JPEG или WebP."));
+    }
+    if (!accepted.length) return;
+    const selected = [...files, ...accepted];
+    if (selected.length > feedbackMaxFiles) {
+      setStatus(translate("Можно приложить не более 10 скриншотов."));
+      return;
+    }
+    if (selected.reduce((total, file) => total + file.size, 0) > feedbackMaxBytes) {
+      setStatus(translate("Общий размер скриншотов не должен превышать 20 МБ."));
+      return;
+    }
+    setFiles(selected);
+    setStatus("");
+  };
+  const {getRootProps, getInputProps, isDragActive, isDragReject} = useDropzone({
+    onDrop,
+    accept: {"image/png": [], "image/jpeg": [], "image/webp": []},
+    maxFiles: feedbackMaxFiles,
+    maxSize: feedbackMaxBytes,
+    multiple: true
+  });
+
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!feedbackEndpoint || !message.trim()) return;
+    setSending(true);
+    setStatus("");
+    setToast(null);
+    const body = new FormData();
+    body.set("message", message.trim());
+    body.set("contact", contact.trim());
+    body.set("contactLabel", translate("Контактная информация"));
+    body.set("website", "");
+    files.forEach((file) => body.append("screenshots", file, file.name));
+    try {
+      const response = await fetch(feedbackEndpoint, {method: "POST", body});
+      if (!response.ok) throw new Error("feedback request failed");
+      setMessage("");
+      setContact("");
+      setFiles([]);
+      setToast({type: "success", message: translate("Спасибо! Сообщение отправлено.")});
+    } catch {
+      setToast({type: "error", message: translate("Не удалось отправить сообщение. Попробуйте позже.")});
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <section className="feedback-card">
+      {toast && <div className={`feedback-toast is-${toast.type}`} role={toast.type === "error" ? "alert" : "status"} aria-live={toast.type === "error" ? "assertive" : "polite"} aria-atomic="true">{toast.message}</div>}
+      <div className="feedback-icon"><MessageIcon /></div>
+      <div className="feedback-content">
+        <h2>{translate("Обратная связь")}</h2>
+        <p>{translate("Опишите проблему или предложение. При желании приложите скриншоты.")}</p>
+        <form onSubmit={(event) => void submit(event)}>
+          <label>{translate("Сообщение")}
+            <textarea required rows={2} maxLength={5000} value={message} onChange={(event) => setMessage(event.target.value)} onInput={(event) => {
+              const textarea = event.currentTarget;
+              textarea.style.height = "auto";
+              const style = window.getComputedStyle(textarea);
+              const borderHeight = Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth);
+              const minimumHeight = Number.parseFloat(style.minHeight) || 74;
+              textarea.style.height = `${Math.max(textarea.scrollHeight + borderHeight, minimumHeight)}px`;
+            }} />
+          </label>
+          <label>{translate("Ваш email или контакт для ответа (необязательно)")}
+            <input type="text" maxLength={500} value={contact} onChange={(event) => setContact(event.target.value)} />
+          </label>
+          <label className="feedback-honeypot" aria-hidden="true" tabIndex={-1}>Website
+            <input tabIndex={-1} autoComplete="off" value="" onChange={() => undefined} />
+          </label>
+          <div className="feedback-upload-label">{translate("Изображения")}</div>
+          <div {...getRootProps({className: `feedback-dropzone${isDragActive ? " is-drag-active" : ""}${isDragReject ? " is-drag-reject" : ""}`})}>
+            <input {...getInputProps()} />
+            <UploadIcon />
+            <strong>{isDragActive ? translate("Перетащите файлы сюда") : translate("Перетащите изображения сюда или нажмите, чтобы выбрать")}</strong>
+            <span>{translate("PNG, JPEG или WebP · до 10 файлов · всего до 20 МБ")}</span>
+          </div>
+          {status && <p className="feedback-status" role="status">{status}</p>}
+          {files.length > 0 && <div className="feedback-preview-grid">
+            {files.map((file, index) => <ScreenshotPreview key={`${file.name}-${file.size}-${file.lastModified}-${index}`} file={file} onRemove={() => setFiles((current) => current.filter((item) => item !== file))} />)}
+          </div>}
+          <button className="review-store-action" type="submit" disabled={!feedbackEndpoint || sending || !message.trim()}>
+            {sending ? translate("Отправка…") : translate("Отправить")}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
+function ScreenshotPreview({file, onRemove}: {file: File; onRemove: () => void}) {
+  const [previewUrl, setPreviewUrl] = useState("");
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+  return (
+    <div className="feedback-preview-item">
+      {previewUrl && <img src={previewUrl} alt={file.name} />}
+      <span title={file.name}>{file.name}</span>
+      <button type="button" aria-label={`${translate("Удалить файл")}: ${file.name}`} onClick={onRemove}><CloseIcon /></button>
+    </div>
+  );
 }
 
 function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
@@ -1141,7 +1312,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       <section className="help-section help-troubleshooting">
         <div className="help-section-heading"><span>Если что-то не работает</span><h2>Частые вопросы</h2></div>
         <div className="faq-list">
-          <details><summary>Окно перевода не появляется после выделения</summary><p>Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения. На служебных страницах браузера вида <code>chrome://…</code> расширения не запускаются.</p></details>
+          <details><summary>Окно перевода не появляется после выделения</summary><p>{translate("Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения.")} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
           <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
           <details><summary>Новая запись не появилась в истории</summary><p>Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.</p></details>
           <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
@@ -1244,6 +1415,9 @@ function DownloadIcon() { return <Icon><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M
 function EditIcon() { return <Icon><path d="m4 16-.8 4.8L8 20l11-11-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></Icon>; }
 function TrashIcon() { return <Icon><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></Icon>; }
 function HelpIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.5 2.1c-.8.4-1.2 1-1.2 1.9M12 17h.01"/></Icon>; }
+function StarIcon() { return <Icon><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></Icon>; }
+function MessageIcon() { return <Icon><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l1.6-3.2A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8.5 11.5h.01M12.5 11.5h.01M16.5 11.5h.01"/></Icon>; }
+function UploadIcon() { return <Icon><path d="M12 16V4M7 9l5-5 5 5M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></Icon>; }
 function ReadingIcon() { return <Icon><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H4V5.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H14v18a3 3 0 0 1 3-3h3V5.5Z"/></Icon>; }
 function KeyboardIcon() { return <Icon><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M18 10h.01M7 14h.01M10 14h7"/></Icon>; }
 function CursorIcon() { return <Icon><path d="m5 3 6.5 16 2.2-5.3L19 11.5 5 3Z"/></Icon>; }
