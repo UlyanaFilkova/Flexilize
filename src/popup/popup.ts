@@ -30,7 +30,7 @@ let records: TranslationRecord[] = [];
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => void initialize(), {once: true});
 else void initialize();
 clearButton.addEventListener("click", clearRecords);
-settingsButton.addEventListener("click", () => void extensionApi.runtime.openOptionsPage());
+settingsButton.addEventListener("click", () => void openSettings());
 historyButton.addEventListener("click", () => void openHistory());
 exportButton.addEventListener("click", () => void exportRecords());
 formatSelect.addEventListener("change", updateExportButton);
@@ -51,6 +51,11 @@ async function initialize() {
 
 async function openHistory() {
   await extensionApi.tabs.create({url: extensionApi.runtime.getURL("options/index.html#history")});
+  window.close();
+}
+
+async function openSettings() {
+  await extensionApi.tabs.create({url: extensionApi.runtime.getURL("options/index.html#settings")});
   window.close();
 }
 

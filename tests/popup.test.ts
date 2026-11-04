@@ -36,7 +36,7 @@ describe("popup", () => {
 
   it("opens settings and full history", async () => {
     fireEvent.click(document.querySelector("#settings")!);
-    expect(browserMock.runtime.openOptionsPage).toHaveBeenCalled();
+    await waitFor(() => expect(browserMock.tabs.create).toHaveBeenCalledWith({url: "moz-extension://test/options/index.html#settings"}));
     fireEvent.click(document.querySelector("#history")!);
     await waitFor(() => expect(browserMock.tabs.create).toHaveBeenCalledWith({url: "moz-extension://test/options/index.html#history"}));
   });
