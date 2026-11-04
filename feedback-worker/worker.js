@@ -37,6 +37,11 @@ export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") return response(null, 204);
     if (request.method !== "POST") return response("Method not allowed", 405);
+
+    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    const {success} = await env.FEEDBACK_RATE_LIMITER.limit({key: ip});
+    if (!success) return response("Слишком много запросов. Попробуйте позже.", 429);
+
     if (!env.RESEND_API_KEY || !env.FEEDBACK_TO || !env.FEEDBACK_FROM) {
       return response("Feedback service is not configured", 503);
     }
