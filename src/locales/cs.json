@@ -436,5 +436,6 @@
   "ui.open-the-store-and-leave-a-review": "Ohodnotit",
   "ui.export": "Vývozní",
   "ui.tip": "Tip:",
-  "ui.speak-code": "Mluvit ({code})"
+  "ui.speak-code": "Mluvit ({code})",
+  "ui.contact-information": "Kontaktní informace"
 }

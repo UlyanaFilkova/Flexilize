@@ -424,6 +424,7 @@
   "ui.feedback": "Feedback",
   "ui.feedback-intro": "Describe an issue or suggestion. You can attach screenshots.",
   "ui.reply-email-optional": "Email / contact information to receive a reply (optional)",
+  "ui.contact-information": "Contact information",
   "ui.screenshots-limits": "Images",
   "ui.send-message": "Send",
   "ui.sending": "Sending…",

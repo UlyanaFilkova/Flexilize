@@ -436,5 +436,6 @@
   "ui.urdu": "Urdu",
   "ui.original": "Original",
   "ui.rotation": "Drehung",
-  "ui.download-format": "{format} herunterladen"
+  "ui.download-format": "{format} herunterladen",
+  "ui.contact-information": "Kontaktinformationen"
 }

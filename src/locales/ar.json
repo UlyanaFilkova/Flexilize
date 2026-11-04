@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "قم بإسقاط الصور هنا أو انقر للتصفح",
   "ui.screenshot-file-limits-short": "PNG أو JPEG أو WebP · ما يصل إلى 10 ملفات · إجمالي 20 ميجابايت",
   "ui.remove-file": "إزالة الملف",
-  "ui.open-the-store-and-leave-a-review": "قيّم"
+  "ui.open-the-store-and-leave-a-review": "قيّم",
+  "ui.contact-information": "معلومات الاتصال"
 }

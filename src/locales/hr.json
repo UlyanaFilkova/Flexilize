@@ -436,5 +436,6 @@
   "ui.screenshot-file-limits-short": "PNG, JPEG ili WebP · do 10 datoteka · 20 MB ukupno",
   "ui.remove-file": "Ukloni datoteku",
   "ui.open-the-store-and-leave-a-review": "Ocijeni",
-  "ui.original": "Izvornik"
+  "ui.original": "Izvornik",
+  "ui.contact-information": "Kontakt podaci"
 }

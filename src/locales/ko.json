@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "여기에 이미지를 놓거나 찾아보려면 클릭하세요.",
   "ui.screenshot-file-limits-short": "PNG, JPEG 또는 WebP · 최대 10개 파일 · 총 20MB",
   "ui.remove-file": "파일 제거",
-  "ui.open-the-store-and-leave-a-review": "평가하기"
+  "ui.open-the-store-and-leave-a-review": "평가하기",
+  "ui.contact-information": "연락처 정보"
 }

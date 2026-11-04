@@ -436,5 +436,6 @@
   "ui.later": "Later",
   "ui.records": "Opnames",
   "ui.download-format": "Download {format}",
-  "ui.interface": "Interface"
+  "ui.interface": "Interface",
+  "ui.contact-information": "Contactgegevens"
 }

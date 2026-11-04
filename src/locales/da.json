@@ -436,5 +436,6 @@
   "ui.rotation": "Rotation",
   "ui.download-json": "Download JSON",
   "ui.download-format": "Download {format}",
-  "ui.send-message": "Sende"
+  "ui.send-message": "Sende",
+  "ui.contact-information": "Kontaktoplysninger"
 }

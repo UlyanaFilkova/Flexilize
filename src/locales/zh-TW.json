@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "將圖像拖曳到此處或按一下瀏覽",
   "ui.screenshot-file-limits-short": "PNG、JPEG 或 WebP · 最多 10 個檔案 · 總共 20 MB",
   "ui.remove-file": "刪除文件",
-  "ui.open-the-store-and-leave-a-review": "評分"
+  "ui.open-the-store-and-leave-a-review": "評分",
+  "ui.contact-information": "聯絡資訊"
 }

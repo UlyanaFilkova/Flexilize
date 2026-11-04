@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "تصاویر را اینجا رها کنید یا برای مرور کلیک کنید",
   "ui.screenshot-file-limits-short": "PNG، JPEG یا WebP · حداکثر 10 فایل · 20 مگابایت کل",
   "ui.remove-file": "حذف فایل",
-  "ui.open-the-store-and-leave-a-review": "امتیاز دهید"
+  "ui.open-the-store-and-leave-a-review": "امتیاز دهید",
+  "ui.contact-information": "اطلاعات تماس"
 }

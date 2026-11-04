@@ -436,5 +436,6 @@
   "ui.screenshot-file-limits-short": "PNG, JPEG o WebP · hasta 10 archivos · 20 MB en total",
   "ui.remove-file": "Eliminar archivo",
   "ui.open-the-store-and-leave-a-review": "Valorar",
-  "ui.original": "Original"
+  "ui.original": "Original",
+  "ui.contact-information": "Información del contacto"
 }

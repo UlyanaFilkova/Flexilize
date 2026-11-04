@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "Resimleri buraya bırakın veya göz atmak için tıklayın",
   "ui.screenshot-file-limits-short": "PNG, JPEG veya WebP · en fazla 10 dosya · toplam 20 MB",
   "ui.remove-file": "Dosyayı kaldır",
-  "ui.open-the-store-and-leave-a-review": "Puan ver"
+  "ui.open-the-store-and-leave-a-review": "Puan ver",
+  "ui.contact-information": "İletişim bilgileri"
 }

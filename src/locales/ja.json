@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "ここに画像をドロップするか、クリックして参照してください",
   "ui.screenshot-file-limits-short": "PNG、JPEG、または WebP · 最大 10 ファイル · 合計 20 MB",
   "ui.remove-file": "ファイルを削除",
-  "ui.open-the-store-and-leave-a-review": "評価する"
+  "ui.open-the-store-and-leave-a-review": "評価する",
+  "ui.contact-information": "連絡先"
 }

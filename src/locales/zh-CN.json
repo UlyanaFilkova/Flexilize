@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "将图像拖到此处或单击浏览",
   "ui.screenshot-file-limits-short": "PNG、JPEG 或 WebP · 最多 10 个文件 · 总共 20 MB",
   "ui.remove-file": "删除文件",
-  "ui.open-the-store-and-leave-a-review": "评价"
+  "ui.open-the-store-and-leave-a-review": "评价",
+  "ui.contact-information": "联系信息"
 }

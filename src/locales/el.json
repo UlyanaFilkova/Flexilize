@@ -436,5 +436,6 @@
   "ui.drop-images-or-click-to-select": "Αποθέστε εικόνες εδώ ή κάντε κλικ για περιήγηση",
   "ui.screenshot-file-limits-short": "PNG, JPEG ή WebP · έως 10 αρχεία · 20 MB συνολικά",
   "ui.remove-file": "Κατάργηση αρχείου",
-  "ui.open-the-store-and-leave-a-review": "Αξιολόγηση"
+  "ui.open-the-store-and-leave-a-review": "Αξιολόγηση",
+  "ui.contact-information": "Στοιχεία επικοινωνίας"
 }
