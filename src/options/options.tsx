@@ -645,7 +645,7 @@ function GeneralSettings() {
         </label>
       </div>}
 
-      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
+      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row">
         <div className="setting-copy">
           <h2>Активация горячими клавишами</h2>
           <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
@@ -663,7 +663,7 @@ function GeneralSettings() {
         </label>
       </div>}
 
-      {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+      {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
         <div className="setting-copy">
           <h2>Комбинация клавиш</h2>
           <p>Нажмите кнопку и введите новую комбинацию.</p>
@@ -681,7 +681,7 @@ function GeneralSettings() {
       </div>}
         </section>
       </div>
-      {!isMobile && <div className="settings-group settings-group-following">
+      {!isMobile && <div className="settings-group settings-group-following translator-shortcuts-settings-group">
         <h2 className="settings-group-title">Переводчик</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
           <div className="setting-row activation-setting-row">
