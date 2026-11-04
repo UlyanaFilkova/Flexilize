@@ -322,7 +322,7 @@ function ReviewView() {
   );
 }
 
-const feedbackEndpoint = ((import.meta as ImportMeta & {env?: Record<string, string | undefined>}).env?.VITE_FEEDBACK_ENDPOINT || "").trim();
+const feedbackEndpoint = ((import.meta as ImportMeta & {env?: Record<string, string | undefined>}).env?.EXTENSION_PUBLIC_FEEDBACK_ENDPOINT || "").trim();
 const feedbackMaxFiles = 10;
 const feedbackMaxBytes = 20 * 1024 * 1024;
 
@@ -400,7 +400,7 @@ function FeedbackForm() {
               textarea.style.height = `${Math.max(textarea.scrollHeight, textarea.clientHeight)}px`;
             }} />
           </label>
-          <label>{translate("Email / контактная информация для получения ответа (необязательно)")}
+          <label>{translate("Электронная почта (необязательно)")}
             <input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
           </label>
           <label className="feedback-honeypot" aria-hidden="true" tabIndex={-1}>Website
