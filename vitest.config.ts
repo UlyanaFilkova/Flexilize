@@ -1,6 +1,9 @@
 import {defineConfig} from "vitest/config";
 import {fileURLToPath} from "node:url";
 
+// Keep the feedback form enabled in tests without relying on a local .env file.
+process.env.EXTENSION_PUBLIC_FEEDBACK_ENDPOINT = "https://feedback.test.invalid/";
+
 export default defineConfig({
   envPrefix: ["VITE_", "EXTENSION_PUBLIC_"],
   resolve: {

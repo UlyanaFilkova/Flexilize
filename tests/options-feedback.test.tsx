@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
+import {beforeEach, describe, expect, it, vi} from "vitest";
 import {screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {defaultSettings, SETTINGS_KEY} from "../src/settings";
@@ -8,7 +8,6 @@ describe("feedback form", () => {
 
   beforeEach(async () => {
     vi.resetModules();
-    vi.stubEnv("EXTENSION_PUBLIC_FEEDBACK_ENDPOINT", "https://feedback.example.workers.dev/");
     const mock = await import("./mocks/browser");
     mock.storageData[SETTINGS_KEY] = {...structuredClone(defaultSettings), interfaceLanguage: "ru"};
     mock.browserMock.runtime.sendMessage.mockResolvedValue({ok: true, records: []});
@@ -19,9 +18,6 @@ describe("feedback form", () => {
     await import("../src/options/options");
     await screen.findByRole("heading", {name: "Оценка и отзыв"});
   });
-
-  afterEach(() => vi.unstubAllEnvs());
-
   it("sends arbitrary contact text with a localized label and clears after success", async () => {
     fetchMock.mockResolvedValue({ok: true, status: 200});
     const message = screen.getByRole("textbox", {name: "Сообщение"});
