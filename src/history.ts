@@ -6,16 +6,16 @@ import {formatRecordCount, getActiveLanguage, translate, type InterfaceLanguage}
 const RECORDS_KEY = "translationRecords";
 
 export const exportFormats: ReadonlyArray<{format: ExportFormat; label: string}> = [
-  {format: "json", label: "JSON"},
   {format: "pdf", label: "PDF"},
   {format: "txt", label: "TXT"},
   {format: "csv", label: "CSV"},
-  {format: "tsv", label: "TSV"},
+  {format: "xlsx", label: "XLSX"},
+  {format: "html", label: "HTML"},
+  {format: "markdown", label: "Markdown"},
   {format: "anki-csv", label: "Anki CSV"},
   {format: "anki-tsv", label: "Anki TSV"},
-  {format: "xlsx", label: "XLSX"},
-  {format: "markdown", label: "Markdown"},
-  {format: "html", label: "HTML"}
+  {format: "tsv", label: "TSV"},
+  {format: "json", label: "JSON"}
 ];
 
 export async function getTranslationRecords() {
