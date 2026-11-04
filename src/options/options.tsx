@@ -331,7 +331,14 @@ function FeedbackForm() {
   const [email, setEmail] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState("");
+  const [toast, setToast] = useState<{type: "success" | "error"; message: string} | null>(null);
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
   const onDrop = (accepted: File[], rejected: Array<{errors: Array<{code: string}>}>) => {
     if (rejected.length) {
@@ -368,6 +375,7 @@ function FeedbackForm() {
     if (!feedbackEndpoint || !message.trim()) return;
     setSending(true);
     setStatus("");
+    setToast(null);
     const body = new FormData();
     body.set("message", message.trim());
     body.set("email", email.trim());
@@ -379,9 +387,9 @@ function FeedbackForm() {
       setMessage("");
       setEmail("");
       setFiles([]);
-      setStatus(translate("Спасибо! Сообщение отправлено."));
+      setToast({type: "success", message: translate("Спасибо! Сообщение отправлено.")});
     } catch {
-      setStatus(translate("Не удалось отправить сообщение. Попробуйте позже."));
+      setToast({type: "error", message: translate("Не удалось отправить сообщение. Попробуйте позже.")});
     } finally {
       setSending(false);
     }
@@ -389,6 +397,7 @@ function FeedbackForm() {
 
   return (
     <section className="feedback-card">
+      {toast && <div className={`feedback-toast is-${toast.type}`} role={toast.type === "error" ? "alert" : "status"} aria-live={toast.type === "error" ? "assertive" : "polite"} aria-atomic="true">{toast.message}</div>}
       <div className="feedback-icon"><MessageIcon /></div>
       <div className="feedback-content">
         <h2>{translate("Обратная связь")}</h2>

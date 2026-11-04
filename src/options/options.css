@@ -309,6 +309,10 @@ a:focus-visible {
 .feedback-card .review-store-action:disabled { cursor: not-allowed; opacity: .55; transform: none; }
 .feedback-card .feedback-note, .feedback-card .feedback-status, .feedback-card .feedback-files { margin: 0; }
 .feedback-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.feedback-toast { position: fixed; z-index: 50; bottom: 48px; left: 50%; max-width: min(420px, calc(100vw - 32px)); box-sizing: border-box; padding: 14px 18px; border: 1px solid transparent; border-radius: 12px; box-shadow: 0 12px 30px rgba(24, 34, 47, .2); color: #fff; font-size: 14px; font-weight: 600; line-height: 1.5; transform: translateX(-50%); animation: feedback-toast-in .18s ease-out; }
+.feedback-toast.is-success { border-color: #299564; background: #238759; }
+.feedback-toast.is-error { border-color: #cf483f; background: #c4372f; }
+@keyframes feedback-toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 .status-dot {
   width: 8px;
