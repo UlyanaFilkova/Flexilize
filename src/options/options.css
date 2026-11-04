@@ -289,8 +289,8 @@ a:focus-visible {
 .feedback-content > p { margin: 0; }
 .feedback-card form { display: grid; gap: 15px; margin-top: 18px; }
 .feedback-card form label { display: grid; gap: 8px; color: #344054; font-size: 15px; font-weight: 600; }
-.feedback-card textarea, .feedback-card input[type="email"] { width: 100%; box-sizing: border-box; padding: 12px 13px; border: 1px solid #d7dce5; border-radius: 9px; color: #273245; font-family: inherit; font-size: 16px; font-weight: 400; line-height: 1.5; }
-.feedback-card textarea { min-height: 60px; overflow-y: auto; resize: vertical; }
+.feedback-card textarea, .feedback-card input[type="email"], .feedback-card input[type="text"] { width: 100%; box-sizing: border-box; padding: 12px 13px; border: 1px solid #d7dce5; border-radius: 9px; color: #273245; font-family: inherit; font-size: 16px; font-weight: 400; line-height: 1.5; }
+.feedback-card textarea { min-height: 74px; overflow-y: auto; resize: vertical; }
 .feedback-card input[type="file"] { max-width: 100%; font-size: 12px; font-weight: 400; }
 .feedback-upload-label { color: #344054; font-size: 15px; font-weight: 600; }
 .feedback-dropzone { display: grid; min-height: 84px; place-content: center; justify-items: center; gap: 5px; padding: 12px; border: 1.5px dashed #c8d0df; border-radius: 12px; background: #fafbfe; color: #69758a; text-align: center; cursor: pointer; transition: border-color .16s ease, background .16s ease, color .16s ease; }

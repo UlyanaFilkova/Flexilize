@@ -328,7 +328,7 @@ const feedbackMaxBytes = 20 * 1024 * 1024;
 
 function FeedbackForm() {
   const [message, setMessage] = useState("");
-  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState("");
   const [toast, setToast] = useState<{type: "success" | "error"; message: string} | null>(null);
@@ -378,14 +378,15 @@ function FeedbackForm() {
     setToast(null);
     const body = new FormData();
     body.set("message", message.trim());
-    body.set("email", email.trim());
+    body.set("contact", contact.trim());
+    body.set("contactLabel", translate("Контактная информация"));
     body.set("website", "");
     files.forEach((file) => body.append("screenshots", file, file.name));
     try {
       const response = await fetch(feedbackEndpoint, {method: "POST", body});
       if (!response.ok) throw new Error("feedback request failed");
       setMessage("");
-      setEmail("");
+      setContact("");
       setFiles([]);
       setToast({type: "success", message: translate("Спасибо! Сообщение отправлено.")});
     } catch {
@@ -406,11 +407,15 @@ function FeedbackForm() {
           <label>{translate("Сообщение")}
             <textarea required rows={2} maxLength={5000} value={message} onChange={(event) => setMessage(event.target.value)} onInput={(event) => {
               const textarea = event.currentTarget;
-              textarea.style.height = `${Math.max(textarea.scrollHeight, textarea.clientHeight)}px`;
+              textarea.style.height = "auto";
+              const style = window.getComputedStyle(textarea);
+              const borderHeight = Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth);
+              const minimumHeight = Number.parseFloat(style.minHeight) || 74;
+              textarea.style.height = `${Math.max(textarea.scrollHeight + borderHeight, minimumHeight)}px`;
             }} />
           </label>
-          <label>{translate("Электронная почта (необязательно)")}
-            <input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
+          <label>{translate("Ваш email или контакт для ответа (необязательно)")}
+            <input type="text" maxLength={500} value={contact} onChange={(event) => setContact(event.target.value)} />
           </label>
           <label className="feedback-honeypot" aria-hidden="true" tabIndex={-1}>Website
             <input tabIndex={-1} autoComplete="off" value="" onChange={() => undefined} />

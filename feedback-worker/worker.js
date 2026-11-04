@@ -58,11 +58,11 @@ export default {
 
     if (String(form.get("website") || "").trim()) return response("Thanks", 200);
     const message = String(form.get("message") || "").trim();
-    const replyEmail = String(form.get("email") || "").trim();
+    const contact = String(form.get("contact") || form.get("email") || "").trim();
+    const contactLabel = String(form.get("contactLabel") || "Contact information").trim().slice(0, 80) || "Contact information";
     if (!message || message.length > 5000) return response("Message is required", 400);
-    if (replyEmail && (replyEmail.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(replyEmail))) {
-      return response("Invalid reply email", 400);
-    }
+    if (contact.length > 500) return response("Contact information is too long", 400);
+    const replyEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) ? contact : "";
 
     const files = form.getAll("screenshots").filter((item) => item instanceof File && item.size > 0);
     if (files.length > MAX_FILES) return response("Too many screenshots", 400);
@@ -77,13 +77,13 @@ export default {
       filename: safeFilename(file.name),
       content: toBase64(new Uint8Array(await file.arrayBuffer()))
     })));
-    const reply = replyEmail ? `<p><strong>Reply email:</strong> ${escapeHtml(replyEmail)}</p>` : "";
+    const reply = contact ? `<p><strong>${escapeHtml(contactLabel)}:</strong> ${escapeHtml(contact)}</p>` : "";
     const payload = {
       from: env.FEEDBACK_FROM,
       to: [env.FEEDBACK_TO],
       subject: "Context Translator feedback",
-      text: `${message}${replyEmail ? `\n\nReply email: ${replyEmail}` : ""}`,
-      html: `<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>${reply}`,
+      text: `${contact ? `${contactLabel}: ${contact}\n\n` : ""}${message}`,
+      html: `${reply}<p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>`,
       ...(attachments.length ? {attachments} : {}),
       ...(replyEmail ? {reply_to: replyEmail} : {})
     };
