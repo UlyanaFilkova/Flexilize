@@ -53,6 +53,21 @@ describe("background message handling", () => {
     expect(String(fetchMock.mock.calls[0][0])).toContain("clients5.google.com/translate_a/t");
   });
 
+  it("capitalizes standalone English I in translated text and alternatives", async () => {
+    vi.stubGlobal("fetch", vi.fn<FetchHandler>(async () => new Response(JSON.stringify([
+      "when i read your profile i was wondering how bad it is"
+    ]), {status: 200})));
+    const result = await handle({type: "translate-preview", payload: {
+      text: "Когда я читал ваш профиль, я задумался, насколько всё плохо.",
+      sentence: "Когда я читал ваш профиль, я задумался, насколько всё плохо.",
+      sourceLanguage: "ru",
+      targetLanguage: "en"
+    }});
+
+    expect(result).toMatchObject({ok: true, translation: "when I read your profile I was wondering how bad it is"});
+    expect(result.translations).toContain("when I read your profile I was wondering how bad it is");
+  });
+
   it("creates and saves a selection translation without a transcription request", async () => {
     vi.stubGlobal("fetch", vi.fn<FetchHandler>(async () => (
       new Response(JSON.stringify(["Тестовый перевод"]), {status: 200})

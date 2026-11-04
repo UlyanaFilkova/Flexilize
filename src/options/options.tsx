@@ -340,7 +340,7 @@ function FeedbackForm() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
-  const onDrop = (accepted: File[], rejected: Array<{errors: Array<{code: string}>}>) => {
+  const onDrop = (accepted: File[], rejected: Array<{errors: ReadonlyArray<{code: string}>}>) => {
     if (rejected.length) {
       const codes = rejected.flatMap((item) => item.errors.map((error) => error.code));
       setStatus(codes.includes("file-too-large")
@@ -1312,7 +1312,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       <section className="help-section help-troubleshooting">
         <div className="help-section-heading"><span>Если что-то не работает</span><h2>Частые вопросы</h2></div>
         <div className="faq-list">
-          <details><summary>Окно перевода не появляется после выделения</summary><p>Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения. На служебных страницах браузера вида <code>chrome://…</code> расширения не запускаются.</p></details>
+          <details><summary>Окно перевода не появляется после выделения</summary><p>{translate("Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения.")} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
           <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
           <details><summary>Новая запись не появилась в истории</summary><p>Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.</p></details>
           <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>

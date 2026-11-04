@@ -2,6 +2,7 @@ import {defineConfig} from "vitest/config";
 import {fileURLToPath} from "node:url";
 
 export default defineConfig({
+  envPrefix: ["VITE_", "EXTENSION_PUBLIC_"],
   resolve: {
     alias: {
       "webextension-polyfill": fileURLToPath(new URL("./tests/mocks/browser.ts", import.meta.url))
