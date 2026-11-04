@@ -165,7 +165,6 @@
   "ui.select-text-on-any-page-and-its-translation-will-appear-here": "Odaberite tekst na bilo kojoj stranici i njegov prijevod će se pojaviti ovdje.",
   "ui.edit-record": "Uredi zapis",
   "ui.delete-record": "Izbriši zapis",
-  "ui.original": "Original",
   "ui.context": "Kontekst",
   "ui.context-translation": "Prijevod konteksta",
   "ui.other-translations-one-per-line": "Ostali prijevodi — jedan po retku",
@@ -268,7 +267,7 @@
   "ui.frequently-asked-questions": "Često postavljana pitanja",
   "ui.the-translation-window-does-not-appear-after-selecting-text": "Prozor za prijevod ne pojavljuje se nakon odabira teksta",
   "ui.check-show-translation-window-if-shortcut-activation-is-enabled-press-the-assigned-shortcut-after-selecting-text-reload-the-tab-after-installing-or-updating-the-extension-extensions-do-not-run-on-browser-pages-such-as": "Označite \"Prikaži prozor za prijevod\". Ako je aktiviranje prečaca omogućeno, pritisnite dodijeljeni prečac nakon odabira teksta. Ponovno učitajte karticu nakon instaliranja ili ažuriranja proširenja. Proširenja se ne pokreću na stranicama preglednika kao što su",
-  "ui.message": ".",
+  "ui.message": "Poruka",
   "ui.translation-or-speech-does-not-load": "Prijevod ili govor se ne učitavaju",
   "ui.a-new-record-did-not-appear-in-history": "Novi zapis nije se pojavio u povijesti",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Ove značajke zahtijevaju internetsku vezu. Provjerite vezu i pokušajte ponovno. Neka mjesta mogu ograničiti ugrađene elemente; usporediti rezultat na drugom mjestu.",
@@ -415,7 +414,7 @@
   "ui.context-copy": "Kopiraj",
   "ui.search-the-web": "Pretraži web",
   "ui.rate-and-review": "Ocijenite i pregledajte",
-  "ui.rate-and-review-description": "Recite nam što mislite o Context Translator. Vaša ocjena i recenzija pomažu drugim korisnicima i podržavaju razvoj proširenja.",
+  "ui.rate-and-review-description": "Podijelite svoje mišljenje o Context Translatoru. Ocjene i recenzije pomažu drugim korisnicima i podupiru razvoj proširenja.",
   "ui.rate-context-translator": "Ocijenite Context Translator",
   "ui.detected-browser": "Otkriven preglednik:",
   "ui.extension-store": "Prodavaonica proširenja:",
@@ -436,5 +435,6 @@
   "ui.drop-images-or-click-to-select": "Ispustite slike ovdje ili kliknite za pregledavanje",
   "ui.screenshot-file-limits-short": "PNG, JPEG ili WebP · do 10 datoteka · 20 MB ukupno",
   "ui.remove-file": "Ukloni datoteku",
-  "ui.open-the-store-and-leave-a-review": "Ocijeni"
+  "ui.open-the-store-and-leave-a-review": "Ocijeni",
+  "ui.original": "Izvornik"
 }

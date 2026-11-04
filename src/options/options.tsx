@@ -400,7 +400,7 @@ function FeedbackForm() {
               textarea.style.height = `${Math.max(textarea.scrollHeight, textarea.clientHeight)}px`;
             }} />
           </label>
-          <label>{translate("Электронная почта / контактная информация для получения ответа (необязательно)")}
+          <label>{translate("Email / контактная информация для получения ответа (необязательно)")}
             <input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
           </label>
           <label className="feedback-honeypot" aria-hidden="true" tabIndex={-1}>Website

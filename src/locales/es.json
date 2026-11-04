@@ -147,7 +147,6 @@
   "ui.select-text-on-any-page-and-its-translation-will-appear-here": "Selecciona texto en cualquier página y aquí aparecerá la traducción.",
   "ui.edit-record": "Editar registro",
   "ui.delete-record": "Eliminar registro",
-  "ui.original": "Original",
   "ui.context": "Contexto",
   "ui.context-translation": "Traducción de contexto",
   "ui.other-translations-one-per-line": "Otras traducciones: una por línea",
@@ -249,7 +248,7 @@
   "ui.frequently-asked-questions": "Preguntas frecuentes",
   "ui.the-translation-window-does-not-appear-after-selecting-text": "La ventana de traducción no aparece después de seleccionar el texto.",
   "ui.check-show-translation-window-if-shortcut-activation-is-enabled-press-the-assigned-shortcut-after-selecting-text-reload-the-tab-after-installing-or-updating-the-extension-extensions-do-not-run-on-browser-pages-such-as": "Marque \"Mostrar ventana de traducción\". Si la activación de acceso directo está habilitada, presione el acceso directo asignado después de seleccionar el texto. Vuelva a cargar la pestaña después de instalar o actualizar la extensión. Las extensiones no se ejecutan en páginas del navegador como",
-  "ui.message": ".",
+  "ui.message": "Mensaje",
   "ui.translation-or-speech-does-not-load": "La traducción o la voz no se carga",
   "ui.a-new-record-did-not-appear-in-history": "No apareció un nuevo registro en el historial",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Estas funciones requieren conexión a Internet. Comprueba tu conexión y vuelve a intentarlo. Algunos sitios pueden limitar los elementos integrados; en ese caso, abre otro sitio y compara el resultado.",
@@ -415,7 +414,7 @@
   "ui.context-copy": "Copiar",
   "ui.search-the-web": "Buscar en la web",
   "ui.rate-and-review": "Calificar y reseñar",
-  "ui.rate-and-review-description": "Cuéntanos qué te parece Context Translator. Su calificación y reseña ayudan a otros usuarios y respaldan el desarrollo de la extensión.",
+  "ui.rate-and-review-description": "Comparte tu opinión sobre Context Translator. Las valoraciones y reseñas ayudan a otros usuarios y apoyan el desarrollo de la extensión.",
   "ui.rate-context-translator": "Califica Context Translator",
   "ui.detected-browser": "Navegador detectado:",
   "ui.extension-store": "Tienda de extensiones:",
@@ -436,5 +435,6 @@
   "ui.drop-images-or-click-to-select": "Suelta las imágenes aquí o haz clic para explorar",
   "ui.screenshot-file-limits-short": "PNG, JPEG o WebP · hasta 10 archivos · 20 MB en total",
   "ui.remove-file": "Eliminar archivo",
-  "ui.open-the-store-and-leave-a-review": "Valorar"
+  "ui.open-the-store-and-leave-a-review": "Valorar",
+  "ui.original": "Original"
 }
