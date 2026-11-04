@@ -437,5 +437,9 @@
   "ui.screenshot-file-limits-short": "PNG, JPEG veya WebP · en fazla 10 dosya · toplam 20 MB",
   "ui.remove-file": "Dosyayı kaldır",
   "ui.open-the-store-and-leave-a-review": "Puan ver",
-  "ui.contact-information": "İletişim bilgileri"
+  "ui.contact-information": "İletişim bilgileri",
+  "ui.check-translation-window-and-browser-restrictions": "“Çeviri penceresini göster” seçeneğini işaretleyin. Kısayolu etkinleştirme açıksa metni seçtikten sonra atanan kısayola basın. Uzantıyı yükledikten veya güncelledikten sonra sekmeyi yeniden yükleyin. Tarayıcının dahili sayfaları gibi",
+  "ui.extensions-do-not-work-on-browser-pages": "uzantıları desteklemeyin.",
+  "ui.check-translation-window-shortcut-and-reload": "“Çeviri penceresini göster” seçeneğini işaretleyin. Kısayolu etkinleştirme açıksa metni seçtikten sonra atanan kısayola basın. Uzantıyı yükledikten veya güncelledikten sonra sekmeyi yeniden yükleyin.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Uzantılar aşağıdakiler gibi dahili tarayıcı sayfalarında çalıştırılamaz:"
 }

@@ -437,5 +437,9 @@
   "ui.urdu": "Urdu",
   "ui.original": "Original",
   "ui.interface": "Interface",
-  "ui.contact-information": "Informações de contato"
+  "ui.contact-information": "Informações de contato",
+  "ui.check-translation-window-and-browser-restrictions": "Marque “Mostrar janela de tradução”. Se a ativação do atalho estiver ativada, pressione o atalho atribuído após selecionar o texto. Recarregue a guia após instalar ou atualizar a extensão. Páginas internas do navegador, como",
+  "ui.extensions-do-not-work-on-browser-pages": "não suporta extensões.",
+  "ui.check-translation-window-shortcut-and-reload": "Marque “Mostrar janela de tradução”. Se a ativação do atalho estiver ativada, pressione o atalho atribuído após selecionar o texto. Recarregue a guia após instalar ou atualizar a extensão.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "As extensões não podem ser executadas em páginas internas do navegador, como"
 }

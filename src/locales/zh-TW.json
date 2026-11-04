@@ -437,5 +437,9 @@
   "ui.screenshot-file-limits-short": "PNG、JPEG 或 WebP · 最多 10 個檔案 · 總共 20 MB",
   "ui.remove-file": "刪除文件",
   "ui.open-the-store-and-leave-a-review": "評分",
-  "ui.contact-information": "聯絡資訊"
+  "ui.contact-information": "聯絡資訊",
+  "ui.check-translation-window-and-browser-restrictions": "勾選「顯示翻譯視窗」。如果快捷方式啟動已打開，請在選擇文字後按指定的快捷方式。安裝或更新擴充功能後重新載入選項卡。瀏覽器內部頁面，例如",
+  "ui.extensions-do-not-work-on-browser-pages": "不支援擴充。",
+  "ui.check-translation-window-shortcut-and-reload": "勾選「顯示翻譯視窗」。如果快捷方式啟動已打開，請在選擇文字後按指定的快捷方式。安裝或更新擴充功能後重新載入選項卡。",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "擴充功能無法在內部瀏覽器頁面上運行，例如"
 }

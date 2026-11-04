@@ -437,5 +437,9 @@
   "ui.screenshot-file-limits-short": "पीएनजी, जेपीईजी, या वेबपी · 10 फ़ाइलों तक · कुल 20 एमबी",
   "ui.remove-file": "फ़ाइल हटाएँ",
   "ui.open-the-store-and-leave-a-review": "रेट करें",
-  "ui.contact-information": "संपर्क जानकारी"
+  "ui.contact-information": "संपर्क जानकारी",
+  "ui.check-translation-window-and-browser-restrictions": "\"अनुवाद विंडो दिखाएँ\" चेक करें। यदि शॉर्टकट सक्रियण चालू है, तो टेक्स्ट का चयन करने के बाद निर्दिष्ट शॉर्टकट दबाएं। एक्सटेंशन इंस्टॉल या अपडेट करने के बाद टैब को पुनः लोड करें। ब्राउज़र के आंतरिक पृष्ठ जैसे",
+  "ui.extensions-do-not-work-on-browser-pages": "एक्सटेंशन का समर्थन न करें.",
+  "ui.check-translation-window-shortcut-and-reload": "\"अनुवाद विंडो दिखाएँ\" चेक करें। यदि शॉर्टकट सक्रियण चालू है, तो टेक्स्ट का चयन करने के बाद निर्दिष्ट शॉर्टकट दबाएं। एक्सटेंशन इंस्टॉल या अपडेट करने के बाद टैब को पुनः लोड करें।",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "एक्सटेंशन जैसे आंतरिक ब्राउज़र पृष्ठों पर नहीं चल सकते"
 }

@@ -437,5 +437,9 @@
   "ui.screenshot-file-limits-short": "PNG、JPEG、または WebP · 最大 10 ファイル · 合計 20 MB",
   "ui.remove-file": "ファイルを削除",
   "ui.open-the-store-and-leave-a-review": "評価する",
-  "ui.contact-information": "連絡先"
+  "ui.contact-information": "連絡先",
+  "ui.check-translation-window-and-browser-restrictions": "「翻訳ウィンドウを表示する」にチェックを入れます。ショートカットのアクティブ化がオンになっている場合は、テキストを選択した後、割り当てられたショートカットを押します。拡張機能をインストールまたは更新した後、タブを再読み込みします。次のようなブラウザの内部ページ",
+  "ui.extensions-do-not-work-on-browser-pages": "拡張子はサポートされていません。",
+  "ui.check-translation-window-shortcut-and-reload": "「翻訳ウィンドウを表示する」にチェックを入れます。ショートカットのアクティブ化がオンになっている場合は、テキストを選択した後、割り当てられたショートカットを押します。拡張機能をインストールまたは更新した後、タブを再読み込みします。",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "拡張機能は、次のような内部ブラウ​​ザ ページでは実行できません。"
 }

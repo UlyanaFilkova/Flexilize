@@ -437,5 +437,9 @@
   "ui.screenshot-file-limits-short": "PNG، JPEG یا WebP · حداکثر 10 فایل · 20 مگابایت کل",
   "ui.remove-file": "حذف فایل",
   "ui.open-the-store-and-leave-a-review": "امتیاز دهید",
-  "ui.contact-information": "اطلاعات تماس"
+  "ui.contact-information": "اطلاعات تماس",
+  "ui.check-translation-window-and-browser-restrictions": "\"نمایش پنجره ترجمه\" را علامت بزنید. اگر فعال سازی میانبر روشن است، پس از انتخاب متن، میانبر اختصاص داده شده را فشار دهید. پس از نصب یا به‌روزرسانی برنامه افزودنی، برگه را دوباره بارگیری کنید. صفحات داخلی مرورگر مانند",
+  "ui.extensions-do-not-work-on-browser-pages": "از افزونه ها پشتیبانی نمی کنند",
+  "ui.check-translation-window-shortcut-and-reload": "\"نمایش پنجره ترجمه\" را علامت بزنید. اگر فعال سازی میانبر روشن است، پس از انتخاب متن، میانبر اختصاص داده شده را فشار دهید. پس از نصب یا به‌روزرسانی برنامه افزودنی، برگه را دوباره بارگیری کنید.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "برنامه های افزودنی نمی توانند در صفحات مرورگر داخلی مانند"
 }

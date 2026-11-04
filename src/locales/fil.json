@@ -437,5 +437,9 @@
   "ui.activation": "Pag-activate",
   "ui.interface": "Interface",
   "ui.extension-store": "Tindahan ng extension:",
-  "ui.contact-information": "Impormasyon sa pakikipag-ugnayan"
+  "ui.contact-information": "Impormasyon sa pakikipag-ugnayan",
+  "ui.check-translation-window-and-browser-restrictions": "Lagyan ng check ang \"Ipakita ang window ng pagsasalin\". Kung naka-on ang shortcut activation, pindutin ang nakatalagang shortcut pagkatapos pumili ng text. I-reload ang tab pagkatapos i-install o i-update ang extension. Mga panloob na pahina ng browser tulad ng",
+  "ui.extensions-do-not-work-on-browser-pages": "hindi sumusuporta sa mga extension.",
+  "ui.check-translation-window-shortcut-and-reload": "Lagyan ng check ang \"Ipakita ang window ng pagsasalin\". Kung naka-on ang shortcut activation, pindutin ang nakatalagang shortcut pagkatapos pumili ng text. I-reload ang tab pagkatapos i-install o i-update ang extension.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Ang mga extension ay hindi maaaring tumakbo sa panloob na mga pahina ng browser gaya ng"
 }

@@ -437,5 +437,9 @@
   "ui.export": "Vývozní",
   "ui.tip": "Tip:",
   "ui.speak-code": "Mluvit ({code})",
-  "ui.contact-information": "Kontaktní informace"
+  "ui.contact-information": "Kontaktní informace",
+  "ui.check-translation-window-and-browser-restrictions": "Zaškrtněte „Zobrazit okno překladu“. Pokud je aktivace zkratky zapnutá, stiskněte po výběru textu přiřazenou zkratku. Po instalaci nebo aktualizaci rozšíření kartu znovu načtěte. Vnitřní stránky prohlížeče jako např",
+  "ui.extensions-do-not-work-on-browser-pages": "nepodporují rozšíření.",
+  "ui.check-translation-window-shortcut-and-reload": "Zaškrtněte „Zobrazit okno překladu“. Pokud je aktivace zkratky zapnutá, stiskněte po výběru textu přiřazenou zkratku. Po instalaci nebo aktualizaci rozšíření kartu znovu načtěte.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Rozšíření nelze spustit na interních stránkách prohlížeče, jako je např"
 }

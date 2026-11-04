@@ -437,5 +437,9 @@
   "ui.urdu": "Urdu",
   "ui.uzbek": "Uzbekistan",
   "ui.welsh": "Welsh",
-  "ui.contact-information": "Informasi kontak"
+  "ui.contact-information": "Informasi kontak",
+  "ui.check-translation-window-and-browser-restrictions": "Centang “Tampilkan jendela terjemahan”. Jika aktivasi pintasan aktif, tekan pintasan yang ditetapkan setelah memilih teks. Muat ulang tab setelah menginstal atau memperbarui ekstensi. Halaman internal browser seperti",
+  "ui.extensions-do-not-work-on-browser-pages": "tidak mendukung ekstensi.",
+  "ui.check-translation-window-shortcut-and-reload": "Centang “Tampilkan jendela terjemahan”. Jika aktivasi pintasan aktif, tekan pintasan yang ditetapkan setelah memilih teks. Muat ulang tab setelah menginstal atau memperbarui ekstensi.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Ekstensi tidak dapat berjalan di halaman browser internal seperti"
 }

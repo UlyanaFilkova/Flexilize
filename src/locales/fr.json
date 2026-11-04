@@ -437,5 +437,9 @@
   "ui.activation": "Activation",
   "ui.interface": "Interface",
   "ui.screenshots-limits": "Images",
-  "ui.contact-information": "Coordonnées"
+  "ui.contact-information": "Coordonnées",
+  "ui.check-translation-window-and-browser-restrictions": "Cochez « Afficher la fenêtre de traduction ». Si l'activation du raccourci est activée, appuyez sur le raccourci attribué après avoir sélectionné le texte. Rechargez l'onglet après avoir installé ou mis à jour l'extension. Pages internes du navigateur telles que",
+  "ui.extensions-do-not-work-on-browser-pages": "ne prend pas en charge les extensions.",
+  "ui.check-translation-window-shortcut-and-reload": "Cochez « Afficher la fenêtre de traduction ». Si l'activation du raccourci est activée, appuyez sur le raccourci attribué après avoir sélectionné le texte. Rechargez l'onglet après avoir installé ou mis à jour l'extension.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Les extensions ne peuvent pas s'exécuter sur les pages internes du navigateur telles que"
 }

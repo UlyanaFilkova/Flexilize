@@ -437,5 +437,9 @@
   "ui.screenshot-file-limits-short": "PNG, JPEG או WebP · עד 10 קבצים · 20 MB סך הכל",
   "ui.remove-file": "הסר קובץ",
   "ui.open-the-store-and-leave-a-review": "דרגו",
-  "ui.contact-information": "פרטי התקשרות"
+  "ui.contact-information": "פרטי התקשרות",
+  "ui.check-translation-window-and-browser-restrictions": "סמן את \"הצג חלון תרגום\". אם הפעלת קיצור הדרך מופעלת, לחץ על קיצור הדרך שהוקצה לאחר בחירת טקסט. טען מחדש את הכרטיסייה לאחר התקנה או עדכון של התוסף. דפים פנימיים בדפדפן כגון",
+  "ui.extensions-do-not-work-on-browser-pages": "לא תומכים בהרחבות.",
+  "ui.check-translation-window-shortcut-and-reload": "סמן את \"הצג חלון תרגום\". אם הפעלת קיצור הדרך מופעלת, לחץ על קיצור הדרך שהוקצה לאחר בחירת טקסט. טען מחדש את הכרטיסייה לאחר התקנה או עדכון של התוסף.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "הרחבות אינן יכולות לפעול בדפי דפדפן פנימיים כגון"
 }

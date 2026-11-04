@@ -437,5 +437,9 @@
   "ui.original": "Original",
   "ui.rotation": "Drehung",
   "ui.download-format": "{format} herunterladen",
-  "ui.contact-information": "Kontaktinformationen"
+  "ui.contact-information": "Kontaktinformationen",
+  "ui.check-translation-window-and-browser-restrictions": "Aktivieren Sie „Übersetzungsfenster anzeigen“. Wenn die Verknüpfungsaktivierung aktiviert ist, drücken Sie nach der Textauswahl die zugewiesene Verknüpfung. Laden Sie die Registerkarte neu, nachdem Sie die Erweiterung installiert oder aktualisiert haben. Browserinterne Seiten wie z",
+  "ui.extensions-do-not-work-on-browser-pages": "unterstützen keine Erweiterungen.",
+  "ui.check-translation-window-shortcut-and-reload": "Aktivieren Sie „Übersetzungsfenster anzeigen“. Wenn die Verknüpfungsaktivierung aktiviert ist, drücken Sie nach der Textauswahl die zugewiesene Verknüpfung. Laden Sie die Registerkarte neu, nachdem Sie die Erweiterung installiert oder aktualisiert haben.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Erweiterungen können nicht auf internen Browserseiten ausgeführt werden, z"
 }

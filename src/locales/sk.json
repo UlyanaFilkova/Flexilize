@@ -437,5 +437,9 @@
   "ui.export": "Exportovať",
   "ui.filipino": "filipínsky",
   "ui.tip": "Tip:",
-  "ui.contact-information": "Kontaktné informácie"
+  "ui.contact-information": "Kontaktné informácie",
+  "ui.check-translation-window-and-browser-restrictions": "Začiarknite políčko „Zobraziť okno prekladu“. Ak je aktivácia skratky zapnutá, po výbere textu stlačte priradenú skratku. Po nainštalovaní alebo aktualizácii rozšírenia kartu znova načítajte. Interné stránky prehliadača ako napr",
+  "ui.extensions-do-not-work-on-browser-pages": "nepodporujú rozšírenia.",
+  "ui.check-translation-window-shortcut-and-reload": "Začiarknite políčko „Zobraziť okno prekladu“. Ak je aktivácia skratky zapnutá, po výbere textu stlačte priradenú skratku. Po nainštalovaní alebo aktualizácii rozšírenia kartu znova načítajte.",
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Rozšírenia nemôžu bežať na interných stránkach prehliadača ako napr"
 }
