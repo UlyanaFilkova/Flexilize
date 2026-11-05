@@ -101,6 +101,15 @@ function resetScrollPosition() {
   }
 }
 
+function scrollToSettingsAnchor(id: string) {
+  const anchor = document.getElementById(id);
+  if (!anchor) return;
+  const marginTop = Number.parseFloat(getComputedStyle(anchor).marginTop) || 0;
+  const stickyHeaderHeight = document.querySelector<HTMLElement>(".topbar")?.getBoundingClientRect().height || 0;
+  const marginTopPosition = window.scrollY + anchor.getBoundingClientRect().top - marginTop;
+  window.scrollTo({top: Math.max(0, marginTopPosition - stickyHeaderHeight + 16), behavior: "smooth"});
+}
+
 function App() {
   const initialRoute = routeFromHash();
   const [page, setPage] = useState<Page>(initialRoute === "help" || initialRoute === "review" ? initialRoute : initialRoute === "settings" ? "settings" : "history");
@@ -133,11 +142,24 @@ function App() {
   };
 
   const openSettingsSection = (section: string) => {
-    resetScrollPosition();
     setPage("settings");
     setSettingsSection(section);
     window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
+    if (section === "overview") {
+      window.scrollTo({top: 0, behavior: "smooth"});
+    } else {
+      const targetId = `settings-${section === "saving" ? "advanced" : section}`;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        scrollToSettingsAnchor(targetId);
+      }));
+    }
   };
+
+  useEffect(() => {
+    if (page !== "settings" || settingsSection === "overview") return;
+    const targetId = `settings-${settingsSection === "saving" ? "advanced" : settingsSection}`;
+    requestAnimationFrame(() => scrollToSettingsAnchor(targetId));
+  }, []);
 
   const openHelp = () => {
     resetScrollPosition();
@@ -208,9 +230,6 @@ function App() {
     }
   };
 
-  const settingsSectionTitle = settingsSection === "overview" ? "Настройки" : settingsSidebarItems.find((item) => item.id === settingsSection)?.label || "Настройки";
-  const settingsSectionDescription = settingsSection === "overview" ? "Настройте работу расширения под себя." : "";
-
   return (
     <div className={`app-shell${mobileMenuOpen ? " mobile-menu-open" : ""}`}>
       <header className="topbar">
@@ -261,22 +280,26 @@ function App() {
           ) : page === "help" ? (
             <HelpView onOpenSettings={openSettingsSection} onOpenHistory={() => openHistorySection("records")} onOpenExport={() => openHistorySection("export")} />
           ) : page === "settings" ? (
-            <>
-              <PageHeading title={settingsSectionTitle} description={settingsSectionDescription} />
-              {settingsSection === "overview"
-                ? <SettingsOverview onOpenSection={openSettingsSection} />
-                : settingsSection === "general"
-                ? <GeneralSettings />
-                : settingsSection === "translation"
-                  ? <TranslationSettings />
-                : settingsSection === "sound"
-                  ? <SoundSettings />
-                : settingsSection === "advanced"
-                  ? <AdvancedSettings />
-                : settingsSection === "saving"
-                  ? <AdvancedSettings />
-                  : <section className="empty-panel" aria-label="Область настроек"><div className="empty-panel-accent" /></section>}
-            </>
+            <div id="settings-top">
+              <PageHeading title="Настройки" description="Настройте работу расширения под себя." />
+              <SettingsBanner onOpenSection={openSettingsSection} />
+              <div id="settings-general" className="settings-scroll-anchor">
+                <PageHeading title="Активация" description="" showEyebrow={false} />
+                <GeneralSettings />
+              </div>
+              <div id="settings-translation" className="settings-scroll-anchor">
+                <PageHeading title="Языки" description="" showEyebrow={false} />
+                <TranslationSettings />
+              </div>
+              <div id="settings-sound" className="settings-scroll-anchor">
+                <PageHeading title="Звук" description="" showEyebrow={false} />
+                <SoundSettings />
+              </div>
+              <div id="settings-advanced" className="settings-scroll-anchor">
+                <PageHeading title="Расширенные настройки" description="" showEyebrow={false} />
+                <AdvancedSettings />
+              </div>
+            </div>
           ) : historySection === "records" ? (
             <HistoryView records={records} loading={loading} onClear={clearRecords} onDelete={removeRecord} onUpdate={updateRecord} onOpenExport={() => openHistorySection("export")} />
           ) : (
@@ -295,8 +318,8 @@ function App() {
   );
 }
 
-function PageHeading({title, description, action}: {title: string; description: string; action?: ReactNode}) {
-  return <div className="content-heading-row"><div className="content-heading"><span className="eyebrow">Context Translator</span><h1>{title}</h1><p>{description}</p></div>{action}</div>;
+function PageHeading({title, description, action, showEyebrow = true}: {title: string; description: string; action?: ReactNode; showEyebrow?: boolean}) {
+  return <div className="content-heading-row"><div className="content-heading">{showEyebrow && <span className="eyebrow">Context Translator</span>}<h1>{title}</h1><p>{description}</p></div>{action}</div>;
 }
 
 function ReviewView() {
@@ -456,49 +479,23 @@ function ScreenshotPreview({file, onRemove}: {file: File; onRemove: () => void})
   );
 }
 
-function SettingsOverview({onOpenSection}: {onOpenSection: (section: string) => void}) {
-  const sections = [
-    {id: "general", title: "Активация", description: "Управляйте автоматическим переводом, контекстным меню и горячими клавишами.", icon: <SlidersIcon />, meta: "Способы запуска"},
-    {id: "translation", title: "Языки", description: "Выберите языки и решите, показывать ли окно перевода на странице.", icon: <LanguagesIcon />, meta: "Языки и интерфейс"},
-    {id: "sound", title: "Звук", description: "Настройте транскрипцию, озвучивание и комфортную скорость речи.", icon: <SoundIcon />, meta: "От 0,3× до 2×"},
-    {id: "advanced", title: "Расширенные настройки", description: "Управляйте показом окна перевода и сохранением истории.", icon: <BookmarkIcon />, meta: "Дополнительные параметры"}
-  ];
-
+function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => void}) {
   return (
-    <div className="settings-overview">
-      <section className="settings-banner">
-        <div className="settings-banner-copy">
-          <span className="settings-banner-kicker">Персональные настройки</span>
-          <h2>Context Translator</h2>
-          <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
-          <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
-        </div>
-        <div className="settings-banner-visual" aria-hidden="true">
-          <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
-          <div className="banner-control banner-control-language"><LanguagesIcon /><span><strong>English</strong><small>на русский</small></span></div>
-          <div className="banner-control banner-control-sound"><SoundIcon /><span><strong>Скорость речи</strong><small>1,0×</small></span><b>−</b><em>+</em></div>
-          <div className="banner-orbit banner-orbit-one" />
-          <div className="banner-orbit banner-orbit-two" />
-        </div>
-      </section>
-
-      <div className="settings-overview-heading">
-        <div><span>Разделы</span><h2>Что хотите настроить?</h2></div>
-        <p>Каждый параметр сохраняется автоматически. Вы всегда можете вернуться и изменить его.</p>
+    <section className="settings-banner">
+      <div className="settings-banner-copy">
+        <span className="settings-banner-kicker">Персональные настройки</span>
+        <h2>Context Translator</h2>
+        <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
+        <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
       </div>
-
-      <section className="settings-overview-grid" aria-label="Разделы настроек">
-        {sections.map((section) => (
-          <button key={section.id} type="button" onClick={() => onOpenSection(section.id)}>
-            <span className="settings-overview-icon">{section.icon}</span>
-            <span className="settings-overview-card-copy"><strong>{section.title}</strong><small>{section.description}</small><em>{section.meta}</em></span>
-            <span className="settings-overview-arrow"><ArrowIcon /></span>
-          </button>
-        ))}
-      </section>
-
-      <aside className="settings-overview-note"><InfoIcon /><div><strong>Настройки хранятся только на этом устройстве</strong><p>При удалении данных расширения параметры вернутся к значениям по умолчанию.</p></div></aside>
-    </div>
+      <div className="settings-banner-visual" aria-hidden="true">
+        <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
+        <div className="banner-control banner-control-language"><LanguagesIcon /><span><strong>English</strong><small>на русский</small></span></div>
+        <div className="banner-control banner-control-sound"><SoundIcon /><span><strong>Скорость речи</strong><small>1,0×</small></span><b>−</b><em>+</em></div>
+        <div className="banner-orbit banner-orbit-one" />
+        <div className="banner-orbit banner-orbit-two" />
+      </div>
+    </section>
   );
 }
 

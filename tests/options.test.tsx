@@ -15,6 +15,7 @@ describe("options page", () => {
     document.body.innerHTML = '<div id="root"></div>';
     storageData[SETTINGS_KEY] = structuredClone(defaultSettings);
     browserMock.runtime.sendMessage.mockResolvedValue({ok: true, records: []});
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
     history.replaceState(null, "", "#settings");
     await import("../src/options/options");
     await screen.findByRole("heading", {name: "Настройки"});
@@ -32,16 +33,18 @@ describe("options page", () => {
     expect(screen.getByRole("heading", {name: "Звук"})).toBeTruthy();
   });
 
-  it("opens settings sections from the overview", async () => {
+  it("keeps the banner and scrolls to settings sections on the same page", async () => {
     expect(screen.getByRole("heading", {name: "Context Translator"})).toBeTruthy();
-    expect(screen.getByRole("region", {name: "Разделы настроек"})).toBeTruthy();
-    await userEvent.click(screen.getByRole("button", {name: /Языки.*Языки и интерфейс/}));
+    expect(screen.getByRole("heading", {name: "Активация"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Языки"})).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", {name: /^Языки$/}));
+    expect(screen.getByRole("heading", {name: "Языки"})).toBeTruthy();
+    expect(location.hash).toBe("#settings/translation");
+    await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith(expect.objectContaining({behavior: "smooth"})));
   });
 
-  it("opens advanced settings from the overview and saves its options", async () => {
-    const overview = screen.getByRole("region", {name: "Разделы настроек"});
-    await userEvent.click(within(overview).getByRole("button", {name: /Расширенные настройки/}));
+  it("scrolls to advanced settings from the navigation and saves its options", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
     expect(screen.getByRole("heading", {name: "Расширенные настройки"})).toBeTruthy();
     expect(location.hash).toBe("#settings/advanced");
 
@@ -51,19 +54,19 @@ describe("options page", () => {
     await waitFor(() => expect(storageData[SETTINGS_KEY].historyRotationEnabled).toBe(false));
   });
 
-  it("resets page scroll when switching settings tabs", async () => {
+  it("scrolls to section anchors and returns all settings to the page top", async () => {
     const scrollYDescriptor = Object.getOwnPropertyDescriptor(window, "scrollY");
-    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const scrollTo = vi.mocked(window.scrollTo);
     Object.defineProperty(window, "scrollY", {configurable: true, value: 480});
 
     try {
       await userEvent.click(screen.getByRole("button", {name: /^Активация$/}));
-      expect(scrollTo).toHaveBeenCalledWith(0, 0);
+      await waitFor(() => expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({behavior: "smooth"})));
 
       scrollTo.mockClear();
       Object.defineProperty(window, "scrollY", {configurable: true, value: 0});
-      await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
-      expect(scrollTo).not.toHaveBeenCalled();
+      await userEvent.click(screen.getByRole("button", {name: /^Все настройки$/}));
+      expect(scrollTo).toHaveBeenCalledWith({top: 0, behavior: "smooth"});
     } finally {
       if (scrollYDescriptor) Object.defineProperty(window, "scrollY", scrollYDescriptor);
       else Reflect.deleteProperty(window, "scrollY");
@@ -105,8 +108,9 @@ describe("options page", () => {
   it("separates selection and standalone translator language settings", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Языки$/}));
     expect(screen.getByRole("heading", {name: "Перевод выделенного текста"})).toBeTruthy();
-    expect(screen.getByRole("heading", {name: "Переводчик"})).toBeTruthy();
-    expect(screen.queryByRole("heading", {name: "Языки и интерфейс"})).toBeNull();
+    const translationSection = document.getElementById("settings-translation")!;
+    expect(within(translationSection).getByRole("heading", {name: "Переводчик"})).toBeTruthy();
+    expect(within(translationSection).getByRole("heading", {name: "Интерфейс"})).toBeTruthy();
     const selectionSettings = screen.getByRole("region", {name: "Перевод выделенного текста"});
     expect(within(selectionSettings).getAllByRole("heading").map((heading) => heading.textContent)).toEqual([
       "Язык перевода выделенного текста"
