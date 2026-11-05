@@ -10,6 +10,7 @@ describe("English options interface", () => {
     document.body.innerHTML = '<div id="root"></div>';
     mock.storageData[SETTINGS_KEY] = {...structuredClone(defaultSettings), interfaceLanguage: "en"};
     mock.browserMock.runtime.sendMessage.mockResolvedValue({ok: true, records: []});
+    vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
     history.replaceState(null, "", "#settings");
     await import("../src/options/options");
     await screen.findByRole("heading", {name: "Settings"});
@@ -53,6 +54,6 @@ describe("English options interface", () => {
 
 function mainTextWithoutInterfaceLanguageNames() {
   const main = document.querySelector("main")?.cloneNode(true) as HTMLElement | null;
-  main?.querySelector('select[aria-label="Interface language"]')?.remove();
+  main?.querySelectorAll("select").forEach((select) => select.remove());
   return main?.textContent || "";
 }
