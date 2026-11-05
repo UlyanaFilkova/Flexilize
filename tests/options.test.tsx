@@ -108,7 +108,7 @@ describe("options page", () => {
   it("separates selection and standalone translator language settings", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Языки$/}));
     expect(screen.getByRole("heading", {name: "Перевод выделенного текста"})).toBeTruthy();
-    const translationSection = document.querySelector("#settings-translation")!;
+    const translationSection = document.getElementById("settings-translation")!;
     expect(within(translationSection).getByRole("heading", {name: "Переводчик"})).toBeTruthy();
     expect(within(translationSection).getByRole("heading", {name: "Интерфейс"})).toBeTruthy();
     const selectionSettings = screen.getByRole("region", {name: "Перевод выделенного текста"});
