@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "context-translator",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "A browser extension for translating selected text with context, transcription, and local history.",
   "license": "MIT",
   "type": "module",
