@@ -996,9 +996,9 @@ import {
       translation.append(item);
     });
     const contextText = clean(result.contextTranslation || "");
-    const contextRepeatsSelection = normalizedForDuplicateCheck(currentText) === normalizedForDuplicateCheck(currentSentence);
+    const selectionIsLong = wordCount(currentText) > 7;
     const contextRepeatsTranslation = normalizedForDuplicateCheck(contextText) === normalizedForDuplicateCheck(result.translation);
-    if (!contextRepeatsSelection && (contextPending || (contextText && !contextRepeatsTranslation))) {
+    if (!selectionIsLong && (contextPending || (contextText && !contextRepeatsTranslation))) {
       const context = document.createElement("div");
       context.className = "context-translation";
       context.textContent = contextText;
