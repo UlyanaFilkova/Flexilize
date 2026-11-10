@@ -28,6 +28,7 @@ import {
   const INSTANCE_ATTRIBUTE = "data-context-translator-instance";
   const instanceId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
   const MAX_SELECTION_LENGTH = 1000;
+  const MAX_SELECTION_WORDS_WITH_CONTEXT = 7;
   const SOURCE_LANGUAGES = [
     ["af", "Afrikaans"], ["sq", "Shqip"], ["ar", "العربية"], ["hy", "Հայերեն"],
     ["az", "Azərbaycan dili"], ["eu", "Euskara"], ["be", "Беларуская"], ["bn", "বাংলা"],
@@ -996,7 +997,7 @@ import {
       translation.append(item);
     });
     const contextText = clean(result.contextTranslation || "");
-    const selectionIsLong = wordCount(currentText) > 7;
+    const selectionIsLong = wordCount(currentText) > MAX_SELECTION_WORDS_WITH_CONTEXT;
     const contextRepeatsTranslation = normalizedForDuplicateCheck(contextText) === normalizedForDuplicateCheck(result.translation);
     if (!selectionIsLong && (contextPending || (contextText && !contextRepeatsTranslation))) {
       const context = document.createElement("div");
