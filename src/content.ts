@@ -639,6 +639,7 @@ import {
           </div>
           <div class="top-actions">
             ${activationSettings.speechEnabled ? `<button class="speak" type="button" aria-label="Озвучить выделенный текст" title="Озвучить">▶</button>` : ""}
+            <button class="copy-translation" type="button" aria-label="Копировать весь перевод" title="Копировать всё" disabled hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button>
             <button class="save-translation" type="button" ${activationSettings.autoSaveTranslations ? "hidden" : ""} disabled>Сохранить</button>
           </div>
         </div>
@@ -670,6 +671,24 @@ import {
     const languageClear = shadow.querySelector<HTMLButtonElement>(".language-clear");
     const languageToggle = shadow.querySelector<HTMLButtonElement>(".language-toggle");
     const saveButton = shadow.querySelector<HTMLButtonElement>(".save-translation");
+    const copyButton = shadow.querySelector<HTMLButtonElement>(".copy-translation")!;
+    const copyIcon = copyButton.innerHTML;
+    let copyFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
+    copyButton.addEventListener("click", async () => {
+      const value = [...(shadow?.querySelectorAll<HTMLElement>(".source, .translation-option") || [])]
+        .map((item) => item.textContent?.trim()).filter(Boolean).join("\n");
+      if (!value) return;
+      clearTimeout(copyFeedbackTimer);
+      try {
+        await copyToClipboard(value);
+        copyButton.textContent = "✓";
+      } catch (_error) {
+        copyButton.textContent = "!";
+      }
+      copyFeedbackTimer = setTimeout(() => {
+        if (copyButton.isConnected) copyButton.innerHTML = copyIcon;
+      }, 1200);
+    });
     if (speakButton) speakButton.disabled = true;
     saveButton?.addEventListener("click", () => requestManualSave(saveButton, ownRequest));
     speakButton?.addEventListener("click", (event) => {
@@ -828,6 +847,11 @@ import {
     translation?.replaceChildren();
     translation?.classList.remove("error");
     translation?.classList.add("skeleton");
+    const copyButton = shadow.querySelector<HTMLButtonElement>(".copy-translation");
+    if (copyButton) {
+      copyButton.disabled = true;
+      copyButton.hidden = true;
+    }
     const transcription = shadow.querySelector<HTMLElement>(".transcription");
     transcription?.classList.remove("muted");
     transcription?.classList.add("skeleton", "short");
@@ -996,6 +1020,11 @@ import {
       item.textContent = value;
       translation.append(item);
     });
+    const copyButton = shadow.querySelector<HTMLButtonElement>(".copy-translation");
+    if (copyButton) copyButton.disabled = !uniqueAlternatives.length;
+    if (copyButton) {
+      copyButton.hidden = contextPending || !uniqueAlternatives.some((value) => Boolean(value.trim()));
+    }
     const contextText = clean(result.contextTranslation || "");
     const selectionIsLong = wordCount(currentText) > MAX_SELECTION_WORDS_WITH_CONTEXT;
     const contextRepeatsTranslation = normalizedForDuplicateCheck(contextText) === normalizedForDuplicateCheck(result.translation);
@@ -1619,7 +1648,12 @@ import {
       .card.long.language-open { overflow: visible; }
       .top { display: flex; align-items: flex-start; gap: 9px; }
       .term-details { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; min-width: 0; gap: 9px; }
-      .top-actions { display: flex; flex: none; align-items: center; gap: 9px; }
+      .top-actions { display: flex; flex: none; flex-direction: column; align-items: center; gap: 3px; }
+      .copy-translation { position: absolute; top: 54px; right: 14px; display: grid; flex: 0 0 32px; width: 32px; height: 32px; padding: 6px; place-items: center; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font: 600 16px/1 sans-serif; }
+      .copy-translation:hover:not(:disabled) { background: #d8e5ff; }
+      .copy-translation[hidden] { display: none; }
+      .copy-translation:disabled { cursor: default; opacity: .55; }
+      .copy-translation svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
       .source { display: flex; flex: 1 1 auto; align-items: center; min-width: 0; min-height: 30px; font-size: 16px; font-weight: 650; line-height: 1.35; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }

@@ -106,6 +106,14 @@ describe("standalone translator content UI", () => {
       .toEqual(["Привет", "Добрый день", "Здравствуйте"]);
     expect(selectionHost.shadowRoot?.querySelector(".transcription")?.textContent).toBe("/həˈləʊ/");
     expect(browserMock.runtime.sendMessage.mock.calls.map(([message]) => message.type)).toContain("translate-selection");
+    const copyTranslation = selectionHost.shadowRoot!.querySelector<HTMLButtonElement>(".copy-translation")!;
+    expect(copyTranslation.disabled).toBe(false);
+    expect(copyTranslation.getAttribute("aria-label")).toBe("Copy the full translation");
+    await waitFor(() => expect(selectionHost.shadowRoot?.querySelector(".context-translation")?.textContent).toBe("Привет, мир!"));
+    writeText.mockClear();
+    fireEvent.click(copyTranslation);
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Hello\nПривет\nДобрый день\nЗдравствуйте"));
+    await waitFor(() => expect(copyTranslation.textContent).toBe("✓"));
   }, 5000);
 
   it("waits until the pointer is released before opening a selection translation", async () => {
