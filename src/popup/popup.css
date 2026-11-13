@@ -46,10 +46,15 @@ ol { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; min-width: 
 #empty strong { color: #46546a; }
 #empty span { max-width: 250px; font-size: 12px; line-height: 1.5; }
 .empty-icon { display: grid; place-items: center; width: 50px; height: 50px; margin-bottom: 5px; border-radius: 16px; background: #e7efff; color: #2864dc; font: 700 18px Georgia,serif; }
-footer { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); align-items: end; gap: 8px; padding: 11px 20px 15px; background: #fff; border-top: 1px solid #e7ebf1; }
+footer { display: grid; grid-template-columns: minmax(44px,1fr) minmax(0,138.75px) minmax(0,187px); align-items: end; gap: 8px; padding: 11px 20px 15px; background: #fff; border-top: 1px solid #e7ebf1; }
 footer button { min-height: 40px; padding: 9px 10px; }
-.format-picker { display: grid; gap: 3px; }
-.format-picker span { color: #758196; font-size: 10px; }
+.copy-all-control { display: grid; width: max-content; min-width: 0; justify-self: start; gap: 3px; }
+.copy-all-control > span { white-space: nowrap; }
+#copy-all { display: inline-flex; width: 40px; min-width: 0; align-items: center; justify-content: center; padding-inline: 6px; background: #edf3ff; color: #2864dc; }
+#copy-all:hover { background: #dce8ff; color: #1f53bd; filter: none; }
+#copy-all svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.format-picker { display: grid; min-width: 0; gap: 3px; }
+.format-picker span, .copy-all-control > span { color: #758196; font-size: 10px; }
 .format-picker select { appearance: none; width: 100%; min-height: 40px; padding: 8px 34px 8px 10px; border: 1px solid #d8dee8; border-radius: 10px; background-color: #fff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%237b8799' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-position: right 11px center; background-repeat: no-repeat; background-size: 12px 8px; color: #273349; font: inherit; font-size: 13px; }
 .format-picker select:focus { border-color: #2864dc; outline: 2px solid #dce8ff; }
 .format-picker select:disabled { opacity: .45; }

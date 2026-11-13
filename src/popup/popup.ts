@@ -24,11 +24,15 @@ const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
 const settingsButton = document.querySelector<HTMLButtonElement>("#settings")!;
 const historyButton = document.querySelector<HTMLButtonElement>("#history")!;
 const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
+const copyAllButton = document.querySelector<HTMLButtonElement>("#copy-all")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
 let activeInterfaceLanguage: InterfaceLanguage = "ru";
 let recordContentSequence = 0;
 const COLLAPSIBLE_TEXT_LENGTH = 300;
+const copyAllIcon = createCopyIcon();
+let copyAllFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
+copyAllButton.prepend(copyAllIcon);
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => void initialize(), {once: true});
 else void initialize();
@@ -36,6 +40,7 @@ clearButton.addEventListener("click", clearRecords);
 settingsButton.addEventListener("click", () => void openSettings());
 historyButton.addEventListener("click", () => void openHistory());
 exportButton.addEventListener("click", () => void exportRecords());
+copyAllButton.addEventListener("click", () => void copyAllRecords());
 formatSelect.addEventListener("change", updateExportButton);
 
 async function initialize() {
@@ -80,6 +85,7 @@ function render() {
   counterElement.textContent = pluralizeRecords(records.length);
   clearButton.disabled = records.length === 0;
   exportButton.disabled = records.length === 0;
+  copyAllButton.disabled = records.length === 0;
   formatSelect.disabled = records.length === 0;
 }
 
@@ -122,7 +128,7 @@ function createRecordElement(record: TranslationRecord) {
   copyButton.title = translate("Копировать всё", activeInterfaceLanguage);
   copyButton.setAttribute("aria-label", copyButton.title);
   copyButton.addEventListener("click", async () => {
-    const value = uniqueTranslationForms([record.text, record.translation, ...(record.translations || [])]).join("\n");
+    const value = recordClipboardText(record);
     try {
       await navigator.clipboard.writeText(value);
       copyButton.textContent = "✓";
@@ -168,6 +174,30 @@ function createRecordElement(record: TranslationRecord) {
   }
   item.append(meta);
   return item;
+}
+
+function recordClipboardText(record: TranslationRecord) {
+  return [record.text, ...uniqueTranslationForms([record.translation, ...(record.translations || [])])].join("\n");
+}
+
+async function copyAllRecords() {
+  if (!records.length) return;
+  const value = records.map(recordClipboardText).join("\n\n");
+  copyAllButton.disabled = true;
+  try {
+    await navigator.clipboard.writeText(value);
+    clearTimeout(copyAllFeedbackTimer);
+    const check = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    check.setAttribute("d", "m5 12 4 4L19 6");
+    copyAllIcon.replaceChildren(check);
+    copyAllFeedbackTimer = setTimeout(() => {
+      copyAllIcon.replaceChildren(...createCopyIcon().children);
+    }, 1200);
+  } catch (error) {
+    showNotice(errorMessage(error, "Не удалось скопировать переводы"));
+  } finally {
+    copyAllButton.disabled = records.length === 0;
+  }
 }
 
 async function deleteRecord(record: TranslationRecord, button: HTMLButtonElement) {
