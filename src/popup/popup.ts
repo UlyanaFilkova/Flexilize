@@ -27,6 +27,8 @@ const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
 let activeInterfaceLanguage: InterfaceLanguage = "ru";
+let recordContentSequence = 0;
+const COLLAPSIBLE_TEXT_LENGTH = 300;
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => void initialize(), {once: true});
 else void initialize();
@@ -142,8 +144,29 @@ function createRecordElement(record: TranslationRecord) {
   actions.append(copyButton, deleteButton);
   meta.append(actions);
 
-  item.append(pair);
-  item.append(sentence, meta);
+  const content = document.createElement("div");
+  content.className = "record-content";
+  content.id = `popup-record-content-${++recordContentSequence}`;
+  content.append(pair, sentence);
+  item.append(content);
+  if (record.text.length > COLLAPSIBLE_TEXT_LENGTH) {
+    item.classList.add("collapsed");
+    const toggle = document.createElement("button");
+    toggle.className = "toggle-record";
+    toggle.type = "button";
+    toggle.setAttribute("aria-controls", content.id);
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg><span></span>';
+    const label = toggle.querySelector("span")!;
+    label.textContent = translate("Развернуть", activeInterfaceLanguage);
+    toggle.addEventListener("click", () => {
+      const collapsed = item.classList.toggle("collapsed");
+      toggle.setAttribute("aria-expanded", String(!collapsed));
+      label.textContent = translate(collapsed ? "Развернуть" : "Свернуть", activeInterfaceLanguage);
+    });
+    item.append(toggle);
+  }
+  item.append(meta);
   return item;
 }
 

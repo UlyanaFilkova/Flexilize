@@ -8,6 +8,40 @@ const popupMarkup = `
   <footer><select id="export-format"><option value="json">JSON</option><option value="csv">CSV</option></select><button id="export"></button></footer>
   <div id="notice"></div>`;
 
+it("collapses only records over 300 characters and copies their complete text", async () => {
+  vi.resetModules();
+  const {browserMock} = await import("./mocks/browser");
+  const text = "Long selected text. ".repeat(20);
+  document.body.innerHTML = popupMarkup;
+  await browserMock.storage.local.set({translationRecords: [
+    {...record, id: "at-limit", text: text.slice(0, 300)},
+    {...record, id: "over-limit", text: text.slice(0, 301)}
+  ]});
+  const writeText = vi.fn(async () => undefined);
+  Object.defineProperty(navigator, "clipboard", {configurable: true, value: {writeText}});
+  await import("../src/popup/popup");
+  document.dispatchEvent(new Event("DOMContentLoaded"));
+  await waitFor(() => expect(document.querySelectorAll(".record")).toHaveLength(2));
+  const [shortCard, longCard] = document.querySelectorAll<HTMLElement>(".record");
+  expect(shortCard.querySelector(".toggle-record")).toBeNull();
+  expect(longCard.classList.contains("collapsed")).toBe(true);
+  const toggle = longCard.querySelector<HTMLButtonElement>(".toggle-record")!;
+  expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  expect(toggle.textContent).toBe("Развернуть");
+  expect(document.getElementById(toggle.getAttribute("aria-controls")!)).toBe(longCard.querySelector(".record-content"));
+  fireEvent.click(longCard.querySelector(".copy-record")!);
+  await waitFor(() => expect(writeText).toHaveBeenCalledWith(
+    [text.slice(0, 301), record.translation, ...record.translations.filter((value) => value !== record.translation)].join("\n")
+  ));
+  fireEvent.click(toggle);
+  expect(longCard.classList.contains("collapsed")).toBe(false);
+  expect(toggle.getAttribute("aria-expanded")).toBe("true");
+  expect(toggle.textContent).toBe("Свернуть");
+  expect(longCard.querySelector(".original")?.textContent).toBe(text.slice(0, 301));
+  fireEvent.click(toggle);
+  expect(longCard.classList.contains("collapsed")).toBe(true);
+});
+
 describe("popup", () => {
   let browserMock: typeof import("./mocks/browser")["browserMock"];
 

@@ -295,7 +295,7 @@
   "ui.text-to-translate": "Text to translate",
   "ui.copy-all-source-text": "Copy all source text",
   "ui.copy-the-full-translation": "Copy the full translation",
-  "ui.copy-all": "Copy all",
+  "ui.copy-all": "Copy",
   "ui.translating": "Translating…",
   "ui.could-not-get-a-translation": "Could not get a translation",
   "ui.the-extension-api-is-unavailable-on-this-page": "The extension API is unavailable on this page",
@@ -438,5 +438,7 @@
   "ui.drop-files-here": "Drop files here",
   "ui.drop-images-or-click-to-select": "Drop images here or click to browse",
   "ui.screenshot-file-limits-short": "PNG, JPEG, or WebP · up to 10 files · 20 MB total",
-  "ui.remove-file": "Remove file"
+  "ui.remove-file": "Remove file",
+  "ui.expand-record": "Expand",
+  "ui.collapse-record": "Collapse"
 }
