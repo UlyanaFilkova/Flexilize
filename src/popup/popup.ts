@@ -26,6 +26,7 @@ const historyButton = document.querySelector<HTMLButtonElement>("#history")!;
 const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
+let activeInterfaceLanguage: InterfaceLanguage = "ru";
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => void initialize(), {once: true});
 else void initialize();
@@ -43,6 +44,7 @@ async function initialize() {
     // Keep Russian defaults when settings cannot be read.
   }
   await loadInterfaceLanguage(language);
+  activeInterfaceLanguage = language;
   setActiveLanguage(language);
   observeLocalizedDom(document, language);
   updateExportButton();
@@ -110,6 +112,24 @@ function createRecordElement(record: TranslationRecord) {
     meta.append(link);
   }
 
+  const copyButton = document.createElement("button");
+  copyButton.className = "copy-record";
+  copyButton.type = "button";
+  const copyIcon = createCopyIcon();
+  copyButton.append(copyIcon);
+  copyButton.title = translate("Копировать всё", activeInterfaceLanguage);
+  copyButton.setAttribute("aria-label", copyButton.title);
+  copyButton.addEventListener("click", async () => {
+    const value = uniqueTranslationForms([record.text, record.translation, ...(record.translations || [])]).join("\n");
+    try {
+      await navigator.clipboard.writeText(value);
+      copyButton.textContent = "✓";
+      setTimeout(() => { if (copyButton.isConnected) copyButton.replaceChildren(copyIcon); }, 1200);
+    } catch (error) {
+      showNotice(errorMessage(error, "Не удалось скопировать переводы"));
+    }
+  });
+
   const deleteButton = document.createElement("button");
   deleteButton.className = "delete-record";
   deleteButton.type = "button";
@@ -117,7 +137,10 @@ function createRecordElement(record: TranslationRecord) {
   deleteButton.title = "Удалить запись";
   deleteButton.setAttribute("aria-label", `Удалить перевод «${record.text}»`);
   deleteButton.addEventListener("click", () => void deleteRecord(record, deleteButton));
-  meta.append(deleteButton);
+  const actions = document.createElement("div");
+  actions.className = "record-actions";
+  actions.append(copyButton, deleteButton);
+  meta.append(actions);
 
   item.append(pair);
   item.append(sentence, meta);
@@ -182,6 +205,23 @@ function createTrashIcon() {
     path.setAttribute("d", data);
     icon.append(path);
   });
+  return icon;
+}
+
+function createCopyIcon() {
+  const namespace = "http://www.w3.org/2000/svg";
+  const icon = document.createElementNS(namespace, "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  const back = document.createElementNS(namespace, "path");
+  back.setAttribute("d", "M7 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2");
+  const front = document.createElementNS(namespace, "rect");
+  front.setAttribute("x", "9");
+  front.setAttribute("y", "9");
+  front.setAttribute("width", "12");
+  front.setAttribute("height", "12");
+  front.setAttribute("rx", "2");
+  icon.append(back, front);
   return icon;
 }
 
