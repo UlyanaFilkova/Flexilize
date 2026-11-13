@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Marque \"Mostrar ventana de traducción\". Si la activación de acceso directo está activada, presione el acceso directo asignado después de seleccionar el texto. Vuelva a cargar la pestaña después de instalar o actualizar la extensión. Páginas internas del navegador como",
   "ui.extensions-do-not-work-on-browser-pages": "No admite extensiones.",
   "ui.check-translation-window-shortcut-and-reload": "Marque \"Mostrar ventana de traducción\". Si la activación de acceso directo está activada, presione el acceso directo asignado después de seleccionar el texto. Vuelva a cargar la pestaña después de instalar o actualizar la extensión.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Las extensiones no se pueden ejecutar en páginas internas del navegador como"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Las extensiones no se pueden ejecutar en páginas internas del navegador como",
+  "ui.expand-record": "Expandir",
+  "ui.collapse-record": "Contraer"
 }

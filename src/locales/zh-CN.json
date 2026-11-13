@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "勾选“显示翻译窗口”。如果快捷方式激活已打开，请在选择文本后按指定的快捷方式。安装或更新扩展后重新加载选项卡。浏览器内部页面，例如",
   "ui.extensions-do-not-work-on-browser-pages": "不支持扩展。",
   "ui.check-translation-window-shortcut-and-reload": "勾选“显示翻译窗口”。如果快捷方式激活已打开，请在选择文本后按指定的快捷方式。安装或更新扩展后重新加载选项卡。",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "扩展程序无法在内部浏览器页面上运行，例如"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "扩展程序无法在内部浏览器页面上运行，例如",
+  "ui.expand-record": "展开",
+  "ui.collapse-record": "收起"
 }

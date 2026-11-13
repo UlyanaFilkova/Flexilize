@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Označite \"Prikaži prozor za prijevod\". Ako je aktivacija prečaca uključena, pritisnite dodijeljeni prečac nakon odabira teksta. Ponovno učitajte karticu nakon instaliranja ili ažuriranja proširenja. Interne stranice preglednika kao što su",
   "ui.extensions-do-not-work-on-browser-pages": "ne podržavaju proširenja.",
   "ui.check-translation-window-shortcut-and-reload": "Označite \"Prikaži prozor za prijevod\". Ako je aktivacija prečaca uključena, pritisnite dodijeljeni prečac nakon odabira teksta. Ponovno učitajte karticu nakon instaliranja ili ažuriranja proširenja.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Proširenja se ne mogu izvoditi na internim stranicama preglednika kao što su"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Proširenja se ne mogu izvoditi na internim stranicama preglednika kao što su",
+  "ui.expand-record": "Proširi",
+  "ui.collapse-record": "Sažmi"
 }

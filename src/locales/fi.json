@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Valitse \"Näytä käännösikkuna\". Jos pikakuvakkeen aktivointi on päällä, paina määritettyä pikanäppäintä tekstin valinnan jälkeen. Lataa välilehti uudelleen laajennuksen asentamisen tai päivityksen jälkeen. Selaimen sisäiset sivut, kuten",
   "ui.extensions-do-not-work-on-browser-pages": "eivät tue laajennuksia.",
   "ui.check-translation-window-shortcut-and-reload": "Valitse \"Näytä käännösikkuna\". Jos pikakuvakkeen aktivointi on päällä, paina määritettyä pikanäppäintä tekstin valinnan jälkeen. Lataa välilehti uudelleen laajennuksen asentamisen tai päivityksen jälkeen.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Laajennukset eivät voi toimia sisäisillä selainsivuilla, kuten"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Laajennukset eivät voi toimia sisäisillä selainsivuilla, kuten",
+  "ui.expand-record": "Laajenna",
+  "ui.collapse-record": "Tiivistä"
 }

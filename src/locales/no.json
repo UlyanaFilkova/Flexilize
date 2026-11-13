@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Sjekk \"Vis oversettelsesvindu\". Hvis snarveiaktivering er på, trykker du på den tilordnede snarveien etter at du har valgt tekst. Last inn fanen på nytt etter installasjon eller oppdatering av utvidelsen. Nettleserens interne sider som f.eks",
   "ui.extensions-do-not-work-on-browser-pages": "støtter ikke utvidelser.",
   "ui.check-translation-window-shortcut-and-reload": "Sjekk \"Vis oversettelsesvindu\". Hvis snarveiaktivering er på, trykker du på den tilordnede snarveien etter at du har valgt tekst. Last inn fanen på nytt etter installasjon eller oppdatering av utvidelsen.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Utvidelser kan ikke kjøres på interne nettlesersider som f.eks"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Utvidelser kan ikke kjøres på interne nettlesersider som f.eks",
+  "ui.expand-record": "Utvid",
+  "ui.collapse-record": "Skjul"
 }

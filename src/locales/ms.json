@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Tandai \"Tunjukkan tetingkap terjemahan\". Jika pengaktifan pintasan dihidupkan, tekan pintasan yang ditetapkan selepas memilih teks. Muat semula tab selepas memasang atau mengemas kini sambungan. Halaman dalaman pelayar seperti",
   "ui.extensions-do-not-work-on-browser-pages": "tidak menyokong sambungan.",
   "ui.check-translation-window-shortcut-and-reload": "Tandai \"Tunjukkan tetingkap terjemahan\". Jika pengaktifan pintasan dihidupkan, tekan pintasan yang ditetapkan selepas memilih teks. Muat semula tab selepas memasang atau mengemas kini sambungan.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Sambungan tidak boleh dijalankan pada halaman pelayar dalaman seperti"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Sambungan tidak boleh dijalankan pada halaman pelayar dalaman seperti",
+  "ui.expand-record": "Kembangkan",
+  "ui.collapse-record": "Runtuhkan"
 }

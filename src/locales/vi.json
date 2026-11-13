@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Chọn “Hiển thị cửa sổ dịch”. Nếu kích hoạt phím tắt được bật, hãy nhấn phím tắt được chỉ định sau khi chọn văn bản. Tải lại tab sau khi cài đặt hoặc cập nhật tiện ích mở rộng. Các trang nội bộ của trình duyệt như",
   "ui.extensions-do-not-work-on-browser-pages": "không hỗ trợ phần mở rộng.",
   "ui.check-translation-window-shortcut-and-reload": "Chọn “Hiển thị cửa sổ dịch”. Nếu kích hoạt phím tắt được bật, hãy nhấn phím tắt được chỉ định sau khi chọn văn bản. Tải lại tab sau khi cài đặt hoặc cập nhật tiện ích mở rộng.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Tiện ích mở rộng không thể chạy trên các trang trình duyệt nội bộ như"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Tiện ích mở rộng không thể chạy trên các trang trình duyệt nội bộ như",
+  "ui.expand-record": "Mở rộng",
+  "ui.collapse-record": "Thu gọn"
 }

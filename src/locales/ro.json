@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Bifați „Afișați fereastra de traducere”. Dacă activarea comenzii rapide este activată, apăsați comanda rapidă atribuită după selectarea textului. Reîncărcați fila după instalarea sau actualizarea extensiei. Pagini interne ale browserului, cum ar fi",
   "ui.extensions-do-not-work-on-browser-pages": "nu acceptă extensii.",
   "ui.check-translation-window-shortcut-and-reload": "Bifați „Afișați fereastra de traducere”. Dacă activarea comenzii rapide este activată, apăsați comanda rapidă atribuită după selectarea textului. Reîncărcați fila după instalarea sau actualizarea extensiei.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Extensiile nu pot rula pe paginile interne ale browserului, cum ar fi"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Extensiile nu pot rula pe paginile interne ale browserului, cum ar fi",
+  "ui.expand-record": "Extinde",
+  "ui.collapse-record": "Restrânge"
 }

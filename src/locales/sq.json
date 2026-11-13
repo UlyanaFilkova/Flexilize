@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Kontrolloni \"Shfaq dritaren e përkthimit\". Nëse aktivizimi i shkurtoreve është aktiv, shtypni shkurtoren e caktuar pasi të zgjidhni tekstin. Rifresko skedën pas instalimit ose përditësimit të shtesës. Faqet e brendshme të shfletuesit si p.sh",
   "ui.extensions-do-not-work-on-browser-pages": "nuk mbështesin shtesat.",
   "ui.check-translation-window-shortcut-and-reload": "Kontrolloni \"Shfaq dritaren e përkthimit\". Nëse aktivizimi i shkurtoreve është aktiv, shtypni shkurtoren e caktuar pasi të zgjidhni tekstin. Rifresko skedën pas instalimit ose përditësimit të shtesës.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Shtesat nuk mund të ekzekutohen në faqet e brendshme të shfletuesit si p.sh"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Shtesat nuk mund të ekzekutohen në faqet e brendshme të shfletuesit si p.sh",
+  "ui.expand-record": "Zgjero",
+  "ui.collapse-record": "Palos"
 }

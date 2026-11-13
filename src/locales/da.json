@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Marker \"Vis oversættelsesvindue\". Hvis genvejsaktivering er aktiveret, skal du trykke på den tildelte genvej efter at have valgt tekst. Genindlæs fanen efter installation eller opdatering af udvidelsen. Browser interne sider som f.eks",
   "ui.extensions-do-not-work-on-browser-pages": "understøtter ikke udvidelser.",
   "ui.check-translation-window-shortcut-and-reload": "Marker \"Vis oversættelsesvindue\". Hvis genvejsaktivering er aktiveret, skal du trykke på den tildelte genvej efter at have valgt tekst. Genindlæs fanen efter installation eller opdatering af udvidelsen.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Udvidelser kan ikke køre på interne browsersider som f.eks"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Udvidelser kan ikke køre på interne browsersider som f.eks",
+  "ui.expand-record": "Fold ud",
+  "ui.collapse-record": "Fold sammen"
 }

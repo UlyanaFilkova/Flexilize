@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "'번역 창 표시'를 확인하세요. 단축키 활성화가 켜져 있는 경우, 텍스트를 선택한 후 할당된 단축키를 누르세요. 확장 프로그램을 설치하거나 업데이트한 후 탭을 다시 로드하세요. 다음과 같은 브라우저 내부 페이지",
   "ui.extensions-do-not-work-on-browser-pages": "확장을 지원하지 않습니다.",
   "ui.check-translation-window-shortcut-and-reload": "'번역 창 표시'를 확인하세요. 단축키 활성화가 켜져 있는 경우, 텍스트를 선택한 후 할당된 단축키를 누르세요. 확장 프로그램을 설치하거나 업데이트한 후 탭을 다시 로드하세요.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "확장 프로그램은 다음과 같은 내부 브라우저 페이지에서 실행할 수 없습니다."
+  "ui.extensions-cannot-run-on-internal-browser-pages": "확장 프로그램은 다음과 같은 내부 브라우저 페이지에서 실행할 수 없습니다.",
+  "ui.expand-record": "펼치기",
+  "ui.collapse-record": "접기"
 }

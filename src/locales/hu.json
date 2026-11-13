@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Jelölje be a „Fordítási ablak megjelenítése” lehetőséget. Ha a parancsikon aktiválása be van kapcsolva, a szöveg kiválasztása után nyomja meg a hozzárendelt parancsikont. A bővítmény telepítése vagy frissítése után töltse be újra a lapot. A böngésző belső oldalai, mint pl",
   "ui.extensions-do-not-work-on-browser-pages": "nem támogatja a bővítményeket.",
   "ui.check-translation-window-shortcut-and-reload": "Jelölje be a „Fordítási ablak megjelenítése” lehetőséget. Ha a parancsikon aktiválása be van kapcsolva, a szöveg kiválasztása után nyomja meg a hozzárendelt parancsikont. A bővítmény telepítése vagy frissítése után töltse be újra a lapot.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "A bővítmények nem futhatnak belső böngészőoldalakon, mint pl"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "A bővítmények nem futhatnak belső böngészőoldalakon, mint pl",
+  "ui.expand-record": "Kibontás",
+  "ui.collapse-record": "Összecsukás"
 }

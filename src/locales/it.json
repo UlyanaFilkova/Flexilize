@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Seleziona \"Mostra finestra di traduzione\". Se l'attivazione della scorciatoia è attiva, premere la scorciatoia assegnata dopo aver selezionato il testo. Ricarica la scheda dopo aver installato o aggiornato l'estensione. Pagine interne del browser come",
   "ui.extensions-do-not-work-on-browser-pages": "non supportano le estensioni.",
   "ui.check-translation-window-shortcut-and-reload": "Seleziona \"Mostra finestra di traduzione\". Se l'attivazione della scorciatoia è attiva, premere la scorciatoia assegnata dopo aver selezionato il testo. Ricarica la scheda dopo aver installato o aggiornato l'estensione.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Le estensioni non possono essere eseguite su pagine interne del browser come"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Le estensioni non possono essere eseguite su pagine interne del browser come",
+  "ui.expand-record": "Espandi",
+  "ui.collapse-record": "Comprimi"
 }

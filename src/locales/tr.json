@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "“Çeviri penceresini göster” seçeneğini işaretleyin. Kısayolu etkinleştirme açıksa metni seçtikten sonra atanan kısayola basın. Uzantıyı yükledikten veya güncelledikten sonra sekmeyi yeniden yükleyin. Tarayıcının dahili sayfaları gibi",
   "ui.extensions-do-not-work-on-browser-pages": "uzantıları desteklemeyin.",
   "ui.check-translation-window-shortcut-and-reload": "“Çeviri penceresini göster” seçeneğini işaretleyin. Kısayolu etkinleştirme açıksa metni seçtikten sonra atanan kısayola basın. Uzantıyı yükledikten veya güncelledikten sonra sekmeyi yeniden yükleyin.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Uzantılar aşağıdakiler gibi dahili tarayıcı sayfalarında çalıştırılamaz:"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Uzantılar aşağıdakiler gibi dahili tarayıcı sayfalarında çalıştırılamaz:",
+  "ui.expand-record": "Genişlet",
+  "ui.collapse-record": "Daralt"
 }

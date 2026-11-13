@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Markera \"Visa översättningsfönster\". Om genvägsaktivering är på trycker du på den tilldelade genvägen efter att du har valt text. Ladda om fliken efter installation eller uppdatering av tillägget. Webbläsarens interna sidor som t.ex",
   "ui.extensions-do-not-work-on-browser-pages": "stöder inte tillägg.",
   "ui.check-translation-window-shortcut-and-reload": "Markera \"Visa översättningsfönster\". Om genvägsaktivering är på trycker du på den tilldelade genvägen efter att du har valt text. Ladda om fliken efter installation eller uppdatering av tillägget.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Tillägg kan inte köras på interna webbläsarsidor som t.ex"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Tillägg kan inte köras på interna webbläsarsidor som t.ex",
+  "ui.expand-record": "Visa mer",
+  "ui.collapse-record": "Visa mindre"
 }

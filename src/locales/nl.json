@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Vink “Toon vertaalvenster” aan. Als snelkoppelingsactivering is ingeschakeld, drukt u op de toegewezen snelkoppeling nadat u tekst hebt geselecteerd. Laad het tabblad opnieuw nadat u de extensie hebt geïnstalleerd of bijgewerkt. Browser interne pagina's zoals",
   "ui.extensions-do-not-work-on-browser-pages": "ondersteunen geen extensies.",
   "ui.check-translation-window-shortcut-and-reload": "Vink “Toon vertaalvenster” aan. Als snelkoppelingsactivering is ingeschakeld, drukt u op de toegewezen snelkoppeling nadat u tekst hebt geselecteerd. Laad het tabblad opnieuw nadat u de extensie hebt geïnstalleerd of bijgewerkt.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Extensies kunnen niet worden uitgevoerd op interne browserpagina's zoals"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Extensies kunnen niet worden uitgevoerd op interne browserpagina's zoals",
+  "ui.expand-record": "Uitklappen",
+  "ui.collapse-record": "Inklappen"
 }

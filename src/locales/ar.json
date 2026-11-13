@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "حدد \"إظهار نافذة الترجمة\". إذا كان تنشيط الاختصار قيد التشغيل، فاضغط على الاختصار المخصص بعد تحديد النص. أعد تحميل علامة التبويب بعد تثبيت الامتداد أو تحديثه. الصفحات الداخلية للمتصفح مثل",
   "ui.extensions-do-not-work-on-browser-pages": "لا تدعم الامتدادات.",
   "ui.check-translation-window-shortcut-and-reload": "حدد \"إظهار نافذة الترجمة\". إذا كان تنشيط الاختصار قيد التشغيل، فاضغط على الاختصار المخصص بعد تحديد النص. أعد تحميل علامة التبويب بعد تثبيت الامتداد أو تحديثه.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "لا يمكن تشغيل الإضافات على صفحات المتصفح الداخلية مثل"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "لا يمكن تشغيل الإضافات على صفحات المتصفح الداخلية مثل",
+  "ui.expand-record": "توسيع",
+  "ui.collapse-record": "طي"
 }

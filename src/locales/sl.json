@@ -441,5 +441,7 @@
   "ui.check-translation-window-and-browser-restrictions": "Označite »Prikaži okno za prevod«. Če je aktiviranje bližnjice vklopljeno, po izbiri besedila pritisnite dodeljeno bližnjico. Po namestitvi ali posodobitvi razširitve znova naložite zavihek. Notranje strani brskalnika, kot je npr",
   "ui.extensions-do-not-work-on-browser-pages": "ne podpirajo razširitev.",
   "ui.check-translation-window-shortcut-and-reload": "Označite »Prikaži okno za prevod«. Če je aktiviranje bližnjice vklopljeno, po izbiri besedila pritisnite dodeljeno bližnjico. Po namestitvi ali posodobitvi razširitve znova naložite zavihek.",
-  "ui.extensions-cannot-run-on-internal-browser-pages": "Razširitve se ne morejo izvajati na notranjih straneh brskalnika, kot je npr"
+  "ui.extensions-cannot-run-on-internal-browser-pages": "Razširitve se ne morejo izvajati na notranjih straneh brskalnika, kot je npr",
+  "ui.expand-record": "Razširi",
+  "ui.collapse-record": "Strni"
 }

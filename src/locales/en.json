@@ -295,7 +295,7 @@
   "ui.text-to-translate": "Text to translate",
   "ui.copy-all-source-text": "Copy all source text",
   "ui.copy-the-full-translation": "Copy the full translation",
-  "ui.copy-all": "Copy",
+  "ui.copy-all": "Copy all",
   "ui.translating": "Translating…",
   "ui.could-not-get-a-translation": "Could not get a translation",
   "ui.the-extension-api-is-unavailable-on-this-page": "The extension API is unavailable on this page",
