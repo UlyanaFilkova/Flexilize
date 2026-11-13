@@ -162,7 +162,7 @@ describe("standalone translator content UI", () => {
       return originalAttachShadow.call(this, {...init, mode: "open"});
     });
     const paragraph = document.createElement("textarea");
-    paragraph.value = "Ein langer Absatz mit mehreren Sätzen. Der ganze Absatz wird ausgewählt.";
+    paragraph.value = "Ein langer Absatz mit mehreren Sätzen. Der ganze Absatz wird ausgewählt. ".repeat(6);
     document.body.append(paragraph);
     paragraph.focus();
     paragraph.setSelectionRange(0, paragraph.value.length);
@@ -182,5 +182,34 @@ describe("standalone translator content UI", () => {
     await waitFor(() => expect(shadow.querySelector(".translation-option")?.textContent).toBe("Final translation"));
     expect(shadow.querySelectorAll(".translation-option")).toHaveLength(1);
     expect(shadow.querySelector(".context-translation")).toBeNull();
+
+    const translation = shadow.querySelector<HTMLElement>(".translation")!;
+    const source = shadow.querySelector<HTMLElement>(".source")!;
+    for (const element of [translation, source]) {
+      Object.defineProperties(element, {
+        scrollHeight: {configurable: true, value: 600},
+        clientHeight: {configurable: true, value: 120}
+      });
+    }
+    const wheel = (element: Element, deltaY: number, ctrlKey = false) => {
+      const event = new WheelEvent("wheel", {deltaY, ctrlKey, bubbles: true, composed: true, cancelable: true});
+      element.dispatchEvent(event);
+      return event;
+    };
+    expect(wheel(translation, 80).defaultPrevented).toBe(true);
+    expect(translation.scrollTop).toBe(80);
+    expect(wheel(shadow.querySelector(".top")!, 40).defaultPrevented).toBe(true);
+    expect(translation.scrollTop).toBe(120);
+    expect(wheel(source, 60).defaultPrevented).toBe(true);
+    expect(source.scrollTop).toBe(60);
+    translation.scrollTop = 480;
+    expect(wheel(translation, 80).defaultPrevented).toBe(true);
+    expect(translation.scrollTop).toBe(480);
+    expect(wheel(translation, 80, true).defaultPrevented).toBe(false);
+    expect(wheel(document.body, 80).defaultPrevented).toBe(false);
+    translation.dispatchEvent(new Event("scroll", {composed: true}));
+    expect(host.isConnected).toBe(true);
+    document.dispatchEvent(new Event("scroll"));
+    expect(host.isConnected).toBe(false);
   });
 });

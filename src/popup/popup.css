@@ -26,7 +26,7 @@ ol { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; min-width: 
 .meta time { flex: none; }
 .source-link { flex: 1 1 0; min-width: 0; overflow: hidden; color: inherit; text-align: left; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; }
 .source-link:hover { color: #2864dc; }
-.record-actions { display: flex; flex: none; flex-wrap: nowrap; align-items: center; gap: 8px; margin-left: auto; }
+.record-actions { display: flex; flex: none; flex-wrap: nowrap; align-items: center; gap: 10px; margin-left: auto; }
 .copy-record, .delete-record { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border-radius: 7px; background: #f5f6f8; color: #8b96a7; }
 .copy-record svg, .delete-record svg, .icon-button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .copy-record { background: #edf3ff; color: #2864dc; }

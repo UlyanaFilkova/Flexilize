@@ -105,7 +105,10 @@ import {
   document.addEventListener("select", scheduleSelection, true);
   document.addEventListener("selectionchange", scheduleSelection, true);
   document.addEventListener("pointerdown", handleOutsidePointerDown, true);
-  document.addEventListener("scroll", closeModal, true);
+  document.addEventListener("scroll", (event) => {
+    if (host && event.composedPath().includes(host)) return;
+    closeModal();
+  }, true);
   window.addEventListener("blur", handleWindowBlur);
 
   void getExtensionSettings()
@@ -664,6 +667,7 @@ import {
       </section>`;
 
     shadow.querySelector(".source").textContent = text;
+    shadow.querySelector<HTMLElement>(".card").addEventListener("wheel", handleModalWheel, {passive: false});
     observeLocalizedDom(shadow, activationSettings.interfaceLanguage);
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
     const progress = shadow.querySelector<HTMLInputElement>(".speech-progress");
@@ -756,6 +760,27 @@ import {
     });
     updateLanguageClearButton();
     positionModal(rect);
+  }
+
+  function handleModalWheel(event: WheelEvent) {
+    if (!isCurrentInstance() || !shadow || event.ctrlKey || !event.deltaY) return;
+    const scrollable = [...shadow.querySelectorAll<HTMLElement>(
+      ".card.long .translation, .card.long .source, .language-options:not([hidden])"
+    )].filter((element) => element.scrollHeight > element.clientHeight);
+    const target = event.composedPath().find((node) => scrollable.includes(node as HTMLElement)) as HTMLElement
+      || scrollable.find((element) => element.classList.contains("translation"))
+      || scrollable[0];
+    if (!target) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    const unit = event.deltaMode === 1
+      ? Number.parseFloat(getComputedStyle(target).lineHeight) || 20
+      : event.deltaMode === 2 ? target.clientHeight : 1;
+    target.scrollTop = Math.max(0, Math.min(
+      target.scrollHeight - target.clientHeight,
+      target.scrollTop + event.deltaY * unit
+    ));
   }
 
   function languageCodeForInput(value: string) {
@@ -1646,6 +1671,7 @@ import {
       .source, .transcription, .translation, .context-translation { cursor: text; -webkit-user-select: text; user-select: text; }
       .card.long { display: flex; min-height: min(320px,calc(100vh - 24px)); overflow: hidden; flex-direction: column; }
       .card.long.language-open { overflow: visible; }
+      .card.long .source, .card.long .translation, .language-options { overscroll-behavior: contain; }
       .top { display: flex; align-items: flex-start; gap: 9px; }
       .term-details { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; min-width: 0; gap: 9px; }
       .top-actions { display: flex; flex: none; flex-direction: column; align-items: center; gap: 3px; }
