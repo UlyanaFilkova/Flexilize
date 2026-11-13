@@ -1649,8 +1649,8 @@ import {
       .top { display: flex; align-items: flex-start; gap: 9px; }
       .term-details { display: flex; flex: 1 1 auto; flex-wrap: wrap; align-items: center; min-width: 0; gap: 9px; }
       .top-actions { display: flex; flex: none; flex-direction: column; align-items: center; gap: 3px; }
-      .copy-translation { position: absolute; top: 54px; right: 14px; display: grid; flex: 0 0 32px; width: 32px; height: 32px; padding: 6px; place-items: center; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font: 600 16px/1 sans-serif; }
-      .copy-translation:hover:not(:disabled) { background: #d8e5ff; }
+      .copy-translation { position: absolute; top: 48px; right: 14px; display: grid; flex: 0 0 32px; width: 32px; height: 32px; padding: 6px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #2457d6; cursor: pointer; font: 600 16px/1 sans-serif; }
+      .copy-translation:hover:not(:disabled) { background: transparent; }
       .copy-translation[hidden] { display: none; }
       .copy-translation:disabled { cursor: default; opacity: .55; }
       .copy-translation svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
