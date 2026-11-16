@@ -23,7 +23,7 @@ export function getReviewStore(userAgent: string, language = "ru"): ReviewStore 
   const browser = detectBrowserFamily(userAgent);
   if (browser === "firefox") {
     const locale = language === "en" ? "en-US" : language;
-    return {browser, browserLabel: "Firefox", storeLabel: "Firefox Add-ons", url: firefoxAddonsUrl.replace("/ru/", `/${encodeURIComponent(locale)}/`)};
+    return {browser, browserLabel: "Firefox", storeLabel: "Firefox Add-ons", url: firefoxAddonsUrl.replace("/en/", `/${encodeURIComponent(locale)}/`)};
   }
   const browserLabels: Record<Exclude<BrowserFamily, "firefox">, string> = {
     yandex: "Яндекс Браузер",
