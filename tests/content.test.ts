@@ -106,6 +106,14 @@ describe("standalone translator content UI", () => {
       .toEqual(["Привет", "Добрый день", "Здравствуйте"]);
     expect(selectionHost.shadowRoot?.querySelector(".transcription")?.textContent).toBe("/həˈləʊ/");
     expect(browserMock.runtime.sendMessage.mock.calls.map(([message]) => message.type)).toContain("translate-selection");
+    const copyTranslation = selectionHost.shadowRoot!.querySelector<HTMLButtonElement>(".copy-translation")!;
+    expect(copyTranslation.disabled).toBe(false);
+    expect(copyTranslation.getAttribute("aria-label")).toBe("Copy the full translation");
+    await waitFor(() => expect(selectionHost.shadowRoot?.querySelector(".context-translation")?.textContent).toBe("Привет, мир!"));
+    writeText.mockClear();
+    fireEvent.click(copyTranslation);
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Hello\nПривет\nДобрый день\nЗдравствуйте"));
+    await waitFor(() => expect(copyTranslation.textContent).toBe("✓"));
   }, 5000);
 
   it("waits until the pointer is released before opening a selection translation", async () => {
@@ -154,7 +162,7 @@ describe("standalone translator content UI", () => {
       return originalAttachShadow.call(this, {...init, mode: "open"});
     });
     const paragraph = document.createElement("textarea");
-    paragraph.value = "Ein langer Absatz mit mehreren Sätzen. Der ganze Absatz wird ausgewählt.";
+    paragraph.value = "Ein langer Absatz mit mehreren Sätzen. Der ganze Absatz wird ausgewählt. ".repeat(6);
     document.body.append(paragraph);
     paragraph.focus();
     paragraph.setSelectionRange(0, paragraph.value.length);
@@ -174,5 +182,34 @@ describe("standalone translator content UI", () => {
     await waitFor(() => expect(shadow.querySelector(".translation-option")?.textContent).toBe("Final translation"));
     expect(shadow.querySelectorAll(".translation-option")).toHaveLength(1);
     expect(shadow.querySelector(".context-translation")).toBeNull();
+
+    const translation = shadow.querySelector<HTMLElement>(".translation")!;
+    const source = shadow.querySelector<HTMLElement>(".source")!;
+    for (const element of [translation, source]) {
+      Object.defineProperties(element, {
+        scrollHeight: {configurable: true, value: 600},
+        clientHeight: {configurable: true, value: 120}
+      });
+    }
+    const wheel = (element: Element, deltaY: number, ctrlKey = false) => {
+      const event = new WheelEvent("wheel", {deltaY, ctrlKey, bubbles: true, composed: true, cancelable: true});
+      element.dispatchEvent(event);
+      return event;
+    };
+    expect(wheel(translation, 80).defaultPrevented).toBe(true);
+    expect(translation.scrollTop).toBe(80);
+    expect(wheel(shadow.querySelector(".top")!, 40).defaultPrevented).toBe(true);
+    expect(translation.scrollTop).toBe(120);
+    expect(wheel(source, 60).defaultPrevented).toBe(true);
+    expect(source.scrollTop).toBe(60);
+    translation.scrollTop = 480;
+    expect(wheel(translation, 80).defaultPrevented).toBe(true);
+    expect(translation.scrollTop).toBe(480);
+    expect(wheel(translation, 80, true).defaultPrevented).toBe(false);
+    expect(wheel(document.body, 80).defaultPrevented).toBe(false);
+    translation.dispatchEvent(new Event("scroll", {composed: true}));
+    expect(host.isConnected).toBe(true);
+    document.dispatchEvent(new Event("scroll"));
+    expect(host.isConnected).toBe(false);
   });
 });

@@ -438,5 +438,7 @@
   "ui.drop-files-here": "Перетащите файлы сюда",
   "ui.drop-images-or-click-to-select": "Перетащите изображения сюда или нажмите, чтобы выбрать",
   "ui.screenshot-file-limits-short": "PNG, JPEG или WebP · до 10 файлов · всего до 20 МБ",
-  "ui.remove-file": "Удалить файл"
+  "ui.remove-file": "Удалить файл",
+  "ui.expand-record": "Развернуть",
+  "ui.collapse-record": "Свернуть"
 }

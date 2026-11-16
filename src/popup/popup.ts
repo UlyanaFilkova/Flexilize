@@ -24,8 +24,15 @@ const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
 const settingsButton = document.querySelector<HTMLButtonElement>("#settings")!;
 const historyButton = document.querySelector<HTMLButtonElement>("#history")!;
 const exportButton = document.querySelector<HTMLButtonElement>("#export")!;
+const copyAllButton = document.querySelector<HTMLButtonElement>("#copy-all")!;
 const formatSelect = document.querySelector<HTMLSelectElement>("#export-format")!;
 let records: TranslationRecord[] = [];
+let activeInterfaceLanguage: InterfaceLanguage = "ru";
+let recordContentSequence = 0;
+const COLLAPSIBLE_TEXT_LENGTH = 300;
+const copyAllIcon = createCopyIcon();
+let copyAllFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
+copyAllButton.prepend(copyAllIcon);
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => void initialize(), {once: true});
 else void initialize();
@@ -33,6 +40,7 @@ clearButton.addEventListener("click", clearRecords);
 settingsButton.addEventListener("click", () => void openSettings());
 historyButton.addEventListener("click", () => void openHistory());
 exportButton.addEventListener("click", () => void exportRecords());
+copyAllButton.addEventListener("click", () => void copyAllRecords());
 formatSelect.addEventListener("change", updateExportButton);
 
 async function initialize() {
@@ -43,6 +51,7 @@ async function initialize() {
     // Keep Russian defaults when settings cannot be read.
   }
   await loadInterfaceLanguage(language);
+  activeInterfaceLanguage = language;
   setActiveLanguage(language);
   observeLocalizedDom(document, language);
   updateExportButton();
@@ -76,6 +85,7 @@ function render() {
   counterElement.textContent = pluralizeRecords(records.length);
   clearButton.disabled = records.length === 0;
   exportButton.disabled = records.length === 0;
+  copyAllButton.disabled = records.length === 0;
   formatSelect.disabled = records.length === 0;
 }
 
@@ -110,6 +120,24 @@ function createRecordElement(record: TranslationRecord) {
     meta.append(link);
   }
 
+  const copyButton = document.createElement("button");
+  copyButton.className = "copy-record";
+  copyButton.type = "button";
+  const copyIcon = createCopyIcon();
+  copyButton.append(copyIcon);
+  copyButton.title = translate("Копировать всё", activeInterfaceLanguage);
+  copyButton.setAttribute("aria-label", copyButton.title);
+  copyButton.addEventListener("click", async () => {
+    const value = recordClipboardText(record);
+    try {
+      await navigator.clipboard.writeText(value);
+      copyButton.textContent = "✓";
+      setTimeout(() => { if (copyButton.isConnected) copyButton.replaceChildren(copyIcon); }, 1200);
+    } catch (error) {
+      showNotice(errorMessage(error, "Не удалось скопировать переводы"));
+    }
+  });
+
   const deleteButton = document.createElement("button");
   deleteButton.className = "delete-record";
   deleteButton.type = "button";
@@ -117,11 +145,59 @@ function createRecordElement(record: TranslationRecord) {
   deleteButton.title = "Удалить запись";
   deleteButton.setAttribute("aria-label", `Удалить перевод «${record.text}»`);
   deleteButton.addEventListener("click", () => void deleteRecord(record, deleteButton));
-  meta.append(deleteButton);
+  const actions = document.createElement("div");
+  actions.className = "record-actions";
+  actions.append(copyButton, deleteButton);
+  meta.append(actions);
 
-  item.append(pair);
-  item.append(sentence, meta);
+  const content = document.createElement("div");
+  content.className = "record-content";
+  content.id = `popup-record-content-${++recordContentSequence}`;
+  content.append(pair, sentence);
+  item.append(content);
+  if (record.text.length > COLLAPSIBLE_TEXT_LENGTH) {
+    item.classList.add("collapsed");
+    const toggle = document.createElement("button");
+    toggle.className = "toggle-record";
+    toggle.type = "button";
+    toggle.setAttribute("aria-controls", content.id);
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg><span></span>';
+    const label = toggle.querySelector("span")!;
+    label.textContent = translate("Развернуть", activeInterfaceLanguage);
+    toggle.addEventListener("click", () => {
+      const collapsed = item.classList.toggle("collapsed");
+      toggle.setAttribute("aria-expanded", String(!collapsed));
+      label.textContent = translate(collapsed ? "Развернуть" : "Свернуть", activeInterfaceLanguage);
+    });
+    item.append(toggle);
+  }
+  item.append(meta);
   return item;
+}
+
+function recordClipboardText(record: TranslationRecord) {
+  return [record.text, ...uniqueTranslationForms([record.translation, ...(record.translations || [])])].join("\n");
+}
+
+async function copyAllRecords() {
+  if (!records.length) return;
+  const value = records.map(recordClipboardText).join("\n\n");
+  copyAllButton.disabled = true;
+  try {
+    await navigator.clipboard.writeText(value);
+    clearTimeout(copyAllFeedbackTimer);
+    const check = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    check.setAttribute("d", "m5 12 4 4L19 6");
+    copyAllIcon.replaceChildren(check);
+    copyAllFeedbackTimer = setTimeout(() => {
+      copyAllIcon.replaceChildren(...createCopyIcon().children);
+    }, 1200);
+  } catch (error) {
+    showNotice(errorMessage(error, "Не удалось скопировать переводы"));
+  } finally {
+    copyAllButton.disabled = records.length === 0;
+  }
 }
 
 async function deleteRecord(record: TranslationRecord, button: HTMLButtonElement) {
@@ -182,6 +258,23 @@ function createTrashIcon() {
     path.setAttribute("d", data);
     icon.append(path);
   });
+  return icon;
+}
+
+function createCopyIcon() {
+  const namespace = "http://www.w3.org/2000/svg";
+  const icon = document.createElementNS(namespace, "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  const back = document.createElementNS(namespace, "path");
+  back.setAttribute("d", "M7 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2");
+  const front = document.createElementNS(namespace, "rect");
+  front.setAttribute("x", "9");
+  front.setAttribute("y", "9");
+  front.setAttribute("width", "12");
+  front.setAttribute("height", "12");
+  front.setAttribute("rx", "2");
+  icon.append(back, front);
   return icon;
 }
 

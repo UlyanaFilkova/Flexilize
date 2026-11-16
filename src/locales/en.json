@@ -438,5 +438,7 @@
   "ui.drop-files-here": "Drop files here",
   "ui.drop-images-or-click-to-select": "Drop images here or click to browse",
   "ui.screenshot-file-limits-short": "PNG, JPEG, or WebP · up to 10 files · 20 MB total",
-  "ui.remove-file": "Remove file"
+  "ui.remove-file": "Remove file",
+  "ui.expand-record": "Expand",
+  "ui.collapse-record": "Collapse"
 }
