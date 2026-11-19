@@ -1714,8 +1714,9 @@ import {
       .translation { min-width: 0; min-height: 20px; color: #172033; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; white-space: normal !important; }
       .card.long .translation { min-height: 120px; max-height: min(48vh,420px); overflow-x: hidden; overflow-y: auto; }
       .translation-option { min-width: 0; color: #172033; font-size: 16px; font-weight: 400; overflow-wrap: anywhere; white-space: normal !important; }
+      .card.long .translation-option { line-height: 1.45; }
       .translation-option + .translation-option { margin-top: 2px; }
-      .context-translation { min-height: 54px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; }
+      .context-translation { min-height: 54px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #edf0f4; color: #172033; font-size: 14px; font-style: normal; line-height: 1.45; }
       .context-translation.context-pending { height: 54px; border-top-color: transparent; }
       .storage-limit { margin-top: 10px; padding: 10px; border: 1px solid #f2cf8d; border-radius: 10px; background: #fff8e8; color: #5f4515; font-size: 12px; line-height: 1.4; }
       .storage-limit-actions { display: flex; gap: 7px; margin-top: 8px; }
