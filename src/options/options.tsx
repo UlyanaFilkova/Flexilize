@@ -827,7 +827,13 @@ function SelectionActivationSettings({settings, persist, isMobile, shortCopy = f
       {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row">
         <div className="setting-copy">
           <h2>{shortCopy ? "Горячими клавишами" : "Активация горячими клавишами"}</h2>
-          <p>{shortCopy ? "Выделите текст и нажмите заданную комбинацию клавиш." : "Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш."}</p>
+          <p>
+            {shortCopy ? <>
+              <span>Выделите текст и нажмите комбинацию клавиш</span>{" "}
+              <span className="onboarding-shortcut-value">{formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}</span>{"."}<br />
+              <span>Комбинацию можно изменить в настройках.</span>
+            </> : "Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш."}
+          </p>
         </div>
         <ActivationIllustration kind="shortcut" shortcut={formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)} />
         <label className="switch">

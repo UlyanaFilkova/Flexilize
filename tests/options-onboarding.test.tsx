@@ -55,7 +55,7 @@ describe("onboarding native language", () => {
     for (const description of [
       "The translation appears as soon as you select text.",
       "Click the button that appears next to the selected text.",
-      "Select text and press the assigned keyboard shortcut.",
+      "Select text and press the keyboard shortcut",
       "Right-click the selected text and choose translation."
     ]) expect(screen.getByText(description)).toBeTruthy();
     expect(screen.queryByText(/Enabling this turns off/)).toBeNull();
