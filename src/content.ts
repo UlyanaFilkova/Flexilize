@@ -625,7 +625,7 @@ import {
     selectionRect = rect;
     const selectionWordCount = wordCount(text);
     const isLongSelection = text.length > 320 || selectionWordCount > 48;
-    const showSpeechProgress = activationSettings.speechEnabled && wordCount(text) > 10;
+    const showSpeechProgress = activationSettings.speechEnabled && (isLongSelection || selectionWordCount > 10);
     host = document.createElement("div");
     host.id = HOST_ID;
     host.style.cssText = "all:initial;position:fixed;z-index:2147483647;top:0;left:0";
@@ -666,7 +666,21 @@ import {
         </div>
       </section>`;
 
-    shadow.querySelector(".source").textContent = text;
+    const sourceText = shadow.querySelector<HTMLElement>(".source");
+    sourceText.textContent = text;
+    if (showSpeechProgress) {
+      sourceText.classList.add("speech-text");
+      const fragment = document.createDocumentFragment();
+      for (const {segment, index} of new Intl.Segmenter(undefined, {granularity: "word"}).segment(text)) {
+        const word = document.createElement("span");
+        word.className = segment.trim() ? "speech-segment speech-word" : "speech-segment";
+        word.dataset.start = String(index);
+        word.dataset.end = String(index + segment.length);
+        word.textContent = segment;
+        fragment.append(word);
+      }
+      sourceText.replaceChildren(fragment);
+    }
     shadow.querySelector<HTMLElement>(".card").addEventListener("wheel", handleModalWheel, {passive: false});
     observeLocalizedDom(shadow, activationSettings.interfaceLanguage);
     const speakButton = shadow.querySelector<HTMLButtonElement>(".speak");
@@ -704,10 +718,23 @@ import {
       const requestedPosition = progress ? Number(progress.value) : 0;
       speak(text, speakButton, requestedPosition >= text.length ? 0 : requestedPosition);
     });
+    let sourcePointerStart: {x: number; y: number} | null = null;
+    sourceText.addEventListener("pointerdown", (event) => {
+      sourcePointerStart = {x: event.clientX, y: event.clientY};
+    });
+    sourceText.addEventListener("click", (event) => {
+      if (!speakButton || !isSpeechActive()) return;
+      if (sourcePointerStart && Math.hypot(event.clientX - sourcePointerStart.x, event.clientY - sourcePointerStart.y) > 5) return;
+      const word = (event.target as Element).closest<HTMLElement>(".speech-word");
+      if (!word) return;
+      event.stopPropagation();
+      speak(text, speakButton, Number(word.dataset.start));
+    });
     progress?.addEventListener("input", () => {
       if (isSpeechActive()) {
         stopSpeaking(speakButton || undefined);
       }
+      updateSpeechPosition(Number(progress.value), false);
     });
     progress?.addEventListener("change", () => {
       const requestedPosition = Number(progress.value);
@@ -1191,6 +1218,27 @@ import {
     translation.classList.add("error");
   }
 
+  function updateSpeechPosition(position: number, follow = true) {
+    const progress = shadow?.querySelector<HTMLInputElement>(".speech-progress");
+    if (progress) progress.value = String(position);
+    const source = shadow?.querySelector<HTMLElement>(".source.speech-text");
+    if (!source) return;
+    const previous = [...source.querySelectorAll(".speech-word.speech-read")].at(-1);
+    let lastRead: HTMLElement | null = null;
+    source.querySelectorAll<HTMLElement>(".speech-segment").forEach((word) => {
+      const read = Number(word.dataset.end) <= position;
+      word.classList.toggle("speech-read", read);
+      if (read && word.classList.contains("speech-word")) lastRead = word;
+    });
+    const target = lastRead as HTMLElement | null;
+    if (!follow || !target || target === previous || source.scrollHeight <= source.clientHeight) return;
+    const bounds = source.getBoundingClientRect();
+    const wordBounds = target.getBoundingClientRect();
+    if (wordBounds.top < bounds.top || wordBounds.bottom > bounds.bottom) {
+      source.scrollTop += wordBounds.top - bounds.top - (source.clientHeight - wordBounds.height) / 2;
+    }
+  }
+
   function speak(text: string, button: HTMLButtonElement, requestedPosition = 0) {
     if (!activationSettings.speechEnabled) return;
     try {
@@ -1208,7 +1256,6 @@ import {
       showError("Озвучка не поддерживается этим браузером");
       return;
     }
-    const progress = shadow?.querySelector<HTMLInputElement>(".speech-progress") || null;
     const startPosition = nearestWordStart(text, requestedPosition);
     const spokenText = text.slice(startPosition).trimStart();
     const leadingWhitespace = text.slice(startPosition).length - spokenText.length;
@@ -1227,22 +1274,17 @@ import {
       button.textContent = "■";
       button.title = "Остановить озвучку";
       button.setAttribute("aria-label", "Остановить озвучку");
-      if (progress) {
-        progress.value = String(actualStart);
-        animateSpeechProgress(progress, text, spokenText, actualStart, ownSpeechRun);
-      }
+      updateSpeechPosition(actualStart);
     };
     utterance.onboundary = (event) => {
-      if (ownSpeechRun !== speechRun || !progress) return;
-      progress.value = String(Math.max(
-        Number(progress.value),
-        Math.min(text.length, actualStart + event.charIndex)
-      ));
+      if (ownSpeechRun !== speechRun) return;
+      stopSpeechProgressAnimation();
+      updateSpeechPosition(Math.min(text.length, actualStart + event.charIndex));
     };
     utterance.onend = () => {
       if (ownSpeechRun !== speechRun) return;
       stopSpeechProgressAnimation();
-      if (progress) progress.value = String(text.length);
+      updateSpeechPosition(text.length);
       resetSpeakButton(button);
     };
     utterance.onerror = (event) => {
@@ -1284,7 +1326,7 @@ import {
     button.textContent = "■";
     button.title = "Остановить озвучку";
     button.setAttribute("aria-label", "Остановить озвучку");
-    if (progress) progress.value = String(actualStart);
+    updateSpeechPosition(actualStart);
 
     try {
       const result = await extensionApi.runtime.sendMessage({
@@ -1332,7 +1374,7 @@ import {
           if (ownSpeechRun !== speechRun) return;
           stopSpeechProgressAnimation();
           remoteSpeech = null;
-          if (progress) progress.value = String(text.length);
+          updateSpeechPosition(text.length);
           resetSpeakButton(button);
         };
       }
@@ -1362,10 +1404,11 @@ import {
       const now = remoteSpeech.context.currentTime;
       const current = schedule.find((item) => now >= item.startTime && now < item.endTime);
       if (current) {
-        const fraction = (now - current.startTime) / (current.endTime - current.startTime);
+        const duration = current.endTime - current.startTime;
+        const fraction = Math.max(0, (now - current.startTime) / duration);
         const chunkPosition = current.chunk.start
           + Math.floor((current.chunk.end - current.chunk.start) * fraction);
-        progress.value = String(Math.min(fullText.length, startPosition + chunkPosition));
+        updateSpeechPosition(Math.min(fullText.length, startPosition + chunkPosition));
       }
       speechProgressFrame = requestAnimationFrame(update);
     };
@@ -1419,41 +1462,17 @@ import {
       || Boolean(window.speechSynthesis?.speaking || window.speechSynthesis?.pending);
   }
 
-  function animateSpeechProgress(
-    progress: HTMLInputElement,
-    fullText: string,
-    spokenText: string,
-    startPosition: number,
-    ownSpeechRun: number
-  ) {
-    stopSpeechProgressAnimation();
-    const startedAt = performance.now();
-    const estimatedDuration = estimateSpeechDuration(spokenText, activationSettings.speechRate);
-    const remainingCharacters = fullText.length - startPosition;
-
-    const update = (now: number) => {
-      if (ownSpeechRun !== speechRun) return;
-      const fraction = Math.min(0.98, (now - startedAt) / estimatedDuration);
-      const estimatedPosition = startPosition + Math.floor(remainingCharacters * fraction);
-      progress.value = String(Math.max(Number(progress.value), estimatedPosition));
-      speechProgressFrame = requestAnimationFrame(update);
-    };
-    speechProgressFrame = requestAnimationFrame(update);
-  }
-
   function stopSpeechProgressAnimation() {
     if (speechProgressFrame === null) return;
     cancelAnimationFrame(speechProgressFrame);
     speechProgressFrame = null;
   }
 
-  function estimateSpeechDuration(value: string, speechRate: number) {
-    const wordsPerMinute = 165 * speechRate;
-    return Math.max(1200, (wordCount(value) / wordsPerMinute) * 60_000);
-  }
-
   function nearestWordStart(text: string, requestedPosition: number) {
     let position = Math.max(0, Math.min(Math.floor(requestedPosition), text.length));
+    for (const part of new Intl.Segmenter(undefined, {granularity: "word"}).segment(text)) {
+      if (part.isWordLike && part.index <= position && position < part.index + part.segment.length) return part.index;
+    }
     while (position > 0 && /[\p{L}\p{M}'’ʼ-]/u.test(text[position - 1])) position -= 1;
     return position;
   }
@@ -1681,6 +1700,9 @@ import {
       .copy-translation:disabled { cursor: default; opacity: .55; }
       .copy-translation svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
       .source { display: flex; flex: 1 1 auto; align-items: center; min-width: 0; min-height: 30px; font-size: 16px; font-weight: 650; line-height: 1.35; overflow-wrap: anywhere; white-space: normal !important; }
+      .source.speech-text { display: block; }
+      .speech-segment { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+      .speech-read { background: #d5e3ff; }
       .card.long .source { max-height: min(22vh,180px); overflow-x: hidden; overflow-y: auto; line-height: 1.45; }
       .speak { flex: 0 0 32px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #e8f0ff; color: #2457d6; cursor: pointer; font-size: 12px; transition: background .15s, transform .15s; }
       .speak:hover { background: #d8e5ff; transform: scale(1.04); }
