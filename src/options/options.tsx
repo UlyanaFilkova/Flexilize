@@ -576,7 +576,7 @@ function OnboardingView({onComplete}: {onComplete: () => void}) {
 
         <fieldset className="onboarding-field onboarding-activation-field" disabled={loading || saving}>
           <legend className="onboarding-field-title">Как запускать перевод по выделению текста?</legend>
-          <section className="settings-panel settings-panel-grouped" aria-label="Способы запуска перевода">
+          <section className="settings-panel settings-panel-grouped activation-options-grid" aria-label="Способы запуска перевода">
             <SelectionActivationSettings settings={settings} persist={setSettings} isMobile={false} shortCopy />
           </section>
         </fieldset>
@@ -682,7 +682,7 @@ function GeneralSettings() {
     <>
       <div className="settings-group settings-group-following">
         <h2 className="settings-group-title">Перевод по выделению</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Перевод по выделению">
+        <section className="settings-panel settings-panel-grouped activation-options-grid" aria-label="Перевод по выделению">
       <SelectionActivationSettings settings={settings} persist={persist} isMobile={isMobile} />
 
       {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
