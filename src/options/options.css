@@ -2371,7 +2371,6 @@ h1 {
 .activation-options-grid .setting-row > .activation-illustration { grid-column: 1 / -1; grid-row: 3; justify-self: center; }
 .activation-options-grid > .setting-row:not(:has(.activation-illustration)) {
   grid-column: 1 / -1;
-  padding: 20px;
   border: 1px solid #e4e8ef;
   border-radius: 16px;
   background: #fff;
