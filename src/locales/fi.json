@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Valitse \"Näytä käännösikkuna\". Jos pikakuvakkeen aktivointi on päällä, paina määritettyä pikanäppäintä tekstin valinnan jälkeen. Lataa välilehti uudelleen laajennuksen asentamisen tai päivityksen jälkeen.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Laajennukset eivät voi toimia sisäisillä selainsivuilla, kuten",
   "ui.expand-record": "Laajenna",
-  "ui.collapse-record": "Tiivistä"
+  "ui.collapse-record": "Tiivistä",
+  "ui.onboarding-first-launch": "Ensimmäinen käynnistys",
+  "ui.onboarding-quick-setup": "Pika-asetukset",
+  "ui.onboarding-native-language": "Äidinkielesi?",
+  "ui.onboarding-target-language-prompt": "Valitse kieli, jolle teksti käännetään",
+  "ui.onboarding-selection-activation-prompt": "Miten valitun tekstin käännös käynnistetään?",
+  "ui.onboarding-settings-change-anytime": "Voit muuttaa näitä asetuksia milloin tahansa.",
+  "ui.onboarding-start": "Aloita",
+  "ui.onboarding-saving": "Tallennetaan…"
 }

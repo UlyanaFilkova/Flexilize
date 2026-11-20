@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Cochez « Afficher la fenêtre de traduction ». Si l'activation du raccourci est activée, appuyez sur le raccourci attribué après avoir sélectionné le texte. Rechargez l'onglet après avoir installé ou mis à jour l'extension.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Les extensions ne peuvent pas s'exécuter sur les pages internes du navigateur telles que",
   "ui.expand-record": "Développer",
-  "ui.collapse-record": "Réduire"
+  "ui.collapse-record": "Réduire",
+  "ui.onboarding-first-launch": "Premier lancement",
+  "ui.onboarding-quick-setup": "Configuration rapide",
+  "ui.onboarding-native-language": "Votre langue maternelle ?",
+  "ui.onboarding-target-language-prompt": "Choisissez la langue de traduction du texte",
+  "ui.onboarding-selection-activation-prompt": "Comment lancer la traduction du texte sélectionné ?",
+  "ui.onboarding-settings-change-anytime": "Vous pouvez modifier ces paramètres à tout moment.",
+  "ui.onboarding-start": "Commencer",
+  "ui.onboarding-saving": "Enregistrement…"
 }

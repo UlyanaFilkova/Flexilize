@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Marker \"Vis oversættelsesvindue\". Hvis genvejsaktivering er aktiveret, skal du trykke på den tildelte genvej efter at have valgt tekst. Genindlæs fanen efter installation eller opdatering af udvidelsen.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Udvidelser kan ikke køre på interne browsersider som f.eks",
   "ui.expand-record": "Fold ud",
-  "ui.collapse-record": "Fold sammen"
+  "ui.collapse-record": "Fold sammen",
+  "ui.onboarding-first-launch": "Første start",
+  "ui.onboarding-quick-setup": "Hurtig opsætning",
+  "ui.onboarding-native-language": "Dit modersmål?",
+  "ui.onboarding-target-language-prompt": "Vælg det sprog, teksten skal oversættes til",
+  "ui.onboarding-selection-activation-prompt": "Hvordan skal oversættelse af markeret tekst startes?",
+  "ui.onboarding-settings-change-anytime": "Du kan ændre disse indstillinger når som helst.",
+  "ui.onboarding-start": "Start",
+  "ui.onboarding-saving": "Gemmer…"
 }

@@ -511,18 +511,8 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
   );
 }
 
-type ActivationChoice = "automatic" | "button" | "hotkey" | "context-menu";
-
-const activationChoices: ReadonlyArray<readonly [ActivationChoice, string, string]> = [
-  ["automatic", "Автоматически при выделении", "Перевод появится сразу после выделения текста."],
-  ["button", "Кнопкой рядом с выделением", "Нажмите кнопку, которая появляется возле выделенного текста."],
-  ["hotkey", "Горячими клавишами", "Выделите текст и нажмите заданную комбинацию клавиш."],
-  ["context-menu", "Через контекстное меню", "Щёлкните правой кнопкой по выделенному тексту и выберите перевод."]
-];
-
 function OnboardingView({onComplete}: {onComplete: () => void}) {
   const [settings, setSettings] = useState<ExtensionSettings>(defaultSettings);
-  const [activationChoice, setActivationChoice] = useState<ActivationChoice>("automatic");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -530,27 +520,32 @@ function OnboardingView({onComplete}: {onComplete: () => void}) {
   useEffect(() => {
     void getExtensionSettings().then((stored) => {
       setSettings(stored);
-      if (stored.selectionButtonEnabled) setActivationChoice("button");
-      else if (stored.hotkeyActivationEnabled) setActivationChoice("hotkey");
-      else if (stored.contextMenuEnabled) setActivationChoice("context-menu");
     }).catch(() => setError("Не удалось загрузить текущие настройки.")).finally(() => setLoading(false));
   }, []);
 
-  const languageOptions = localizedLanguageOptions(TRANSLATION_LANGUAGES, "ru");
+  const languageOptions = localizedLanguageOptions(interfaceLanguageOptions, settings.interfaceLanguage, true);
+
+  const changeNativeLanguage = async (interfaceLanguage: InterfaceLanguage) => {
+    if (loading || saving) return;
+    const targetLanguage = interfaceLanguage === "fil" ? "tl" : interfaceLanguage;
+    setSaving(true);
+    setError("");
+    try {
+      await loadInterfaceLanguage(interfaceLanguage);
+      await saveExtensionSettings({...settings, targetLanguage, interfaceLanguage});
+      renderOptions(interfaceLanguage);
+    } catch (_error) {
+      setError("Не удалось сохранить настройки. Попробуйте ещё раз.");
+      setSaving(false);
+    }
+  };
 
   const saveSetup = async () => {
     if (saving || loading) return;
     setSaving(true);
     setError("");
-    const nextSettings: ExtensionSettings = {
-      ...settings,
-      autoActivationEnabled: activationChoice === "automatic",
-      selectionButtonEnabled: activationChoice === "button",
-      hotkeyActivationEnabled: activationChoice === "hotkey",
-      contextMenuEnabled: activationChoice === "context-menu"
-    };
     try {
-      await saveExtensionSettings(nextSettings);
+      await saveExtensionSettings(settings);
       await browser.storage.local.set({[ONBOARDING_COMPLETED_KEY]: true});
       onComplete();
     } catch (_error) {
@@ -563,40 +558,34 @@ function OnboardingView({onComplete}: {onComplete: () => void}) {
     <div className="onboarding-page">
       <section className="onboarding-card" aria-labelledby="onboarding-title">
         <div className="onboarding-kicker">Первый запуск</div>
-        <h1 id="onboarding-title">Настроим перевод под вас</h1>
-        <p className="onboarding-intro">Выберите язык, на который переводить текст, и удобный способ запуска. Эти параметры можно будет изменить в настройках.</p>
+        <h1 id="onboarding-title">Быстрая настройка</h1>
 
-        <label className="onboarding-field" htmlFor="onboarding-language">
-          <span className="onboarding-field-title">На какой язык переводить текст?</span>
-          <span className="onboarding-field-description">Выберите ваш родной язык или язык, на котором вам удобнее читать.</span>
+        <label className="onboarding-field onboarding-language-field" htmlFor="onboarding-language">
+          <span className="onboarding-field-title">Ваш родной язык?</span>
+          <span className="onboarding-field-description">Язык интерфейса</span>
           <select
             id="onboarding-language"
             className="setting-select"
-            value={settings.targetLanguage}
+            value={settings.interfaceLanguage}
             disabled={loading || saving}
-            onChange={(event) => setSettings((current) => ({...current, targetLanguage: event.target.value}))}
+            onChange={(event) => void changeNativeLanguage(event.target.value as InterfaceLanguage)}
           >
             {languageOptions.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
           </select>
         </label>
 
         <fieldset className="onboarding-field onboarding-activation-field" disabled={loading || saving}>
-          <legend className="onboarding-field-title">Как запускать перевод?</legend>
-          <div className="onboarding-choices">
-            {activationChoices.map(([value, title, description]) => (
-              <label className={`onboarding-choice${activationChoice === value ? " selected" : ""}`} key={value}>
-                <input type="radio" name="activation-choice" value={value} checked={activationChoice === value} onChange={() => setActivationChoice(value)} />
-                <span className="onboarding-choice-copy"><strong>{title}</strong><small>{description}</small></span>
-              </label>
-            ))}
-          </div>
+          <legend className="onboarding-field-title">Как запускать перевод по выделению текста?</legend>
+          <section className="settings-panel settings-panel-grouped" aria-label="Способы запуска перевода">
+            <SelectionActivationSettings settings={settings} persist={setSettings} isMobile={false} />
+          </section>
         </fieldset>
 
         {error && <div className="onboarding-error" role="alert">{error}</div>}
         <div className="onboarding-footer">
           <span>Настройки можно будет изменить в любое время.</span>
           <button className="onboarding-submit" type="button" disabled={loading || saving} onClick={() => void saveSetup()}>
-            {saving ? "Сохранение…" : "Начать пользоваться"}
+            {saving ? "Сохранение…" : "Начать"}
           </button>
         </div>
       </section>
@@ -694,76 +683,7 @@ function GeneralSettings() {
       <div className="settings-group settings-group-following">
         <h2 className="settings-group-title">Перевод по выделению</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Перевод по выделению">
-      <div className="setting-row activation-setting-row">
-        <div className="setting-copy">
-          <h2>Автоматическая активация</h2>
-          <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
-        </div>
-        <ActivationIllustration kind="automatic" />
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.autoActivationEnabled ?? true}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, autoActivationEnabled: event.target.checked, ...(event.target.checked ? {selectionButtonEnabled: false} : {})})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить автоматическую активацию</span>
-        </label>
-      </div>
-
-      <div className="setting-row setting-row-secondary activation-setting-row">
-        <div className="setting-copy">
-          <h2>Кнопка рядом с выделением</h2>
-          <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
-        </div>
-        <ActivationIllustration kind="button" />
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.selectionButtonEnabled || false}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, selectionButtonEnabled: event.target.checked, ...(event.target.checked ? {autoActivationEnabled: false} : {})})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить кнопку рядом с выделением</span>
-        </label>
-      </div>
-      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
-        <div className="setting-copy">
-          <h2>Активация через контекстное меню</h2>
-          <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
-        </div>
-        <ActivationIllustration kind="context" />
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.contextMenuEnabled || false}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, contextMenuEnabled: event.target.checked})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить перевод через контекстное меню</span>
-        </label>
-      </div>}
-
-      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row">
-        <div className="setting-copy">
-          <h2>Активация горячими клавишами</h2>
-          <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
-        </div>
-        <ActivationIllustration kind="shortcut" shortcut={formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)} />
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.hotkeyActivationEnabled || false}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, hotkeyActivationEnabled: event.target.checked})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить активацию горячими клавишами</span>
-        </label>
-      </div>}
+      <SelectionActivationSettings settings={settings} persist={persist} isMobile={isMobile} />
 
       {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
         <div className="setting-copy">
@@ -839,6 +759,88 @@ function GeneralSettings() {
           {error && <div className="settings-error" role="alert">{error}</div>}
         </section>
       </div>}
+    </>
+  );
+}
+
+function SelectionActivationSettings({settings, persist, isMobile}: {
+  settings: ExtensionSettings | null;
+  persist: (settings: ExtensionSettings) => void | Promise<void>;
+  isMobile: boolean;
+}) {
+  return (
+    <>
+      <div className="setting-row activation-setting-row">
+        <div className="setting-copy">
+          <h2>Автоматическая активация</h2>
+          <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
+        </div>
+        <ActivationIllustration kind="automatic" />
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.autoActivationEnabled ?? true}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, autoActivationEnabled: event.target.checked, ...(event.target.checked ? {selectionButtonEnabled: false} : {})})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить автоматическую активацию</span>
+        </label>
+      </div>
+
+      <div className="setting-row setting-row-secondary activation-setting-row">
+        <div className="setting-copy">
+          <h2>Кнопка рядом с выделением</h2>
+          <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
+        </div>
+        <ActivationIllustration kind="button" />
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.selectionButtonEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, selectionButtonEnabled: event.target.checked, ...(event.target.checked ? {autoActivationEnabled: false} : {})})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить кнопку рядом с выделением</span>
+        </label>
+      </div>
+      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
+        <div className="setting-copy">
+          <h2>Активация через контекстное меню</h2>
+          <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
+        </div>
+        <ActivationIllustration kind="context" />
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.contextMenuEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, contextMenuEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить перевод через контекстное меню</span>
+        </label>
+      </div>}
+
+      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row">
+        <div className="setting-copy">
+          <h2>Активация горячими клавишами</h2>
+          <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
+        </div>
+        <ActivationIllustration kind="shortcut" shortcut={formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)} />
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.hotkeyActivationEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, hotkeyActivationEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить активацию горячими клавишами</span>
+        </label>
+      </div>}
+
     </>
   );
 }
@@ -1529,6 +1531,18 @@ function InfoIcon() { return <Icon><circle cx="12" cy="12" r="9"/><path d="M12 1
 function CheckIcon() { return <Icon><path d="m5 12 4 4L19 6"/></Icon>; }
 function ArrowIcon() { return <Icon><path d="M5 12h14M14 7l5 5-5 5"/></Icon>; }
 
+const optionsRoot = createRoot(document.getElementById("root")!);
+let stopLocalizing: (() => void) | undefined;
+let optionsRenderVersion = 0;
+
+function renderOptions(language: InterfaceLanguage) {
+  stopLocalizing?.();
+  setActiveLanguage(language);
+  document.title = translate("Context Translator — настройки", language);
+  stopLocalizing = observeLocalizedDom(document, language);
+  optionsRoot.render(<App key={++optionsRenderVersion} />);
+}
+
 async function startApp() {
   let language: InterfaceLanguage = "ru";
   try {
@@ -1537,9 +1551,7 @@ async function startApp() {
     // Keep the default language when storage is unavailable.
   }
   await loadInterfaceLanguage(language);
-  setActiveLanguage(language);
-  observeLocalizedDom(document, language);
-  createRoot(document.getElementById("root")!).render(<App />);
+  renderOptions(language);
 }
 
 void startApp();

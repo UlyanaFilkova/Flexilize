@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Seleziona \"Mostra finestra di traduzione\". Se l'attivazione della scorciatoia è attiva, premere la scorciatoia assegnata dopo aver selezionato il testo. Ricarica la scheda dopo aver installato o aggiornato l'estensione.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Le estensioni non possono essere eseguite su pagine interne del browser come",
   "ui.expand-record": "Espandi",
-  "ui.collapse-record": "Comprimi"
+  "ui.collapse-record": "Comprimi",
+  "ui.onboarding-first-launch": "Primo avvio",
+  "ui.onboarding-quick-setup": "Configurazione rapida",
+  "ui.onboarding-native-language": "La tua lingua madre?",
+  "ui.onboarding-target-language-prompt": "Scegli la lingua in cui tradurre il testo",
+  "ui.onboarding-selection-activation-prompt": "Come avviare la traduzione del testo selezionato?",
+  "ui.onboarding-settings-change-anytime": "Puoi modificare queste impostazioni in qualsiasi momento.",
+  "ui.onboarding-start": "Inizia",
+  "ui.onboarding-saving": "Salvataggio…"
 }

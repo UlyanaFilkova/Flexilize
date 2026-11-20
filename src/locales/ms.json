@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Tandai \"Tunjukkan tetingkap terjemahan\". Jika pengaktifan pintasan dihidupkan, tekan pintasan yang ditetapkan selepas memilih teks. Muat semula tab selepas memasang atau mengemas kini sambungan.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Sambungan tidak boleh dijalankan pada halaman pelayar dalaman seperti",
   "ui.expand-record": "Kembangkan",
-  "ui.collapse-record": "Runtuhkan"
+  "ui.collapse-record": "Runtuhkan",
+  "ui.onboarding-first-launch": "Penggunaan pertama",
+  "ui.onboarding-quick-setup": "Persediaan pantas",
+  "ui.onboarding-native-language": "Bahasa ibunda anda?",
+  "ui.onboarding-target-language-prompt": "Pilih bahasa sasaran untuk terjemahan teks",
+  "ui.onboarding-selection-activation-prompt": "Bagaimana hendak memulakan terjemahan teks yang dipilih?",
+  "ui.onboarding-settings-change-anytime": "Anda boleh menukar tetapan ini pada bila-bila masa.",
+  "ui.onboarding-start": "Mula",
+  "ui.onboarding-saving": "Menyimpan…"
 }

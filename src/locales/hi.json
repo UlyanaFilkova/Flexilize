@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "\"अनुवाद विंडो दिखाएँ\" चेक करें। यदि शॉर्टकट सक्रियण चालू है, तो टेक्स्ट का चयन करने के बाद निर्दिष्ट शॉर्टकट दबाएं। एक्सटेंशन इंस्टॉल या अपडेट करने के बाद टैब को पुनः लोड करें।",
   "ui.extensions-cannot-run-on-internal-browser-pages": "एक्सटेंशन जैसे आंतरिक ब्राउज़र पृष्ठों पर नहीं चल सकते",
   "ui.expand-record": "विस्तार करें",
-  "ui.collapse-record": "संक्षिप्त करें"
+  "ui.collapse-record": "संक्षिप्त करें",
+  "ui.onboarding-first-launch": "पहली शुरुआत",
+  "ui.onboarding-quick-setup": "त्वरित सेटअप",
+  "ui.onboarding-native-language": "आपकी मातृभाषा?",
+  "ui.onboarding-target-language-prompt": "टेक्स्ट का अनुवाद किस भाषा में करना है, चुनें",
+  "ui.onboarding-selection-activation-prompt": "चुने हुए टेक्स्ट का अनुवाद कैसे शुरू करें?",
+  "ui.onboarding-settings-change-anytime": "आप इन सेटिंग को कभी भी बदल सकते हैं।",
+  "ui.onboarding-start": "शुरू करें",
+  "ui.onboarding-saving": "सहेजा जा रहा है…"
 }

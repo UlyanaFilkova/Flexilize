@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "შეამოწმეთ \"თარგმანის ფანჯრის ჩვენება\". თუ მალსახმობის გააქტიურება ჩართულია, ტექსტის არჩევის შემდეგ დააჭირეთ მინიჭებულ მალსახმობას. გადატვირთეთ ჩანართი გაფართოების ინსტალაციის ან განახლების შემდეგ.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "გაფართოებები ვერ მუშაობს შიდა ბრაუზერის გვერდებზე, როგორიცაა",
   "ui.expand-record": "გაშლა",
-  "ui.collapse-record": "ჩაკეცვა"
+  "ui.collapse-record": "ჩაკეცვა",
+  "ui.onboarding-first-launch": "პირველი გაშვება",
+  "ui.onboarding-quick-setup": "სწრაფი დაყენება",
+  "ui.onboarding-native-language": "თქვენი მშობლიური ენა?",
+  "ui.onboarding-target-language-prompt": "აირჩიეთ ენა, რომელზეც ტექსტი ითარგმნება",
+  "ui.onboarding-selection-activation-prompt": "როგორ დაიწყოს მონიშნული ტექსტის თარგმნა?",
+  "ui.onboarding-settings-change-anytime": "ამ პარამეტრების შეცვლა ნებისმიერ დროს შეგიძლიათ.",
+  "ui.onboarding-start": "დაწყება",
+  "ui.onboarding-saving": "ინახება…"
 }

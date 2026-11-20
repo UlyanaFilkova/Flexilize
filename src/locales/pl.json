@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Zaznacz „Pokaż okno tłumaczenia”. Jeśli aktywacja skrótu jest włączona, po zaznaczeniu tekstu naciśnij przypisany skrót. Załaduj ponownie kartę po zainstalowaniu lub aktualizacji rozszerzenia.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Rozszerzenia nie mogą działać na wewnętrznych stronach przeglądarki, takich jak",
   "ui.expand-record": "Rozwiń",
-  "ui.collapse-record": "Zwiń"
+  "ui.collapse-record": "Zwiń",
+  "ui.onboarding-first-launch": "Pierwsze uruchomienie",
+  "ui.onboarding-quick-setup": "Szybka konfiguracja",
+  "ui.onboarding-native-language": "Twój język ojczysty?",
+  "ui.onboarding-target-language-prompt": "Wybierz język, na który tłumaczyć tekst",
+  "ui.onboarding-selection-activation-prompt": "Jak uruchamiać tłumaczenie zaznaczonego tekstu?",
+  "ui.onboarding-settings-change-anytime": "Możesz zmienić te ustawienia w dowolnym momencie.",
+  "ui.onboarding-start": "Rozpocznij",
+  "ui.onboarding-saving": "Zapisywanie…"
 }

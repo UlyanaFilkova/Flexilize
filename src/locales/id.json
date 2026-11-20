@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Centang “Tampilkan jendela terjemahan”. Jika aktivasi pintasan aktif, tekan pintasan yang ditetapkan setelah memilih teks. Muat ulang tab setelah menginstal atau memperbarui ekstensi.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Ekstensi tidak dapat berjalan di halaman browser internal seperti",
   "ui.expand-record": "Perluas",
-  "ui.collapse-record": "Ciutkan"
+  "ui.collapse-record": "Ciutkan",
+  "ui.onboarding-first-launch": "Penggunaan pertama",
+  "ui.onboarding-quick-setup": "Pengaturan cepat",
+  "ui.onboarding-native-language": "Bahasa ibu Anda?",
+  "ui.onboarding-target-language-prompt": "Pilih bahasa tujuan terjemahan teks",
+  "ui.onboarding-selection-activation-prompt": "Bagaimana memulai terjemahan teks yang dipilih?",
+  "ui.onboarding-settings-change-anytime": "Anda dapat mengubah pengaturan ini kapan saja.",
+  "ui.onboarding-start": "Mulai",
+  "ui.onboarding-saving": "Menyimpan…"
 }

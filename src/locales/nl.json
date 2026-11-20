@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Vink “Toon vertaalvenster” aan. Als snelkoppelingsactivering is ingeschakeld, drukt u op de toegewezen snelkoppeling nadat u tekst hebt geselecteerd. Laad het tabblad opnieuw nadat u de extensie hebt geïnstalleerd of bijgewerkt.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Extensies kunnen niet worden uitgevoerd op interne browserpagina's zoals",
   "ui.expand-record": "Uitklappen",
-  "ui.collapse-record": "Inklappen"
+  "ui.collapse-record": "Inklappen",
+  "ui.onboarding-first-launch": "Eerste keer",
+  "ui.onboarding-quick-setup": "Snelle configuratie",
+  "ui.onboarding-native-language": "Je moedertaal?",
+  "ui.onboarding-target-language-prompt": "Kies de taal waarnaar de tekst wordt vertaald",
+  "ui.onboarding-selection-activation-prompt": "Hoe wil je de vertaling van geselecteerde tekst starten?",
+  "ui.onboarding-settings-change-anytime": "Je kunt deze instellingen op elk moment wijzigen.",
+  "ui.onboarding-start": "Starten",
+  "ui.onboarding-saving": "Opslaan…"
 }

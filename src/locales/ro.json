@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Bifați „Afișați fereastra de traducere”. Dacă activarea comenzii rapide este activată, apăsați comanda rapidă atribuită după selectarea textului. Reîncărcați fila după instalarea sau actualizarea extensiei.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Extensiile nu pot rula pe paginile interne ale browserului, cum ar fi",
   "ui.expand-record": "Extinde",
-  "ui.collapse-record": "Restrânge"
+  "ui.collapse-record": "Restrânge",
+  "ui.onboarding-first-launch": "Prima pornire",
+  "ui.onboarding-quick-setup": "Configurare rapidă",
+  "ui.onboarding-native-language": "Limba ta maternă?",
+  "ui.onboarding-target-language-prompt": "Alege limba în care să fie tradus textul",
+  "ui.onboarding-selection-activation-prompt": "Cum să pornească traducerea textului selectat?",
+  "ui.onboarding-settings-change-anytime": "Poți modifica aceste setări oricând.",
+  "ui.onboarding-start": "Începe",
+  "ui.onboarding-saving": "Se salvează…"
 }

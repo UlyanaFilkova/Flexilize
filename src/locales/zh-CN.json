@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "勾选“显示翻译窗口”。如果快捷方式激活已打开，请在选择文本后按指定的快捷方式。安装或更新扩展后重新加载选项卡。",
   "ui.extensions-cannot-run-on-internal-browser-pages": "扩展程序无法在内部浏览器页面上运行，例如",
   "ui.expand-record": "展开",
-  "ui.collapse-record": "收起"
+  "ui.collapse-record": "收起",
+  "ui.onboarding-first-launch": "首次启动",
+  "ui.onboarding-quick-setup": "快速设置",
+  "ui.onboarding-native-language": "您的母语是什么？",
+  "ui.onboarding-target-language-prompt": "选择文本的目标翻译语言",
+  "ui.onboarding-selection-activation-prompt": "如何启动所选文本的翻译？",
+  "ui.onboarding-settings-change-anytime": "您可以随时更改这些设置。",
+  "ui.onboarding-start": "开始",
+  "ui.onboarding-saving": "正在保存…"
 }

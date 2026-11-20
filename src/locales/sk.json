@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Začiarknite políčko „Zobraziť okno prekladu“. Ak je aktivácia skratky zapnutá, po výbere textu stlačte priradenú skratku. Po nainštalovaní alebo aktualizácii rozšírenia kartu znova načítajte.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Rozšírenia nemôžu bežať na interných stránkach prehliadača ako napr",
   "ui.expand-record": "Rozbaliť",
-  "ui.collapse-record": "Zbaliť"
+  "ui.collapse-record": "Zbaliť",
+  "ui.onboarding-first-launch": "Prvé spustenie",
+  "ui.onboarding-quick-setup": "Rýchle nastavenie",
+  "ui.onboarding-native-language": "Váš rodný jazyk?",
+  "ui.onboarding-target-language-prompt": "Vyberte jazyk, do ktorého sa má text prekladať",
+  "ui.onboarding-selection-activation-prompt": "Ako spúšťať preklad vybraného textu?",
+  "ui.onboarding-settings-change-anytime": "Tieto nastavenia môžete kedykoľvek zmeniť.",
+  "ui.onboarding-start": "Začať",
+  "ui.onboarding-saving": "Ukladanie…"
 }

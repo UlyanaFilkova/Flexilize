@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Marque \"Mostrar ventana de traducción\". Si la activación de acceso directo está activada, presione el acceso directo asignado después de seleccionar el texto. Vuelva a cargar la pestaña después de instalar o actualizar la extensión.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Las extensiones no se pueden ejecutar en páginas internas del navegador como",
   "ui.expand-record": "Expandir",
-  "ui.collapse-record": "Contraer"
+  "ui.collapse-record": "Contraer",
+  "ui.onboarding-first-launch": "Primer inicio",
+  "ui.onboarding-quick-setup": "Configuración rápida",
+  "ui.onboarding-native-language": "¿Cuál es tu lengua materna?",
+  "ui.onboarding-target-language-prompt": "Elige el idioma al que traducir el texto",
+  "ui.onboarding-selection-activation-prompt": "¿Cómo iniciar la traducción del texto seleccionado?",
+  "ui.onboarding-settings-change-anytime": "Puedes cambiar estos ajustes en cualquier momento.",
+  "ui.onboarding-start": "Empezar",
+  "ui.onboarding-saving": "Guardando…"
 }

@@ -440,5 +440,16 @@
   "ui.screenshot-file-limits-short": "PNG, JPEG или WebP · до 10 файлов · всего до 20 МБ",
   "ui.remove-file": "Удалить файл",
   "ui.expand-record": "Развернуть",
-  "ui.collapse-record": "Свернуть"
+  "ui.collapse-record": "Свернуть",
+  "ui.onboarding-first-launch": "Первый запуск",
+  "ui.onboarding-quick-setup": "Быстрая настройка",
+  "ui.onboarding-native-language": "Ваш родной язык?",
+  "ui.onboarding-target-language-prompt": "Выберите, на какой язык переводить текст",
+  "ui.onboarding-selection-activation-prompt": "Как запускать перевод по выделению текста?",
+  "ui.onboarding-settings-change-anytime": "Настройки можно будет изменить в любое время.",
+  "ui.onboarding-start": "Начать",
+  "ui.onboarding-saving": "Сохранение…",
+  "ui.onboarding-activation-methods": "Способы запуска перевода",
+  "ui.onboarding-load-error": "Не удалось загрузить текущие настройки.",
+  "ui.onboarding-save-error": "Не удалось сохранить настройки. Попробуйте ещё раз."
 }

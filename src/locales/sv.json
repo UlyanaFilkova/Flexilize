@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Markera \"Visa översättningsfönster\". Om genvägsaktivering är på trycker du på den tilldelade genvägen efter att du har valt text. Ladda om fliken efter installation eller uppdatering av tillägget.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Tillägg kan inte köras på interna webbläsarsidor som t.ex",
   "ui.expand-record": "Visa mer",
-  "ui.collapse-record": "Visa mindre"
+  "ui.collapse-record": "Visa mindre",
+  "ui.onboarding-first-launch": "Första starten",
+  "ui.onboarding-quick-setup": "Snabbinställning",
+  "ui.onboarding-native-language": "Ditt modersmål?",
+  "ui.onboarding-target-language-prompt": "Välj vilket språk texten ska översättas till",
+  "ui.onboarding-selection-activation-prompt": "Hur ska översättningen av markerad text startas?",
+  "ui.onboarding-settings-change-anytime": "Du kan ändra dessa inställningar när som helst.",
+  "ui.onboarding-start": "Börja",
+  "ui.onboarding-saving": "Sparar…"
 }

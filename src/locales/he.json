@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "סמן את \"הצג חלון תרגום\". אם הפעלת קיצור הדרך מופעלת, לחץ על קיצור הדרך שהוקצה לאחר בחירת טקסט. טען מחדש את הכרטיסייה לאחר התקנה או עדכון של התוסף.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "הרחבות אינן יכולות לפעול בדפי דפדפן פנימיים כגון",
   "ui.expand-record": "הרחבה",
-  "ui.collapse-record": "צמצום"
+  "ui.collapse-record": "צמצום",
+  "ui.onboarding-first-launch": "הפעלה ראשונה",
+  "ui.onboarding-quick-setup": "הגדרה מהירה",
+  "ui.onboarding-native-language": "מהי שפת האם שלך?",
+  "ui.onboarding-target-language-prompt": "בחרו את השפה שאליה יתורגם הטקסט",
+  "ui.onboarding-selection-activation-prompt": "כיצד להפעיל תרגום של טקסט מסומן?",
+  "ui.onboarding-settings-change-anytime": "אפשר לשנות את ההגדרות האלה בכל עת.",
+  "ui.onboarding-start": "התחלה",
+  "ui.onboarding-saving": "שומר…"
 }

@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Označite \"Prikaži prozor za prijevod\". Ako je aktivacija prečaca uključena, pritisnite dodijeljeni prečac nakon odabira teksta. Ponovno učitajte karticu nakon instaliranja ili ažuriranja proširenja.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Proširenja se ne mogu izvoditi na internim stranicama preglednika kao što su",
   "ui.expand-record": "Proširi",
-  "ui.collapse-record": "Sažmi"
+  "ui.collapse-record": "Sažmi",
+  "ui.onboarding-first-launch": "Prvo pokretanje",
+  "ui.onboarding-quick-setup": "Brzo postavljanje",
+  "ui.onboarding-native-language": "Vaš materinski jezik?",
+  "ui.onboarding-target-language-prompt": "Odaberite jezik na koji želite prevoditi tekst",
+  "ui.onboarding-selection-activation-prompt": "Kako pokrenuti prijevod označenog teksta?",
+  "ui.onboarding-settings-change-anytime": "Ove postavke možete promijeniti u bilo kojem trenutku.",
+  "ui.onboarding-start": "Započni",
+  "ui.onboarding-saving": "Spremanje…"
 }

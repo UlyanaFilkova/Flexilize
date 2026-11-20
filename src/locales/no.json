@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Sjekk \"Vis oversettelsesvindu\". Hvis snarveiaktivering er på, trykker du på den tilordnede snarveien etter at du har valgt tekst. Last inn fanen på nytt etter installasjon eller oppdatering av utvidelsen.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Utvidelser kan ikke kjøres på interne nettlesersider som f.eks",
   "ui.expand-record": "Utvid",
-  "ui.collapse-record": "Skjul"
+  "ui.collapse-record": "Skjul",
+  "ui.onboarding-first-launch": "Første oppstart",
+  "ui.onboarding-quick-setup": "Hurtigoppsett",
+  "ui.onboarding-native-language": "Morsmålet ditt?",
+  "ui.onboarding-target-language-prompt": "Velg språket teksten skal oversettes til",
+  "ui.onboarding-selection-activation-prompt": "Hvordan skal oversettelse av markert tekst startes?",
+  "ui.onboarding-settings-change-anytime": "Du kan endre disse innstillingene når som helst.",
+  "ui.onboarding-start": "Start",
+  "ui.onboarding-saving": "Lagrer…"
 }

@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Επιλέξτε \"Εμφάνιση παραθύρου μετάφρασης\". Εάν η ενεργοποίηση συντόμευσης είναι ενεργοποιημένη, πατήστε την αντιστοιχισμένη συντόμευση αφού επιλέξετε κείμενο. Φορτώστε ξανά την καρτέλα μετά την εγκατάσταση ή την ενημέρωση της επέκτασης.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Οι επεκτάσεις δεν μπορούν να εκτελεστούν σε εσωτερικές σελίδες προγράμματος περιήγησης, όπως π.χ",
   "ui.expand-record": "Ανάπτυξη",
-  "ui.collapse-record": "Σύμπτυξη"
+  "ui.collapse-record": "Σύμπτυξη",
+  "ui.onboarding-first-launch": "Πρώτη εκκίνηση",
+  "ui.onboarding-quick-setup": "Γρήγορη ρύθμιση",
+  "ui.onboarding-native-language": "Η μητρική σας γλώσσα;",
+  "ui.onboarding-target-language-prompt": "Επιλέξτε τη γλώσσα μετάφρασης του κειμένου",
+  "ui.onboarding-selection-activation-prompt": "Πώς να ξεκινά η μετάφραση του επιλεγμένου κειμένου;",
+  "ui.onboarding-settings-change-anytime": "Μπορείτε να αλλάξετε αυτές τις ρυθμίσεις ανά πάσα στιγμή.",
+  "ui.onboarding-start": "Έναρξη",
+  "ui.onboarding-saving": "Αποθήκευση…"
 }

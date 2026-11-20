@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "\"نمایش پنجره ترجمه\" را علامت بزنید. اگر فعال سازی میانبر روشن است، پس از انتخاب متن، میانبر اختصاص داده شده را فشار دهید. پس از نصب یا به‌روزرسانی برنامه افزودنی، برگه را دوباره بارگیری کنید.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "برنامه های افزودنی نمی توانند در صفحات مرورگر داخلی مانند",
   "ui.expand-record": "باز کردن",
-  "ui.collapse-record": "جمع کردن"
+  "ui.collapse-record": "جمع کردن",
+  "ui.onboarding-first-launch": "اولین اجرا",
+  "ui.onboarding-quick-setup": "راه‌اندازی سریع",
+  "ui.onboarding-native-language": "زبان مادری شما چیست؟",
+  "ui.onboarding-target-language-prompt": "زبانی را که می‌خواهید متن به آن ترجمه شود انتخاب کنید",
+  "ui.onboarding-selection-activation-prompt": "ترجمهٔ متن انتخاب‌شده چگونه آغاز شود؟",
+  "ui.onboarding-settings-change-anytime": "می‌توانید این تنظیمات را هر زمان تغییر دهید.",
+  "ui.onboarding-start": "شروع",
+  "ui.onboarding-saving": "در حال ذخیره…"
 }

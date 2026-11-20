@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "Означите „Прикажи прозор за превод“. Ако је активација пречице укључена, притисните додељену пречицу након што изаберете текст. Поново учитајте картицу након инсталирања или ажурирања екстензије.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "Екстензије се не могу покренути на интерним страницама претраживача као што су",
   "ui.expand-record": "Прошири",
-  "ui.collapse-record": "Скупи"
+  "ui.collapse-record": "Скупи",
+  "ui.onboarding-first-launch": "Прво покретање",
+  "ui.onboarding-quick-setup": "Брзо подешавање",
+  "ui.onboarding-native-language": "Ваш матерњи језик?",
+  "ui.onboarding-target-language-prompt": "Изаберите језик на који желите да преводите текст",
+  "ui.onboarding-selection-activation-prompt": "Како покренути превод изабраног текста?",
+  "ui.onboarding-settings-change-anytime": "Ова подешавања можете променити у било ком тренутку.",
+  "ui.onboarding-start": "Почни",
+  "ui.onboarding-saving": "Чување…"
 }

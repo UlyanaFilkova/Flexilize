@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "勾選「顯示翻譯視窗」。如果快捷方式啟動已打開，請在選擇文字後按指定的快捷方式。安裝或更新擴充功能後重新載入選項卡。",
   "ui.extensions-cannot-run-on-internal-browser-pages": "擴充功能無法在內部瀏覽器頁面上運行，例如",
   "ui.expand-record": "展開",
-  "ui.collapse-record": "收合"
+  "ui.collapse-record": "收合",
+  "ui.onboarding-first-launch": "首次啟動",
+  "ui.onboarding-quick-setup": "快速設定",
+  "ui.onboarding-native-language": "您的母語是什麼？",
+  "ui.onboarding-target-language-prompt": "選擇文字的目標翻譯語言",
+  "ui.onboarding-selection-activation-prompt": "如何啟動所選文字的翻譯？",
+  "ui.onboarding-settings-change-anytime": "您可以隨時變更這些設定。",
+  "ui.onboarding-start": "開始",
+  "ui.onboarding-saving": "正在儲存…"
 }

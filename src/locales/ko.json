@@ -440,5 +440,13 @@
   "ui.check-translation-window-shortcut-and-reload": "'번역 창 표시'를 확인하세요. 단축키 활성화가 켜져 있는 경우, 텍스트를 선택한 후 할당된 단축키를 누르세요. 확장 프로그램을 설치하거나 업데이트한 후 탭을 다시 로드하세요.",
   "ui.extensions-cannot-run-on-internal-browser-pages": "확장 프로그램은 다음과 같은 내부 브라우저 페이지에서 실행할 수 없습니다.",
   "ui.expand-record": "펼치기",
-  "ui.collapse-record": "접기"
+  "ui.collapse-record": "접기",
+  "ui.onboarding-first-launch": "첫 실행",
+  "ui.onboarding-quick-setup": "빠른 설정",
+  "ui.onboarding-native-language": "모국어는 무엇인가요?",
+  "ui.onboarding-target-language-prompt": "텍스트를 번역할 언어를 선택하세요",
+  "ui.onboarding-selection-activation-prompt": "선택한 텍스트의 번역을 어떻게 시작할까요?",
+  "ui.onboarding-settings-change-anytime": "이 설정은 언제든지 변경할 수 있습니다.",
+  "ui.onboarding-start": "시작",
+  "ui.onboarding-saving": "저장 중…"
 }
