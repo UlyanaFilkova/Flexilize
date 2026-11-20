@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Unang paggamit",
   "ui.onboarding-quick-setup": "Mabilis na pag-setup",
   "ui.onboarding-native-language": "Ano ang iyong katutubong wika?",
-  "ui.onboarding-target-language-prompt": "Piliin ang wikang pagsasalinan ng teksto",
   "ui.onboarding-selection-activation-prompt": "Paano sisimulan ang pagsasalin ng napiling teksto?",
   "ui.onboarding-settings-change-anytime": "Maaari mong baguhin ang mga setting na ito anumang oras.",
   "ui.onboarding-start": "Magsimula",
-  "ui.onboarding-saving": "Sine-save…"
+  "ui.onboarding-saving": "Sine-save…",
+  "ui.onboarding-activation-methods": "Mga paraan ng pagsisimula ng pagsasalin",
+  "ui.onboarding-load-error": "Hindi ma-load ang kasalukuyang mga setting.",
+  "ui.onboarding-save-error": "Hindi ma-save ang mga setting. Subukang muli."
 }

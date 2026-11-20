@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Første oppstart",
   "ui.onboarding-quick-setup": "Hurtigoppsett",
   "ui.onboarding-native-language": "Morsmålet ditt?",
-  "ui.onboarding-target-language-prompt": "Velg språket teksten skal oversettes til",
   "ui.onboarding-selection-activation-prompt": "Hvordan skal oversettelse av markert tekst startes?",
   "ui.onboarding-settings-change-anytime": "Du kan endre disse innstillingene når som helst.",
   "ui.onboarding-start": "Start",
-  "ui.onboarding-saving": "Lagrer…"
+  "ui.onboarding-saving": "Lagrer…",
+  "ui.onboarding-activation-methods": "Måter å starte oversettelsen på",
+  "ui.onboarding-load-error": "Kunne ikke laste inn gjeldende innstillinger.",
+  "ui.onboarding-save-error": "Kunne ikke lagre innstillingene. Prøv igjen."
 }

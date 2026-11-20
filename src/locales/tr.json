@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "İlk açılış",
   "ui.onboarding-quick-setup": "Hızlı kurulum",
   "ui.onboarding-native-language": "Ana diliniz?",
-  "ui.onboarding-target-language-prompt": "Metnin hangi dile çevrileceğini seçin",
   "ui.onboarding-selection-activation-prompt": "Seçili metnin çevirisi nasıl başlatılsın?",
   "ui.onboarding-settings-change-anytime": "Bu ayarları istediğiniz zaman değiştirebilirsiniz.",
   "ui.onboarding-start": "Başla",
-  "ui.onboarding-saving": "Kaydediliyor…"
+  "ui.onboarding-saving": "Kaydediliyor…",
+  "ui.onboarding-activation-methods": "Çeviriyi başlatma yöntemleri",
+  "ui.onboarding-load-error": "Mevcut ayarlar yüklenemedi.",
+  "ui.onboarding-save-error": "Ayarlar kaydedilemedi. Tekrar deneyin."
 }

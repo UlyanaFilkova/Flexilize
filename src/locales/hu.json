@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Első indítás",
   "ui.onboarding-quick-setup": "Gyors beállítás",
   "ui.onboarding-native-language": "Mi az anyanyelve?",
-  "ui.onboarding-target-language-prompt": "Válassza ki, milyen nyelvre fordítsuk a szöveget",
   "ui.onboarding-selection-activation-prompt": "Hogyan induljon a kijelölt szöveg fordítása?",
   "ui.onboarding-settings-change-anytime": "Ezeket a beállításokat bármikor módosíthatja.",
   "ui.onboarding-start": "Indítás",
-  "ui.onboarding-saving": "Mentés…"
+  "ui.onboarding-saving": "Mentés…",
+  "ui.onboarding-activation-methods": "Fordításindítási módok",
+  "ui.onboarding-load-error": "A jelenlegi beállítások betöltése nem sikerült.",
+  "ui.onboarding-save-error": "A beállítások mentése nem sikerült. Próbálja újra."
 }

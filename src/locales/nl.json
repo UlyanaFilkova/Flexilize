@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Eerste keer",
   "ui.onboarding-quick-setup": "Snelle configuratie",
   "ui.onboarding-native-language": "Je moedertaal?",
-  "ui.onboarding-target-language-prompt": "Kies de taal waarnaar de tekst wordt vertaald",
   "ui.onboarding-selection-activation-prompt": "Hoe wil je de vertaling van geselecteerde tekst starten?",
   "ui.onboarding-settings-change-anytime": "Je kunt deze instellingen op elk moment wijzigen.",
   "ui.onboarding-start": "Starten",
-  "ui.onboarding-saving": "Opslaan…"
+  "ui.onboarding-saving": "Opslaan…",
+  "ui.onboarding-activation-methods": "Manieren om vertalingen te starten",
+  "ui.onboarding-load-error": "De huidige instellingen konden niet worden geladen.",
+  "ui.onboarding-save-error": "De instellingen konden niet worden opgeslagen. Probeer het opnieuw."
 }

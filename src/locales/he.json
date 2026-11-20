@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "הפעלה ראשונה",
   "ui.onboarding-quick-setup": "הגדרה מהירה",
   "ui.onboarding-native-language": "מהי שפת האם שלך?",
-  "ui.onboarding-target-language-prompt": "בחרו את השפה שאליה יתורגם הטקסט",
   "ui.onboarding-selection-activation-prompt": "כיצד להפעיל תרגום של טקסט מסומן?",
   "ui.onboarding-settings-change-anytime": "אפשר לשנות את ההגדרות האלה בכל עת.",
   "ui.onboarding-start": "התחלה",
-  "ui.onboarding-saving": "שומר…"
+  "ui.onboarding-saving": "שומר…",
+  "ui.onboarding-activation-methods": "דרכים להפעלת התרגום",
+  "ui.onboarding-load-error": "טעינת ההגדרות הנוכחיות נכשלה.",
+  "ui.onboarding-save-error": "שמירת ההגדרות נכשלה. אפשר לנסות שוב."
 }

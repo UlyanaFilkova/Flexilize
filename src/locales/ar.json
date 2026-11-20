@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "التشغيل الأول",
   "ui.onboarding-quick-setup": "إعداد سريع",
   "ui.onboarding-native-language": "ما لغتك الأم؟",
-  "ui.onboarding-target-language-prompt": "اختر اللغة التي تريد ترجمة النص إليها",
   "ui.onboarding-selection-activation-prompt": "كيف تريد بدء ترجمة النص المحدد؟",
   "ui.onboarding-settings-change-anytime": "يمكنك تغيير هذه الإعدادات في أي وقت.",
   "ui.onboarding-start": "ابدأ",
-  "ui.onboarding-saving": "جارٍ الحفظ…"
+  "ui.onboarding-saving": "جارٍ الحفظ…",
+  "ui.onboarding-activation-methods": "طرق تفعيل الترجمة",
+  "ui.onboarding-load-error": "تعذّر تحميل الإعدادات الحالية.",
+  "ui.onboarding-save-error": "تعذّر حفظ الإعدادات. يُرجى المحاولة مرة أخرى."
 }

@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Hapja e parë",
   "ui.onboarding-quick-setup": "Konfigurim i shpejtë",
   "ui.onboarding-native-language": "Gjuha juaj amtare?",
-  "ui.onboarding-target-language-prompt": "Zgjidhni gjuhën në të cilën të përkthehet teksti",
   "ui.onboarding-selection-activation-prompt": "Si të nisë përkthimi i tekstit të zgjedhur?",
   "ui.onboarding-settings-change-anytime": "Mund t’i ndryshoni këto cilësime në çdo kohë.",
   "ui.onboarding-start": "Fillo",
-  "ui.onboarding-saving": "Duke ruajtur…"
+  "ui.onboarding-saving": "Duke ruajtur…",
+  "ui.onboarding-activation-methods": "Mënyrat e nisjes së përkthimit",
+  "ui.onboarding-load-error": "Ngarkimi i cilësimeve aktuale dështoi.",
+  "ui.onboarding-save-error": "Ruajtja e cilësimeve dështoi. Provo sërish."
 }

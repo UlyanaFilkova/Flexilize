@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Erster Start",
   "ui.onboarding-quick-setup": "Schnelleinrichtung",
   "ui.onboarding-native-language": "Ihre Muttersprache?",
-  "ui.onboarding-target-language-prompt": "Wählen Sie die Sprache, in die der Text übersetzt werden soll",
   "ui.onboarding-selection-activation-prompt": "Wie soll die Übersetzung markierter Texte gestartet werden?",
   "ui.onboarding-settings-change-anytime": "Sie können diese Einstellungen jederzeit ändern.",
   "ui.onboarding-start": "Starten",
-  "ui.onboarding-saving": "Speichern…"
+  "ui.onboarding-saving": "Speichern…",
+  "ui.onboarding-activation-methods": "Übersetzungsstartmethoden",
+  "ui.onboarding-load-error": "Die aktuellen Einstellungen konnten nicht geladen werden.",
+  "ui.onboarding-save-error": "Die Einstellungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut."
 }

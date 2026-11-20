@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "首次启动",
   "ui.onboarding-quick-setup": "快速设置",
   "ui.onboarding-native-language": "您的母语是什么？",
-  "ui.onboarding-target-language-prompt": "选择文本的目标翻译语言",
   "ui.onboarding-selection-activation-prompt": "如何启动所选文本的翻译？",
   "ui.onboarding-settings-change-anytime": "您可以随时更改这些设置。",
   "ui.onboarding-start": "开始",
-  "ui.onboarding-saving": "正在保存…"
+  "ui.onboarding-saving": "正在保存…",
+  "ui.onboarding-activation-methods": "翻译启动方式",
+  "ui.onboarding-load-error": "无法加载当前设置。",
+  "ui.onboarding-save-error": "无法保存设置，请重试。"
 }

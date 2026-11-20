@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Ensimmäinen käynnistys",
   "ui.onboarding-quick-setup": "Pika-asetukset",
   "ui.onboarding-native-language": "Äidinkielesi?",
-  "ui.onboarding-target-language-prompt": "Valitse kieli, jolle teksti käännetään",
   "ui.onboarding-selection-activation-prompt": "Miten valitun tekstin käännös käynnistetään?",
   "ui.onboarding-settings-change-anytime": "Voit muuttaa näitä asetuksia milloin tahansa.",
   "ui.onboarding-start": "Aloita",
-  "ui.onboarding-saving": "Tallennetaan…"
+  "ui.onboarding-saving": "Tallennetaan…",
+  "ui.onboarding-activation-methods": "Käännöksen käynnistystavat",
+  "ui.onboarding-load-error": "Nykyisten asetusten lataaminen epäonnistui.",
+  "ui.onboarding-save-error": "Asetusten tallentaminen epäonnistui. Yritä uudelleen."
 }

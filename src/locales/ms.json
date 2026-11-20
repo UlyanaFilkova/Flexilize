@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Penggunaan pertama",
   "ui.onboarding-quick-setup": "Persediaan pantas",
   "ui.onboarding-native-language": "Bahasa ibunda anda?",
-  "ui.onboarding-target-language-prompt": "Pilih bahasa sasaran untuk terjemahan teks",
   "ui.onboarding-selection-activation-prompt": "Bagaimana hendak memulakan terjemahan teks yang dipilih?",
   "ui.onboarding-settings-change-anytime": "Anda boleh menukar tetapan ini pada bila-bila masa.",
   "ui.onboarding-start": "Mula",
-  "ui.onboarding-saving": "Menyimpan…"
+  "ui.onboarding-saving": "Menyimpan…",
+  "ui.onboarding-activation-methods": "Cara memulakan terjemahan",
+  "ui.onboarding-load-error": "Tetapan semasa tidak dapat dimuatkan.",
+  "ui.onboarding-save-error": "Tetapan tidak dapat disimpan. Cuba lagi."
 }

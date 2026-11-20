@@ -444,7 +444,6 @@
   "ui.onboarding-first-launch": "First launch",
   "ui.onboarding-quick-setup": "Quick setup",
   "ui.onboarding-native-language": "Your native language?",
-  "ui.onboarding-target-language-prompt": "Choose the language to translate text into",
   "ui.onboarding-selection-activation-prompt": "How should translation of selected text start?",
   "ui.onboarding-settings-change-anytime": "You can change these settings at any time.",
   "ui.onboarding-start": "Start",

@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "पहली शुरुआत",
   "ui.onboarding-quick-setup": "त्वरित सेटअप",
   "ui.onboarding-native-language": "आपकी मातृभाषा?",
-  "ui.onboarding-target-language-prompt": "टेक्स्ट का अनुवाद किस भाषा में करना है, चुनें",
   "ui.onboarding-selection-activation-prompt": "चुने हुए टेक्स्ट का अनुवाद कैसे शुरू करें?",
   "ui.onboarding-settings-change-anytime": "आप इन सेटिंग को कभी भी बदल सकते हैं।",
   "ui.onboarding-start": "शुरू करें",
-  "ui.onboarding-saving": "सहेजा जा रहा है…"
+  "ui.onboarding-saving": "सहेजा जा रहा है…",
+  "ui.onboarding-activation-methods": "अनुवाद शुरू करने के तरीके",
+  "ui.onboarding-load-error": "मौजूदा सेटिंग लोड नहीं हो सकीं।",
+  "ui.onboarding-save-error": "सेटिंग सेव नहीं हो सकीं। फिर से कोशिश करें।"
 }

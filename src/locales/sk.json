@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Prvé spustenie",
   "ui.onboarding-quick-setup": "Rýchle nastavenie",
   "ui.onboarding-native-language": "Váš rodný jazyk?",
-  "ui.onboarding-target-language-prompt": "Vyberte jazyk, do ktorého sa má text prekladať",
   "ui.onboarding-selection-activation-prompt": "Ako spúšťať preklad vybraného textu?",
   "ui.onboarding-settings-change-anytime": "Tieto nastavenia môžete kedykoľvek zmeniť.",
   "ui.onboarding-start": "Začať",
-  "ui.onboarding-saving": "Ukladanie…"
+  "ui.onboarding-saving": "Ukladanie…",
+  "ui.onboarding-activation-methods": "Spôsoby spustenia prekladu",
+  "ui.onboarding-load-error": "Aktuálne nastavenia sa nepodarilo načítať.",
+  "ui.onboarding-save-error": "Nastavenia sa nepodarilo uložiť. Skúste to znova."
 }

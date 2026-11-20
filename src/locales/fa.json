@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "اولین اجرا",
   "ui.onboarding-quick-setup": "راه‌اندازی سریع",
   "ui.onboarding-native-language": "زبان مادری شما چیست؟",
-  "ui.onboarding-target-language-prompt": "زبانی را که می‌خواهید متن به آن ترجمه شود انتخاب کنید",
   "ui.onboarding-selection-activation-prompt": "ترجمهٔ متن انتخاب‌شده چگونه آغاز شود؟",
   "ui.onboarding-settings-change-anytime": "می‌توانید این تنظیمات را هر زمان تغییر دهید.",
   "ui.onboarding-start": "شروع",
-  "ui.onboarding-saving": "در حال ذخیره…"
+  "ui.onboarding-saving": "در حال ذخیره…",
+  "ui.onboarding-activation-methods": "روش‌های شروع ترجمه",
+  "ui.onboarding-load-error": "بارگیری تنظیمات فعلی ممکن نشد.",
+  "ui.onboarding-save-error": "ذخیره تنظیمات ممکن نشد. لطفاً دوباره تلاش کنید."
 }

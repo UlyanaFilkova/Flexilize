@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Primeiro acesso",
   "ui.onboarding-quick-setup": "Configuração rápida",
   "ui.onboarding-native-language": "Qual é o seu idioma nativo?",
-  "ui.onboarding-target-language-prompt": "Escolha o idioma para traduzir o texto",
   "ui.onboarding-selection-activation-prompt": "Como iniciar a tradução do texto selecionado?",
   "ui.onboarding-settings-change-anytime": "Você pode alterar estas configurações a qualquer momento.",
   "ui.onboarding-start": "Começar",
-  "ui.onboarding-saving": "Salvando…"
+  "ui.onboarding-saving": "Salvando…",
+  "ui.onboarding-activation-methods": "Formas de iniciar a tradução",
+  "ui.onboarding-load-error": "Não foi possível carregar as configurações atuais.",
+  "ui.onboarding-save-error": "Não foi possível salvar as configurações. Tente novamente."
 }

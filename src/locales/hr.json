@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Prvo pokretanje",
   "ui.onboarding-quick-setup": "Brzo postavljanje",
   "ui.onboarding-native-language": "Vaš materinski jezik?",
-  "ui.onboarding-target-language-prompt": "Odaberite jezik na koji želite prevoditi tekst",
   "ui.onboarding-selection-activation-prompt": "Kako pokrenuti prijevod označenog teksta?",
   "ui.onboarding-settings-change-anytime": "Ove postavke možete promijeniti u bilo kojem trenutku.",
   "ui.onboarding-start": "Započni",
-  "ui.onboarding-saving": "Spremanje…"
+  "ui.onboarding-saving": "Spremanje…",
+  "ui.onboarding-activation-methods": "Načini pokretanja prijevoda",
+  "ui.onboarding-load-error": "Nije moguće učitati trenutačne postavke.",
+  "ui.onboarding-save-error": "Nije moguće spremiti postavke. Pokušajte ponovno."
 }

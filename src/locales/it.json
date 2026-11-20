@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Primo avvio",
   "ui.onboarding-quick-setup": "Configurazione rapida",
   "ui.onboarding-native-language": "La tua lingua madre?",
-  "ui.onboarding-target-language-prompt": "Scegli la lingua in cui tradurre il testo",
   "ui.onboarding-selection-activation-prompt": "Come avviare la traduzione del testo selezionato?",
   "ui.onboarding-settings-change-anytime": "Puoi modificare queste impostazioni in qualsiasi momento.",
   "ui.onboarding-start": "Inizia",
-  "ui.onboarding-saving": "Salvataggio…"
+  "ui.onboarding-saving": "Salvataggio…",
+  "ui.onboarding-activation-methods": "Modalità di avvio della traduzione",
+  "ui.onboarding-load-error": "Impossibile caricare le impostazioni attuali.",
+  "ui.onboarding-save-error": "Impossibile salvare le impostazioni. Riprova."
 }

@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Πρώτη εκκίνηση",
   "ui.onboarding-quick-setup": "Γρήγορη ρύθμιση",
   "ui.onboarding-native-language": "Η μητρική σας γλώσσα;",
-  "ui.onboarding-target-language-prompt": "Επιλέξτε τη γλώσσα μετάφρασης του κειμένου",
   "ui.onboarding-selection-activation-prompt": "Πώς να ξεκινά η μετάφραση του επιλεγμένου κειμένου;",
   "ui.onboarding-settings-change-anytime": "Μπορείτε να αλλάξετε αυτές τις ρυθμίσεις ανά πάσα στιγμή.",
   "ui.onboarding-start": "Έναρξη",
-  "ui.onboarding-saving": "Αποθήκευση…"
+  "ui.onboarding-saving": "Αποθήκευση…",
+  "ui.onboarding-activation-methods": "Τρόποι ενεργοποίησης μετάφρασης",
+  "ui.onboarding-load-error": "Δεν ήταν δυνατή η φόρτωση των τρεχουσών ρυθμίσεων.",
+  "ui.onboarding-save-error": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων. Δοκιμάστε ξανά."
 }

@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Прво покретање",
   "ui.onboarding-quick-setup": "Брзо подешавање",
   "ui.onboarding-native-language": "Ваш матерњи језик?",
-  "ui.onboarding-target-language-prompt": "Изаберите језик на који желите да преводите текст",
   "ui.onboarding-selection-activation-prompt": "Како покренути превод изабраног текста?",
   "ui.onboarding-settings-change-anytime": "Ова подешавања можете променити у било ком тренутку.",
   "ui.onboarding-start": "Почни",
-  "ui.onboarding-saving": "Чување…"
+  "ui.onboarding-saving": "Чување…",
+  "ui.onboarding-activation-methods": "Начини покретања превода",
+  "ui.onboarding-load-error": "Учитавање тренутних подешавања није успело.",
+  "ui.onboarding-save-error": "Чување подешавања није успело. Покушајте поново."
 }

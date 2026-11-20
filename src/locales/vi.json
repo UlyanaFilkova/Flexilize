@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Lần đầu sử dụng",
   "ui.onboarding-quick-setup": "Thiết lập nhanh",
   "ui.onboarding-native-language": "Tiếng mẹ đẻ của bạn là gì?",
-  "ui.onboarding-target-language-prompt": "Chọn ngôn ngữ đích để dịch văn bản",
   "ui.onboarding-selection-activation-prompt": "Bạn muốn bắt đầu dịch văn bản đã chọn bằng cách nào?",
   "ui.onboarding-settings-change-anytime": "Bạn có thể thay đổi các cài đặt này bất cứ lúc nào.",
   "ui.onboarding-start": "Bắt đầu",
-  "ui.onboarding-saving": "Đang lưu…"
+  "ui.onboarding-saving": "Đang lưu…",
+  "ui.onboarding-activation-methods": "Cách bắt đầu dịch",
+  "ui.onboarding-load-error": "Không thể tải cài đặt hiện tại.",
+  "ui.onboarding-save-error": "Không thể lưu cài đặt. Vui lòng thử lại."
 }

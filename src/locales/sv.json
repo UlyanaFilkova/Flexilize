@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Första starten",
   "ui.onboarding-quick-setup": "Snabbinställning",
   "ui.onboarding-native-language": "Ditt modersmål?",
-  "ui.onboarding-target-language-prompt": "Välj vilket språk texten ska översättas till",
   "ui.onboarding-selection-activation-prompt": "Hur ska översättningen av markerad text startas?",
   "ui.onboarding-settings-change-anytime": "Du kan ändra dessa inställningar när som helst.",
   "ui.onboarding-start": "Börja",
-  "ui.onboarding-saving": "Sparar…"
+  "ui.onboarding-saving": "Sparar…",
+  "ui.onboarding-activation-methods": "Sätt att starta översättningen",
+  "ui.onboarding-load-error": "Det gick inte att läsa in de aktuella inställningarna.",
+  "ui.onboarding-save-error": "Det gick inte att spara inställningarna. Försök igen."
 }

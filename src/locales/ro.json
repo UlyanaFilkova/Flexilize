@@ -444,9 +444,11 @@
   "ui.onboarding-first-launch": "Prima pornire",
   "ui.onboarding-quick-setup": "Configurare rapidă",
   "ui.onboarding-native-language": "Limba ta maternă?",
-  "ui.onboarding-target-language-prompt": "Alege limba în care să fie tradus textul",
   "ui.onboarding-selection-activation-prompt": "Cum să pornească traducerea textului selectat?",
   "ui.onboarding-settings-change-anytime": "Poți modifica aceste setări oricând.",
   "ui.onboarding-start": "Începe",
-  "ui.onboarding-saving": "Se salvează…"
+  "ui.onboarding-saving": "Se salvează…",
+  "ui.onboarding-activation-methods": "Modalități de pornire a traducerii",
+  "ui.onboarding-load-error": "Setările actuale nu au putut fi încărcate.",
+  "ui.onboarding-save-error": "Setările nu au putut fi salvate. Încercați din nou."
 }
