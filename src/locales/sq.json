@@ -50,7 +50,7 @@
   "ui.context-menu-activation-description": "Shton \"Context Translator\" në menynë e kontekstit të shfletuesit (hape atë duke klikuar me të djathtën mbi tekstin e zgjedhur).",
   "ui.enable-context-menu-activation": "Aktivizo përkthimin nga menyja e kontekstit",
   "ui.hotkey-activation": "Aktivizo me një shkurtore të tastierës",
-  "ui.hotkey-activation-description": "Përkthimi fillon vetëm pasi të shtypni shkurtoren e zgjedhur të tastierës.",
+  "ui.hotkey-activation-description": "Përkthimi fillon vetëm pasi të shtypni kombinimin e zgjedhur të tasteve",
   "ui.enable-hotkey-activation": "Aktivizo aktivizimin e shkurtores së tastierës",
   "ui.reverse-translation-shortcut": "Shkurtorja e përkthimit të kundërt",
   "ui.reverse-translation-shortcut-description": "Zëvendëson gjuhën burimore dhe të synuar.",
@@ -450,13 +450,14 @@
   "ui.onboarding-saving": "Duke ruajtur…",
   "ui.onboarding-activation-methods": "Mënyrat e nisjes së përkthimit",
   "ui.onboarding-load-error": "Ngarkimi i cilësimeve aktuale dështoi.",
-  "ui.onboarding-save-error": "Ruajtja e cilësimeve dështoi. Provo sërish.",
+  "ui.onboarding-save-error": "Ruajtja e cilësimeve dështoi. Provoni sërish.",
   "ui.onboarding-automatic-title": "Automatikisht gjatë përzgjedhjes",
   "ui.onboarding-automatic-description": "Përkthimi shfaqet sapo të zgjidhni tekstin.",
   "ui.onboarding-button-title": "Butoni pranë përzgjedhjes",
   "ui.onboarding-button-description": "Klikoni butonin që shfaqet pranë tekstit të zgjedhur.",
   "ui.onboarding-hotkey-title": "Shkurtore tastiere",
-  "ui.onboarding-hotkey-description": "Zgjidhni tekstin dhe shtypni kombinimin e caktuar të tasteve.",
+  "ui.onboarding-hotkey-description": "Zgjidhni tekstin dhe shtypni kombinimin e tasteve",
   "ui.onboarding-context-title": "Menuja e kontekstit",
-  "ui.onboarding-context-description": "Klikoni me të djathtën mbi tekstin e zgjedhur dhe zgjidhni përkthimin."
+  "ui.onboarding-context-description": "Klikoni me të djathtën mbi tekstin e zgjedhur dhe zgjidhni përkthimin.",
+  "ui.onboarding-shortcut-change-hint": "Shkurtoren mund ta ndryshoni te cilësimet."
 }

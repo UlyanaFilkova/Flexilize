@@ -382,7 +382,7 @@
   "ui.context-menu-activation-description": "Přidá „Context Translator“ do kontextové nabídky prohlížeče (otevřete ji kliknutím pravým tlačítkem na vybraný text).",
   "ui.enable-context-menu-activation": "Povolit překlad z kontextové nabídky",
   "ui.hotkey-activation": "Aktivovat pomocí klávesové zkratky",
-  "ui.hotkey-activation-description": "Překlad se spustí až po stisknutí vybrané klávesové zkratky.",
+  "ui.hotkey-activation-description": "Překlad se spustí až po stisknutí vybrané klávesové zkratky",
   "ui.enable-hotkey-activation": "Povolit aktivaci klávesové zkratky",
   "ui.reverse-translation-shortcut": "Zkratka zpětného překladu",
   "ui.reverse-translation-shortcut-description": "Zamění zdrojový a cílový jazyk.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Tlačítko vedle výběru",
   "ui.onboarding-button-description": "Klikněte na tlačítko, které se zobrazí vedle vybraného textu.",
   "ui.onboarding-hotkey-title": "Klávesová zkratka",
-  "ui.onboarding-hotkey-description": "Vyberte text a stiskněte nastavenou klávesovou zkratku.",
+  "ui.onboarding-hotkey-description": "Vyberte text a stiskněte klávesovou zkratku",
   "ui.onboarding-context-title": "Kontextová nabídka",
-  "ui.onboarding-context-description": "Klikněte pravým tlačítkem na vybraný text a zvolte překlad."
+  "ui.onboarding-context-description": "Klikněte pravým tlačítkem na vybraný text a zvolte překlad.",
+  "ui.onboarding-shortcut-change-hint": "Klávesovou zkratku můžete změnit v nastavení."
 }

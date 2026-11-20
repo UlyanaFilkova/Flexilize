@@ -384,7 +384,7 @@
   "ui.context-menu-activation-description": "Agrega “Context Translator” al menú contextual del navegador (ábralo haciendo clic derecho en el texto seleccionado).",
   "ui.enable-context-menu-activation": "Habilitar traducción desde el menú contextual",
   "ui.hotkey-activation": "Activar con un atajo de teclado",
-  "ui.hotkey-activation-description": "La traducción comienza solo después de presionar el método abreviado de teclado seleccionado.",
+  "ui.hotkey-activation-description": "La traducción se inicia solo al pulsar el atajo de teclado seleccionado",
   "ui.enable-hotkey-activation": "Habilitar la activación del método abreviado de teclado",
   "ui.reverse-translation-shortcut": "Atajo de traducción inversa",
   "ui.reverse-translation-shortcut-description": "Intercambia los idiomas de origen y de destino.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Botón junto a la selección",
   "ui.onboarding-button-description": "Haz clic en el botón que aparece junto al texto seleccionado.",
   "ui.onboarding-hotkey-title": "Atajo de teclado",
-  "ui.onboarding-hotkey-description": "Selecciona texto y pulsa el atajo de teclado asignado.",
+  "ui.onboarding-hotkey-description": "Selecciona texto y pulsa el atajo de teclado",
   "ui.onboarding-context-title": "Menú contextual",
-  "ui.onboarding-context-description": "Haz clic derecho en el texto seleccionado y elige traducir."
+  "ui.onboarding-context-description": "Haz clic derecho en el texto seleccionado y elige traducir.",
+  "ui.onboarding-shortcut-change-hint": "Puedes cambiar el atajo en la configuración."
 }

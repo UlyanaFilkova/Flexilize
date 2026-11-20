@@ -374,7 +374,7 @@
   "ui.context-menu-activation-description": "Voegt “Context Translator” toe aan het contextmenu van de browser (open het door met de rechtermuisknop op de geselecteerde tekst te klikken).",
   "ui.enable-context-menu-activation": "Vertaling inschakelen vanuit het contextmenu",
   "ui.hotkey-activation": "Activeren met een sneltoets",
-  "ui.hotkey-activation-description": "De vertaling start pas nadat u op de geselecteerde sneltoets drukt.",
+  "ui.hotkey-activation-description": "De vertaling start pas nadat je op de ingestelde sneltoets drukt",
   "ui.enable-hotkey-activation": "Activering van de sneltoets inschakelen",
   "ui.reverse-translation-shortcut": "Sneltoets voor omgekeerde vertaling",
   "ui.reverse-translation-shortcut-description": "Wisselt de bron- en doeltaal om.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Knop naast de selectie",
   "ui.onboarding-button-description": "Klik op de knop die naast de geselecteerde tekst verschijnt.",
   "ui.onboarding-hotkey-title": "Sneltoets",
-  "ui.onboarding-hotkey-description": "Selecteer tekst en druk op de ingestelde sneltoets.",
+  "ui.onboarding-hotkey-description": "Selecteer tekst en druk op de sneltoets",
   "ui.onboarding-context-title": "Contextmenu",
-  "ui.onboarding-context-description": "Klik met de rechtermuisknop op de geselecteerde tekst en kies vertalen."
+  "ui.onboarding-context-description": "Klik met de rechtermuisknop op de geselecteerde tekst en kies vertalen.",
+  "ui.onboarding-shortcut-change-hint": "Je kunt de sneltoets wijzigen in de instellingen."
 }

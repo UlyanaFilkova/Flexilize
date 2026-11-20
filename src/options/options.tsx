@@ -830,11 +830,11 @@ function SelectionActivationSettings({settings, persist, isMobile, shortCopy = f
           <p>
             {shortCopy ? <>
               <span>Выделите текст и нажмите комбинацию клавиш</span>{" "}
-              <span className="onboarding-shortcut-value">{formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}</span>{"."}<br />
+              <span className="onboarding-shortcut-value" dir="ltr">{formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}</span>{"."}<br />
               <span>Комбинацию можно изменить в настройках.</span>
             </> : <>
               <span>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш</span>{" "}
-              <span className="onboarding-shortcut-value">{formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}</span>{"."}
+              <span className="onboarding-shortcut-value" dir="ltr">{formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}</span>{"."}
             </>}
           </p>
         </div>

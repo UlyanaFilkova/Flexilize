@@ -372,7 +372,7 @@
   "ui.context-menu-activation-description": "Adaugă „Context Translator” în meniul contextual al browserului (deschideți-l făcând clic dreapta pe textul selectat).",
   "ui.enable-context-menu-activation": "Activați traducerea din meniul contextual",
   "ui.hotkey-activation": "Activați cu o comandă rapidă de la tastatură",
-  "ui.hotkey-activation-description": "Traducerea începe numai după ce apăsați comanda rapidă de la tastatură.",
+  "ui.hotkey-activation-description": "Traducerea începe doar după ce apeși combinația de taste aleasă",
   "ui.enable-hotkey-activation": "Activați activarea comenzii rapide de la tastatură",
   "ui.reverse-translation-shortcut": "Comandă rapidă de traducere inversă",
   "ui.reverse-translation-shortcut-description": "Schimbă limbile sursă și țintă.",
@@ -450,13 +450,14 @@
   "ui.onboarding-saving": "Se salvează…",
   "ui.onboarding-activation-methods": "Modalități de pornire a traducerii",
   "ui.onboarding-load-error": "Setările actuale nu au putut fi încărcate.",
-  "ui.onboarding-save-error": "Setările nu au putut fi salvate. Încercați din nou.",
+  "ui.onboarding-save-error": "Setările nu au putut fi salvate. Încearcă din nou.",
   "ui.onboarding-automatic-title": "Automat la selectare",
   "ui.onboarding-automatic-description": "Traducerea apare imediat ce selectezi textul.",
   "ui.onboarding-button-title": "Buton lângă selecție",
   "ui.onboarding-button-description": "Apasă butonul care apare lângă textul selectat.",
   "ui.onboarding-hotkey-title": "Comandă rapidă de la tastatură",
-  "ui.onboarding-hotkey-description": "Selectează textul și apasă combinația de taste stabilită.",
+  "ui.onboarding-hotkey-description": "Selectează textul și apasă combinația de taste",
   "ui.onboarding-context-title": "Meniu contextual",
-  "ui.onboarding-context-description": "Fă clic dreapta pe textul selectat și alege traducerea."
+  "ui.onboarding-context-description": "Fă clic dreapta pe textul selectat și alege traducerea.",
+  "ui.onboarding-shortcut-change-hint": "Poți schimba combinația de taste în setări."
 }

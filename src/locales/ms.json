@@ -370,7 +370,7 @@
   "ui.context-menu-activation-description": "Menambahkan “Context Translator” pada menu konteks penyemak imbas (buka dengan mengklik kanan teks yang dipilih).",
   "ui.enable-context-menu-activation": "Dayakan terjemahan daripada menu konteks",
   "ui.hotkey-activation": "Aktifkan dengan pintasan papan kekunci",
-  "ui.hotkey-activation-description": "Terjemahan bermula hanya selepas anda menekan pintasan papan kekunci yang dipilih.",
+  "ui.hotkey-activation-description": "Terjemahan bermula hanya selepas anda menekan pintasan papan kekunci yang dipilih",
   "ui.enable-hotkey-activation": "Dayakan pengaktifan pintasan papan kekunci",
   "ui.reverse-translation-shortcut": "Pintasan terjemahan songsang",
   "ui.reverse-translation-shortcut-description": "Menukar bahasa sumber dan bahasa sasaran.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Butang di sebelah pilihan",
   "ui.onboarding-button-description": "Klik butang yang muncul di sebelah teks yang dipilih.",
   "ui.onboarding-hotkey-title": "Pintasan papan kekunci",
-  "ui.onboarding-hotkey-description": "Pilih teks dan tekan kombinasi kekunci yang ditetapkan.",
+  "ui.onboarding-hotkey-description": "Pilih teks dan tekan pintasan papan kekunci",
   "ui.onboarding-context-title": "Menu konteks",
-  "ui.onboarding-context-description": "Klik kanan pada teks yang dipilih dan pilih terjemahan."
+  "ui.onboarding-context-description": "Klik kanan pada teks yang dipilih dan pilih terjemahan.",
+  "ui.onboarding-shortcut-change-hint": "Anda boleh menukar pintasan dalam tetapan."
 }

@@ -50,7 +50,7 @@
   "ui.context-menu-activation-description": "Adds “Context Translator” to the browser context menu (open it by right-clicking selected text).",
   "ui.enable-context-menu-activation": "Enable translation from the context menu",
   "ui.hotkey-activation": "Activate with a keyboard shortcut",
-  "ui.hotkey-activation-description": "Translation starts only after you press the selected keyboard shortcut.",
+  "ui.hotkey-activation-description": "Translation starts only after you press the selected keyboard shortcut",
   "ui.enable-hotkey-activation": "Enable keyboard shortcut activation",
   "ui.reverse-translation-shortcut": "Reverse translation shortcut",
   "ui.reverse-translation-shortcut-description": "Swaps the source and target languages.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Button next to selection",
   "ui.onboarding-button-description": "Click the button that appears next to the selected text.",
   "ui.onboarding-hotkey-title": "Keyboard shortcut",
-  "ui.onboarding-hotkey-description": "Select text and press the assigned keyboard shortcut.",
+  "ui.onboarding-hotkey-description": "Select text and press the keyboard shortcut",
   "ui.onboarding-context-title": "Context menu",
-  "ui.onboarding-context-description": "Right-click the selected text and choose translation."
+  "ui.onboarding-context-description": "Right-click the selected text and choose translation.",
+  "ui.onboarding-shortcut-change-hint": "You can change the shortcut in settings."
 }

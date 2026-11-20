@@ -375,7 +375,7 @@
   "ui.context-menu-activation-description": "Tilføjer \"Context Translator\" til browserens kontekstmenu (åbn den ved at højreklikke på valgt tekst).",
   "ui.enable-context-menu-activation": "Aktiver oversættelse fra kontekstmenuen",
   "ui.hotkey-activation": "Aktiver med en tastaturgenvej",
-  "ui.hotkey-activation-description": "Oversættelse starter først, når du trykker på den valgte tastaturgenvej.",
+  "ui.hotkey-activation-description": "Oversættelsen starter først, når du trykker på den valgte tastaturgenvej",
   "ui.enable-hotkey-activation": "Aktiver aktivering af tastaturgenvej",
   "ui.reverse-translation-shortcut": "Omvendt oversættelsesgenvej",
   "ui.reverse-translation-shortcut-description": "Skifter kilde- og målsprog.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Knap ved siden af markeringen",
   "ui.onboarding-button-description": "Klik på knappen, der vises ved siden af den markerede tekst.",
   "ui.onboarding-hotkey-title": "Tastaturgenvej",
-  "ui.onboarding-hotkey-description": "Markér tekst, og tryk på den indstillede tastaturgenvej.",
+  "ui.onboarding-hotkey-description": "Markér tekst, og tryk på tastaturgenvejen",
   "ui.onboarding-context-title": "Genvejsmenu",
-  "ui.onboarding-context-description": "Højreklik på den markerede tekst, og vælg oversættelse."
+  "ui.onboarding-context-description": "Højreklik på den markerede tekst, og vælg oversættelse.",
+  "ui.onboarding-shortcut-change-hint": "Du kan ændre tastaturgenvejen i indstillingerne."
 }

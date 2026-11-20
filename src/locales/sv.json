@@ -377,7 +377,7 @@
   "ui.context-menu-activation-description": "Lägger till \"Context Translator\" i webbläsarens snabbmeny (öppna den genom att högerklicka på vald text).",
   "ui.enable-context-menu-activation": "Aktivera översättning från snabbmenyn",
   "ui.hotkey-activation": "Aktivera med en kortkommando",
-  "ui.hotkey-activation-description": "Översättningen startar först efter att du har tryckt på det valda kortkommandot.",
+  "ui.hotkey-activation-description": "Översättningen startar först när du trycker på det valda kortkommandot",
   "ui.enable-hotkey-activation": "Aktivera kortkommandoaktivering",
   "ui.reverse-translation-shortcut": "Omvänd översättningsgenväg",
   "ui.reverse-translation-shortcut-description": "Byter käll- och målspråk.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Knapp bredvid markeringen",
   "ui.onboarding-button-description": "Klicka på knappen som visas bredvid den markerade texten.",
   "ui.onboarding-hotkey-title": "Kortkommando",
-  "ui.onboarding-hotkey-description": "Markera text och tryck på det inställda kortkommandot.",
+  "ui.onboarding-hotkey-description": "Markera text och tryck på kortkommandot",
   "ui.onboarding-context-title": "Snabbmeny",
-  "ui.onboarding-context-description": "Högerklicka på den markerade texten och välj översättning."
+  "ui.onboarding-context-description": "Högerklicka på den markerade texten och välj översättning.",
+  "ui.onboarding-shortcut-change-hint": "Du kan ändra kortkommandot i inställningarna."
 }

@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "\"Context Translator\" را به منوی زمینه مرورگر اضافه می کند (با کلیک راست روی متن انتخاب شده آن را باز کنید).",
   "ui.enable-context-menu-activation": "ترجمه را از منوی زمینه فعال کنید",
   "ui.hotkey-activation": "با میانبر صفحه کلید فعال کنید",
-  "ui.hotkey-activation-description": "ترجمه فقط پس از فشار دادن میانبر صفحه کلید انتخابی شروع می شود.",
+  "ui.hotkey-activation-description": "ترجمه فقط با فشردن این میان‌بر صفحه‌کلید آغاز می‌شود:",
   "ui.enable-hotkey-activation": "فعال سازی میانبر صفحه کلید را فعال کنید",
   "ui.reverse-translation-shortcut": "میانبر ترجمه معکوس",
   "ui.reverse-translation-shortcut-description": "زبان مبدأ و مقصد را تعویض می کند.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "دکمه کنار متن انتخاب‌شده",
   "ui.onboarding-button-description": "روی دکمه‌ای که کنار متن انتخاب‌شده ظاهر می‌شود کلیک کنید.",
   "ui.onboarding-hotkey-title": "میان‌بر صفحه‌کلید",
-  "ui.onboarding-hotkey-description": "متن را انتخاب کنید و میان‌بر تعیین‌شده را فشار دهید.",
+  "ui.onboarding-hotkey-description": "متن را انتخاب کنید و این میان‌بر را فشار دهید:",
   "ui.onboarding-context-title": "منوی زمینه",
-  "ui.onboarding-context-description": "روی متن انتخاب‌شده راست‌کلیک کنید و ترجمه را انتخاب کنید."
+  "ui.onboarding-context-description": "روی متن انتخاب‌شده راست‌کلیک کنید و ترجمه را انتخاب کنید.",
+  "ui.onboarding-shortcut-change-hint": "می‌توانید میان‌بر را در تنظیمات تغییر دهید."
 }

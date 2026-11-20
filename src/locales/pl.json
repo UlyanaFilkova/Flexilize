@@ -382,7 +382,7 @@
   "ui.context-menu-activation-description": "Dodaje „Context Translator” do menu kontekstowego przeglądarki (otwórz je, klikając prawym przyciskiem myszy wybrany tekst).",
   "ui.enable-context-menu-activation": "Włącz tłumaczenie z menu kontekstowego",
   "ui.hotkey-activation": "Aktywuj za pomocą skrótu klawiaturowego",
-  "ui.hotkey-activation-description": "Tłumaczenie rozpoczyna się dopiero po naciśnięciu wybranego skrótu klawiaturowego.",
+  "ui.hotkey-activation-description": "Tłumaczenie rozpoczyna się dopiero po naciśnięciu wybranego skrótu klawiszowego",
   "ui.enable-hotkey-activation": "Włącz aktywację skrótu klawiaturowego",
   "ui.reverse-translation-shortcut": "Skrót do tłumaczenia zwrotnego",
   "ui.reverse-translation-shortcut-description": "Zamienia język źródłowy i docelowy.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Przycisk obok zaznaczenia",
   "ui.onboarding-button-description": "Kliknij przycisk, który pojawia się obok zaznaczonego tekstu.",
   "ui.onboarding-hotkey-title": "Skrót klawiszowy",
-  "ui.onboarding-hotkey-description": "Zaznacz tekst i naciśnij ustawiony skrót klawiszowy.",
+  "ui.onboarding-hotkey-description": "Zaznacz tekst i naciśnij skrót klawiszowy",
   "ui.onboarding-context-title": "Menu kontekstowe",
-  "ui.onboarding-context-description": "Kliknij zaznaczony tekst prawym przyciskiem myszy i wybierz tłumaczenie."
+  "ui.onboarding-context-description": "Kliknij zaznaczony tekst prawym przyciskiem myszy i wybierz tłumaczenie.",
+  "ui.onboarding-shortcut-change-hint": "Skrót możesz zmienić w ustawieniach."
 }

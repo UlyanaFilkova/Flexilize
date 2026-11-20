@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "ब्राउज़र संदर्भ मेनू में \"Context Translator\" जोड़ता है (चयनित टेक्स्ट पर राइट-क्लिक करके इसे खोलें)।",
   "ui.enable-context-menu-activation": "संदर्भ मेनू से अनुवाद सक्षम करें",
   "ui.hotkey-activation": "कीबोर्ड शॉर्टकट से सक्रिय करें",
-  "ui.hotkey-activation-description": "आपके द्वारा चयनित कीबोर्ड शॉर्टकट दबाने के बाद ही अनुवाद शुरू होता है।",
+  "ui.hotkey-activation-description": "अनुवाद शुरू करने के लिए यह कीबोर्ड शॉर्टकट दबाना ज़रूरी है:",
   "ui.enable-hotkey-activation": "कुंजीपटल शॉर्टकट सक्रियण सक्षम करें",
   "ui.reverse-translation-shortcut": "रिवर्स अनुवाद शॉर्टकट",
   "ui.reverse-translation-shortcut-description": "स्रोत और लक्ष्य भाषाओं की अदला-बदली करता है।",
@@ -441,7 +441,7 @@
   "ui.extensions-cannot-run-on-internal-browser-pages": "एक्सटेंशन जैसे आंतरिक ब्राउज़र पृष्ठों पर नहीं चल सकते",
   "ui.expand-record": "विस्तार करें",
   "ui.collapse-record": "संक्षिप्त करें",
-  "ui.onboarding-first-launch": "पहली शुरुआत",
+  "ui.onboarding-first-launch": "पहली बार शुरू करना",
   "ui.onboarding-quick-setup": "त्वरित सेटअप",
   "ui.onboarding-native-language": "आपकी मातृभाषा?",
   "ui.onboarding-selection-activation-prompt": "चुने हुए टेक्स्ट का अनुवाद कैसे शुरू करें?",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "चुने हुए टेक्स्ट के पास बटन",
   "ui.onboarding-button-description": "चुने हुए टेक्स्ट के पास दिखाई देने वाले बटन पर क्लिक करें।",
   "ui.onboarding-hotkey-title": "कीबोर्ड शॉर्टकट",
-  "ui.onboarding-hotkey-description": "टेक्स्ट चुनें और तय किया गया कीबोर्ड शॉर्टकट दबाएँ।",
+  "ui.onboarding-hotkey-description": "टेक्स्ट चुनें और यह कीबोर्ड शॉर्टकट दबाएँ:",
   "ui.onboarding-context-title": "कॉन्टेक्स्ट मेन्यू",
-  "ui.onboarding-context-description": "चुने हुए टेक्स्ट पर राइट-क्लिक करें और अनुवाद चुनें।"
+  "ui.onboarding-context-description": "चुने हुए टेक्स्ट पर राइट-क्लिक करें और अनुवाद चुनें।",
+  "ui.onboarding-shortcut-change-hint": "आप सेटिंग में शॉर्टकट बदल सकते हैं।"
 }

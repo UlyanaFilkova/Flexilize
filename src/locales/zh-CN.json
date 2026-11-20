@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "将“Context Translator”添加到浏览器上下文菜单（通过右键单击所选文本将其打开）。",
   "ui.enable-context-menu-activation": "从上下文菜单启用翻译",
   "ui.hotkey-activation": "使用键盘快捷键激活",
-  "ui.hotkey-activation-description": "仅在按下选定的键盘快捷键后才开始翻译。",
+  "ui.hotkey-activation-description": "仅在按下所选快捷键后启动翻译：",
   "ui.enable-hotkey-activation": "启用键盘快捷键激活",
   "ui.reverse-translation-shortcut": "反向翻译快捷键",
   "ui.reverse-translation-shortcut-description": "交换源语言和目标语言。",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "选区旁的按钮",
   "ui.onboarding-button-description": "点击所选文本旁出现的按钮。",
   "ui.onboarding-hotkey-title": "键盘快捷键",
-  "ui.onboarding-hotkey-description": "选中文本并按下设定的快捷键。",
+  "ui.onboarding-hotkey-description": "选中文本并按下快捷键",
   "ui.onboarding-context-title": "右键菜单",
-  "ui.onboarding-context-description": "右键点击所选文本并选择翻译。"
+  "ui.onboarding-context-description": "右键点击所选文本并选择翻译。",
+  "ui.onboarding-shortcut-change-hint": "您可以在设置中更改快捷键。"
 }

@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "Προσθέτει το \"Context Translator\" στο μενού περιβάλλοντος του προγράμματος περιήγησης (ανοίξτε το κάνοντας δεξί κλικ στο επιλεγμένο κείμενο).",
   "ui.enable-context-menu-activation": "Ενεργοποίηση μετάφρασης από το μενού περιβάλλοντος",
   "ui.hotkey-activation": "Ενεργοποίηση με συντόμευση πληκτρολογίου",
-  "ui.hotkey-activation-description": "Η μετάφραση ξεκινά μόνο αφού πατήσετε την επιλεγμένη συντόμευση πληκτρολογίου.",
+  "ui.hotkey-activation-description": "Η μετάφραση ξεκινά μόνο αφού πατήσετε τον επιλεγμένο συνδυασμό πλήκτρων",
   "ui.enable-hotkey-activation": "Ενεργοποίηση ενεργοποίησης συντόμευσης πληκτρολογίου",
   "ui.reverse-translation-shortcut": "Συντόμευση αντίστροφης μετάφρασης",
   "ui.reverse-translation-shortcut-description": "Εναλλάσσει τις γλώσσες προέλευσης και προορισμού.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Κουμπί δίπλα στην επιλογή",
   "ui.onboarding-button-description": "Πατήστε το κουμπί που εμφανίζεται δίπλα στο επιλεγμένο κείμενο.",
   "ui.onboarding-hotkey-title": "Συντόμευση πληκτρολογίου",
-  "ui.onboarding-hotkey-description": "Επιλέξτε κείμενο και πατήστε τον καθορισμένο συνδυασμό πλήκτρων.",
+  "ui.onboarding-hotkey-description": "Επιλέξτε κείμενο και πατήστε τον συνδυασμό πλήκτρων",
   "ui.onboarding-context-title": "Μενού περιβάλλοντος",
-  "ui.onboarding-context-description": "Κάντε δεξί κλικ στο επιλεγμένο κείμενο και επιλέξτε μετάφραση."
+  "ui.onboarding-context-description": "Κάντε δεξί κλικ στο επιλεγμένο κείμενο και επιλέξτε μετάφραση.",
+  "ui.onboarding-shortcut-change-hint": "Μπορείτε να αλλάξετε τη συντόμευση στις ρυθμίσεις."
 }

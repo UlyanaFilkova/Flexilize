@@ -383,7 +383,7 @@
   "ui.context-menu-activation-description": "Aggiunge \"Context Translator\" al menu contestuale del browser (aprilo facendo clic con il pulsante destro del mouse sul testo selezionato).",
   "ui.enable-context-menu-activation": "Abilita la traduzione dal menu contestuale",
   "ui.hotkey-activation": "Attiva con una scorciatoia da tastiera",
-  "ui.hotkey-activation-description": "La traduzione inizia solo dopo aver premuto la scorciatoia da tastiera selezionata.",
+  "ui.hotkey-activation-description": "La traduzione si avvia solo premendo la combinazione di tasti selezionata",
   "ui.enable-hotkey-activation": "Abilita l'attivazione della scorciatoia da tastiera",
   "ui.reverse-translation-shortcut": "Scorciatoia per traduzione inversa",
   "ui.reverse-translation-shortcut-description": "Scambia la lingua di origine e quella di destinazione.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Pulsante accanto alla selezione",
   "ui.onboarding-button-description": "Fai clic sul pulsante che appare accanto al testo selezionato.",
   "ui.onboarding-hotkey-title": "Scorciatoia da tastiera",
-  "ui.onboarding-hotkey-description": "Seleziona il testo e premi la combinazione di tasti assegnata.",
+  "ui.onboarding-hotkey-description": "Seleziona il testo e premi la combinazione di tasti",
   "ui.onboarding-context-title": "Menu contestuale",
-  "ui.onboarding-context-description": "Fai clic con il tasto destro sul testo selezionato e scegli la traduzione."
+  "ui.onboarding-context-description": "Fai clic con il tasto destro sul testo selezionato e scegli la traduzione.",
+  "ui.onboarding-shortcut-change-hint": "Puoi modificare la scorciatoia nelle impostazioni."
 }

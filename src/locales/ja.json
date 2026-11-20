@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "ブラウザのコンテキスト メニューに「Context Translator」を追加します (選択したテキストを右クリックして開きます)。",
   "ui.enable-context-menu-activation": "コンテキスト メニューから翻訳を有効にする",
   "ui.hotkey-activation": "キーボード ショートカットで有効にする",
-  "ui.hotkey-activation-description": "翻訳は、選択したキーボード ショートカットを押した後にのみ開始されます。",
+  "ui.hotkey-activation-description": "翻訳を開始するには、次のキーボードショートカットを押す必要があります：",
   "ui.enable-hotkey-activation": "キーボード ショートカットのアクティブ化を有効にする",
   "ui.reverse-translation-shortcut": "逆翻訳ショートカット",
   "ui.reverse-translation-shortcut-description": "ソース言語とターゲット言語を交換します。",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "選択範囲の横のボタン",
   "ui.onboarding-button-description": "選択したテキストの横に表示されるボタンをクリックします。",
   "ui.onboarding-hotkey-title": "キーボードショートカット",
-  "ui.onboarding-hotkey-description": "テキストを選択し、設定したキーの組み合わせを押します。",
+  "ui.onboarding-hotkey-description": "テキストを選択し、次のショートカットを押してください：",
   "ui.onboarding-context-title": "コンテキストメニュー",
-  "ui.onboarding-context-description": "選択したテキストを右クリックし、翻訳を選びます。"
+  "ui.onboarding-context-description": "選択したテキストを右クリックし、翻訳を選びます。",
+  "ui.onboarding-shortcut-change-hint": "ショートカットは設定で変更できます。"
 }

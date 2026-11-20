@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "브라우저 상황에 맞는 메뉴에 'Context Translator'를 추가합니다(선택한 텍스트를 마우스 오른쪽 버튼으로 클릭하여 엽니다).",
   "ui.enable-context-menu-activation": "상황에 맞는 메뉴에서 번역 활성화",
   "ui.hotkey-activation": "키보드 단축키로 활성화",
-  "ui.hotkey-activation-description": "선택한 키보드 단축키를 누른 후에만 번역이 시작됩니다.",
+  "ui.hotkey-activation-description": "번역을 시작하려면 다음 단축키를 눌러야 합니다:",
   "ui.enable-hotkey-activation": "키보드 단축키 활성화 활성화",
   "ui.reverse-translation-shortcut": "역번역 단축키",
   "ui.reverse-translation-shortcut-description": "출발어와 대상 언어를 바꿉니다.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "선택 영역 옆 버튼",
   "ui.onboarding-button-description": "선택한 텍스트 옆에 나타나는 버튼을 클릭하세요.",
   "ui.onboarding-hotkey-title": "키보드 단축키",
-  "ui.onboarding-hotkey-description": "텍스트를 선택하고 지정한 단축키를 누르세요.",
+  "ui.onboarding-hotkey-description": "텍스트를 선택하고 다음 단축키를 누르세요:",
   "ui.onboarding-context-title": "컨텍스트 메뉴",
-  "ui.onboarding-context-description": "선택한 텍스트를 마우스 오른쪽 버튼으로 클릭하고 번역을 선택하세요."
+  "ui.onboarding-context-description": "선택한 텍스트를 마우스 오른쪽 버튼으로 클릭하고 번역을 선택하세요.",
+  "ui.onboarding-shortcut-change-hint": "단축키는 설정에서 변경할 수 있습니다."
 }

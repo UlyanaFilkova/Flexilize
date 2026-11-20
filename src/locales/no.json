@@ -378,7 +378,7 @@
   "ui.context-menu-activation-description": "Legger til \"Context Translator\" i nettleserens kontekstmeny (åpne den ved å høyreklikke på valgt tekst).",
   "ui.enable-context-menu-activation": "Aktiver oversettelse fra kontekstmenyen",
   "ui.hotkey-activation": "Aktiver med en hurtigtast",
-  "ui.hotkey-activation-description": "Oversettelsen starter først etter at du trykker på den valgte tastatursnarveien.",
+  "ui.hotkey-activation-description": "Oversettelsen starter først når du trykker på den valgte hurtigtasten",
   "ui.enable-hotkey-activation": "Aktiver aktivering av hurtigtaster",
   "ui.reverse-translation-shortcut": "Reversert oversettelsessnarvei",
   "ui.reverse-translation-shortcut-description": "Bytter kilde- og målspråk.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Knapp ved siden av markeringen",
   "ui.onboarding-button-description": "Klikk på knappen som vises ved siden av den markerte teksten.",
   "ui.onboarding-hotkey-title": "Hurtigtast",
-  "ui.onboarding-hotkey-description": "Marker tekst og trykk på den angitte hurtigtasten.",
+  "ui.onboarding-hotkey-description": "Marker tekst og trykk på hurtigtasten",
   "ui.onboarding-context-title": "Hurtigmeny",
-  "ui.onboarding-context-description": "Høyreklikk på den markerte teksten og velg oversettelse."
+  "ui.onboarding-context-description": "Høyreklikk på den markerte teksten og velg oversettelse.",
+  "ui.onboarding-shortcut-change-hint": "Du kan endre hurtigtasten i innstillingene."
 }

@@ -381,7 +381,7 @@
   "ui.context-menu-activation-description": "Lisää \"Context Translator\" selaimen kontekstivalikkoon (avaa se napsauttamalla valittua tekstiä hiiren kakkospainikkeella).",
   "ui.enable-context-menu-activation": "Ota käännös käyttöön pikavalikosta",
   "ui.hotkey-activation": "Aktivoi pikanäppäimellä",
-  "ui.hotkey-activation-description": "Käännös alkaa vasta, kun painat valittua pikanäppäintä.",
+  "ui.hotkey-activation-description": "Käännös alkaa vasta, kun painat valittua näppäinyhdistelmää",
   "ui.enable-hotkey-activation": "Ota pikanäppäimen aktivointi käyttöön",
   "ui.reverse-translation-shortcut": "Käänteisen käännöksen pikanäppäin",
   "ui.reverse-translation-shortcut-description": "Vaihtaa lähde- ja kohdekielen.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Painike valinnan vieressä",
   "ui.onboarding-button-description": "Napsauta valitun tekstin viereen ilmestyvää painiketta.",
   "ui.onboarding-hotkey-title": "Pikanäppäin",
-  "ui.onboarding-hotkey-description": "Valitse teksti ja paina määritettyä näppäinyhdistelmää.",
+  "ui.onboarding-hotkey-description": "Valitse teksti ja paina näppäinyhdistelmää",
   "ui.onboarding-context-title": "Pikavalikko",
-  "ui.onboarding-context-description": "Napsauta valittua tekstiä hiiren oikealla painikkeella ja valitse käännös."
+  "ui.onboarding-context-description": "Napsauta valittua tekstiä hiiren oikealla painikkeella ja valitse käännös.",
+  "ui.onboarding-shortcut-change-hint": "Voit muuttaa pikanäppäintä asetuksissa."
 }

@@ -1,7 +1,28 @@
 import {describe, expect, it} from "vitest";
+import {readFileSync} from "node:fs";
+import russianCatalog from "../src/locales/ru.json";
 import {INTERFACE_LANGUAGES, loadInterfaceLanguage, localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
 
 describe("interface localization", () => {
+  it.each(INTERFACE_LANGUAGES)("uses current first-launch and activation strings from the %s catalog", async (language) => {
+    const catalog = JSON.parse(readFileSync(`src/locales/${language}.json`, "utf8")) as Record<string, string>;
+    await loadInterfaceLanguage(language);
+    expect(Object.keys(catalog).sort()).toEqual(Object.keys(russianCatalog).sort());
+    const currentKeys = Object.keys(russianCatalog).filter((key) => key.startsWith("ui.onboarding-") || key === "ui.hotkey-activation-description" || key === "ui.interface-language");
+    for (const key of currentKeys) {
+      const source = russianCatalog[key as keyof typeof russianCatalog];
+      const localized = catalog[key];
+      expect(localized, `${language}: ${key}`).toBeTruthy();
+      expect(localized).toBe(localized.trim());
+      expect(translate(source, language), `${language}: ${source}`).toBe(localized);
+      expect(localized).not.toMatch(/Ctrl\s*\+/u);
+      if (language !== "ru") expect(localized).not.toBe(source);
+    }
+    expect(catalog).not.toHaveProperty("ui.onboarding-target-language-prompt");
+    expect(catalog["ui.hotkey-activation-description"]).not.toMatch(/[.。।]\s*$/u);
+    expect(catalog["ui.onboarding-hotkey-description"]).not.toMatch(/[.。।]\s*$/u);
+  });
+
   it("normalizes the supported interface languages", () => {
     expect(normalizeInterfaceLanguage("en")).toBe("en");
     expect(normalizeInterfaceLanguage("ru")).toBe("ru");

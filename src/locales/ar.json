@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "يضيف \"Context Translator\" إلى قائمة سياق المتصفح (افتحها بالنقر بزر الماوس الأيمن فوق النص المحدد).",
   "ui.enable-context-menu-activation": "تمكين الترجمة من قائمة السياق",
   "ui.hotkey-activation": "التنشيط باستخدام اختصار لوحة المفاتيح",
-  "ui.hotkey-activation-description": "تبدأ الترجمة فقط بعد الضغط على اختصار لوحة المفاتيح المحدد.",
+  "ui.hotkey-activation-description": "تبدأ الترجمة فقط بعد الضغط على اختصار لوحة المفاتيح المحدد",
   "ui.enable-hotkey-activation": "تمكين تفعيل اختصارات لوحة المفاتيح",
   "ui.reverse-translation-shortcut": "عكس اختصار الترجمة",
   "ui.reverse-translation-shortcut-description": "مبادلة اللغات المصدر والهدف.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "زر بجوار النص المحدد",
   "ui.onboarding-button-description": "انقر على الزر الذي يظهر بجوار النص المحدد.",
   "ui.onboarding-hotkey-title": "اختصار لوحة المفاتيح",
-  "ui.onboarding-hotkey-description": "حدّد النص واضغط على اختصار لوحة المفاتيح المعيّن.",
+  "ui.onboarding-hotkey-description": "حدّد النص واضغط على اختصار لوحة المفاتيح",
   "ui.onboarding-context-title": "القائمة السياقية",
-  "ui.onboarding-context-description": "انقر بزر الفأرة الأيمن على النص المحدد واختر الترجمة."
+  "ui.onboarding-context-description": "انقر بزر الفأرة الأيمن على النص المحدد واختر الترجمة.",
+  "ui.onboarding-shortcut-change-hint": "يمكنك تغيير الاختصار في الإعدادات."
 }

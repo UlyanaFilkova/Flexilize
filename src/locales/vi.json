@@ -380,7 +380,7 @@
   "ui.context-menu-activation-description": "Thêm “Context Translator” vào menu ngữ cảnh của trình duyệt (mở nó bằng cách nhấp chuột phải vào văn bản đã chọn).",
   "ui.enable-context-menu-activation": "Bật dịch từ menu ngữ cảnh",
   "ui.hotkey-activation": "Kích hoạt bằng phím tắt",
-  "ui.hotkey-activation-description": "Quá trình dịch chỉ bắt đầu sau khi bạn nhấn phím tắt đã chọn.",
+  "ui.hotkey-activation-description": "Bản dịch chỉ bắt đầu sau khi bạn nhấn tổ hợp phím đã chọn",
   "ui.enable-hotkey-activation": "Bật kích hoạt phím tắt",
   "ui.reverse-translation-shortcut": "Phím tắt dịch ngược",
   "ui.reverse-translation-shortcut-description": "Hoán đổi ngôn ngữ nguồn và ngôn ngữ đích.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Nút bên cạnh vùng chọn",
   "ui.onboarding-button-description": "Nhấp vào nút xuất hiện bên cạnh văn bản đã chọn.",
   "ui.onboarding-hotkey-title": "Phím tắt",
-  "ui.onboarding-hotkey-description": "Chọn văn bản và nhấn tổ hợp phím đã đặt.",
+  "ui.onboarding-hotkey-description": "Chọn văn bản và nhấn tổ hợp phím",
   "ui.onboarding-context-title": "Menu ngữ cảnh",
-  "ui.onboarding-context-description": "Nhấp chuột phải vào văn bản đã chọn và chọn dịch."
+  "ui.onboarding-context-description": "Nhấp chuột phải vào văn bản đã chọn và chọn dịch.",
+  "ui.onboarding-shortcut-change-hint": "Bạn có thể thay đổi phím tắt trong phần cài đặt."
 }

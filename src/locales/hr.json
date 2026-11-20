@@ -50,7 +50,7 @@
   "ui.context-menu-activation-description": "Dodaje “Context Translator” u kontekstni izbornik preglednika (otvorite ga desnim klikom na odabrani tekst).",
   "ui.enable-context-menu-activation": "Omogućite prijevod iz kontekstnog izbornika",
   "ui.hotkey-activation": "Aktivirajte tipkovničkim prečacem",
-  "ui.hotkey-activation-description": "Prijevod počinje tek nakon što pritisnete odabrani prečac na tipkovnici.",
+  "ui.hotkey-activation-description": "Prijevod počinje tek nakon što pritisnete odabrani tipkovnički prečac",
   "ui.enable-hotkey-activation": "Omogući aktivaciju prečaca na tipkovnici",
   "ui.reverse-translation-shortcut": "Prečac za obrnuti prijevod",
   "ui.reverse-translation-shortcut-description": "Zamjenjuje izvorni i ciljni jezik.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Gumb pokraj odabira",
   "ui.onboarding-button-description": "Kliknite gumb koji se pojavljuje pokraj označenog teksta.",
   "ui.onboarding-hotkey-title": "Tipkovnički prečac",
-  "ui.onboarding-hotkey-description": "Označite tekst i pritisnite zadani tipkovnički prečac.",
+  "ui.onboarding-hotkey-description": "Označite tekst i pritisnite tipkovnički prečac",
   "ui.onboarding-context-title": "Kontekstni izbornik",
-  "ui.onboarding-context-description": "Desnom tipkom miša kliknite označeni tekst i odaberite prijevod."
+  "ui.onboarding-context-description": "Desnom tipkom miša kliknite označeni tekst i odaberite prijevod.",
+  "ui.onboarding-shortcut-change-hint": "Prečac možete promijeniti u postavkama."
 }

@@ -385,7 +385,7 @@
   "ui.context-menu-activation-description": "Tarayıcı içerik menüsüne “Context Translator” ekler (seçili metne sağ tıklayarak açın).",
   "ui.enable-context-menu-activation": "İçerik menüsünden çeviriyi etkinleştirin",
   "ui.hotkey-activation": "Klavye kısayoluyla etkinleştirin",
-  "ui.hotkey-activation-description": "Çeviri yalnızca seçilen klavye kısayoluna bastığınızda başlar.",
+  "ui.hotkey-activation-description": "Çeviri yalnızca şu klavye kısayoluyla başlatılır:",
   "ui.enable-hotkey-activation": "Klavye kısayolunu etkinleştirmeyi etkinleştir",
   "ui.reverse-translation-shortcut": "Tersine çeviri kısayolu",
   "ui.reverse-translation-shortcut-description": "Kaynak ve hedef dilleri değiştirir.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Seçimin yanındaki düğme",
   "ui.onboarding-button-description": "Seçili metnin yanında görünen düğmeye tıklayın.",
   "ui.onboarding-hotkey-title": "Klavye kısayolu",
-  "ui.onboarding-hotkey-description": "Metni seçin ve belirlenen klavye kısayoluna basın.",
+  "ui.onboarding-hotkey-description": "Metni seçin ve şu klavye kısayoluna basın:",
   "ui.onboarding-context-title": "Bağlam menüsü",
-  "ui.onboarding-context-description": "Seçili metne sağ tıklayın ve çeviriyi seçin."
+  "ui.onboarding-context-description": "Seçili metne sağ tıklayın ve çeviriyi seçin.",
+  "ui.onboarding-shortcut-change-hint": "Kısayolu ayarlardan değiştirebilirsiniz."
 }

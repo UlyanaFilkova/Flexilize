@@ -328,7 +328,7 @@
   "ui.context-menu-activation-description": "Nagdaragdag ng “Context Translator” sa menu ng konteksto ng browser (buksan ito sa pamamagitan ng pag-right click sa napiling teksto).",
   "ui.enable-context-menu-activation": "Paganahin ang pagsasalin mula sa menu ng konteksto",
   "ui.hotkey-activation": "I-activate gamit ang isang keyboard shortcut",
-  "ui.hotkey-activation-description": "Magsisimula lamang ang pagsasalin pagkatapos mong pindutin ang napiling keyboard shortcut.",
+  "ui.hotkey-activation-description": "Magsisimula lamang ang pagsasalin kapag pinindot mo ang napiling keyboard shortcut",
   "ui.enable-hotkey-activation": "I-enable ang keyboard shortcut activation",
   "ui.preserve-translator-text": "Panatilihin ang nakaraang teksto kapag muling binubuksan ang tagasalin",
   "ui.preserve-translator-text-description": "Kapag isinara mo ang tagasalin, ang inilagay na teksto at ang pagsasalin nito ay nai-save at magagamit sa susunod na bubuksan mo ito.",
@@ -451,12 +451,13 @@
   "ui.onboarding-activation-methods": "Mga paraan ng pagsisimula ng pagsasalin",
   "ui.onboarding-load-error": "Hindi ma-load ang kasalukuyang mga setting.",
   "ui.onboarding-save-error": "Hindi ma-save ang mga setting. Subukang muli.",
-  "ui.onboarding-automatic-title": "Awtomatiko kapag pumili",
+  "ui.onboarding-automatic-title": "Awtomatiko sa pagpili",
   "ui.onboarding-automatic-description": "Lalabas agad ang salin kapag pumili ka ng teksto.",
   "ui.onboarding-button-title": "Button sa tabi ng napili",
   "ui.onboarding-button-description": "I-click ang button na lumalabas sa tabi ng napiling teksto.",
   "ui.onboarding-hotkey-title": "Keyboard shortcut",
-  "ui.onboarding-hotkey-description": "Pumili ng teksto at pindutin ang itinakdang keyboard shortcut.",
+  "ui.onboarding-hotkey-description": "Pumili ng teksto at pindutin ang keyboard shortcut",
   "ui.onboarding-context-title": "Menu ng konteksto",
-  "ui.onboarding-context-description": "I-right-click ang napiling teksto at piliin ang pagsasalin."
+  "ui.onboarding-context-description": "I-right-click ang napiling teksto at piliin ang pagsasalin.",
+  "ui.onboarding-shortcut-change-hint": "Maaari mong baguhin ang shortcut sa mga setting."
 }

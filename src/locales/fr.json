@@ -376,7 +376,7 @@
   "ui.context-menu-activation-description": "Ajoute « Context Translator » au menu contextuel du navigateur (ouvrez-le en cliquant avec le bouton droit sur le texte sélectionné).",
   "ui.enable-context-menu-activation": "Activer la traduction à partir du menu contextuel",
   "ui.hotkey-activation": "Activer avec un raccourci clavier",
-  "ui.hotkey-activation-description": "La traduction ne démarre qu'après avoir appuyé sur le raccourci clavier sélectionné.",
+  "ui.hotkey-activation-description": "La traduction ne démarre qu’après avoir appuyé sur le raccourci clavier sélectionné",
   "ui.enable-hotkey-activation": "Activer l'activation du raccourci clavier",
   "ui.reverse-translation-shortcut": "Raccourci de traduction inversée",
   "ui.reverse-translation-shortcut-description": "Permute les langues source et cible.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Bouton près de la sélection",
   "ui.onboarding-button-description": "Cliquez sur le bouton qui apparaît près du texte sélectionné.",
   "ui.onboarding-hotkey-title": "Raccourci clavier",
-  "ui.onboarding-hotkey-description": "Sélectionnez du texte et appuyez sur le raccourci clavier défini.",
+  "ui.onboarding-hotkey-description": "Sélectionnez du texte et appuyez sur le raccourci clavier",
   "ui.onboarding-context-title": "Menu contextuel",
-  "ui.onboarding-context-description": "Faites un clic droit sur le texte sélectionné et choisissez la traduction."
+  "ui.onboarding-context-description": "Faites un clic droit sur le texte sélectionné et choisissez la traduction.",
+  "ui.onboarding-shortcut-change-hint": "Vous pouvez modifier le raccourci dans les paramètres."
 }

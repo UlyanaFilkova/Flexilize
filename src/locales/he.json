@@ -50,7 +50,7 @@
   "ui.context-menu-activation-description": "מוסיף \"Context Translator\" לתפריט ההקשר של הדפדפן (פתח אותו על ידי לחיצה ימנית על הטקסט שנבחר).",
   "ui.enable-context-menu-activation": "אפשר תרגום מתפריט ההקשר",
   "ui.hotkey-activation": "הפעל באמצעות קיצור מקלדת",
-  "ui.hotkey-activation-description": "התרגום מתחיל רק לאחר לחיצה על קיצור המקשים שנבחר.",
+  "ui.hotkey-activation-description": "התרגום מתחיל רק לאחר לחיצה על צירוף המקשים שנבחר",
   "ui.enable-hotkey-activation": "אפשר הפעלת קיצורי מקלדת",
   "ui.reverse-translation-shortcut": "קיצור תרגום הפוך",
   "ui.reverse-translation-shortcut-description": "מחליף את שפות המקור והיעד.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "כפתור ליד הטקסט המסומן",
   "ui.onboarding-button-description": "לחצו על הכפתור שמופיע ליד הטקסט המסומן.",
   "ui.onboarding-hotkey-title": "קיצור מקשים",
-  "ui.onboarding-hotkey-description": "סמנו טקסט ולחצו על צירוף המקשים שהוגדר.",
+  "ui.onboarding-hotkey-description": "סמנו טקסט ולחצו על צירוף המקשים",
   "ui.onboarding-context-title": "תפריט ההקשר",
-  "ui.onboarding-context-description": "לחצו לחיצה ימנית על הטקסט המסומן ובחרו בתרגום."
+  "ui.onboarding-context-description": "לחצו לחיצה ימנית על הטקסט המסומן ובחרו בתרגום.",
+  "ui.onboarding-shortcut-change-hint": "אפשר לשנות את קיצור המקשים בהגדרות."
 }

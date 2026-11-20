@@ -50,7 +50,7 @@
   "ui.context-menu-activation-description": "Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).",
   "ui.enable-context-menu-activation": "Включить перевод через контекстное меню",
   "ui.hotkey-activation": "Активация горячими клавишами",
-  "ui.hotkey-activation-description": "Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.",
+  "ui.hotkey-activation-description": "Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш",
   "ui.enable-hotkey-activation": "Включить активацию горячими клавишами",
   "ui.reverse-translation-shortcut": "Горячая клавиша обратного перевода",
   "ui.reverse-translation-shortcut-description": "Меняет местами исходный язык и язык перевода.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Кнопкой рядом с выделением",
   "ui.onboarding-button-description": "Нажмите кнопку, которая появляется возле выделенного текста.",
   "ui.onboarding-hotkey-title": "Горячими клавишами",
-  "ui.onboarding-hotkey-description": "Выделите текст и нажмите заданную комбинацию клавиш.",
+  "ui.onboarding-hotkey-description": "Выделите текст и нажмите комбинацию клавиш",
   "ui.onboarding-context-title": "Через контекстное меню",
-  "ui.onboarding-context-description": "Щёлкните правой кнопкой по выделенному тексту и выберите перевод."
+  "ui.onboarding-context-description": "Щёлкните правой кнопкой по выделенному тексту и выберите перевод.",
+  "ui.onboarding-shortcut-change-hint": "Комбинацию можно изменить в настройках."
 }

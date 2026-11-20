@@ -50,7 +50,7 @@
   "ui.context-menu-activation-description": "Додаје „Context Translator“ у контекст мени претраживача (отворите га десним кликом на изабрани текст).",
   "ui.enable-context-menu-activation": "Омогући превод из контекстног менија",
   "ui.hotkey-activation": "Активирај помоћу пречице на тастатури",
-  "ui.hotkey-activation-description": "Превођење почиње тек након што притиснете изабрану пречицу на тастатури.",
+  "ui.hotkey-activation-description": "Превод почиње тек када притиснете изабрану комбинацију тастера",
   "ui.enable-hotkey-activation": "Омогући активацију пречице на тастатури",
   "ui.reverse-translation-shortcut": "Пречица за обрнути превод",
   "ui.reverse-translation-shortcut-description": "Мења изворни и циљни језик.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Дугме поред избора",
   "ui.onboarding-button-description": "Кликните на дугме које се појављује поред изабраног текста.",
   "ui.onboarding-hotkey-title": "Пречица на тастатури",
-  "ui.onboarding-hotkey-description": "Изаберите текст и притисните задату пречицу на тастатури.",
+  "ui.onboarding-hotkey-description": "Изаберите текст и притисните пречицу на тастатури",
   "ui.onboarding-context-title": "Контекстни мени",
-  "ui.onboarding-context-description": "Кликните десним тастером миша на изабрани текст и изаберите превод."
+  "ui.onboarding-context-description": "Кликните десним тастером миша на изабрани текст и изаберите превод.",
+  "ui.onboarding-shortcut-change-hint": "Пречицу можете променити у подешавањима."
 }

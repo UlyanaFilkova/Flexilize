@@ -376,7 +376,7 @@
   "ui.context-menu-activation-description": "Fügt „Context Translator“ zum Browser-Kontextmenü hinzu (öffnen Sie es, indem Sie mit der rechten Maustaste auf den ausgewählten Text klicken).",
   "ui.enable-context-menu-activation": "Übersetzung über das Kontextmenü aktivieren",
   "ui.hotkey-activation": "Mit einer Tastenkombination aktivieren",
-  "ui.hotkey-activation-description": "Die Übersetzung beginnt erst, nachdem Sie die ausgewählte Tastenkombination gedrückt haben.",
+  "ui.hotkey-activation-description": "Die Übersetzung startet nur mit der ausgewählten Tastenkombination",
   "ui.enable-hotkey-activation": "Aktivierung der Tastenkombination aktivieren",
   "ui.reverse-translation-shortcut": "Tastenkombination für die umgekehrte Übersetzung",
   "ui.reverse-translation-shortcut-description": "Tauscht die Ausgangs- und Zielsprache.",
@@ -448,7 +448,7 @@
   "ui.onboarding-settings-change-anytime": "Sie können diese Einstellungen jederzeit ändern.",
   "ui.onboarding-start": "Starten",
   "ui.onboarding-saving": "Speichern…",
-  "ui.onboarding-activation-methods": "Übersetzungsstartmethoden",
+  "ui.onboarding-activation-methods": "Startmethoden für Übersetzungen",
   "ui.onboarding-load-error": "Die aktuellen Einstellungen konnten nicht geladen werden.",
   "ui.onboarding-save-error": "Die Einstellungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.",
   "ui.onboarding-automatic-title": "Automatisch beim Markieren",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Schaltfläche neben der Auswahl",
   "ui.onboarding-button-description": "Klicken Sie auf die Schaltfläche neben dem markierten Text.",
   "ui.onboarding-hotkey-title": "Tastenkombination",
-  "ui.onboarding-hotkey-description": "Markieren Sie Text und drücken Sie die festgelegte Tastenkombination.",
+  "ui.onboarding-hotkey-description": "Markieren Sie Text und drücken Sie die Tastenkombination",
   "ui.onboarding-context-title": "Kontextmenü",
-  "ui.onboarding-context-description": "Klicken Sie mit der rechten Maustaste auf den markierten Text und wählen Sie die Übersetzung."
+  "ui.onboarding-context-description": "Klicken Sie mit der rechten Maustaste auf den markierten Text und wählen Sie die Übersetzung.",
+  "ui.onboarding-shortcut-change-hint": "Sie können die Tastenkombination in den Einstellungen ändern."
 }

@@ -383,7 +383,7 @@
   "ui.context-menu-activation-description": "Hozzáadja a „Context Translator” kifejezést a böngésző helyi menüjéhez (nyissa meg a kiválasztott szövegre jobb gombbal kattintva).",
   "ui.enable-context-menu-activation": "Fordítás engedélyezése a helyi menüből",
   "ui.hotkey-activation": "Aktiválás billentyűkóddal",
-  "ui.hotkey-activation-description": "A fordítás csak a kiválasztott billentyűparancs megnyomása után indul el.",
+  "ui.hotkey-activation-description": "A fordítás csak a következő billentyűkombináció megnyomásával indul el:",
   "ui.enable-hotkey-activation": "Billentyűparancs aktiválásának engedélyezése",
   "ui.reverse-translation-shortcut": "Fordítási billentyűparancs",
   "ui.reverse-translation-shortcut-description": "Cseréli a forrás- és a célnyelvet.",
@@ -456,7 +456,8 @@
   "ui.onboarding-button-title": "Gomb a kijelölés mellett",
   "ui.onboarding-button-description": "Kattintson a kijelölt szöveg mellett megjelenő gombra.",
   "ui.onboarding-hotkey-title": "Billentyűparancs",
-  "ui.onboarding-hotkey-description": "Jelöljön ki szöveget, és nyomja meg a beállított billentyűkombinációt.",
+  "ui.onboarding-hotkey-description": "Jelöljön ki szöveget, és nyomja meg a következő billentyűkombinációt:",
   "ui.onboarding-context-title": "Helyi menü",
-  "ui.onboarding-context-description": "Kattintson a jobb gombbal a kijelölt szövegre, és válassza a fordítást."
+  "ui.onboarding-context-description": "Kattintson a jobb gombbal a kijelölt szövegre, és válassza a fordítást.",
+  "ui.onboarding-shortcut-change-hint": "A billentyűparancsot a beállításokban módosíthatja."
 }
