@@ -1,6 +1,7 @@
 import {useEffect, useState, type ReactNode} from "react";
 import {createRoot} from "react-dom/client";
 import {useDropzone} from "react-dropzone";
+import browser from "webextension-polyfill";
 import type {ExportFormat} from "../export";
 import {
   clearTranslationRecords,
@@ -27,6 +28,7 @@ import {
   MAX_SPEECH_RATE,
   MIN_SPEECH_RATE,
   normalizeSpeechRate,
+  ONBOARDING_COMPLETED_KEY,
   saveExtensionSettings,
   shortcutFromKeyboardEvent,
   SPEECH_RATE_STEP,
@@ -35,9 +37,9 @@ import {
 } from "../settings";
 import "./options.css";
 
-type Page = "settings" | "history" | "help" | "review";
+type Page = "settings" | "history" | "help" | "review" | "welcome";
 type HistorySection = "records" | "export";
-type Route = "settings" | "history" | "export" | "help" | "review";
+type Route = "settings" | "history" | "export" | "help" | "review" | "welcome";
 type Notice = {message: string; undo?: () => Promise<void>};
 
 const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, string]> = [
@@ -70,7 +72,8 @@ const routeHashes: Record<Route, string> = {
   history: "#history",
   export: "#export",
   help: "#help",
-  review: "#review"
+  review: "#review",
+  welcome: "#welcome"
 };
 
 const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving", "advanced"]);
@@ -112,7 +115,7 @@ function scrollToSettingsAnchor(id: string) {
 
 function App() {
   const initialRoute = routeFromHash();
-  const [page, setPage] = useState<Page>(initialRoute === "help" || initialRoute === "review" ? initialRoute : initialRoute === "settings" ? "settings" : "history");
+  const [page, setPage] = useState<Page>(initialRoute === "welcome" ? "welcome" : initialRoute === "help" || initialRoute === "review" ? initialRoute : initialRoute === "settings" ? "settings" : "history");
   const [settingsSection, setSettingsSection] = useState(settingsSectionFromHash);
   const [historySection, setHistorySection] = useState<HistorySection>(initialRoute === "export" ? "export" : "records");
   const [records, setRecords] = useState<TranslationRecord[]>([]);
@@ -173,6 +176,13 @@ function App() {
     window.history.replaceState(null, "", routeHashes.review);
   };
 
+  const completeOnboarding = () => {
+    setPage("settings");
+    setSettingsSection("overview");
+    window.history.replaceState(null, "", routeHashes.settings);
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
+
   const removeRecord = async (record: TranslationRecord) => {
     const index = records.indexOf(record);
     try {
@@ -231,7 +241,7 @@ function App() {
   };
 
   return (
-    <div className={`app-shell${mobileMenuOpen ? " mobile-menu-open" : ""}`}>
+    <div className={`app-shell${mobileMenuOpen ? " mobile-menu-open" : ""}${page === "welcome" ? " onboarding-mode" : ""}`}>
       <header className="topbar">
         <div className="brand" aria-label="Context Translator">
           <span className="brand-mark" aria-hidden="true">A<span>а</span></span>
@@ -275,7 +285,9 @@ function App() {
         </aside>
 
         <main className="content">
-          {page === "review" ? (
+          {page === "welcome" ? (
+            <OnboardingView onComplete={completeOnboarding} />
+          ) : page === "review" ? (
             <ReviewView />
           ) : page === "help" ? (
             <HelpView onOpenSettings={openSettingsSection} onOpenHistory={() => openHistorySection("records")} onOpenExport={() => openHistorySection("export")} />
@@ -496,6 +508,99 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
         <div className="banner-orbit banner-orbit-two" />
       </div>
     </section>
+  );
+}
+
+type ActivationChoice = "automatic" | "button" | "hotkey" | "context-menu";
+
+const activationChoices: ReadonlyArray<readonly [ActivationChoice, string, string]> = [
+  ["automatic", "Автоматически при выделении", "Перевод появится сразу после выделения текста."],
+  ["button", "Кнопкой рядом с выделением", "Нажмите кнопку, которая появляется возле выделенного текста."],
+  ["hotkey", "Горячими клавишами", "Выделите текст и нажмите заданную комбинацию клавиш."],
+  ["context-menu", "Через контекстное меню", "Щёлкните правой кнопкой по выделенному тексту и выберите перевод."]
+];
+
+function OnboardingView({onComplete}: {onComplete: () => void}) {
+  const [settings, setSettings] = useState<ExtensionSettings>(defaultSettings);
+  const [activationChoice, setActivationChoice] = useState<ActivationChoice>("automatic");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    void getExtensionSettings().then((stored) => {
+      setSettings(stored);
+      if (stored.selectionButtonEnabled) setActivationChoice("button");
+      else if (stored.hotkeyActivationEnabled) setActivationChoice("hotkey");
+      else if (stored.contextMenuEnabled) setActivationChoice("context-menu");
+    }).catch(() => setError("Не удалось загрузить текущие настройки.")).finally(() => setLoading(false));
+  }, []);
+
+  const languageOptions = localizedLanguageOptions(TRANSLATION_LANGUAGES, "ru");
+
+  const saveSetup = async () => {
+    if (saving || loading) return;
+    setSaving(true);
+    setError("");
+    const nextSettings: ExtensionSettings = {
+      ...settings,
+      autoActivationEnabled: activationChoice === "automatic",
+      selectionButtonEnabled: activationChoice === "button",
+      hotkeyActivationEnabled: activationChoice === "hotkey",
+      contextMenuEnabled: activationChoice === "context-menu"
+    };
+    try {
+      await saveExtensionSettings(nextSettings);
+      await browser.storage.local.set({[ONBOARDING_COMPLETED_KEY]: true});
+      onComplete();
+    } catch (_error) {
+      setError("Не удалось сохранить настройки. Попробуйте ещё раз.");
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="onboarding-page">
+      <section className="onboarding-card" aria-labelledby="onboarding-title">
+        <div className="onboarding-kicker">Первый запуск</div>
+        <h1 id="onboarding-title">Настроим перевод под вас</h1>
+        <p className="onboarding-intro">Выберите язык, на который переводить текст, и удобный способ запуска. Эти параметры можно будет изменить в настройках.</p>
+
+        <label className="onboarding-field" htmlFor="onboarding-language">
+          <span className="onboarding-field-title">На какой язык переводить текст?</span>
+          <span className="onboarding-field-description">Выберите ваш родной язык или язык, на котором вам удобнее читать.</span>
+          <select
+            id="onboarding-language"
+            className="setting-select"
+            value={settings.targetLanguage}
+            disabled={loading || saving}
+            onChange={(event) => setSettings((current) => ({...current, targetLanguage: event.target.value}))}
+          >
+            {languageOptions.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+          </select>
+        </label>
+
+        <fieldset className="onboarding-field onboarding-activation-field" disabled={loading || saving}>
+          <legend className="onboarding-field-title">Как запускать перевод?</legend>
+          <div className="onboarding-choices">
+            {activationChoices.map(([value, title, description]) => (
+              <label className={`onboarding-choice${activationChoice === value ? " selected" : ""}`} key={value}>
+                <input type="radio" name="activation-choice" value={value} checked={activationChoice === value} onChange={() => setActivationChoice(value)} />
+                <span className="onboarding-choice-copy"><strong>{title}</strong><small>{description}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {error && <div className="onboarding-error" role="alert">{error}</div>}
+        <div className="onboarding-footer">
+          <span>Настройки можно будет изменить в любое время.</span>
+          <button className="onboarding-submit" type="button" disabled={loading || saving} onClick={() => void saveSetup()}>
+            {saving ? "Сохранение…" : "Начать пользоваться"}
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }
 

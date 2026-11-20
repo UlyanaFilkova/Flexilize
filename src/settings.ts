@@ -2,6 +2,7 @@ import browser from "webextension-polyfill";
 import {INTERFACE_LANGUAGES, normalizeInterfaceLanguage, type InterfaceLanguage} from "./i18n";
 
 export const SETTINGS_KEY = "extensionSettings";
+export const ONBOARDING_COMPLETED_KEY = "onboardingCompleted";
 
 export interface ActivationShortcut {
   alt: boolean

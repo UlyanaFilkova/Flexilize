@@ -4,6 +4,7 @@ import {uniqueTranslationForms} from "./translation-variants";
 import {getExtensionSettings, normalizeSettings, SETTINGS_KEY} from "./settings";
 import {MAX_HISTORY_RECORDS} from "./history-config";
 import {loadInterfaceLanguage, translate} from "./i18n";
+import {ONBOARDING_COMPLETED_KEY} from "./settings";
 
 const extensionApi = browser;
 const RECORDS_KEY = "translationRecords";
@@ -81,6 +82,16 @@ if (isFirefox) {
 } else {
   extensionApi.runtime.onInstalled?.addListener(registerSelectionMenu);
 }
+
+extensionApi.runtime.onInstalled?.addListener((details) => {
+  if (details.reason !== "install") return;
+  void extensionApi.storage.local.get(ONBOARDING_COMPLETED_KEY).then((stored) => {
+    if (stored[ONBOARDING_COMPLETED_KEY] === true) return;
+    return extensionApi.storage.local.set({[ONBOARDING_COMPLETED_KEY]: false}).then(() =>
+      extensionApi.tabs.create({url: extensionApi.runtime.getURL("options/index.html#welcome")})
+    );
+  }).catch(() => undefined);
+});
 
 contextMenuApi?.onClicked.addListener((info, tab) => {
   if (info.menuItemId !== TRANSLATE_SELECTION_MENU_ID || !tab?.id || !info.selectionText) return;
