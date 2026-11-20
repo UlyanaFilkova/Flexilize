@@ -35,12 +35,14 @@ describe("onboarding native language", () => {
   });
 
   const selectLanguage = async (value: string, heading: string) => {
+    const originalOrder = [...(document.querySelector("#onboarding-language") as HTMLSelectElement).options].map((option) => option.value);
     await userEvent.selectOptions(document.querySelector("#onboarding-language") as HTMLSelectElement, value);
     await screen.findByRole("heading", {name: heading});
     await waitFor(() => {
       const select = document.querySelector("#onboarding-language") as HTMLSelectElement;
       expect(select.disabled).toBe(false);
       expect(select.value).toBe(value);
+      expect([...select.options].map((option) => option.value)).toEqual(originalOrder);
     });
   };
 

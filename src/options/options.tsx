@@ -523,7 +523,7 @@ function OnboardingView({onComplete}: {onComplete: () => void}) {
     }).catch(() => setError("Не удалось загрузить текущие настройки.")).finally(() => setLoading(false));
   }, []);
 
-  const languageOptions = localizedLanguageOptions(interfaceLanguageOptions, settings.interfaceLanguage, true);
+  const languageOptions = localizedLanguageOptions(interfaceLanguageOptions, "en", true);
 
   const changeNativeLanguage = async (interfaceLanguage: InterfaceLanguage) => {
     if (loading || saving) return;
