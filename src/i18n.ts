@@ -128,6 +128,9 @@ const excludedTextSelector = [
   ".translator-output", ".source", ".source-link", "time"
 ].join(",");
 
+const localizedTextSources = new WeakMap<Node, {source: string; localized: string}>();
+const localizedAttributeSources = new WeakMap<Element, Map<string, {source: string; localized: string}>>();
+
 export function localizeDom(root: Document | ShadowRoot, language: InterfaceLanguage) {
   const isDocument = root.nodeType === 9;
   const documentNode = isDocument ? root as Document : root.ownerDocument;
@@ -135,14 +138,32 @@ export function localizeDom(root: Document | ShadowRoot, language: InterfaceLang
   let node = walker.nextNode();
   while (node) {
     const parent = node.parentElement;
-    if (parent && !parent.closest(excludedTextSelector)) node.nodeValue = translate(node.nodeValue || "", language);
+    if (parent && !parent.closest(excludedTextSelector)) {
+      const current = node.nodeValue || "";
+      const previous = localizedTextSources.get(node);
+      const source = previous?.localized === current ? previous.source : current;
+      const localized = translate(source, language);
+      localizedTextSources.set(node, {source, localized});
+      if (current !== localized) node.nodeValue = localized;
+    }
     node = walker.nextNode();
   }
   const elements = root.querySelectorAll<HTMLElement>("[aria-label], [title], [placeholder], [data-placeholder]");
   elements.forEach((element) => {
     ["aria-label", "title", "placeholder", "data-placeholder"].forEach((attribute) => {
       const value = element.getAttribute(attribute);
-      if (value) element.setAttribute(attribute, translate(value, language));
+      if (value) {
+        let sources = localizedAttributeSources.get(element);
+        if (!sources) {
+          sources = new Map();
+          localizedAttributeSources.set(element, sources);
+        }
+        const previous = sources.get(attribute);
+        const source = previous?.localized === value ? previous.source : value;
+        const localized = translate(source, language);
+        sources.set(attribute, {source, localized});
+        if (value !== localized) element.setAttribute(attribute, localized);
+      }
     });
   });
   if (isDocument) {

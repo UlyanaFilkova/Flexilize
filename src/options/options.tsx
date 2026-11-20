@@ -55,7 +55,7 @@ const interfaceLanguageOptions: ReadonlyArray<readonly [InterfaceLanguage, strin
 
 function localizedLanguageOptions<T extends string>(options: ReadonlyArray<readonly [T, string]>, locale: string, useSelfNames = false) {
   const displayNames = new Intl.DisplayNames([locale], {type: "language"});
-  const collator = new Intl.Collator(locale, {sensitivity: "base"});
+  const collator = new Intl.Collator(useSelfNames ? "en" : locale, {sensitivity: "base"});
   return options
     .map(([code, fallback]) => {
       const displayCode = code === "tl" ? "fil" : code;
@@ -894,6 +894,7 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
 function TranslationSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [error, setError] = useState("");
+  const [changingLanguage, setChangingLanguage] = useState(false);
 
   useEffect(() => {
     void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
@@ -913,17 +914,21 @@ function TranslationSettings() {
   };
 
   const changeInterfaceLanguage = async (interfaceLanguage: InterfaceLanguage) => {
-    if (!settings || settings.interfaceLanguage === interfaceLanguage) return;
+    if (!settings || changingLanguage || settings.interfaceLanguage === interfaceLanguage) return;
     const previous = settings;
     const next = {...settings, interfaceLanguage};
     setSettings(next);
     setError("");
+    setChangingLanguage(true);
     try {
+      await loadInterfaceLanguage(interfaceLanguage);
       await saveExtensionSettings(next);
-      window.location.reload();
+      changeOptionsLanguage(interfaceLanguage);
     } catch (_error) {
       setSettings(previous);
       setError("Не удалось сохранить настройку");
+    } finally {
+      setChangingLanguage(false);
     }
   };
 
@@ -946,7 +951,7 @@ function TranslationSettings() {
               className="setting-select"
               aria-label="Язык интерфейса"
               value={settings?.interfaceLanguage || "ru"}
-              disabled={!settings}
+              disabled={!settings || changingLanguage}
               onChange={(event) => void changeInterfaceLanguage(event.target.value as InterfaceLanguage)}
             >
               {sortedInterfaceLanguageOptions.map(([language, label]) => <option key={language} value={language}>{label}</option>)}
@@ -1537,11 +1542,15 @@ const optionsRoot = createRoot(document.getElementById("root")!);
 let stopLocalizing: (() => void) | undefined;
 let optionsRenderVersion = 0;
 
-function renderOptions(language: InterfaceLanguage) {
+function changeOptionsLanguage(language: InterfaceLanguage) {
   stopLocalizing?.();
   setActiveLanguage(language);
   document.title = translate("Context Translator — настройки", language);
   stopLocalizing = observeLocalizedDom(document, language);
+}
+
+function renderOptions(language: InterfaceLanguage) {
+  changeOptionsLanguage(language);
   optionsRoot.render(<App key={++optionsRenderVersion} />);
 }
 

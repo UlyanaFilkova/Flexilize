@@ -91,4 +91,18 @@ describe("interface localization", () => {
     localizeDom(document, "he");
     expect(document.documentElement.dir).toBe("rtl");
   });
+
+  it("switches existing text and attributes between languages and preserves external text updates", async () => {
+    await loadInterfaceLanguage("de");
+    document.body.innerHTML = '<button aria-label="Открыть настройки">Настройки</button>';
+    const button = document.querySelector("button")!;
+    for (const language of ["en", "de", "ru", "en"] as const) {
+      localizeDom(document, language);
+      expect(button.textContent).toBe(translate("Настройки", language));
+      expect(button.getAttribute("aria-label")).toBe(translate("Открыть настройки", language));
+    }
+    button.textContent = "История";
+    localizeDom(document, "de");
+    expect(button.textContent).toBe(translate("История", "de"));
+  });
 });
