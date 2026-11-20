@@ -2342,6 +2342,7 @@ h1 {
 .onboarding-language-field .onboarding-field-title,
 .onboarding-language-field .onboarding-field-description { grid-column: 1; }
 .onboarding-language-field .setting-select { grid-column: 2; grid-row: 1 / 3; align-self: center; justify-self: end; max-width: none; margin-top: 0; }
+.onboarding-activation-field { margin-top: 40px; }
 .onboarding-activation-field legend { margin-bottom: 8px; }
 .onboarding-activation-field .settings-panel {
   display: grid;

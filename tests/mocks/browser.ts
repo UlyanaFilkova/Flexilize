@@ -4,6 +4,7 @@ type Listener = (...args: any[]) => any;
 
 export const messageListeners: Listener[] = [];
 export const storageListeners: Listener[] = [];
+export const installedListeners: Listener[] = [];
 export let storageData: Record<string, any> = {};
 
 const local = {
@@ -36,6 +37,7 @@ export const browserMock = {
     onChanged: {addListener: vi.fn((listener: Listener) => storageListeners.push(listener))}
   },
   runtime: {
+    onInstalled: {addListener: vi.fn((listener: Listener) => installedListeners.push(listener))},
     onMessage: {addListener: vi.fn((listener: Listener) => messageListeners.push(listener))},
     sendMessage: vi.fn(async (message: any) => {
       for (const listener of messageListeners) {
@@ -54,6 +56,8 @@ export function resetBrowserMock(data: Record<string, any> = {}) {
   storageData = structuredClone(data);
   messageListeners.splice(0);
   storageListeners.splice(0);
+  installedListeners.splice(0);
+  browserMock.runtime.onInstalled.addListener.mockClear();
   local.get.mockClear();
   local.set.mockClear();
   local.remove.mockClear();

@@ -577,7 +577,7 @@ function OnboardingView({onComplete}: {onComplete: () => void}) {
         <fieldset className="onboarding-field onboarding-activation-field" disabled={loading || saving}>
           <legend className="onboarding-field-title">Как запускать перевод по выделению текста?</legend>
           <section className="settings-panel settings-panel-grouped" aria-label="Способы запуска перевода">
-            <SelectionActivationSettings settings={settings} persist={setSettings} isMobile={false} />
+            <SelectionActivationSettings settings={settings} persist={setSettings} isMobile={false} shortCopy />
           </section>
         </fieldset>
 
@@ -763,17 +763,19 @@ function GeneralSettings() {
   );
 }
 
-function SelectionActivationSettings({settings, persist, isMobile}: {
+function SelectionActivationSettings({settings, persist, isMobile, shortCopy = false}: {
   settings: ExtensionSettings | null;
   persist: (settings: ExtensionSettings) => void | Promise<void>;
   isMobile: boolean;
+  shortCopy?: boolean;
 }) {
+  const shortRussianCopy = shortCopy && getActiveLanguage() === "ru";
   return (
     <>
       <div className="setting-row activation-setting-row">
         <div className="setting-copy">
-          <h2>Автоматическая активация</h2>
-          <p>Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой.</p>
+          <h2>{shortRussianCopy ? "Автоматически при выделении" : "Автоматическая активация"}</h2>
+          <p>{shortRussianCopy ? "Перевод появится сразу после выделения текста." : "Переводить выделенный текст сразу после выделения. Включение отключит активацию кнопкой."}</p>
         </div>
         <ActivationIllustration kind="automatic" />
         <label className="switch">
@@ -790,8 +792,8 @@ function SelectionActivationSettings({settings, persist, isMobile}: {
 
       <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
-          <h2>Кнопка рядом с выделением</h2>
-          <p>Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию.</p>
+          <h2>{shortRussianCopy ? "Кнопкой рядом с выделением" : "Кнопка рядом с выделением"}</h2>
+          <p>{shortRussianCopy ? "Нажмите кнопку, которая появляется возле выделенного текста." : "Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию."}</p>
         </div>
         <ActivationIllustration kind="button" />
         <label className="switch">
@@ -807,8 +809,8 @@ function SelectionActivationSettings({settings, persist, isMobile}: {
       </div>
       {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
         <div className="setting-copy">
-          <h2>Активация через контекстное меню</h2>
-          <p>Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту).</p>
+          <h2>{shortRussianCopy ? "Через контекстное меню" : "Активация через контекстное меню"}</h2>
+          <p>{shortRussianCopy ? "Щёлкните правой кнопкой по выделенному тексту и выберите перевод." : "Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту)."}</p>
         </div>
         <ActivationIllustration kind="context" />
         <label className="switch">
@@ -825,8 +827,8 @@ function SelectionActivationSettings({settings, persist, isMobile}: {
 
       {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row">
         <div className="setting-copy">
-          <h2>Активация горячими клавишами</h2>
-          <p>Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш.</p>
+          <h2>{shortRussianCopy ? "Горячими клавишами" : "Активация горячими клавишами"}</h2>
+          <p>{shortRussianCopy ? "Выделите текст и нажмите заданную комбинацию клавиш." : "Перевод текста будет запускаться только после нажатия выбранной комбинации клавиш."}</p>
         </div>
         <ActivationIllustration kind="shortcut" shortcut={formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)} />
         <label className="switch">
