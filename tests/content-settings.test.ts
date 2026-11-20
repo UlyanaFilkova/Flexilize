@@ -93,7 +93,8 @@ describe("selection translator settings", () => {
     const source = root.querySelector<HTMLElement>(".source")!;
     const words = [...source.querySelectorAll<HTMLElement>(".speech-word")];
     expect(source.textContent).toBe(text);
-    expect(source.querySelectorAll(".speech-read, .speech-current")).toHaveLength(0);
+    expect(source.querySelectorAll(".speech-read")).toHaveLength(0);
+    expect(source.querySelector(".speech-current")).toBeNull();
     Object.defineProperties(source, {
       scrollHeight: {configurable: true, value: 500},
       clientHeight: {configurable: true, value: 100}
