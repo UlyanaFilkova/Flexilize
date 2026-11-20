@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Se salvează…",
   "ui.onboarding-activation-methods": "Modalități de pornire a traducerii",
   "ui.onboarding-load-error": "Setările actuale nu au putut fi încărcate.",
-  "ui.onboarding-save-error": "Setările nu au putut fi salvate. Încercați din nou."
+  "ui.onboarding-save-error": "Setările nu au putut fi salvate. Încercați din nou.",
+  "ui.onboarding-automatic-title": "Automat la selectare",
+  "ui.onboarding-automatic-description": "Traducerea apare imediat ce selectezi textul.",
+  "ui.onboarding-button-title": "Buton lângă selecție",
+  "ui.onboarding-button-description": "Apasă butonul care apare lângă textul selectat.",
+  "ui.onboarding-hotkey-title": "Comandă rapidă de la tastatură",
+  "ui.onboarding-hotkey-description": "Selectează textul și apasă combinația de taste stabilită.",
+  "ui.onboarding-context-title": "Meniu contextual",
+  "ui.onboarding-context-description": "Fă clic dreapta pe textul selectat și alege traducerea."
 }

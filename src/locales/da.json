@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Gemmer…",
   "ui.onboarding-activation-methods": "Måder at starte oversættelse på",
   "ui.onboarding-load-error": "De aktuelle indstillinger kunne ikke indlæses.",
-  "ui.onboarding-save-error": "Indstillingerne kunne ikke gemmes. Prøv igen."
+  "ui.onboarding-save-error": "Indstillingerne kunne ikke gemmes. Prøv igen.",
+  "ui.onboarding-automatic-title": "Automatisk ved markering",
+  "ui.onboarding-automatic-description": "Oversættelsen vises, så snart du markerer tekst.",
+  "ui.onboarding-button-title": "Knap ved siden af markeringen",
+  "ui.onboarding-button-description": "Klik på knappen, der vises ved siden af den markerede tekst.",
+  "ui.onboarding-hotkey-title": "Tastaturgenvej",
+  "ui.onboarding-hotkey-description": "Markér tekst, og tryk på den indstillede tastaturgenvej.",
+  "ui.onboarding-context-title": "Genvejsmenu",
+  "ui.onboarding-context-description": "Højreklik på den markerede tekst, og vælg oversættelse."
 }

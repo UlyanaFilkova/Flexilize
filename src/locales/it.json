@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Salvataggio…",
   "ui.onboarding-activation-methods": "Modalità di avvio della traduzione",
   "ui.onboarding-load-error": "Impossibile caricare le impostazioni attuali.",
-  "ui.onboarding-save-error": "Impossibile salvare le impostazioni. Riprova."
+  "ui.onboarding-save-error": "Impossibile salvare le impostazioni. Riprova.",
+  "ui.onboarding-automatic-title": "Automaticamente alla selezione",
+  "ui.onboarding-automatic-description": "La traduzione appare appena selezioni il testo.",
+  "ui.onboarding-button-title": "Pulsante accanto alla selezione",
+  "ui.onboarding-button-description": "Fai clic sul pulsante che appare accanto al testo selezionato.",
+  "ui.onboarding-hotkey-title": "Scorciatoia da tastiera",
+  "ui.onboarding-hotkey-description": "Seleziona il testo e premi la combinazione di tasti assegnata.",
+  "ui.onboarding-context-title": "Menu contestuale",
+  "ui.onboarding-context-description": "Fai clic con il tasto destro sul testo selezionato e scegli la traduzione."
 }

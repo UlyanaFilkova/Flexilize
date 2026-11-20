@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Guardando…",
   "ui.onboarding-activation-methods": "Métodos para iniciar la traducción",
   "ui.onboarding-load-error": "No se pudo cargar la configuración actual.",
-  "ui.onboarding-save-error": "No se pudo guardar la configuración. Inténtalo de nuevo."
+  "ui.onboarding-save-error": "No se pudo guardar la configuración. Inténtalo de nuevo.",
+  "ui.onboarding-automatic-title": "Automáticamente al seleccionar",
+  "ui.onboarding-automatic-description": "La traducción aparece en cuanto seleccionas texto.",
+  "ui.onboarding-button-title": "Botón junto a la selección",
+  "ui.onboarding-button-description": "Haz clic en el botón que aparece junto al texto seleccionado.",
+  "ui.onboarding-hotkey-title": "Atajo de teclado",
+  "ui.onboarding-hotkey-description": "Selecciona texto y pulsa el atajo de teclado asignado.",
+  "ui.onboarding-context-title": "Menú contextual",
+  "ui.onboarding-context-description": "Haz clic derecho en el texto seleccionado y elige traducir."
 }

@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Sine-save…",
   "ui.onboarding-activation-methods": "Mga paraan ng pagsisimula ng pagsasalin",
   "ui.onboarding-load-error": "Hindi ma-load ang kasalukuyang mga setting.",
-  "ui.onboarding-save-error": "Hindi ma-save ang mga setting. Subukang muli."
+  "ui.onboarding-save-error": "Hindi ma-save ang mga setting. Subukang muli.",
+  "ui.onboarding-automatic-title": "Awtomatiko kapag pumili",
+  "ui.onboarding-automatic-description": "Lalabas agad ang salin kapag pumili ka ng teksto.",
+  "ui.onboarding-button-title": "Button sa tabi ng napili",
+  "ui.onboarding-button-description": "I-click ang button na lumalabas sa tabi ng napiling teksto.",
+  "ui.onboarding-hotkey-title": "Keyboard shortcut",
+  "ui.onboarding-hotkey-description": "Pumili ng teksto at pindutin ang itinakdang keyboard shortcut.",
+  "ui.onboarding-context-title": "Menu ng konteksto",
+  "ui.onboarding-context-description": "I-right-click ang napiling teksto at piliin ang pagsasalin."
 }

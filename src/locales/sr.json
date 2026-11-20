@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Чување…",
   "ui.onboarding-activation-methods": "Начини покретања превода",
   "ui.onboarding-load-error": "Учитавање тренутних подешавања није успело.",
-  "ui.onboarding-save-error": "Чување подешавања није успело. Покушајте поново."
+  "ui.onboarding-save-error": "Чување подешавања није успело. Покушајте поново.",
+  "ui.onboarding-automatic-title": "Аутоматски при избору",
+  "ui.onboarding-automatic-description": "Превод се појављује чим изаберете текст.",
+  "ui.onboarding-button-title": "Дугме поред избора",
+  "ui.onboarding-button-description": "Кликните на дугме које се појављује поред изабраног текста.",
+  "ui.onboarding-hotkey-title": "Пречица на тастатури",
+  "ui.onboarding-hotkey-description": "Изаберите текст и притисните задату пречицу на тастатури.",
+  "ui.onboarding-context-title": "Контекстни мени",
+  "ui.onboarding-context-description": "Кликните десним тастером миша на изабрани текст и изаберите превод."
 }

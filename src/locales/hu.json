@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Mentés…",
   "ui.onboarding-activation-methods": "Fordításindítási módok",
   "ui.onboarding-load-error": "A jelenlegi beállítások betöltése nem sikerült.",
-  "ui.onboarding-save-error": "A beállítások mentése nem sikerült. Próbálja újra."
+  "ui.onboarding-save-error": "A beállítások mentése nem sikerült. Próbálja újra.",
+  "ui.onboarding-automatic-title": "Automatikusan kijelöléskor",
+  "ui.onboarding-automatic-description": "A fordítás a szöveg kijelölése után azonnal megjelenik.",
+  "ui.onboarding-button-title": "Gomb a kijelölés mellett",
+  "ui.onboarding-button-description": "Kattintson a kijelölt szöveg mellett megjelenő gombra.",
+  "ui.onboarding-hotkey-title": "Billentyűparancs",
+  "ui.onboarding-hotkey-description": "Jelöljön ki szöveget, és nyomja meg a beállított billentyűkombinációt.",
+  "ui.onboarding-context-title": "Helyi menü",
+  "ui.onboarding-context-description": "Kattintson a jobb gombbal a kijelölt szövegre, és válassza a fordítást."
 }

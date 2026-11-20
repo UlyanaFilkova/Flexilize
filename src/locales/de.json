@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Speichern…",
   "ui.onboarding-activation-methods": "Übersetzungsstartmethoden",
   "ui.onboarding-load-error": "Die aktuellen Einstellungen konnten nicht geladen werden.",
-  "ui.onboarding-save-error": "Die Einstellungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut."
+  "ui.onboarding-save-error": "Die Einstellungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+  "ui.onboarding-automatic-title": "Automatisch beim Markieren",
+  "ui.onboarding-automatic-description": "Die Übersetzung erscheint sofort nach dem Markieren des Textes.",
+  "ui.onboarding-button-title": "Schaltfläche neben der Auswahl",
+  "ui.onboarding-button-description": "Klicken Sie auf die Schaltfläche neben dem markierten Text.",
+  "ui.onboarding-hotkey-title": "Tastenkombination",
+  "ui.onboarding-hotkey-description": "Markieren Sie Text und drücken Sie die festgelegte Tastenkombination.",
+  "ui.onboarding-context-title": "Kontextmenü",
+  "ui.onboarding-context-description": "Klicken Sie mit der rechten Maustaste auf den markierten Text und wählen Sie die Übersetzung."
 }

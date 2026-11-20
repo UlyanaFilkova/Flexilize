@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Menyimpan…",
   "ui.onboarding-activation-methods": "Cara memulai terjemahan",
   "ui.onboarding-load-error": "Pengaturan saat ini tidak dapat dimuat.",
-  "ui.onboarding-save-error": "Pengaturan tidak dapat disimpan. Coba lagi."
+  "ui.onboarding-save-error": "Pengaturan tidak dapat disimpan. Coba lagi.",
+  "ui.onboarding-automatic-title": "Otomatis saat dipilih",
+  "ui.onboarding-automatic-description": "Terjemahan muncul segera setelah Anda memilih teks.",
+  "ui.onboarding-button-title": "Tombol di samping pilihan",
+  "ui.onboarding-button-description": "Klik tombol yang muncul di samping teks yang dipilih.",
+  "ui.onboarding-hotkey-title": "Pintasan keyboard",
+  "ui.onboarding-hotkey-description": "Pilih teks dan tekan kombinasi tombol yang ditetapkan.",
+  "ui.onboarding-context-title": "Menu konteks",
+  "ui.onboarding-context-description": "Klik kanan teks yang dipilih dan pilih terjemahan."
 }

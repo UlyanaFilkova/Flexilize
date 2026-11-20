@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Zapisywanie…",
   "ui.onboarding-activation-methods": "Sposoby uruchamiania tłumaczenia",
   "ui.onboarding-load-error": "Nie udało się wczytać bieżących ustawień.",
-  "ui.onboarding-save-error": "Nie udało się zapisać ustawień. Spróbuj ponownie."
+  "ui.onboarding-save-error": "Nie udało się zapisać ustawień. Spróbuj ponownie.",
+  "ui.onboarding-automatic-title": "Automatycznie po zaznaczeniu",
+  "ui.onboarding-automatic-description": "Tłumaczenie pojawi się od razu po zaznaczeniu tekstu.",
+  "ui.onboarding-button-title": "Przycisk obok zaznaczenia",
+  "ui.onboarding-button-description": "Kliknij przycisk, który pojawia się obok zaznaczonego tekstu.",
+  "ui.onboarding-hotkey-title": "Skrót klawiszowy",
+  "ui.onboarding-hotkey-description": "Zaznacz tekst i naciśnij ustawiony skrót klawiszowy.",
+  "ui.onboarding-context-title": "Menu kontekstowe",
+  "ui.onboarding-context-description": "Kliknij zaznaczony tekst prawym przyciskiem myszy i wybierz tłumaczenie."
 }

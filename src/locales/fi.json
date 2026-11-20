@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Tallennetaan…",
   "ui.onboarding-activation-methods": "Käännöksen käynnistystavat",
   "ui.onboarding-load-error": "Nykyisten asetusten lataaminen epäonnistui.",
-  "ui.onboarding-save-error": "Asetusten tallentaminen epäonnistui. Yritä uudelleen."
+  "ui.onboarding-save-error": "Asetusten tallentaminen epäonnistui. Yritä uudelleen.",
+  "ui.onboarding-automatic-title": "Automaattisesti valittaessa",
+  "ui.onboarding-automatic-description": "Käännös näkyy heti, kun valitset tekstin.",
+  "ui.onboarding-button-title": "Painike valinnan vieressä",
+  "ui.onboarding-button-description": "Napsauta valitun tekstin viereen ilmestyvää painiketta.",
+  "ui.onboarding-hotkey-title": "Pikanäppäin",
+  "ui.onboarding-hotkey-description": "Valitse teksti ja paina määritettyä näppäinyhdistelmää.",
+  "ui.onboarding-context-title": "Pikavalikko",
+  "ui.onboarding-context-description": "Napsauta valittua tekstiä hiiren oikealla painikkeella ja valitse käännös."
 }

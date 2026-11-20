@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Shranjevanje…",
   "ui.onboarding-activation-methods": "Načini zagona prevajanja",
   "ui.onboarding-load-error": "Trenutnih nastavitev ni bilo mogoče naložiti.",
-  "ui.onboarding-save-error": "Nastavitev ni bilo mogoče shraniti. Poskusite znova."
+  "ui.onboarding-save-error": "Nastavitev ni bilo mogoče shraniti. Poskusite znova.",
+  "ui.onboarding-automatic-title": "Samodejno ob izbiri",
+  "ui.onboarding-automatic-description": "Prevod se prikaže takoj, ko izberete besedilo.",
+  "ui.onboarding-button-title": "Gumb ob izbiri",
+  "ui.onboarding-button-description": "Kliknite gumb, ki se prikaže ob izbranem besedilu.",
+  "ui.onboarding-hotkey-title": "Bližnjica na tipkovnici",
+  "ui.onboarding-hotkey-description": "Izberite besedilo in pritisnite nastavljeno bližnjico na tipkovnici.",
+  "ui.onboarding-context-title": "Kontekstni meni",
+  "ui.onboarding-context-description": "Z desno tipko kliknite izbrano besedilo in izberite prevod."
 }

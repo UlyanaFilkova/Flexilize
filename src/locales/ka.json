@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "ინახება…",
   "ui.onboarding-activation-methods": "თარგმანის დაწყების გზები",
   "ui.onboarding-load-error": "მიმდინარე პარამეტრების ჩატვირთვა ვერ მოხერხდა.",
-  "ui.onboarding-save-error": "პარამეტრების შენახვა ვერ მოხერხდა. სცადეთ ხელახლა."
+  "ui.onboarding-save-error": "პარამეტრების შენახვა ვერ მოხერხდა. სცადეთ ხელახლა.",
+  "ui.onboarding-automatic-title": "ავტომატურად მონიშვნისას",
+  "ui.onboarding-automatic-description": "თარგმანი ტექსტის მონიშვნისთანავე გამოჩნდება.",
+  "ui.onboarding-button-title": "ღილაკი მონიშნულ ტექსტთან",
+  "ui.onboarding-button-description": "დააჭირეთ ღილაკს, რომელიც მონიშნულ ტექსტთან გამოჩნდება.",
+  "ui.onboarding-hotkey-title": "კლავიატურის მალსახმობი",
+  "ui.onboarding-hotkey-description": "მონიშნეთ ტექსტი და დააჭირეთ მითითებულ კლავიშთა კომბინაციას.",
+  "ui.onboarding-context-title": "კონტექსტური მენიუ",
+  "ui.onboarding-context-description": "მონიშნულ ტექსტზე დააწკაპუნეთ მარჯვენა ღილაკით და აირჩიეთ თარგმნა."
 }

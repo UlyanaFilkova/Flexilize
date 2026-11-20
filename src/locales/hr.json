@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Spremanje…",
   "ui.onboarding-activation-methods": "Načini pokretanja prijevoda",
   "ui.onboarding-load-error": "Nije moguće učitati trenutačne postavke.",
-  "ui.onboarding-save-error": "Nije moguće spremiti postavke. Pokušajte ponovno."
+  "ui.onboarding-save-error": "Nije moguće spremiti postavke. Pokušajte ponovno.",
+  "ui.onboarding-automatic-title": "Automatski pri odabiru",
+  "ui.onboarding-automatic-description": "Prijevod se pojavljuje čim označite tekst.",
+  "ui.onboarding-button-title": "Gumb pokraj odabira",
+  "ui.onboarding-button-description": "Kliknite gumb koji se pojavljuje pokraj označenog teksta.",
+  "ui.onboarding-hotkey-title": "Tipkovnički prečac",
+  "ui.onboarding-hotkey-description": "Označite tekst i pritisnite zadani tipkovnički prečac.",
+  "ui.onboarding-context-title": "Kontekstni izbornik",
+  "ui.onboarding-context-description": "Desnom tipkom miša kliknite označeni tekst i odaberite prijevod."
 }

@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Kaydediliyor…",
   "ui.onboarding-activation-methods": "Çeviriyi başlatma yöntemleri",
   "ui.onboarding-load-error": "Mevcut ayarlar yüklenemedi.",
-  "ui.onboarding-save-error": "Ayarlar kaydedilemedi. Tekrar deneyin."
+  "ui.onboarding-save-error": "Ayarlar kaydedilemedi. Tekrar deneyin.",
+  "ui.onboarding-automatic-title": "Seçildiğinde otomatik",
+  "ui.onboarding-automatic-description": "Metni seçtiğiniz anda çeviri görünür.",
+  "ui.onboarding-button-title": "Seçimin yanındaki düğme",
+  "ui.onboarding-button-description": "Seçili metnin yanında görünen düğmeye tıklayın.",
+  "ui.onboarding-hotkey-title": "Klavye kısayolu",
+  "ui.onboarding-hotkey-description": "Metni seçin ve belirlenen klavye kısayoluna basın.",
+  "ui.onboarding-context-title": "Bağlam menüsü",
+  "ui.onboarding-context-description": "Seçili metne sağ tıklayın ve çeviriyi seçin."
 }

@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "保存中…",
   "ui.onboarding-activation-methods": "翻訳の起動方法",
   "ui.onboarding-load-error": "現在の設定を読み込めませんでした。",
-  "ui.onboarding-save-error": "設定を保存できませんでした。もう一度お試しください。"
+  "ui.onboarding-save-error": "設定を保存できませんでした。もう一度お試しください。",
+  "ui.onboarding-automatic-title": "選択時に自動翻訳",
+  "ui.onboarding-automatic-description": "テキストを選択すると、すぐに翻訳が表示されます。",
+  "ui.onboarding-button-title": "選択範囲の横のボタン",
+  "ui.onboarding-button-description": "選択したテキストの横に表示されるボタンをクリックします。",
+  "ui.onboarding-hotkey-title": "キーボードショートカット",
+  "ui.onboarding-hotkey-description": "テキストを選択し、設定したキーの組み合わせを押します。",
+  "ui.onboarding-context-title": "コンテキストメニュー",
+  "ui.onboarding-context-description": "選択したテキストを右クリックし、翻訳を選びます。"
 }

@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "جارٍ الحفظ…",
   "ui.onboarding-activation-methods": "طرق تفعيل الترجمة",
   "ui.onboarding-load-error": "تعذّر تحميل الإعدادات الحالية.",
-  "ui.onboarding-save-error": "تعذّر حفظ الإعدادات. يُرجى المحاولة مرة أخرى."
+  "ui.onboarding-save-error": "تعذّر حفظ الإعدادات. يُرجى المحاولة مرة أخرى.",
+  "ui.onboarding-automatic-title": "تلقائيًا عند التحديد",
+  "ui.onboarding-automatic-description": "تظهر الترجمة فور تحديد النص.",
+  "ui.onboarding-button-title": "زر بجوار النص المحدد",
+  "ui.onboarding-button-description": "انقر على الزر الذي يظهر بجوار النص المحدد.",
+  "ui.onboarding-hotkey-title": "اختصار لوحة المفاتيح",
+  "ui.onboarding-hotkey-description": "حدّد النص واضغط على اختصار لوحة المفاتيح المعيّن.",
+  "ui.onboarding-context-title": "القائمة السياقية",
+  "ui.onboarding-context-description": "انقر بزر الفأرة الأيمن على النص المحدد واختر الترجمة."
 }

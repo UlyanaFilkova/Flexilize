@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Duke ruajtur…",
   "ui.onboarding-activation-methods": "Mënyrat e nisjes së përkthimit",
   "ui.onboarding-load-error": "Ngarkimi i cilësimeve aktuale dështoi.",
-  "ui.onboarding-save-error": "Ruajtja e cilësimeve dështoi. Provo sërish."
+  "ui.onboarding-save-error": "Ruajtja e cilësimeve dështoi. Provo sërish.",
+  "ui.onboarding-automatic-title": "Automatikisht gjatë përzgjedhjes",
+  "ui.onboarding-automatic-description": "Përkthimi shfaqet sapo të zgjidhni tekstin.",
+  "ui.onboarding-button-title": "Butoni pranë përzgjedhjes",
+  "ui.onboarding-button-description": "Klikoni butonin që shfaqet pranë tekstit të zgjedhur.",
+  "ui.onboarding-hotkey-title": "Shkurtore tastiere",
+  "ui.onboarding-hotkey-description": "Zgjidhni tekstin dhe shtypni kombinimin e caktuar të tasteve.",
+  "ui.onboarding-context-title": "Menuja e kontekstit",
+  "ui.onboarding-context-description": "Klikoni me të djathtën mbi tekstin e zgjedhur dhe zgjidhni përkthimin."
 }

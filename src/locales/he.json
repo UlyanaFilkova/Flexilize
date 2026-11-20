@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "שומר…",
   "ui.onboarding-activation-methods": "דרכים להפעלת התרגום",
   "ui.onboarding-load-error": "טעינת ההגדרות הנוכחיות נכשלה.",
-  "ui.onboarding-save-error": "שמירת ההגדרות נכשלה. אפשר לנסות שוב."
+  "ui.onboarding-save-error": "שמירת ההגדרות נכשלה. אפשר לנסות שוב.",
+  "ui.onboarding-automatic-title": "אוטומטית בעת סימון",
+  "ui.onboarding-automatic-description": "התרגום מופיע מיד לאחר סימון הטקסט.",
+  "ui.onboarding-button-title": "כפתור ליד הטקסט המסומן",
+  "ui.onboarding-button-description": "לחצו על הכפתור שמופיע ליד הטקסט המסומן.",
+  "ui.onboarding-hotkey-title": "קיצור מקשים",
+  "ui.onboarding-hotkey-description": "סמנו טקסט ולחצו על צירוף המקשים שהוגדר.",
+  "ui.onboarding-context-title": "תפריט ההקשר",
+  "ui.onboarding-context-description": "לחצו לחיצה ימנית על הטקסט המסומן ובחרו בתרגום."
 }

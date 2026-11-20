@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Saving…",
   "ui.onboarding-activation-methods": "Translation activation methods",
   "ui.onboarding-load-error": "Could not load the current settings.",
-  "ui.onboarding-save-error": "Could not save the settings. Please try again."
+  "ui.onboarding-save-error": "Could not save the settings. Please try again.",
+  "ui.onboarding-automatic-title": "Automatically on selection",
+  "ui.onboarding-automatic-description": "The translation appears as soon as you select text.",
+  "ui.onboarding-button-title": "Button next to selection",
+  "ui.onboarding-button-description": "Click the button that appears next to the selected text.",
+  "ui.onboarding-hotkey-title": "Keyboard shortcut",
+  "ui.onboarding-hotkey-description": "Select text and press the assigned keyboard shortcut.",
+  "ui.onboarding-context-title": "Context menu",
+  "ui.onboarding-context-description": "Right-click the selected text and choose translation."
 }

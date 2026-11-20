@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Ukladanie…",
   "ui.onboarding-activation-methods": "Spôsoby spustenia prekladu",
   "ui.onboarding-load-error": "Aktuálne nastavenia sa nepodarilo načítať.",
-  "ui.onboarding-save-error": "Nastavenia sa nepodarilo uložiť. Skúste to znova."
+  "ui.onboarding-save-error": "Nastavenia sa nepodarilo uložiť. Skúste to znova.",
+  "ui.onboarding-automatic-title": "Automaticky pri výbere",
+  "ui.onboarding-automatic-description": "Preklad sa zobrazí ihneď po označení textu.",
+  "ui.onboarding-button-title": "Tlačidlo vedľa výberu",
+  "ui.onboarding-button-description": "Kliknite na tlačidlo, ktoré sa zobrazí vedľa vybraného textu.",
+  "ui.onboarding-hotkey-title": "Klávesová skratka",
+  "ui.onboarding-hotkey-description": "Vyberte text a stlačte nastavenú klávesovú skratku.",
+  "ui.onboarding-context-title": "Kontextová ponuka",
+  "ui.onboarding-context-description": "Kliknite pravým tlačidlom na vybraný text a zvoľte preklad."
 }

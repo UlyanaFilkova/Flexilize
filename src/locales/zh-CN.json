@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "正在保存…",
   "ui.onboarding-activation-methods": "翻译启动方式",
   "ui.onboarding-load-error": "无法加载当前设置。",
-  "ui.onboarding-save-error": "无法保存设置，请重试。"
+  "ui.onboarding-save-error": "无法保存设置，请重试。",
+  "ui.onboarding-automatic-title": "选中文本后自动翻译",
+  "ui.onboarding-automatic-description": "选中文本后立即显示翻译。",
+  "ui.onboarding-button-title": "选区旁的按钮",
+  "ui.onboarding-button-description": "点击所选文本旁出现的按钮。",
+  "ui.onboarding-hotkey-title": "键盘快捷键",
+  "ui.onboarding-hotkey-description": "选中文本并按下设定的快捷键。",
+  "ui.onboarding-context-title": "右键菜单",
+  "ui.onboarding-context-description": "右键点击所选文本并选择翻译。"
 }

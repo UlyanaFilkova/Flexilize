@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Сохранение…",
   "ui.onboarding-activation-methods": "Способы запуска перевода",
   "ui.onboarding-load-error": "Не удалось загрузить текущие настройки.",
-  "ui.onboarding-save-error": "Не удалось сохранить настройки. Попробуйте ещё раз."
+  "ui.onboarding-save-error": "Не удалось сохранить настройки. Попробуйте ещё раз.",
+  "ui.onboarding-automatic-title": "Автоматически при выделении",
+  "ui.onboarding-automatic-description": "Перевод появится сразу после выделения текста.",
+  "ui.onboarding-button-title": "Кнопкой рядом с выделением",
+  "ui.onboarding-button-description": "Нажмите кнопку, которая появляется возле выделенного текста.",
+  "ui.onboarding-hotkey-title": "Горячими клавишами",
+  "ui.onboarding-hotkey-description": "Выделите текст и нажмите заданную комбинацию клавиш.",
+  "ui.onboarding-context-title": "Через контекстное меню",
+  "ui.onboarding-context-description": "Щёлкните правой кнопкой по выделенному тексту и выберите перевод."
 }

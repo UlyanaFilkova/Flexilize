@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Đang lưu…",
   "ui.onboarding-activation-methods": "Cách bắt đầu dịch",
   "ui.onboarding-load-error": "Không thể tải cài đặt hiện tại.",
-  "ui.onboarding-save-error": "Không thể lưu cài đặt. Vui lòng thử lại."
+  "ui.onboarding-save-error": "Không thể lưu cài đặt. Vui lòng thử lại.",
+  "ui.onboarding-automatic-title": "Tự động khi chọn",
+  "ui.onboarding-automatic-description": "Bản dịch xuất hiện ngay khi bạn chọn văn bản.",
+  "ui.onboarding-button-title": "Nút bên cạnh vùng chọn",
+  "ui.onboarding-button-description": "Nhấp vào nút xuất hiện bên cạnh văn bản đã chọn.",
+  "ui.onboarding-hotkey-title": "Phím tắt",
+  "ui.onboarding-hotkey-description": "Chọn văn bản và nhấn tổ hợp phím đã đặt.",
+  "ui.onboarding-context-title": "Menu ngữ cảnh",
+  "ui.onboarding-context-description": "Nhấp chuột phải vào văn bản đã chọn và chọn dịch."
 }

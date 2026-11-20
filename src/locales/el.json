@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Αποθήκευση…",
   "ui.onboarding-activation-methods": "Τρόποι ενεργοποίησης μετάφρασης",
   "ui.onboarding-load-error": "Δεν ήταν δυνατή η φόρτωση των τρεχουσών ρυθμίσεων.",
-  "ui.onboarding-save-error": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων. Δοκιμάστε ξανά."
+  "ui.onboarding-save-error": "Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων. Δοκιμάστε ξανά.",
+  "ui.onboarding-automatic-title": "Αυτόματα με την επιλογή",
+  "ui.onboarding-automatic-description": "Η μετάφραση εμφανίζεται μόλις επιλέξετε κείμενο.",
+  "ui.onboarding-button-title": "Κουμπί δίπλα στην επιλογή",
+  "ui.onboarding-button-description": "Πατήστε το κουμπί που εμφανίζεται δίπλα στο επιλεγμένο κείμενο.",
+  "ui.onboarding-hotkey-title": "Συντόμευση πληκτρολογίου",
+  "ui.onboarding-hotkey-description": "Επιλέξτε κείμενο και πατήστε τον καθορισμένο συνδυασμό πλήκτρων.",
+  "ui.onboarding-context-title": "Μενού περιβάλλοντος",
+  "ui.onboarding-context-description": "Κάντε δεξί κλικ στο επιλεγμένο κείμενο και επιλέξτε μετάφραση."
 }

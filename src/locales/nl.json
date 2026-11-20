@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Opslaan…",
   "ui.onboarding-activation-methods": "Manieren om vertalingen te starten",
   "ui.onboarding-load-error": "De huidige instellingen konden niet worden geladen.",
-  "ui.onboarding-save-error": "De instellingen konden niet worden opgeslagen. Probeer het opnieuw."
+  "ui.onboarding-save-error": "De instellingen konden niet worden opgeslagen. Probeer het opnieuw.",
+  "ui.onboarding-automatic-title": "Automatisch bij selecteren",
+  "ui.onboarding-automatic-description": "De vertaling verschijnt zodra je tekst selecteert.",
+  "ui.onboarding-button-title": "Knop naast de selectie",
+  "ui.onboarding-button-description": "Klik op de knop die naast de geselecteerde tekst verschijnt.",
+  "ui.onboarding-hotkey-title": "Sneltoets",
+  "ui.onboarding-hotkey-description": "Selecteer tekst en druk op de ingestelde sneltoets.",
+  "ui.onboarding-context-title": "Contextmenu",
+  "ui.onboarding-context-description": "Klik met de rechtermuisknop op de geselecteerde tekst en kies vertalen."
 }

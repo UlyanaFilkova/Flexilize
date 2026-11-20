@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Enregistrement…",
   "ui.onboarding-activation-methods": "Modes de lancement de la traduction",
   "ui.onboarding-load-error": "Impossible de charger les paramètres actuels.",
-  "ui.onboarding-save-error": "Impossible d’enregistrer les paramètres. Réessayez."
+  "ui.onboarding-save-error": "Impossible d’enregistrer les paramètres. Réessayez.",
+  "ui.onboarding-automatic-title": "Automatiquement à la sélection",
+  "ui.onboarding-automatic-description": "La traduction apparaît dès que vous sélectionnez du texte.",
+  "ui.onboarding-button-title": "Bouton près de la sélection",
+  "ui.onboarding-button-description": "Cliquez sur le bouton qui apparaît près du texte sélectionné.",
+  "ui.onboarding-hotkey-title": "Raccourci clavier",
+  "ui.onboarding-hotkey-description": "Sélectionnez du texte et appuyez sur le raccourci clavier défini.",
+  "ui.onboarding-context-title": "Menu contextuel",
+  "ui.onboarding-context-description": "Faites un clic droit sur le texte sélectionné et choisissez la traduction."
 }

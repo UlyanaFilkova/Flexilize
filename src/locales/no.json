@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "Lagrer…",
   "ui.onboarding-activation-methods": "Måter å starte oversettelsen på",
   "ui.onboarding-load-error": "Kunne ikke laste inn gjeldende innstillinger.",
-  "ui.onboarding-save-error": "Kunne ikke lagre innstillingene. Prøv igjen."
+  "ui.onboarding-save-error": "Kunne ikke lagre innstillingene. Prøv igjen.",
+  "ui.onboarding-automatic-title": "Automatisk ved markering",
+  "ui.onboarding-automatic-description": "Oversettelsen vises så snart du markerer tekst.",
+  "ui.onboarding-button-title": "Knapp ved siden av markeringen",
+  "ui.onboarding-button-description": "Klikk på knappen som vises ved siden av den markerte teksten.",
+  "ui.onboarding-hotkey-title": "Hurtigtast",
+  "ui.onboarding-hotkey-description": "Marker tekst og trykk på den angitte hurtigtasten.",
+  "ui.onboarding-context-title": "Hurtigmeny",
+  "ui.onboarding-context-description": "Høyreklikk på den markerte teksten og velg oversettelse."
 }

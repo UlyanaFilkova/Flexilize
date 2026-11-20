@@ -51,7 +51,14 @@ describe("onboarding native language", () => {
     await selectLanguage("en", "Quick setup");
     expect(storageData[SETTINGS_KEY]).toMatchObject({interfaceLanguage: "en", targetLanguage: "en", selectionButtonEnabled: true, autoActivationEnabled: false});
     expect(screen.getByRole("button", {name: "Start"})).toBeTruthy();
-    expect(screen.getByRole("heading", {name: "Button next to selected text"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Button next to selection"})).toBeTruthy();
+    for (const description of [
+      "The translation appears as soon as you select text.",
+      "Click the button that appears next to the selected text.",
+      "Select text and press the assigned keyboard shortcut.",
+      "Right-click the selected text and choose translation."
+    ]) expect(screen.getByText(description)).toBeTruthy();
+    expect(screen.queryByText(/Enabling this turns off/)).toBeNull();
     expect(document.documentElement.lang).toBe("en");
     expect(storageData[ONBOARDING_COMPLETED_KEY]).not.toBe(true);
 

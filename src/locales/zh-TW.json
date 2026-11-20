@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "正在儲存…",
   "ui.onboarding-activation-methods": "翻譯啟動方式",
   "ui.onboarding-load-error": "無法載入目前設定。",
-  "ui.onboarding-save-error": "無法儲存設定，請再試一次。"
+  "ui.onboarding-save-error": "無法儲存設定，請再試一次。",
+  "ui.onboarding-automatic-title": "選取文字後自動翻譯",
+  "ui.onboarding-automatic-description": "選取文字後立即顯示翻譯。",
+  "ui.onboarding-button-title": "選取範圍旁的按鈕",
+  "ui.onboarding-button-description": "點擊所選文字旁出現的按鈕。",
+  "ui.onboarding-hotkey-title": "鍵盤快速鍵",
+  "ui.onboarding-hotkey-description": "選取文字並按下設定的快速鍵。",
+  "ui.onboarding-context-title": "右鍵選單",
+  "ui.onboarding-context-description": "在所選文字上按一下滑鼠右鍵並選擇翻譯。"
 }

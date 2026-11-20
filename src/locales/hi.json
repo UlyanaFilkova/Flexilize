@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "सहेजा जा रहा है…",
   "ui.onboarding-activation-methods": "अनुवाद शुरू करने के तरीके",
   "ui.onboarding-load-error": "मौजूदा सेटिंग लोड नहीं हो सकीं।",
-  "ui.onboarding-save-error": "सेटिंग सेव नहीं हो सकीं। फिर से कोशिश करें।"
+  "ui.onboarding-save-error": "सेटिंग सेव नहीं हो सकीं। फिर से कोशिश करें।",
+  "ui.onboarding-automatic-title": "चुनते ही अपने आप",
+  "ui.onboarding-automatic-description": "टेक्स्ट चुनते ही अनुवाद दिखाई देगा।",
+  "ui.onboarding-button-title": "चुने हुए टेक्स्ट के पास बटन",
+  "ui.onboarding-button-description": "चुने हुए टेक्स्ट के पास दिखाई देने वाले बटन पर क्लिक करें।",
+  "ui.onboarding-hotkey-title": "कीबोर्ड शॉर्टकट",
+  "ui.onboarding-hotkey-description": "टेक्स्ट चुनें और तय किया गया कीबोर्ड शॉर्टकट दबाएँ।",
+  "ui.onboarding-context-title": "कॉन्टेक्स्ट मेन्यू",
+  "ui.onboarding-context-description": "चुने हुए टेक्स्ट पर राइट-क्लिक करें और अनुवाद चुनें।"
 }

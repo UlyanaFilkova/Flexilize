@@ -450,5 +450,13 @@
   "ui.onboarding-saving": "در حال ذخیره…",
   "ui.onboarding-activation-methods": "روش‌های شروع ترجمه",
   "ui.onboarding-load-error": "بارگیری تنظیمات فعلی ممکن نشد.",
-  "ui.onboarding-save-error": "ذخیره تنظیمات ممکن نشد. لطفاً دوباره تلاش کنید."
+  "ui.onboarding-save-error": "ذخیره تنظیمات ممکن نشد. لطفاً دوباره تلاش کنید.",
+  "ui.onboarding-automatic-title": "خودکار هنگام انتخاب",
+  "ui.onboarding-automatic-description": "ترجمه بلافاصله پس از انتخاب متن نمایش داده می‌شود.",
+  "ui.onboarding-button-title": "دکمه کنار متن انتخاب‌شده",
+  "ui.onboarding-button-description": "روی دکمه‌ای که کنار متن انتخاب‌شده ظاهر می‌شود کلیک کنید.",
+  "ui.onboarding-hotkey-title": "میان‌بر صفحه‌کلید",
+  "ui.onboarding-hotkey-description": "متن را انتخاب کنید و میان‌بر تعیین‌شده را فشار دهید.",
+  "ui.onboarding-context-title": "منوی زمینه",
+  "ui.onboarding-context-description": "روی متن انتخاب‌شده راست‌کلیک کنید و ترجمه را انتخاب کنید."
 }
