@@ -46,7 +46,6 @@ describe("English options interface", () => {
     expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
     expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
     expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(0);
-    expect(screen.getByText("On-page example")).toBeTruthy();
     expect(screen.getByText("Standalone translator example")).toBeTruthy();
     expect(document.querySelector(".visual-popup-source strong")?.textContent).toBe("el contexto importa");
     expect(document.querySelector(".visual-translator-input")?.textContent).toBe("updated");

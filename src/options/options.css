@@ -1652,7 +1652,7 @@ h1 {
 .help-task-hero .help-visual-example figcaption > strong { color: #fff; }
 .help-task-hero .help-visual-example figcaption > p { color: rgba(255, 255, 255, .8); }
 .help-reading-overview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: center; gap: 32px; }
-.help-reading-hero .help-hero-copy h3 { margin: 0; color: #fff; font-size: clamp(20px, 2vw, 25px); line-height: 1.25; }
+.help-reading-hero .help-hero-copy h3 { margin: 24px 0 0; color: #fff; font-size: clamp(20px, 2vw, 25px); line-height: 1.25; }
 .help-reading-hero .help-selection-example { grid-template-columns: minmax(0, 1fr); gap: 20px; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
 
 @media (max-width: 1100px) {
@@ -1870,7 +1870,7 @@ h1 {
 }
 
 .help-section {
-  margin-top: 78px;
+  margin-top: 64px;
   scroll-margin-top: 104px;
 }
 
@@ -2256,6 +2256,12 @@ h1 {
   color: #2b3647;
   font-size: 16px;
 }
+
+.help-reading-details .help-card { padding-right: 36px; }
+.help-card-heading { display: flex; align-items: center; gap: 14px; }
+.help-card-heading .help-card-icon { flex: none; margin-bottom: 0; }
+
+.help-card-description { margin: 14px 0 0; color: #687487; font-size: 13px; line-height: 1.65; }
 
 .help-card ol {
   display: grid;
@@ -2729,7 +2735,7 @@ h1 {
 
   .help-callout { grid-template-columns: 22px minmax(0, 1fr); }
   .help-callout button { grid-column: 2; justify-self: start; }
-  .help-section { margin-top: 58px; }
+  .help-section { margin-top: 48px; }
   .help-page .help-footer { display: none; }
 }
 

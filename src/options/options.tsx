@@ -1387,37 +1387,35 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 <PageHeading title="Как пользоваться" description="Практическое руководство по использованию расширения" />
 
       <section className="help-section help-hero help-task-hero help-reading-hero" id="help-reading" aria-labelledby="help-reading-title">
-        <div className="help-section-heading help-reading-heading"><span>Задача 01</span><h2 id="help-reading-title">Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место, на котором остановились в тексте.</p></div>
+        <div className="help-section-heading help-reading-heading"><h2 id="help-reading-title">Читайте текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы мгновенно перевести любое слово или выражение прямо в тексте.</p></div>
         <div className="help-reading-overview">
           <div className="help-hero-copy">
-            <span className="help-kicker">Быстрый старт</span>
-            <h3 id="quick-start-title">Первый перевод — за несколько секунд</h3>
+            <h3 id="quick-start-title">Выделите фразу — и сразу увидите перевод</h3>
             <ol className="quick-steps">
-              <li><span>1</span><div><strong>Откройте обычную веб-страницу</strong><p>Статья, документация, письмо или учебный материал — подойдёт любой доступный сайт.</p></div></li>
+              <li><span>1</span><div><strong>Откройте любую веб-страницу</strong><p>Статья, документация, письмо или учебный материал — подойдёт любой доступный сайт.</p></div></li>
               <li><span>2</span><div><strong>Выделите нужный текст</strong><p>Можно выбрать одно слово, фразу или целый абзац.</p></div></li>
-              <li><span>3</span><div><strong>Изучите результат</strong><p>В окне появятся перевод, контекст, варианты значения, транскрипция и кнопка озвучивания.</p></div></li>
+              <li><span>3</span><div><strong>Ознакомьтесь с переводом</strong><p>В окне появятся перевод, транскрипция, озвучка и перевод контекста.</p></div></li>
             </ol>
           </div>
           <SelectionHelpExample />
         </div>
       </section>
 
-      <div className="help-card-grid">
-        <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
-        <article className="help-card"><div className="help-card-icon"><TextIcon /></div><h3>Предложение или абзац</h3><ol><li>Выделите текст целиком.</li><li>Для длинного фрагмента основным результатом станет перевод всего выделения.</li><li>Проверьте границы выделения, если смысл кажется неполным.</li></ol><p className="help-tip"><strong>Полезно для:</strong> статей, документации, учебников и деловой переписки.</p></article>
+      <div className="help-card-grid help-reading-details">
+        <article className="help-card">
+          <div className="help-card-heading"><div className="help-card-icon"><SoundIcon /></div><h3>Транскрипция и озвучка</h3></div>
+          <p className="help-card-description">Транскрипция подскажет, как читается выделенное слово. А озвучка позволит услышать его произношение на заданной скорости.</p>
+        </article>
+        <article className="help-card">
+          <div className="help-card-heading"><div className="help-card-icon"><TextIcon /></div><h3>Перевод контекста</h3></div>
+          <p className="help-card-description">Помимо перевода самого слова, вы увидите перевод всего предложения, в котором оно встретилось. Так проще понять значение слова в контексте.</p>
+        </article>
       </div>
-      <div className="help-callout"><InfoIcon /><div><strong>Не хотите открывать окно при каждом выделении?</strong><p>Включите активацию горячими клавишами: тогда перевод запускается только после вашей комбинации. Это удобно при копировании и редактировании текста.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Настроить клавиши</button></div>
-
-      <nav className="help-toc" aria-label="Содержание справки">
-        <a href="#help-reading"><ReadingIcon /><span><strong>Чтение</strong><small>Перевод выделения</small></span></a>
-        <a href="#help-writing"><KeyboardIcon /><span><strong>Переводчик</strong><small>Ввод своего текста</small></span></a>
-        <a href="#help-listening"><SoundIcon /><span><strong>Произношение</strong><small>Транскрипция и звук</small></span></a>
-        <a href="#help-vocabulary"><BookmarkIcon /><span><strong>Словарь</strong><small>История и экспорт</small></span></a>
-      </nav>
+      <div className="help-callout"><InfoIcon /><div><strong>Не хотите, чтобы окно с переводом открывалось при каждом выделении?</strong><p>Настройте активацию перевода: горячими клавишами, кликом по отдельной кнопке или через контекстное меню.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Настроить активацию перевода</button></div>
 
       <section className="help-section" id="help-writing">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><span>Задача 02</span><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
+          <div className="help-section-heading"><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
           <TranslatorHelpExample />
         </div>
         <div className="workflow-card">
@@ -1432,7 +1430,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-listening">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><span>Задача 03</span><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
+          <div className="help-section-heading"><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
           <SpeechHelpExample />
         </div>
         <div className="help-card-grid help-card-grid-three">
@@ -1445,7 +1443,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-vocabulary">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
+          <div className="help-section-heading"><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
           <HistoryHelpExample />
         </div>
         <div className="vocabulary-layout">
@@ -1456,7 +1454,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><span>Задача 05</span><h2>Переносите переводы в другие приложения</h2><p>Экспортируйте всю историю в подходящем формате. Файл создаётся по вашему запросу и сохраняется через браузер.</p></div>
+          <div className="help-section-heading"><h2>Переносите переводы в другие приложения</h2><p>Экспортируйте всю историю в подходящем формате. Файл создаётся по вашему запросу и сохраняется через браузер.</p></div>
         </div>
         <div className="format-guide">
           <div><span>ANKI</span><h3>Для интервального повторения</h3><p>Anki CSV или Anki TSV — готовая основа для импорта карточек.</p></div>
@@ -1537,7 +1535,6 @@ function SelectionHelpExample() {
           </div>
         </div>
       </div>
-      <figcaption><span>Пример на странице</span><strong>Выделите фразу — и сразу увидите перевод</strong><p>Окно появляется рядом с текстом, поэтому контекст и место чтения не теряются.</p></figcaption>
     </AnimatedHelpExample>
   );
 }

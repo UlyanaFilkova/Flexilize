@@ -103,11 +103,11 @@ describe("options page", () => {
   it("shows a detailed help section and links it to settings", async () => {
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
     expect(screen.getByRole("heading", {name: "Как пользоваться"})).toBeTruthy();
-    expect(screen.getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
-    expect(screen.getByRole("heading", {name: "Читаете текст на иностранном языке"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Выделите фразу — и сразу увидите перевод"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Читайте текст на иностранном языке"})).toBeTruthy();
     const reading = document.getElementById("help-reading")!;
     expect(reading.classList.contains("help-reading-hero")).toBe(true);
-    expect(within(reading).getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
+    expect(within(reading).getByRole("heading", {name: "Выделите фразу — и сразу увидите перевод"})).toBeTruthy();
     expect(reading.querySelectorAll(".help-selection-example")).toHaveLength(1);
     expect(reading.querySelectorAll(".help-card, .help-callout")).toHaveLength(0);
     expect(reading.nextElementSibling?.querySelectorAll(".help-card")).toHaveLength(2);
@@ -119,7 +119,7 @@ describe("options page", () => {
     expect(document.querySelectorAll(".help-task-hero .help-card-grid, .help-task-hero .workflow-card, .help-task-hero .vocabulary-layout, .help-task-hero .format-guide")).toHaveLength(0);
     expect(location.hash).toBe("#help");
 
-    await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
+    await userEvent.click(screen.getByRole("button", {name: "Настроить активацию перевода"}));
     expect(screen.getByRole("heading", {name: "Активация"})).toBeTruthy();
     expect(location.hash).toBe("#settings/general");
   });
