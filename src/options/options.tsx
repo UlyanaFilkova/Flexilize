@@ -1385,7 +1385,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
   }, []);
   return (
     <div className="help-page">
-<PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в другие приложения" />
+<PageHeading title="Как пользоваться" description="Практическое руководство по использованию расширения" />
 
       <section className="help-hero" aria-labelledby="quick-start-title">
         <div className="help-hero-copy">
@@ -1412,7 +1412,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       </nav>
 
       <section className="help-section" id="help-reading">
-        <div className="help-section-heading"><span>Задача 01</span><h2>Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место в тексте.</p></div>
+        <div className="help-section-heading"><span>Задача 01</span><h2>Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место, на котором остановились в тексте.</p></div>
         <SelectionHelpExample />
         <div className="help-card-grid">
           <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
@@ -1533,7 +1533,7 @@ function SelectionHelpExample() {
           </div>
         </div>
       </div>
-      <figcaption><span>Пример на странице</span><strong>Выделили фразу — сразу получили перевод</strong><p>Окно остаётся рядом с текстом, поэтому контекст и место чтения не теряются.</p></figcaption>
+      <figcaption><span>Пример на странице</span><strong>Выделите фразу — и сразу увидите перевод</strong><p>Окно появляется рядом с текстом, поэтому контекст и место чтения не теряются.</p></figcaption>
     </AnimatedHelpExample>
   );
 }
