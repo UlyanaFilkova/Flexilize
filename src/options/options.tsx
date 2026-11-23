@@ -1378,7 +1378,6 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 }
 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
-  const example = helpExamples();
   const [historyRecordLimit, setHistoryRecordLimit] = useState(MAX_HISTORY_RECORDS);
   useEffect(() => {
     void getExtensionSettings().then((settings) => setHistoryRecordLimit(settings.historyRecordLimit)).catch(() => {});
@@ -1387,22 +1386,27 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
     <div className="help-page">
 <PageHeading title="Как пользоваться" description="Практическое руководство по использованию расширения" />
 
-      <section className="help-hero" aria-labelledby="quick-start-title">
-        <div className="help-hero-copy">
-          <span className="help-kicker">Быстрый старт</span>
-          <h2 id="quick-start-title">Первый перевод — за несколько секунд</h2>
-          <ol className="quick-steps">
-            <li><span>1</span><div><strong>Откройте обычную веб-страницу</strong><p>Статья, документация, письмо или учебный материал — подойдёт любой доступный сайт.</p></div></li>
-            <li><span>2</span><div><strong>Выделите нужный текст</strong><p>Можно выбрать одно слово, фразу или целый абзац.</p></div></li>
-            <li><span>3</span><div><strong>Изучите результат</strong><p>В окне появятся перевод, контекст, варианты значения, транскрипция и кнопка озвучивания.</p></div></li>
-          </ol>
-        </div>
-        <div className="help-demo" aria-hidden="true">
-          <div className="demo-browser-bar"><i /><i /><i /><span>example.com/article</span></div>
-          <div className="demo-copy"><span /><span /><em translate="no" lang={example.sourceLanguage} dir="ltr">{example.selection.source}</em><span /><span /></div>
-          <div className="demo-translation"><small translate="no" dir="ltr">{example.directionCodes}</small><strong translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.selection.translation}</strong><p translate="no" dir="ltr">{example.selection.transcription}</p><div><span>Слушать</span><span>Сохранено</span></div></div>
+      <section className="help-section help-hero help-task-hero help-reading-hero" id="help-reading" aria-labelledby="help-reading-title">
+        <div className="help-section-heading help-reading-heading"><span>Задача 01</span><h2 id="help-reading-title">Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место, на котором остановились в тексте.</p></div>
+        <div className="help-reading-overview">
+          <div className="help-hero-copy">
+            <span className="help-kicker">Быстрый старт</span>
+            <h3 id="quick-start-title">Первый перевод — за несколько секунд</h3>
+            <ol className="quick-steps">
+              <li><span>1</span><div><strong>Откройте обычную веб-страницу</strong><p>Статья, документация, письмо или учебный материал — подойдёт любой доступный сайт.</p></div></li>
+              <li><span>2</span><div><strong>Выделите нужный текст</strong><p>Можно выбрать одно слово, фразу или целый абзац.</p></div></li>
+              <li><span>3</span><div><strong>Изучите результат</strong><p>В окне появятся перевод, контекст, варианты значения, транскрипция и кнопка озвучивания.</p></div></li>
+            </ol>
+          </div>
+          <SelectionHelpExample />
         </div>
       </section>
+
+      <div className="help-card-grid">
+        <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
+        <article className="help-card"><div className="help-card-icon"><TextIcon /></div><h3>Предложение или абзац</h3><ol><li>Выделите текст целиком.</li><li>Для длинного фрагмента основным результатом станет перевод всего выделения.</li><li>Проверьте границы выделения, если смысл кажется неполным.</li></ol><p className="help-tip"><strong>Полезно для:</strong> статей, документации, учебников и деловой переписки.</p></article>
+      </div>
+      <div className="help-callout"><InfoIcon /><div><strong>Не хотите открывать окно при каждом выделении?</strong><p>Включите активацию горячими клавишами: тогда перевод запускается только после вашей комбинации. Это удобно при копировании и редактировании текста.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Настроить клавиши</button></div>
 
       <nav className="help-toc" aria-label="Содержание справки">
         <a href="#help-reading"><ReadingIcon /><span><strong>Чтение</strong><small>Перевод выделения</small></span></a>
@@ -1411,19 +1415,11 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         <a href="#help-vocabulary"><BookmarkIcon /><span><strong>Словарь</strong><small>История и экспорт</small></span></a>
       </nav>
 
-      <section className="help-section" id="help-reading">
-        <div className="help-section-heading"><span>Задача 01</span><h2>Читаете текст на иностранном языке</h2><p>Используйте перевод выделения, чтобы не переключаться между вкладками и не терять место, на котором остановились в тексте.</p></div>
-        <SelectionHelpExample />
-        <div className="help-card-grid">
-          <article className="help-card"><div className="help-card-icon"><CursorIcon /></div><h3>Слово или короткая фраза</h3><ol><li>Выделите фрагмент мышью или клавиатурой.</li><li>Изучите основной и дополнительный перевод</li><li>Сверьте с переводом контекста.</li></ol><p className="help-tip"><strong>Совет:</strong> выделяйте слово прямо в предложении — расширение сохранит окружающий контекст вместе с переводом.</p></article>
-          <article className="help-card"><div className="help-card-icon"><TextIcon /></div><h3>Предложение или абзац</h3><ol><li>Выделите текст целиком.</li><li>Для длинного фрагмента основным результатом станет перевод всего выделения.</li><li>Проверьте границы выделения, если смысл кажется неполным.</li></ol><p className="help-tip"><strong>Полезно для:</strong> статей, документации, учебников и деловой переписки.</p></article>
-        </div>
-        <div className="help-callout"><InfoIcon /><div><strong>Не хотите открывать окно при каждом выделении?</strong><p>Включите активацию горячими клавишами: тогда перевод запускается только после вашей комбинации. Это удобно при копировании и редактировании текста.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Настроить клавиши</button></div>
-      </section>
-
       <section className="help-section" id="help-writing">
-        <div className="help-section-heading"><span>Задача 02</span><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
-        <TranslatorHelpExample />
+        <div className="help-hero help-task-hero">
+          <div className="help-section-heading"><span>Задача 02</span><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
+          <TranslatorHelpExample />
+        </div>
         <div className="workflow-card">
           <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Нажмите назначенную горячую клавишу. По умолчанию комбинацию можно посмотреть или изменить в настройках.</p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
@@ -1435,8 +1431,10 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       </section>
 
       <section className="help-section" id="help-listening">
-        <div className="help-section-heading"><span>Задача 03</span><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
-        <SpeechHelpExample />
+        <div className="help-hero help-task-hero">
+          <div className="help-section-heading"><span>Задача 03</span><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
+          <SpeechHelpExample />
+        </div>
         <div className="help-card-grid help-card-grid-three">
           <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка и фрагмента.</p></article>
           <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку звука в окне перевода и повторите фразу вслух.</p></article>
@@ -1446,8 +1444,10 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       </section>
 
       <section className="help-section" id="help-vocabulary">
-        <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
-        <HistoryHelpExample />
+        <div className="help-hero help-task-hero">
+          <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
+          <HistoryHelpExample />
+        </div>
         <div className="vocabulary-layout">
           <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong>{" "}{formatMessage("ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically", {count: String(historyRecordLimit)})}</span></li></ul></article>
           <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
@@ -1455,7 +1455,9 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       </section>
 
       <section className="help-section">
-        <div className="help-section-heading"><span>Задача 05</span><h2>Переносите переводы в другие приложения</h2><p>Экспортируйте всю историю в подходящем формате. Файл создаётся по вашему запросу и сохраняется через браузер.</p></div>
+        <div className="help-hero help-task-hero">
+          <div className="help-section-heading"><span>Задача 05</span><h2>Переносите переводы в другие приложения</h2><p>Экспортируйте всю историю в подходящем формате. Файл создаётся по вашему запросу и сохраняется через браузер.</p></div>
+        </div>
         <div className="format-guide">
           <div><span>ANKI</span><h3>Для интервального повторения</h3><p>Anki CSV или Anki TSV — готовая основа для импорта карточек.</p></div>
           <div><span>XLSX · CSV · TSV</span><h3>Для таблиц и анализа</h3><p>Подойдут для Excel, Google Таблиц, сортировки и собственной обработки.</p></div>
@@ -1466,13 +1468,15 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       </section>
 
       <section className="help-section help-troubleshooting">
-        <div className="help-section-heading"><span>Если что-то не работает</span><h2>Частые вопросы</h2></div>
-        <div className="faq-list">
-          <details><summary>Окно перевода не появляется после выделения</summary><p>{translate("Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения.")} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
-          <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
-          <details><summary>Новая запись не появилась в истории</summary><p>{formatMessage("ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation", {count: String(historyRecordLimit)})}</p></details>
-          <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
-          <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удалите данные расширения средствами браузера.</p></details>
+        <div className="help-hero help-task-hero">
+          <div className="help-section-heading"><span>Если что-то не работает</span><h2>Частые вопросы</h2></div>
+          <div className="faq-list">
+            <details><summary>Окно перевода не появляется после выделения</summary><p>{translate("Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения.")} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
+            <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
+            <details><summary>Новая запись не появилась в истории</summary><p>{formatMessage("ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation", {count: String(historyRecordLimit)})}</p></details>
+            <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
+            <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удалите данные расширения средствами браузера.</p></details>
+          </div>
         </div>
       </section>
 

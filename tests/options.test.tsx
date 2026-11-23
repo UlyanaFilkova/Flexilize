@@ -105,8 +105,18 @@ describe("options page", () => {
     expect(screen.getByRole("heading", {name: "Как пользоваться"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
     expect(screen.getByRole("heading", {name: "Читаете текст на иностранном языке"})).toBeTruthy();
+    const reading = document.getElementById("help-reading")!;
+    expect(reading.classList.contains("help-reading-hero")).toBe(true);
+    expect(within(reading).getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
+    expect(reading.querySelectorAll(".help-selection-example")).toHaveLength(1);
+    expect(reading.querySelectorAll(".help-card, .help-callout")).toHaveLength(0);
+    expect(reading.nextElementSibling?.querySelectorAll(".help-card")).toHaveLength(2);
+    expect(reading.nextElementSibling?.nextElementSibling?.classList.contains("help-callout")).toBe(true);
     expect(screen.getByRole("heading", {name: "Частые вопросы"})).toBeTruthy();
     expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-task-hero")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-task-hero .help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-task-hero .help-card-grid, .help-task-hero .workflow-card, .help-task-hero .vocabulary-layout, .help-task-hero .format-guide")).toHaveLength(0);
     expect(location.hash).toBe("#help");
 
     await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
@@ -127,7 +137,6 @@ describe("options page", () => {
     expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
     expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
     expect(observers).toHaveLength(2);
-    expect(document.querySelector(".demo-translation > small")?.textContent).toBe("EN → RU");
     expect(document.querySelector(".visual-translator-input")?.textContent).toBe("обновленный");
     expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("ru");
     expect(document.querySelector(".visual-translator-panes > div:last-child p")?.textContent).toBe("updated");

@@ -48,7 +48,6 @@ describe("English options interface", () => {
     expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(0);
     expect(screen.getByText("On-page example")).toBeTruthy();
     expect(screen.getByText("Standalone translator example")).toBeTruthy();
-    expect(document.querySelector(".demo-translation > small")?.textContent).toBe("ES → EN");
     expect(document.querySelector(".visual-popup-source strong")?.textContent).toBe("el contexto importa");
     expect(document.querySelector(".visual-translator-input")?.textContent).toBe("updated");
     expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("en");
