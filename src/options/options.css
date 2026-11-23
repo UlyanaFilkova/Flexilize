@@ -791,6 +791,44 @@ h1 {
   opacity: .55;
 }
 
+.history-limit-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.history-limit-controls input {
+  width: 100px;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid #d8dee8;
+  border-radius: 10px;
+  color: #344054;
+  font: inherit;
+}
+
+.history-limit-controls button {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid #d8dee8;
+  border-radius: 10px;
+  background: #fff;
+  color: #315be8;
+  cursor: pointer;
+  font: inherit;
+}
+
+.history-limit-controls :focus-visible {
+  outline: 3px solid rgba(49, 91, 232, .3);
+}
+
+.history-limit-controls :disabled {
+  opacity: .55;
+  cursor: default;
+}
+
 .setting-select {
   appearance: none;
   min-width: 220px;

@@ -241,7 +241,7 @@
   "ui.every-translation-goes-straight-to-history": "— çdo përkthim shkon direkt në histori.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— vetëm regjistrimet që ju zgjidhni i shtohen fjalorit tuaj.",
   "ui.refine-the-translation-context-transcription-and-source": "— Përmirësoni përkthimin, kontekstin, transkriptimin dhe burimin.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— në kufirin prej 5000 rekordesh, përkthimet më të vjetra mund të zëvendësohen automatikisht.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— në kufirin prej {count} rekordesh, përkthimet më të vjetra mund të zëvendësohen automatikisht.",
   "ui.open-history": "Hap historinë",
   "ui.view-and-edit-records": "Shikoni dhe modifikoni regjistrimet",
   "ui.configure-saving": "Konfiguro ruajtjen",
@@ -264,7 +264,7 @@
   "ui.translation-or-speech-does-not-load": "Përkthimi ose fjalimi nuk ngarkohet",
   "ui.a-new-record-did-not-appear-in-history": "Një rekord i ri nuk u shfaq në histori",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Këto veçori kërkojnë një lidhje interneti. Kontrollo lidhjen tënde dhe provo sërish. Disa sajte mund të kufizojnë elementët e integruar; krahasoni rezultatin në një faqe tjetër.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kontrolloni mënyrën e ruajtjes. Në modalitetin manual, klikoni Ruaj në dritaren e përkthimit. Nëse rrotullimi është i çaktivizuar dhe është arritur kufiri i 5000 rekordeve, fshini të dhënat e panevojshme ose aktivizoni rrotullimin automatik.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kontrolloni mënyrën e ruajtjes. Në modalitetin manual, klikoni Ruaj në dritaren e përkthimit. Nëse rrotullimi është i çaktivizuar dhe është arritur kufiri i {count} rekordeve, fshini të dhënat e panevojshme ose aktivizoni rrotullimin automatik.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Shkurtorja bie ndesh me faqen e internetit ose shfletuesin",
   "ui.where-is-my-data-stored": "Ku ruhen të dhënat e mia?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Hapni shkurtoret e tastierës, klikoni kombinimin aktual dhe futni një tjetër duke përdorur Ctrl, Alt, Shift ose Meta. Zgjidhni një shkurtore që nuk përdoret nga shfletuesi ose faqja aktuale e internetit.",
@@ -365,8 +365,8 @@
   "ui.speak-code": "Flisni ({code}) ()",
   "ui.speech-error-error": "Gabim në të folur: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Kufiri i {count} përkthimeve është arritur. Shkarkoni të dhënat e ruajtura dhe pastroni hapësirën ruajtëse për të ruajtur të reja.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kur rrotullimi është i çaktivizuar, të dhënat e reja nuk do të ruhen ndërsa është arritur kufiri i {count}-rekordeve.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kur përkthimet e reja tejkalojnë kufirin e {count}-record, regjistrimet më të vjetra hiqen automatikisht, duke e mbajtur historinë në {count} regjistrime.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kur rrotullimi është joaktiv, regjistrimet e reja nuk do të ruhen në historik për sa kohë është arritur kufiri {count}. Regjistrimet e vjetra do të mbeten në historik.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kur shtohen përkthime të reja mbi kufirin {count}, regjistrimet më të vjetra do të fshihen automatikisht nga historiku. Kështu, numri i përgjithshëm i regjistrimeve në historik do të mbetet {count}.",
   "ui.translated-from-english": "Përkthyer nga anglishtja",
   "ui.on-page-example": "Shembull në faqe",
   "ui.select-a-phrase-and-get-an-instant-translation": "Zgjidhni një frazë dhe merrni një përkthim të menjëhershëm",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menuja e kontekstit",
   "ui.onboarding-context-description": "Klikoni me të djathtën mbi tekstin e zgjedhur dhe zgjidhni përkthimin.",
   "ui.onboarding-shortcut-change-hint": "Shkurtoren mund ta ndryshoni te cilësimet.",
-  "ui.could-not-copy-translations": "Përkthimet nuk mund të kopjoheshin"
+  "ui.could-not-copy-translations": "Përkthimet nuk mund të kopjoheshin",
+  "ui.history-record-limit": "Kufiri i regjistrimeve në historik",
+  "ui.history-record-limit-description": "Nga 1 deri në 5000. Kur rrotullimi është aktiv, regjistrimet e vjetra do të fshihen kur ruhet një përkthim i ri."
 }

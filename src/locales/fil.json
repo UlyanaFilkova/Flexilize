@@ -176,7 +176,7 @@
   "ui.every-translation-goes-straight-to-history": "— ang bawat pagsasalin ay dumiretso sa kasaysayan.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— ang mga rekord lamang na pipiliin mo ang idinaragdag sa iyong bokabularyo.",
   "ui.refine-the-translation-context-transcription-and-source": "— pinuhin ang pagsasalin, konteksto, transkripsyon, at pinagmulan.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— sa 5,000-record na limitasyon, ang mga mas lumang pagsasalin ay maaaring awtomatikong palitan.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— sa {count}-record na limitasyon, ang mga mas lumang pagsasalin ay maaaring awtomatikong palitan.",
   "ui.open-history": "Buksan ang kasaysayan",
   "ui.view-and-edit-records": "Tingnan at i-edit ang mga talaan",
   "ui.configure-saving": "I-configure ang pag-save",
@@ -199,7 +199,7 @@
   "ui.translation-or-speech-does-not-load": "Hindi naglo-load ang pagsasalin o pagsasalita",
   "ui.a-new-record-did-not-appear-in-history": "Hindi lumitaw ang isang bagong tala sa kasaysayan",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Ang mga tampok na ito ay nangangailangan ng koneksyon sa internet. Suriin ang iyong koneksyon at subukang muli. Maaaring paghigpitan ng ilang site ang mga naka-embed na elemento; ihambing ang resulta sa ibang site.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Suriin ang saving mode. Sa manual mode, i-click ang I-save sa window ng pagsasalin. Kung hindi pinagana ang pag-ikot at naabot na ang 5,000-record na limitasyon, tanggalin ang mga hindi kinakailangang tala o paganahin ang awtomatikong pag-ikot.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Suriin ang saving mode. Sa manual mode, i-click ang I-save sa window ng pagsasalin. Kung hindi pinagana ang pag-ikot at naabot na ang {count}-record na limitasyon, tanggalin ang mga hindi kinakailangang tala o paganahin ang awtomatikong pag-ikot.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Sumasalungat ang shortcut sa website o browser",
   "ui.where-is-my-data-stored": "Saan nakaimbak ang aking data?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Buksan ang mga keyboard shortcut, i-click ang kasalukuyang kumbinasyon, at magpasok ng isa pa gamit ang Ctrl, Alt, Shift, o Meta. Pumili ng shortcut na hindi ginagamit ng browser o kasalukuyang website.",
@@ -297,8 +297,8 @@
   "ui.speak-code": "Magsalita ({code})",
   "ui.speech-error-error": "Error sa pananalita: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Naabot na ang limitasyon ng {count} na pagsasalin. I-download ang mga naka-save na tala at i-clear ang storage para mag-save ng mga bago.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kapag hindi pinagana ang pag-ikot, hindi mase-save ang mga bagong tala habang naabot na ang {count}-record na limitasyon.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kapag ang mga bagong pagsasalin ay lumampas sa {count}-record na limitasyon, ang mga pinakalumang talaan ay awtomatikong aalisin, na pinapanatili ang kasaysayan sa {count} na mga tala.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kapag naka-off ang pag-ikot, hindi mase-save sa kasaysayan ang mga bagong tala habang naabot ang limitasyong {count}. Mananatili sa kasaysayan ang mga lumang tala.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kapag lumampas sa limitasyong {count} ang pagdagdag ng mga bagong salin, awtomatikong buburahin sa kasaysayan ang mga pinakalumang tala. Sa ganitong paraan, mananatiling {count} ang kabuuang bilang ng mga tala sa kasaysayan.",
   "ui.translated-from-english": "Isinalin mula sa Ingles",
   "ui.on-page-example": "Halimbawa sa pahina",
   "ui.select-a-phrase-and-get-an-instant-translation": "Pumili ng parirala at kumuha ng agarang pagsasalin",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu ng konteksto",
   "ui.onboarding-context-description": "I-right-click ang napiling teksto at piliin ang pagsasalin.",
   "ui.onboarding-shortcut-change-hint": "Maaari mong baguhin ang shortcut sa mga setting.",
-  "ui.could-not-copy-translations": "Hindi makopya ang mga pagsasalin"
+  "ui.could-not-copy-translations": "Hindi makopya ang mga pagsasalin",
+  "ui.history-record-limit": "Limitasyon ng mga tala sa kasaysayan",
+  "ui.history-record-limit-description": "Mula 1 hanggang 5000. Kapag naka-on ang pag-ikot, buburahin ang mga lumang tala kapag nag-save ng bagong salin."
 }

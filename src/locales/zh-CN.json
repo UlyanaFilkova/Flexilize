@@ -229,7 +229,7 @@
   "ui.every-translation-goes-straight-to-history": "—每个翻译都会直接进入历史记录。",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— 仅将您选择的记录添加到词汇表中。",
   "ui.refine-the-translation-context-transcription-and-source": "— 优化翻译、上下文、音标和来源。",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 在 5,000 条记录限制下，可以自动替换较旧的翻译。",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 在 {count} 条记录限制下，可以自动替换较旧的翻译。",
   "ui.open-history": "打开历史记录",
   "ui.view-and-edit-records": "查看和编辑记录",
   "ui.configure-saving": "配置保存",
@@ -252,7 +252,7 @@
   "ui.translation-or-speech-does-not-load": "翻译或语音未加载",
   "ui.a-new-record-did-not-appear-in-history": "历史记录中未出现新记录",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "这些功能需要互联网连接。检查您的连接并重试。有些网站可能会限制嵌入元素；比较另一个网站上的结果。",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "检查保存模式。在手动模式下，单击翻译窗口中的“保存”。如果禁用轮换且已达到 5,000 条记录限制，请删除不需要的记录或启用自动轮换。",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "检查保存模式。在手动模式下，单击翻译窗口中的“保存”。如果禁用轮换且已达到 {count} 条记录限制，请删除不需要的记录或启用自动轮换。",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "快捷方式与网站或浏览器冲突",
   "ui.where-is-my-data-stored": "我的数据存储在哪里？",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "打开键盘快捷键，单击当前组合，然后使用 Ctrl、Alt、Shift 或 Meta 输入另一个组合。选择浏览器或当前网站未使用的快捷方式。",
@@ -352,8 +352,8 @@
   "ui.speak-code": "讲话 ({code})",
   "ui.speech-error-error": "语音错误：{error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "已达到 {count} 次翻译的限制。下载保存的记录并清除存储以保存新记录。",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "禁用轮换后，当达到 {count} 条记录限制时，将不会保存新记录。",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "当新翻译超过 {count} 条记录限制时，最旧的记录将被自动删除，将历史记录保留在 {count} 条记录中。",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "关闭轮换后，只要记录数量达到 {count} 条的上限，就不会保存新记录。旧记录将保留在历史记录中。",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "添加新翻译超过 {count} 条的上限时，最旧的记录会自动从历史记录中删除。这样，历史记录总数将保持为 {count} 条。",
   "ui.translated-from-english": "翻译自英文",
   "ui.on-page-example": "页面示例",
   "ui.select-a-phrase-and-get-an-instant-translation": "选择一个短语并获得即时翻译",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "右键菜单",
   "ui.onboarding-context-description": "右键点击所选文本并选择翻译。",
   "ui.onboarding-shortcut-change-hint": "您可以在设置中更改快捷键。",
-  "ui.could-not-copy-translations": "无法复制翻译"
+  "ui.could-not-copy-translations": "无法复制翻译",
+  "ui.history-record-limit": "历史记录数量上限",
+  "ui.history-record-limit-description": "1 至 5000。启用轮换后，保存新翻译时会删除旧记录。"
 }

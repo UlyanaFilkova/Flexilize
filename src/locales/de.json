@@ -221,7 +221,7 @@
   "ui.every-translation-goes-straight-to-history": "– jede Übersetzung geht direkt in den Verlauf.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "– Nur die von Ihnen ausgewählten Datensätze werden Ihrem Vokabular hinzugefügt.",
   "ui.refine-the-translation-context-transcription-and-source": "– Verfeinern Sie die Übersetzung, den Kontext, die Transkription und die Quelle.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "– Bei der Beschränkung auf 5.000 Datensätze können ältere Übersetzungen automatisch ersetzt werden.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "– Bei der Beschränkung auf {count} Datensätze können ältere Übersetzungen automatisch ersetzt werden.",
   "ui.open-history": "Verlauf öffnen",
   "ui.view-and-edit-records": "Datensätze anzeigen und bearbeiten",
   "ui.configure-saving": "Speichern konfigurieren",
@@ -244,7 +244,7 @@
   "ui.translation-or-speech-does-not-load": "Übersetzung oder Sprache werden nicht geladen",
   "ui.a-new-record-did-not-appear-in-history": "Ein neuer Datensatz wurde nicht im Verlauf angezeigt",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Für diese Funktionen ist eine Internetverbindung erforderlich. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut. Einige Websites schränken eingebettete Elemente möglicherweise ein. Vergleichen Sie das Ergebnis auf einer anderen Website.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Überprüfen Sie den Speichermodus. Klicken Sie im manuellen Modus im Übersetzungsfenster auf Speichern. Wenn die Rotation deaktiviert ist und das Limit von 5.000 Datensätzen erreicht wurde, löschen Sie nicht benötigte Datensätze oder aktivieren Sie die automatische Rotation.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Überprüfen Sie den Speichermodus. Klicken Sie im manuellen Modus im Übersetzungsfenster auf Speichern. Wenn die Rotation deaktiviert ist und das Limit von {count} Datensätzen erreicht wurde, löschen Sie nicht benötigte Datensätze oder aktivieren Sie die automatische Rotation.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Die Verknüpfung steht in Konflikt mit der Website oder dem Browser",
   "ui.where-is-my-data-stored": "Wo werden meine Daten gespeichert?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Öffnen Sie Tastaturkürzel, klicken Sie auf die aktuelle Kombination und geben Sie mit Strg, Alt, Umschalt oder Meta eine andere ein. Wählen Sie eine Verknüpfung, die vom Browser oder der aktuellen Website nicht verwendet wird.",
@@ -343,8 +343,8 @@
   "ui.speak-code": "Sprechen ({code})",
   "ui.speech-error-error": "Sprachfehler: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Das Limit von {count} Übersetzungen wurde erreicht. Laden Sie die gespeicherten Datensätze herunter und leeren Sie den Speicher, um neue zu speichern.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Wenn die Rotation deaktiviert ist, werden keine neuen Datensätze gespeichert, solange das {count}-Datensatzlimit erreicht ist.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Wenn neue Übersetzungen das Limit von {count}-Datensätzen überschreiten, werden die ältesten Datensätze automatisch entfernt, sodass der Verlauf bei {count} Datensätzen bleibt.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Bei deaktivierter Rotation werden keine neuen Einträge im Verlauf gespeichert, solange das Limit von {count} erreicht ist. Bestehende Einträge bleiben im Verlauf erhalten.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Wenn neue Übersetzungen das Limit von {count} überschreiten, werden die ältesten Einträge automatisch aus dem Verlauf gelöscht. So bleibt die Gesamtzahl der Einträge im Verlauf bei {count}.",
   "ui.translated-from-english": "Übersetzt aus dem Englischen",
   "ui.on-page-example": "Beispiel auf der Seite",
   "ui.select-a-phrase-and-get-an-instant-translation": "Phrase markiert – Übersetzung sofort erhalten",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Kontextmenü",
   "ui.onboarding-context-description": "Klicken Sie mit der rechten Maustaste auf den markierten Text und wählen Sie die Übersetzung.",
   "ui.onboarding-shortcut-change-hint": "Sie können die Tastenkombination in den Einstellungen ändern.",
-  "ui.could-not-copy-translations": "Die Übersetzungen konnten nicht kopiert werden"
+  "ui.could-not-copy-translations": "Die Übersetzungen konnten nicht kopiert werden",
+  "ui.history-record-limit": "Maximale Anzahl der Verlaufseinträge",
+  "ui.history-record-limit-description": "Von 1 bis 5000. Bei aktivierter Rotation werden alte Einträge beim Speichern einer neuen Übersetzung gelöscht."
 }

@@ -248,7 +248,7 @@
   "ui.every-translation-goes-straight-to-history": "— ყოველი თარგმანი პირდაპირ ისტორიაში გადადის.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— მხოლოდ თქვენ მიერ არჩეული ჩანაწერები ემატება თქვენს ლექსიკას.",
   "ui.refine-the-translation-context-transcription-and-source": "— დახვეწეთ თარგმანი, კონტექსტი, ტრანსკრიფცია და წყარო.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 5000 ჩანაწერის ლიმიტზე ძველი თარგმანების შეცვლა შესაძლებელია ავტომატურად.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— {count} ჩანაწერის ლიმიტზე ძველი თარგმანების შეცვლა შესაძლებელია ავტომატურად.",
   "ui.open-history": "ისტორიის გახსნა",
   "ui.view-and-edit-records": "ჩანაწერების ნახვა და რედაქტირება",
   "ui.configure-saving": "შენახვის დაყენება",
@@ -271,7 +271,7 @@
   "ui.translation-or-speech-does-not-load": "თარგმანი ან მეტყველება არ იტვირთება",
   "ui.a-new-record-did-not-appear-in-history": "ახალი ჩანაწერი არ გამოჩნდა ისტორიაში",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "ეს ფუნქციები მოითხოვს ინტერნეტ კავშირს. შეამოწმეთ თქვენი კავშირი და სცადეთ ხელახლა. ზოგიერთმა საიტმა შეიძლება შეზღუდოს ჩაშენებული ელემენტები; შეადარეთ შედეგი სხვა საიტზე.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "შეამოწმეთ შენახვის რეჟიმი. ხელით რეჟიმში დააწკაპუნეთ შენახვაზე თარგმანის ფანჯარაში. თუ როტაცია გამორთულია და 5000 ჩანაწერის ლიმიტი მიღწეულია, წაშალეთ არასაჭირო ჩანაწერები ან ჩართეთ ავტომატური როტაცია.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "შეამოწმეთ შენახვის რეჟიმი. ხელით რეჟიმში დააწკაპუნეთ შენახვაზე თარგმანის ფანჯარაში. თუ როტაცია გამორთულია და {count} ჩანაწერის ლიმიტი მიღწეულია, წაშალეთ არასაჭირო ჩანაწერები ან ჩართეთ ავტომატური როტაცია.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "მალსახმობი ეწინააღმდეგება ვებსაიტს ან ბრაუზერს",
   "ui.where-is-my-data-stored": "სად ინახება ჩემი მონაცემები?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "გახსენით კლავიატურის მალსახმობები, დააწკაპუნეთ მიმდინარე კომბინაციაზე და შეიყვანეთ სხვა Ctrl, Alt, Shift ან Meta გამოყენებით. აირჩიეთ მალსახმობი, რომელიც არ გამოიყენება ბრაუზერის ან მიმდინარე ვებსაიტის მიერ.",
@@ -372,8 +372,8 @@
   "ui.speak-code": "საუბარი) ({code})",
   "ui.speech-error-error": "მეტყველების შეცდომა: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "{count} თარგმანის ლიმიტი მიღწეულია. ჩამოტვირთეთ შენახული ჩანაწერები და გაასუფთავეთ მეხსიერება ახლის შესანახად.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "როდესაც როტაცია გამორთულია, ახალი ჩანაწერები არ შეინახება, სანამ მიღწეულია {count}- ჩანაწერის ლიმიტი.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "როდესაც ახალი თარგმანები აღემატება {count}-ჩანაწერის ლიმიტს, უძველესი ჩანაწერები ავტომატურად იშლება, ისტორია ინახება {count} ჩანაწერზე.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "გამორთული როტაციისას ახალი ჩანაწერები ისტორიაში არ შეინახება, სანამ მიღწეულია {count}-ის ლიმიტი. ძველი ჩანაწერები ისტორიაში დარჩება.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "ახალი თარგმანების დამატებისას, თუ რაოდენობა {count}-ის ლიმიტს გადააჭარბებს, უძველესი ჩანაწერები ისტორიიდან ავტომატურად წაიშლება. ამგვარად, ისტორიაში ჩანაწერების საერთო რაოდენობა {count} დარჩება.",
   "ui.translated-from-english": "თარგმნილია ინგლისურიდან",
   "ui.on-page-example": "მაგალითი გვერდზე",
   "ui.select-a-phrase-and-get-an-instant-translation": "აირჩიეთ ფრაზა და მიიღეთ მყისიერი თარგმანი",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "კონტექსტური მენიუ",
   "ui.onboarding-context-description": "მონიშნულ ტექსტზე დააწკაპუნეთ მარჯვენა ღილაკით და აირჩიეთ თარგმნა.",
   "ui.onboarding-shortcut-change-hint": "მალსახმობის შეცვლა პარამეტრებში შეგიძლიათ.",
-  "ui.could-not-copy-translations": "თარგმანების კოპირება ვერ მოხერხდა"
+  "ui.could-not-copy-translations": "თარგმანების კოპირება ვერ მოხერხდა",
+  "ui.history-record-limit": "ისტორიის ჩანაწერების ლიმიტი",
+  "ui.history-record-limit-description": "1-დან 5000-მდე. ჩართული როტაციისას ძველი ჩანაწერები ახალი თარგმანის შენახვისას წაიშლება."
 }

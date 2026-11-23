@@ -248,7 +248,7 @@
   "ui.every-translation-goes-straight-to-history": "— каждый перевод сразу попадает в историю.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— в словарь попадают только выбранные вами записи.",
   "ui.refine-the-translation-context-transcription-and-source": "— уточняйте перевод, контекст, транскрипцию и источник.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— при лимите в 5000 записей старые переводы могут автоматически заменяться новыми.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— при лимите в {count} записей старые переводы могут автоматически заменяться новыми.",
   "ui.open-history": "Открыть историю",
   "ui.view-and-edit-records": "Просмотреть и отредактировать записи",
   "ui.configure-saving": "Настроить сохранение",
@@ -273,7 +273,7 @@
   "ui.translation-or-speech-does-not-load": "Перевод или озвучивание не загружается",
   "ui.a-new-record-did-not-appear-in-history": "Новая запись не появилась в истории",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит {count} записей, удалите ненужные записи или включите автоматическую ротацию.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Горячая клавиша конфликтует с сайтом или браузером",
   "ui.where-is-my-data-stored": "Где хранятся мои данные?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Откройте «Горячие клавиши», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.",
@@ -374,8 +374,8 @@
   "ui.speak-code": "Озвучить ({code})",
   "ui.speech-error-error": "Ошибка озвучки: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}. Старые будут оставаться в истории.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удаляться из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.",
   "ui.translated-from-english": "Перевод с английского",
   "ui.on-page-example": "Пример на странице",
   "ui.select-a-phrase-and-get-an-instant-translation": "Выделили фразу — сразу получили перевод",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Через контекстное меню",
   "ui.onboarding-context-description": "Щёлкните правой кнопкой по выделенному тексту и выберите перевод.",
   "ui.onboarding-shortcut-change-hint": "Комбинацию можно изменить в настройках.",
-  "ui.could-not-copy-translations": "Не удалось скопировать переводы"
+  "ui.could-not-copy-translations": "Не удалось скопировать переводы",
+  "ui.history-record-limit": "Лимит записей в истории",
+  "ui.history-record-limit-description": "От 1 до 5000. При включённой ротации старые записи будут удаляться при сохранении нового перевода."
 }

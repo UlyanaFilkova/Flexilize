@@ -221,7 +221,7 @@
   "ui.every-translation-goes-straight-to-history": "— hver oversættelse går direkte til historien.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— kun optegnelser, du vælger, føjes til dit ordforråd.",
   "ui.refine-the-translation-context-transcription-and-source": "— finjuster oversættelsen, konteksten, transskriptionen og kilden.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— ved grænsen på 5.000 optegnelser kan ældre oversættelser erstattes automatisk.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— ved grænsen på {count} optegnelser kan ældre oversættelser erstattes automatisk.",
   "ui.open-history": "Åbn historik",
   "ui.view-and-edit-records": "Se og rediger poster",
   "ui.configure-saving": "Konfigurer lagring",
@@ -244,7 +244,7 @@
   "ui.translation-or-speech-does-not-load": "Oversættelse eller tale indlæses ikke",
   "ui.a-new-record-did-not-appear-in-history": "En ny post dukkede ikke op i historien",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Disse funktioner kræver en internetforbindelse. Tjek din forbindelse, og prøv igen. Nogle websteder kan begrænse indlejrede elementer; sammenligne resultatet på et andet websted.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Tjek gemmetilstanden. I manuel tilstand skal du klikke på Gem i oversættelsesvinduet. Hvis rotation er deaktiveret, og grænsen på 5.000 poster er nået, skal du slette unødvendige poster eller aktivere automatisk rotation.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Tjek gemmetilstanden. I manuel tilstand skal du klikke på Gem i oversættelsesvinduet. Hvis rotation er deaktiveret, og grænsen på {count} poster er nået, skal du slette unødvendige poster eller aktivere automatisk rotation.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Genvejen er i konflikt med webstedet eller browseren",
   "ui.where-is-my-data-stored": "Hvor er mine data gemt?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Åbn Tastaturgenveje, klik på den aktuelle kombination, og indtast en anden ved at bruge Ctrl, Alt, Shift eller Meta. Vælg en genvej, der ikke bruges af browseren eller det aktuelle websted.",
@@ -342,8 +342,8 @@
   "ui.speak-code": "Tal ({code})",
   "ui.speech-error-error": "Talefejl: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Grænsen på {count} oversættelser er nået. Download de gemte poster og ryd lagerplads for at gemme nye.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Når rotation er deaktiveret, vil nye poster ikke blive gemt, mens grænsen for {count}-record er nået.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Når nye oversættelser overskrider grænsen for {count}-registrering, fjernes de ældste poster automatisk, og historikken holdes på {count} poster.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Når rotation er deaktiveret, gemmes nye poster ikke i historikken, så længe grænsen på {count} er nået. Gamle poster forbliver i historikken.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Når nye oversættelser tilføjes ud over grænsen på {count}, slettes de ældste poster automatisk fra historikken. Det samlede antal poster i historikken forbliver dermed {count}.",
   "ui.translated-from-english": "Oversat fra engelsk",
   "ui.on-page-example": "Eksempel på siden",
   "ui.select-a-phrase-and-get-an-instant-translation": "Vælg en sætning, og få en øjeblikkelig oversættelse",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Genvejsmenu",
   "ui.onboarding-context-description": "Højreklik på den markerede tekst, og vælg oversættelse.",
   "ui.onboarding-shortcut-change-hint": "Du kan ændre tastaturgenvejen i indstillingerne.",
-  "ui.could-not-copy-translations": "Oversættelserne kunne ikke kopieres"
+  "ui.could-not-copy-translations": "Oversættelserne kunne ikke kopieres",
+  "ui.history-record-limit": "Grænse for historikposter",
+  "ui.history-record-limit-description": "Fra 1 til 5000. Når rotation er aktiveret, slettes gamle poster, når en ny oversættelse gemmes."
 }

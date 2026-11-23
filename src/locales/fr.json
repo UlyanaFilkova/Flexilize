@@ -223,7 +223,7 @@
   "ui.every-translation-goes-straight-to-history": "— chaque traduction va directement dans l'historique.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— seuls les enregistrements que vous choisissez sont ajoutés à votre vocabulaire.",
   "ui.refine-the-translation-context-transcription-and-source": "— affinez la traduction, le contexte, la transcription et la source.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— à la limite de 5 000 enregistrements, les anciennes traductions peuvent être remplacées automatiquement.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— à la limite de {count} enregistrements, les anciennes traductions peuvent être remplacées automatiquement.",
   "ui.open-history": "Ouvrir l'historique",
   "ui.view-and-edit-records": "Afficher et modifier les enregistrements",
   "ui.configure-saving": "Configurer l’enregistrement",
@@ -245,7 +245,7 @@
   "ui.translation-or-speech-does-not-load": "La traduction ou la parole ne se charge pas",
   "ui.a-new-record-did-not-appear-in-history": "Un nouvel enregistrement n'est pas apparu dans l'historique",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Ces fonctionnalités nécessitent une connexion Internet. Vérifiez votre connexion et réessayez. Certains sites peuvent restreindre les éléments intégrés ; comparer le résultat sur un autre site.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Vérifiez le mode d’enregistrement. En mode manuel, cliquez sur Enregistrer dans la fenêtre de traduction. Si la rotation est désactivée et que la limite de 5 000 enregistrements a été atteinte, supprimez les enregistrements inutiles ou activez la rotation automatique.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Vérifiez le mode d’enregistrement. En mode manuel, cliquez sur Enregistrer dans la fenêtre de traduction. Si la rotation est désactivée et que la limite de {count} enregistrements a été atteinte, supprimez les enregistrements inutiles ou activez la rotation automatique.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Le raccourci est en conflit avec le site Web ou le navigateur",
   "ui.where-is-my-data-stored": "Où mes données sont-elles stockées ?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Ouvrez les raccourcis clavier, cliquez sur la combinaison actuelle et saisissez-en une autre en utilisant Ctrl, Alt, Shift ou Meta. Choisissez un raccourci non utilisé par le navigateur ou le site Web actuel.",
@@ -343,8 +343,8 @@
   "ui.speak-code": "Parler ({code})",
   "ui.speech-error-error": "Erreur vocale : {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "La limite de {count} traductions a été atteinte. Téléchargez les enregistrements enregistrés et effacez le stockage pour en enregistrer de nouveaux.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Lorsque la rotation est désactivée, les nouveaux enregistrements ne seront pas enregistrés tant que la limite de {count} enregistrements a été atteinte.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Lorsque les nouvelles traductions dépassent la limite de {count} enregistrements, les enregistrements les plus anciens sont automatiquement supprimés, conservant l'historique à {count} enregistrements.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Si la rotation est désactivée, aucune nouvelle entrée ne sera enregistrée dans l’historique tant que la limite de {count} sera atteinte. Les anciennes entrées resteront dans l’historique.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Lorsque de nouvelles traductions dépassent la limite de {count}, les entrées les plus anciennes sont automatiquement supprimées de l’historique. Le nombre total d’entrées dans l’historique reste ainsi égal à {count}.",
   "ui.translated-from-english": "Traduit de l’anglais",
   "ui.on-page-example": "Exemple sur la page",
   "ui.select-a-phrase-and-get-an-instant-translation": "Sélectionnez une phrase et obtenez sa traduction instantanément",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu contextuel",
   "ui.onboarding-context-description": "Faites un clic droit sur le texte sélectionné et choisissez la traduction.",
   "ui.onboarding-shortcut-change-hint": "Vous pouvez modifier le raccourci dans les paramètres.",
-  "ui.could-not-copy-translations": "Impossible de copier les traductions"
+  "ui.could-not-copy-translations": "Impossible de copier les traductions",
+  "ui.history-record-limit": "Limite des entrées de l’historique",
+  "ui.history-record-limit-description": "De 1 à 5000. Si la rotation est activée, les anciennes entrées seront supprimées lors de l’enregistrement d’une nouvelle traduction."
 }

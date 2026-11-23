@@ -229,7 +229,7 @@
   "ui.every-translation-goes-straight-to-history": "—每個翻譯都會直接進入歷史記錄。",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— 僅將您選擇的記錄加入詞彙表。",
   "ui.refine-the-translation-context-transcription-and-source": "— 調整翻譯、上下文、音標和來源。",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 達到 5,000 筆記錄上限後，可以自動替換較舊的翻譯。",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 達到 {count} 筆記錄上限後，可以自動替換較舊的翻譯。",
   "ui.open-history": "開啟歷史記錄",
   "ui.view-and-edit-records": "檢視和編輯記錄",
   "ui.configure-saving": "設定儲存方式",
@@ -252,7 +252,7 @@
   "ui.translation-or-speech-does-not-load": "翻譯或語音未載入",
   "ui.a-new-record-did-not-appear-in-history": "歷史記錄中未出現新記錄",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "這些功能需要網路連線。檢查您的連線並重試。有些網站可能會限制嵌入元素；比較另一個網站上的結果。",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "檢查保存模式。在手動模式下，按一下翻譯視窗中的「儲存」。如果停用輪換且已達到 5,000 筆記錄限制，請刪除不需要的記錄或啟用自動輪調。",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "檢查保存模式。在手動模式下，按一下翻譯視窗中的「儲存」。如果停用輪換且已達到 {count} 筆記錄限制，請刪除不需要的記錄或啟用自動輪調。",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "快捷方式與網站或瀏覽器衝突",
   "ui.where-is-my-data-stored": "我的資料儲存在哪裡？",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "開啟鍵盤快速鍵，按一下目前組合，然後使用 Ctrl、Alt、Shift 或 Meta 輸入另一個組合。選擇瀏覽器或目前網站未使用的捷徑。",
@@ -352,8 +352,8 @@
   "ui.speak-code": "講話 ({code})",
   "ui.speech-error-error": "語音錯誤：{error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "已達到 {count} 次翻譯的限制。下載已儲存的記錄並清除儲存體以儲存新記錄。",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "停用輪換後，當達到 {count} 筆記錄限制時，將不會儲存新記錄。",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "當新翻譯超過 {count} 筆記錄限制時，最舊的記錄將自動刪除，將歷史記錄保留在 {count} 筆記錄中。",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "關閉輪替後，只要記錄數量達到 {count} 筆的上限，就不會儲存新記錄。舊記錄將保留在歷史記錄中。",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "新增翻譯超過 {count} 筆的上限時，最舊的記錄會自動從歷史記錄中刪除。如此一來，歷史記錄總數將維持為 {count} 筆。",
   "ui.translated-from-english": "翻譯自英文",
   "ui.on-page-example": "頁面範例",
   "ui.select-a-phrase-and-get-an-instant-translation": "選擇一個短語並獲得即時翻譯",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "右鍵選單",
   "ui.onboarding-context-description": "在所選文字上按一下滑鼠右鍵並選擇翻譯。",
   "ui.onboarding-shortcut-change-hint": "您可以在設定中變更快速鍵。",
-  "ui.could-not-copy-translations": "無法複製翻譯"
+  "ui.could-not-copy-translations": "無法複製翻譯",
+  "ui.history-record-limit": "歷史記錄數量上限",
+  "ui.history-record-limit-description": "1 至 5000。啟用輪替後，儲存新翻譯時會刪除舊記錄。"
 }

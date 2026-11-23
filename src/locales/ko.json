@@ -229,7 +229,7 @@
   "ui.every-translation-goes-straight-to-history": "— 모든 번역은 기록으로 바로 이동됩니다.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— 선택한 레코드만 어휘에 추가됩니다.",
   "ui.refine-the-translation-context-transcription-and-source": "— 번역, 문맥, 발음 기호 및 소스를 구체화합니다.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 레코드 제한이 5,000개에 이르면 이전 번역이 자동으로 교체될 수 있습니다.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 레코드 제한이 {count}개에 이르면 이전 번역이 자동으로 교체될 수 있습니다.",
   "ui.open-history": "기록 열기",
   "ui.view-and-edit-records": "기록 보기 및 편집",
   "ui.configure-saving": "저장 설정하기",
@@ -252,7 +252,7 @@
   "ui.translation-or-speech-does-not-load": "번역이나 음성이 로드되지 않습니다.",
   "ui.a-new-record-did-not-appear-in-history": "새 기록이 기록에 나타나지 않았습니다.",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "이러한 기능을 사용하려면 인터넷 연결이 필요합니다. 연결을 확인하고 다시 시도하세요. 일부 사이트에서는 삽입된 요소를 제한할 수 있습니다. 다른 사이트의 결과를 비교해 보세요.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "저장 모드를 확인하세요. 수동 모드에서는 번역 창에서 저장을 클릭하세요. 순환이 비활성화되고 5,000개 레코드 제한에 도달한 경우 불필요한 레코드를 삭제하거나 자동 순환을 활성화하십시오.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "저장 모드를 확인하세요. 수동 모드에서는 번역 창에서 저장을 클릭하세요. 순환이 비활성화되고 {count}개 레코드 제한에 도달한 경우 불필요한 레코드를 삭제하거나 자동 순환을 활성화하십시오.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "바로가기가 웹사이트 또는 브라우저와 충돌합니다.",
   "ui.where-is-my-data-stored": "내 데이터는 어디에 저장되나요?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "키보드 단축키를 열고 현재 조합을 클릭한 다음 Ctrl, Alt, Shift 또는 Meta를 사용하여 다른 조합을 입력하세요. 브라우저나 현재 웹사이트에서 사용하지 않는 단축키를 선택하세요.",
@@ -352,8 +352,8 @@
   "ui.speak-code": "말하기({code})",
   "ui.speech-error-error": "음성 오류: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "번역 {count}개 제한에 도달했습니다. 저장된 기록을 다운로드하고 저장 공간을 비워 새로운 기록을 저장하세요.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "순환이 비활성화되면 {count}개 레코드 제한에 도달하는 동안 새 레코드가 저장되지 않습니다.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "새 번역이 {count} 레코드 제한을 초과하면 가장 오래된 레코드가 자동으로 제거되고 기록이 {count} 레코드로 유지됩니다.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "순환 저장을 사용하지 않으면 {count}개 한도에 도달한 동안 새 기록이 저장되지 않습니다. 기존 기록은 그대로 유지됩니다.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "새 번역을 추가하여 {count}개 한도를 초과하면 가장 오래된 기록부터 자동으로 삭제됩니다. 따라서 전체 기록 수는 {count}개로 유지됩니다.",
   "ui.translated-from-english": "영어에서 번역됨",
   "ui.on-page-example": "페이지 내 예",
   "ui.select-a-phrase-and-get-an-instant-translation": "구문을 선택하면 즉시 번역됩니다.",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "컨텍스트 메뉴",
   "ui.onboarding-context-description": "선택한 텍스트를 마우스 오른쪽 버튼으로 클릭하고 번역을 선택하세요.",
   "ui.onboarding-shortcut-change-hint": "단축키는 설정에서 변경할 수 있습니다.",
-  "ui.could-not-copy-translations": "번역을 복사하지 못했습니다"
+  "ui.could-not-copy-translations": "번역을 복사하지 못했습니다",
+  "ui.history-record-limit": "기록 저장 개수 제한",
+  "ui.history-record-limit-description": "1~5000. 순환 저장을 사용하면 새 번역을 저장할 때 오래된 기록이 삭제됩니다."
 }

@@ -221,7 +221,7 @@
   "ui.every-translation-goes-straight-to-history": "— elke vertaling gaat rechtstreeks naar de geschiedenis.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— alleen door u gekozen records worden aan uw vocabulaire toegevoegd.",
   "ui.refine-the-translation-context-transcription-and-source": "— verfijn de vertaling, context, transcriptie en bron.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— bij de limiet van 5.000 records kunnen oudere vertalingen automatisch worden vervangen.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— bij de limiet van {count} records kunnen oudere vertalingen automatisch worden vervangen.",
   "ui.open-history": "Geschiedenis openen",
   "ui.view-and-edit-records": "Records bekijken en bewerken",
   "ui.configure-saving": "Opslaan instellen",
@@ -244,7 +244,7 @@
   "ui.translation-or-speech-does-not-load": "Vertaling of spraak wordt niet geladen",
   "ui.a-new-record-did-not-appear-in-history": "Er is geen nieuw record in de geschiedenis verschenen",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Voor deze functies is een internetverbinding vereist. Controleer uw verbinding en probeer het opnieuw. Sommige sites kunnen ingebedde elementen beperken; vergelijk het resultaat op een andere site.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Controleer de opslagmodus. Klik in de handmatige modus op Opslaan in het vertaalvenster. Als rotatie is uitgeschakeld en de limiet van 5.000 records is bereikt, verwijdert u onnodige records of schakelt u automatische rotatie in.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Controleer de opslagmodus. Klik in de handmatige modus op Opslaan in het vertaalvenster. Als rotatie is uitgeschakeld en de limiet van {count} records is bereikt, verwijdert u onnodige records of schakelt u automatische rotatie in.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "De snelkoppeling conflicteert met de website of browser",
   "ui.where-is-my-data-stored": "Waar worden mijn gegevens opgeslagen?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Open sneltoetsen, klik op de huidige combinatie en voer een andere combinatie in met Ctrl, Alt, Shift of Meta. Kies een snelkoppeling die niet door de browser of de huidige website wordt gebruikt.",
@@ -341,8 +341,8 @@
   "ui.speak-code": "Spreek ({code})",
   "ui.speech-error-error": "Spraakfout: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "De limiet van {count} vertalingen is bereikt. Download de opgeslagen records en maak de opslag vrij om nieuwe op te slaan.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Als rotatie is uitgeschakeld, worden er geen nieuwe records opgeslagen zolang de limiet van {count}-records is bereikt.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Wanneer nieuwe vertalingen de limiet van {count} records overschrijden, worden de oudste records automatisch verwijderd, waardoor de geschiedenis op {count} records blijft.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Als rotatie is uitgeschakeld, worden er geen nieuwe items opgeslagen zolang de limiet van {count} is bereikt. Bestaande items blijven in de geschiedenis staan.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Wanneer nieuwe vertalingen de limiet van {count} overschrijden, worden de oudste items automatisch uit de geschiedenis verwijderd. Zo blijft het totale aantal items in de geschiedenis op {count}.",
   "ui.translated-from-english": "Vertaald uit het Engels",
   "ui.on-page-example": "Voorbeeld op de pagina",
   "ui.select-a-phrase-and-get-an-instant-translation": "Selecteer een zin en krijg direct een vertaling",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Contextmenu",
   "ui.onboarding-context-description": "Klik met de rechtermuisknop op de geselecteerde tekst en kies vertalen.",
   "ui.onboarding-shortcut-change-hint": "Je kunt de sneltoets wijzigen in de instellingen.",
-  "ui.could-not-copy-translations": "De vertalingen konden niet worden gekopieerd"
+  "ui.could-not-copy-translations": "De vertalingen konden niet worden gekopieerd",
+  "ui.history-record-limit": "Limiet voor geschiedenisitems",
+  "ui.history-record-limit-description": "Van 1 tot 5000. Als rotatie is ingeschakeld, worden oude items verwijderd wanneer een nieuwe vertaling wordt opgeslagen."
 }

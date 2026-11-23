@@ -248,7 +248,7 @@
   "ui.every-translation-goes-straight-to-history": "— сваки превод иде право у историју.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— само записи које изаберете се додају у ваш речник.",
   "ui.refine-the-translation-context-transcription-and-source": "— прецизирајте превод, контекст, транскрипцију и извор.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— на граници од 5000 записа, старији преводи се могу аутоматски заменити.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— на граници од {count} записа, старији преводи се могу аутоматски заменити.",
   "ui.open-history": "Отвори историју",
   "ui.view-and-edit-records": "Прегледајте и уредите записе",
   "ui.configure-saving": "Подесите чување",
@@ -271,7 +271,7 @@
   "ui.translation-or-speech-does-not-load": "Превод или говор се не учитавају",
   "ui.a-new-record-did-not-appear-in-history": "Нови запис се није појавио у историји",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Ове функције захтевају интернет везу. Проверите везу и покушајте поново. Неки сајтови могу ограничити уграђене елементе; упоредите резултат на другом сајту.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Проверите режим чувања. У ручном режиму кликните на Сачувај у прозору за превод. Ако је ротација онемогућена и достигнуто ограничење од 5.000 записа, избришите непотребне записе или омогућите аутоматску ротацију.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Проверите режим чувања. У ручном режиму кликните на Сачувај у прозору за превод. Ако је ротација онемогућена и достигнуто ограничење од {count} записа, избришите непотребне записе или омогућите аутоматску ротацију.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Пречица је у сукобу са веб-сајтом или претраживачем",
   "ui.where-is-my-data-stored": "Где се чувају моји подаци?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Отворите пречице на тастатури, кликните на тренутну комбинацију и унесите другу користећи Цтрл, Алт, Схифт или Мета. Изаберите пречицу коју не користи прегледач или тренутна веб локација.",
@@ -372,8 +372,8 @@
   "ui.speak-code": "Говори ({code})",
   "ui.speech-error-error": "Говорна грешка: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Ограничење од {count} превода је достигнуто. Преузмите сачуване записе и очистите складиште да бисте сачували нове.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Када је ротација онемогућена, нови записи неће бити сачувани док је достигнуто ограничење {count}-рецорд.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Када нови преводи премаше ограничење {count}-рецорд, најстарији записи се аутоматски уклањају, задржавајући историју на {count} записа.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Када је ротација искључена, нови записи се неће чувати у историји док је достигнуто ограничење од {count}. Стари записи ће остајати у историји.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "При додавању нових превода преко ограничења од {count}, најстарији записи ће се аутоматски брисати из историје. Тако ће укупан број записа у историји остати једнак {count}.",
   "ui.translated-from-english": "Преведено са енглеског",
   "ui.on-page-example": "Пример на страници",
   "ui.select-a-phrase-and-get-an-instant-translation": "Изаберите фразу и добијте тренутни превод",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Контекстни мени",
   "ui.onboarding-context-description": "Кликните десним тастером миша на изабрани текст и изаберите превод.",
   "ui.onboarding-shortcut-change-hint": "Пречицу можете променити у подешавањима.",
-  "ui.could-not-copy-translations": "Није могуће копирати преводе"
+  "ui.could-not-copy-translations": "Није могуће копирати преводе",
+  "ui.history-record-limit": "Ограничење броја записа историје",
+  "ui.history-record-limit-description": "Од 1 до 5000. Када је ротација укључена, стари записи ће се брисати при чувању новог превода."
 }

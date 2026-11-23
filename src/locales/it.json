@@ -227,7 +227,7 @@
   "ui.every-translation-goes-straight-to-history": "— ogni traduzione entra direttamente nella cronologia.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— solo i record scelti verranno aggiunti al tuo vocabolario.",
   "ui.refine-the-translation-context-transcription-and-source": "— perfeziona la traduzione, il contesto, la trascrizione e la fonte.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— al limite di 5.000 record, le traduzioni più vecchie possono essere sostituite automaticamente.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— al limite di {count} record, le traduzioni più vecchie possono essere sostituite automaticamente.",
   "ui.open-history": "Apri cronologia",
   "ui.view-and-edit-records": "Visualizza e modifica i record",
   "ui.configure-saving": "Configura il salvataggio",
@@ -250,7 +250,7 @@
   "ui.translation-or-speech-does-not-load": "La traduzione o la sintesi vocale non vengono caricate",
   "ui.a-new-record-did-not-appear-in-history": "Un nuovo record non è apparso nella cronologia",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Queste funzionalità richiedono una connessione Internet. Controlla la connessione e riprova. Alcuni siti potrebbero limitare gli elementi incorporati; confrontare il risultato su un altro sito.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Controlla la modalità di salvataggio. In modalità manuale, fai clic su Salva nella finestra di traduzione. Se la rotazione è disabilitata ed è stato raggiunto il limite di 5.000 record, eliminare i record non necessari o abilitare la rotazione automatica.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Controlla la modalità di salvataggio. In modalità manuale, fai clic su Salva nella finestra di traduzione. Se la rotazione è disabilitata ed è stato raggiunto il limite di {count} record, eliminare i record non necessari o abilitare la rotazione automatica.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "La scorciatoia è in conflitto con il sito web o il browser",
   "ui.where-is-my-data-stored": "Dove sono archiviati i miei dati?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Apri le scorciatoie da tastiera, fai clic sulla combinazione corrente e inseriscine un'altra utilizzando Ctrl, Alt, Maiusc o Meta. Scegli un collegamento non utilizzato dal browser o dal sito Web corrente.",
@@ -350,8 +350,8 @@
   "ui.speak-code": "Parla ({code})",
   "ui.speech-error-error": "Errore vocale: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "È stato raggiunto il limite di {count} traduzioni. Scarica i record salvati e cancella la memoria per salvarne di nuovi.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Quando la rotazione è disabilitata, i nuovi record non verranno salvati finché è stato raggiunto il limite di {count} record.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Quando le nuove traduzioni superano il limite di {count} record, i record più vecchi vengono rimossi automaticamente, mantenendo la cronologia su {count} record.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Con la rotazione disattivata, non verranno salvate nuove voci nella cronologia finché sarà raggiunto il limite di {count}. Le vecchie voci rimarranno nella cronologia.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Quando le nuove traduzioni superano il limite di {count}, le voci più vecchie vengono eliminate automaticamente dalla cronologia. In questo modo, il numero totale di voci nella cronologia rimane pari a {count}.",
   "ui.translated-from-english": "Tradotto dall’inglese",
   "ui.on-page-example": "Esempio sulla pagina",
   "ui.select-a-phrase-and-get-an-instant-translation": "Seleziona una frase e ottieni subito la traduzione",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu contestuale",
   "ui.onboarding-context-description": "Fai clic con il tasto destro sul testo selezionato e scegli la traduzione.",
   "ui.onboarding-shortcut-change-hint": "Puoi modificare la scorciatoia nelle impostazioni.",
-  "ui.could-not-copy-translations": "Impossibile copiare le traduzioni"
+  "ui.could-not-copy-translations": "Impossibile copiare le traduzioni",
+  "ui.history-record-limit": "Limite delle voci della cronologia",
+  "ui.history-record-limit-description": "Da 1 a 5000. Con la rotazione attiva, le vecchie voci verranno eliminate al salvataggio di una nuova traduzione."
 }

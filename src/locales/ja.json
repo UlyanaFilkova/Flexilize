@@ -229,7 +229,7 @@
   "ui.every-translation-goes-straight-to-history": "- すべての翻訳は履歴に直接保存されます。",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— 選択したレコードのみが語彙に追加されます。",
   "ui.refine-the-translation-context-transcription-and-source": "— 翻訳、文脈、発音記号、ソースを調整します。",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 5,000 レコードの制限では、古い翻訳は自動的に置き換えられます。",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— {count} レコードの制限では、古い翻訳は自動的に置き換えられます。",
   "ui.open-history": "|履歴を開く",
   "ui.view-and-edit-records": "記録の表示と編集",
   "ui.configure-saving": "保存を設定",
@@ -252,7 +252,7 @@
   "ui.translation-or-speech-does-not-load": "翻訳または音声が読み込まれません",
   "ui.a-new-record-did-not-appear-in-history": "新しいレコードが履歴に表示されませんでした",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "これらの機能にはインターネット接続が必要です。接続を確認して、もう一度試してください。一部のサイトでは、埋め込み要素が制限されている場合があります。別のサイトの結果を比較してください。",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "節約モードを確認してください。手動モードでは、翻訳ウィンドウで「保存」をクリックします。ローテーションが無効になっていて、5,000 レコードの制限に達している場合は、不要なレコードを削除するか、自動ローテーションを有効にしてください。",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "節約モードを確認してください。手動モードでは、翻訳ウィンドウで「保存」をクリックします。ローテーションが無効になっていて、{count} レコードの制限に達している場合は、不要なレコードを削除するか、自動ローテーションを有効にしてください。",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "ショートカットが Web サイトまたはブラウザと競合しています",
   "ui.where-is-my-data-stored": "データはどこに保存されていますか?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "キーボード ショートカットを開き、現在の組み合わせをクリックし、Ctrl、Alt、Shift、または Meta を使用して別の組み合わせを入力します。ブラウザまたは現在の Web サイトで使用されていないショートカットを選択します。",
@@ -352,8 +352,8 @@
   "ui.speak-code": "話す（{code}）",
   "ui.speech-error-error": "音声エラー: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "翻訳数の制限 {count} に達しました。保存されたレコードをダウンロードし、ストレージをクリアして新しいレコードを保存します。",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "ローテーションが無効になっている場合、{count} レコードの制限に達している間、新しいレコードは保存されません。",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "新しい翻訳が {count} レコードの制限を超えると、最も古いレコードが自動的に削除され、履歴は {count} レコードに保持されます。",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "ローテーションが無効な場合、上限の{count}件に達している間は新しい履歴が保存されません。既存の履歴はそのまま残ります。",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "新しい翻訳を追加して上限の{count}件を超えると、最も古い履歴から自動的に削除されます。これにより、履歴の合計件数は{count}件に保たれます。",
   "ui.translated-from-english": "英語から翻訳",
   "ui.on-page-example": "ページ上の例",
   "ui.select-a-phrase-and-get-an-instant-translation": "フレーズを選択するとすぐに翻訳されます",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "コンテキストメニュー",
   "ui.onboarding-context-description": "選択したテキストを右クリックし、翻訳を選びます。",
   "ui.onboarding-shortcut-change-hint": "ショートカットは設定で変更できます。",
-  "ui.could-not-copy-translations": "翻訳をコピーできませんでした"
+  "ui.could-not-copy-translations": "翻訳をコピーできませんでした",
+  "ui.history-record-limit": "履歴の保存件数上限",
+  "ui.history-record-limit-description": "1〜5000。ローテーションが有効な場合、新しい翻訳を保存すると古い履歴が削除されます。"
 }

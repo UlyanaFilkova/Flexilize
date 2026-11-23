@@ -215,7 +215,7 @@
   "ui.every-translation-goes-straight-to-history": "— setiap terjemahan pergi terus ke sejarah.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— hanya rekod yang anda pilih ditambahkan pada perbendaharaan kata anda.",
   "ui.refine-the-translation-context-transcription-and-source": "— memperhalusi terjemahan, konteks, transkripsi dan sumber.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— pada had 5,000 rekod, terjemahan lama boleh diganti secara automatik.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— pada had {count} rekod, terjemahan lama boleh diganti secara automatik.",
   "ui.open-history": "Buka sejarah",
   "ui.view-and-edit-records": "Lihat dan edit rekod",
   "ui.configure-saving": "Konfigurasikan penyimpanan",
@@ -238,7 +238,7 @@
   "ui.translation-or-speech-does-not-load": "Terjemahan atau pertuturan tidak dimuatkan",
   "ui.a-new-record-did-not-appear-in-history": "Rekod baharu tidak muncul dalam sejarah",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Ciri-ciri ini memerlukan sambungan internet. Semak sambungan anda dan cuba lagi. Sesetengah tapak mungkin menyekat elemen terbenam; bandingkan hasilnya di tapak lain.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Semak mod penyimpanan. Dalam mod manual, klik Simpan dalam tetingkap terjemahan. Jika putaran dilumpuhkan dan had 5,000 rekod telah dicapai, padamkan rekod yang tidak diperlukan atau dayakan putaran automatik.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Semak mod penyimpanan. Dalam mod manual, klik Simpan dalam tetingkap terjemahan. Jika putaran dilumpuhkan dan had {count} rekod telah dicapai, padamkan rekod yang tidak diperlukan atau dayakan putaran automatik.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Pintasan bercanggah dengan tapak web atau penyemak imbas",
   "ui.where-is-my-data-stored": "Di manakah data saya disimpan?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Buka pintasan Papan Kekunci, klik gabungan semasa dan masukkan satu lagi menggunakan Ctrl, Alt, Shift atau Meta. Pilih pintasan yang tidak digunakan oleh penyemak imbas atau tapak web semasa.",
@@ -338,8 +338,8 @@
   "ui.speak-code": "Sebut ({code})",
   "ui.speech-error-error": "Ralat pertuturan: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Had {count} terjemahan telah dicapai. Muat turun rekod yang disimpan dan kosongkan storan untuk menyimpan rekod baharu.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Apabila putaran dilumpuhkan, rekod baharu tidak akan disimpan semasa had {count}-rekod telah dicapai.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Apabila terjemahan baharu melebihi had rekod {count}, rekod tertua akan dialih keluar secara automatik, menyimpan sejarah pada {count} rekod.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Apabila putaran dinyahaktifkan, rekod baharu tidak akan disimpan dalam sejarah selagi had {count} telah dicapai. Rekod lama akan kekal dalam sejarah.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Apabila terjemahan baharu ditambah melebihi had {count}, rekod paling lama akan dipadam secara automatik daripada sejarah. Oleh itu, jumlah rekod dalam sejarah akan kekal sebanyak {count}.",
   "ui.translated-from-english": "Diterjemahkan daripada bahasa Inggeris",
   "ui.on-page-example": "Contoh pada halaman",
   "ui.select-a-phrase-and-get-an-instant-translation": "Pilih frasa dan dapatkan terjemahan segera",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu konteks",
   "ui.onboarding-context-description": "Klik kanan pada teks yang dipilih dan pilih terjemahan.",
   "ui.onboarding-shortcut-change-hint": "Anda boleh menukar pintasan dalam tetapan.",
-  "ui.could-not-copy-translations": "Terjemahan tidak dapat disalin"
+  "ui.could-not-copy-translations": "Terjemahan tidak dapat disalin",
+  "ui.history-record-limit": "Had rekod sejarah",
+  "ui.history-record-limit-description": "Dari 1 hingga 5000. Apabila putaran diaktifkan, rekod lama akan dipadam semasa terjemahan baharu disimpan."
 }

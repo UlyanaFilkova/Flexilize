@@ -225,7 +225,7 @@
   "ui.every-translation-goes-straight-to-history": "— cada tradução vai direto para o histórico.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— apenas os registros que você escolher serão adicionados ao seu vocabulário.",
   "ui.refine-the-translation-context-transcription-and-source": "— refine a tradução, o contexto, a transcrição e a fonte.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— no limite de 5.000 registros, as traduções mais antigas podem ser substituídas automaticamente.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— no limite de {count} registros, as traduções mais antigas podem ser substituídas automaticamente.",
   "ui.open-history": "Abrir histórico",
   "ui.view-and-edit-records": "Visualize e edite registros",
   "ui.configure-saving": "Configurar salvamento",
@@ -248,7 +248,7 @@
   "ui.translation-or-speech-does-not-load": "Tradução ou fala não carrega",
   "ui.a-new-record-did-not-appear-in-history": "Um novo registro não apareceu no histórico",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Esses recursos requerem uma conexão com a Internet. Verifique sua conexão e tente novamente. Alguns sites podem restringir elementos incorporados; compare o resultado em outro site.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Verifique o modo de salvamento. No modo manual, clique em Salvar na janela de tradução. Se a rotação estiver desabilitada e o limite de 5.000 registros tiver sido atingido, exclua os registros desnecessários ou ative a rotação automática.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Verifique o modo de salvamento. No modo manual, clique em Salvar na janela de tradução. Se a rotação estiver desabilitada e o limite de {count} registros tiver sido atingido, exclua os registros desnecessários ou ative a rotação automática.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "O atalho entra em conflito com o site ou navegador",
   "ui.where-is-my-data-stored": "Onde meus dados são armazenados?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Abra os atalhos de teclado, clique na combinação atual e insira outra usando Ctrl, Alt, Shift ou Meta. Escolha um atalho não utilizado pelo navegador ou site atual.",
@@ -348,8 +348,8 @@
   "ui.speak-code": "Falar ({code})",
   "ui.speech-error-error": "Erro de fala: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "O limite de {count} traduções foi atingido. Baixe os registros salvos e limpe o armazenamento para salvar novos.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Quando a rotação estiver desativada, novos registros não serão salvos enquanto o limite de registros {count} for atingido.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Quando novas traduções excedem o limite de {count} registros, os registros mais antigos são removidos automaticamente, mantendo o histórico em {count} registros.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Com a rotação desativada, não serão guardados novos registos no histórico enquanto o limite de {count} estiver atingido. Os registos antigos permanecerão no histórico.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Ao adicionar novas traduções acima do limite de {count}, os registos mais antigos serão automaticamente eliminados do histórico. Assim, o número total de registos no histórico permanecerá em {count}.",
   "ui.translated-from-english": "Traduzido do inglês",
   "ui.on-page-example": "Exemplo na página",
   "ui.select-a-phrase-and-get-an-instant-translation": "Selecione uma frase e obtenha a tradução na hora",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu de contexto",
   "ui.onboarding-context-description": "Clique com o botão direito no texto selecionado e escolha a tradução.",
   "ui.onboarding-shortcut-change-hint": "Você pode alterar o atalho nas configurações.",
-  "ui.could-not-copy-translations": "Não foi possível copiar as traduções"
+  "ui.could-not-copy-translations": "Não foi possível copiar as traduções",
+  "ui.history-record-limit": "Limite de registos do histórico",
+  "ui.history-record-limit-description": "De 1 a 5000. Com a rotação ativada, os registos antigos serão eliminados ao guardar uma nova tradução."
 }

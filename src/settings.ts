@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import {MAX_HISTORY_RECORDS, normalizeHistoryRecordLimit} from "./history-config";
 import {INTERFACE_LANGUAGES, normalizeInterfaceLanguage, type InterfaceLanguage} from "./i18n";
 
 export const SETTINGS_KEY = "extensionSettings";
@@ -17,6 +18,7 @@ export interface ExtensionSettings {
   autoActivationEnabled: boolean
   autoSaveTranslations: boolean
   historyRotationEnabled: boolean
+  historyRecordLimit: number
   hotkeyActivationEnabled: boolean
   contextMenuEnabled: boolean
   interfaceLanguage: InterfaceLanguage
@@ -96,6 +98,7 @@ export const defaultSettings: ExtensionSettings = {
   autoActivationEnabled: true,
   autoSaveTranslations: true,
   historyRotationEnabled: true,
+  historyRecordLimit: MAX_HISTORY_RECORDS,
   hotkeyActivationEnabled: false,
   contextMenuEnabled: false,
   interfaceLanguage: interfaceLanguageFromBrowser(initialBrowserLanguage),
@@ -184,6 +187,7 @@ export function normalizeSettings(value: unknown): ExtensionSettings {
     autoActivationEnabled: settings.autoActivationEnabled !== false,
     autoSaveTranslations: settings.autoSaveTranslations !== false,
     historyRotationEnabled: settings.historyRotationEnabled !== false,
+    historyRecordLimit: normalizeHistoryRecordLimit(settings.historyRecordLimit),
     hotkeyActivationEnabled: settings.hotkeyActivationEnabled === true,
     contextMenuEnabled: settings.contextMenuEnabled === true,
     interfaceLanguage: normalizeInterfaceLanguage(settings.interfaceLanguage, defaultSettings.interfaceLanguage),

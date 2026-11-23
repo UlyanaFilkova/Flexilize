@@ -226,7 +226,7 @@
   "ui.every-translation-goes-straight-to-history": "— każde tłumaczenie trafia bezpośrednio do historii.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— do Twojego słownictwa dodawane są tylko wybrane przez Ciebie rekordy.",
   "ui.refine-the-translation-context-transcription-and-source": "— Dopracuj tłumaczenie, kontekst, transkrypcję i źródło.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— Przy limicie 5000 rekordów starsze tłumaczenia mogą być zastępowane automatycznie.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— Przy limicie {count} rekordów starsze tłumaczenia mogą być zastępowane automatycznie.",
   "ui.open-history": "Otwórz historię",
   "ui.view-and-edit-records": "Przeglądaj i edytuj rekordy",
   "ui.configure-saving": "Skonfiguruj zapisywanie",
@@ -249,7 +249,7 @@
   "ui.translation-or-speech-does-not-load": "Tłumaczenie lub mowa nie ładuje się",
   "ui.a-new-record-did-not-appear-in-history": "Nowy rekord nie pojawił się w historii",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Funkcje te wymagają połączenia z Internetem. Sprawdź połączenie i spróbuj ponownie. Niektóre witryny mogą ograniczać elementy osadzone; porównaj wynik w innym serwisie.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Sprawdź tryb zapisywania. W trybie ręcznym kliknij Zapisz w oknie tłumaczenia. Jeśli rotacja jest wyłączona i osiągnięto limit 5000 rekordów, usuń niepotrzebne rekordy lub włącz automatyczną rotację.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Sprawdź tryb zapisywania. W trybie ręcznym kliknij Zapisz w oknie tłumaczenia. Jeśli rotacja jest wyłączona i osiągnięto limit {count} rekordów, usuń niepotrzebne rekordy lub włącz automatyczną rotację.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Skrót powoduje konflikt ze stroną internetową lub przeglądarką",
   "ui.where-is-my-data-stored": "Gdzie przechowywane są moje dane?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Otwórz skróty klawiaturowe, kliknij bieżącą kombinację i wprowadź inną, używając klawiszy Ctrl, Alt, Shift lub Meta. Wybierz skrót, którego nie używa przeglądarka ani bieżąca witryna.",
@@ -349,8 +349,8 @@
   "ui.speak-code": "Mów ({code})",
   "ui.speech-error-error": "Błąd mowy: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Osiągnięto limit {count} tłumaczeń. Pobierz zapisane rekordy i wyczyść pamięć, aby zapisać nowe.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Gdy rotacja jest wyłączona, nowe rekordy nie będą zapisywane po osiągnięciu limitu rekordów ({count}).",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kiedy nowe tłumaczenia przekraczają limit rekordów {count}, najstarsze rekordy są automatycznie usuwane, zachowując historię na poziomie {count} rekordów.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Przy wyłączonej rotacji nowe wpisy nie będą zapisywane w historii, dopóki osiągnięty jest limit {count}. Stare wpisy pozostaną w historii.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Gdy nowe tłumaczenia przekroczą limit {count}, najstarsze wpisy będą automatycznie usuwane z historii. Dzięki temu łączna liczba wpisów w historii pozostanie równa {count}.",
   "ui.translated-from-english": "Przetłumaczone z języka angielskiego",
   "ui.on-page-example": "Przykład na stronie",
   "ui.select-a-phrase-and-get-an-instant-translation": "Wybierz frazę i uzyskaj natychmiastowe tłumaczenie",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu kontekstowe",
   "ui.onboarding-context-description": "Kliknij zaznaczony tekst prawym przyciskiem myszy i wybierz tłumaczenie.",
   "ui.onboarding-shortcut-change-hint": "Skrót możesz zmienić w ustawieniach.",
-  "ui.could-not-copy-translations": "Nie udało się skopiować tłumaczeń"
+  "ui.could-not-copy-translations": "Nie udało się skopiować tłumaczeń",
+  "ui.history-record-limit": "Limit wpisów historii",
+  "ui.history-record-limit-description": "Od 1 do 5000. Przy włączonej rotacji stare wpisy będą usuwane podczas zapisywania nowego tłumaczenia."
 }

@@ -228,7 +228,7 @@
   "ui.every-translation-goes-straight-to-history": "— minden fordítás egyenesen a történelembe megy.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— csak az Ön által kiválasztott rekordok kerülnek hozzáadásra a szókincséhez.",
   "ui.refine-the-translation-context-transcription-and-source": "— finomítsa a fordítást, a szövegkörnyezetet, az átírást és a forrást.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— Az 5000 rekordos korlátnál a régebbi fordítások automatikusan lecserélhetők.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— Az {count} rekordos korlátnál a régebbi fordítások automatikusan lecserélhetők.",
   "ui.open-history": "Előzmények megnyitása",
   "ui.view-and-edit-records": "Rekordok megtekintése és szerkesztése",
   "ui.configure-saving": "Mentés beállítása",
@@ -251,7 +251,7 @@
   "ui.translation-or-speech-does-not-load": "Nem töltődik be a fordítás vagy a beszéd",
   "ui.a-new-record-did-not-appear-in-history": "Nem jelent meg új rekord a történelemben",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Ezek a funkciók internetkapcsolatot igényelnek. Ellenőrizze a kapcsolatot, és próbálja újra. Egyes webhelyek korlátozhatják a beágyazott elemeket; hasonlítsa össze az eredményt egy másik oldalon.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Ellenőrizze a mentési módot. Kézi módban kattintson a Mentés gombra a fordítási ablakban. Ha az elforgatás le van tiltva, és elérte az 5000-es rekordot, törölje a szükségtelen rekordokat, vagy engedélyezze az automatikus elforgatást.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Ellenőrizze a mentési módot. Kézi módban kattintson a Mentés gombra a fordítási ablakban. Ha az elforgatás le van tiltva, és elérte az {count}-es rekordot, törölje a szükségtelen rekordokat, vagy engedélyezze az automatikus elforgatást.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "A parancsikon ütközik a weboldallal vagy a böngészővel",
   "ui.where-is-my-data-stored": "Hol tárolják az adataimat?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Nyissa meg a Billentyűparancsokat, kattintson az aktuális kombinációra, és a Ctrl, Alt, Shift vagy Meta billentyűkkel írjon be egy másikat. Válasszon egy parancsikont, amelyet a böngésző vagy a jelenlegi webhely nem használ.",
@@ -351,8 +351,8 @@
   "ui.speak-code": "Beszélj ({code})",
   "ui.speech-error-error": "Beszédhiba: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Elérte a {count} fordítási korlátot. Töltse le a mentett rekordokat, és ürítse ki a tárhelyet az újak mentéséhez.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Ha az elforgatás le van tiltva, az új rekordok nem kerülnek mentésre, amíg elérte a {count} rekordkorlátot.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Ha az új fordítások túllépik a {count} rekord korlátot, a legrégebbi rekordok automatikusan eltávolításra kerülnek, és a történelem {count} rekordot tart.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kikapcsolt rotáció esetén az új bejegyzések nem kerülnek az előzményekbe, amíg a bejegyzések száma eléri a(z) {count} korlátot. A régi bejegyzések megmaradnak az előzményekben.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Ha az új fordítások hozzáadásakor a bejegyzések száma meghaladja a(z) {count} korlátot, a legrégebbi bejegyzések automatikusan törlődnek az előzményekből. Így az előzményekben lévő bejegyzések száma {count} marad.",
   "ui.translated-from-english": "Fordítva angolról",
   "ui.on-page-example": "Példa az oldalon",
   "ui.select-a-phrase-and-get-an-instant-translation": "Válasszon ki egy kifejezést, és azonnali fordítást kap",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Helyi menü",
   "ui.onboarding-context-description": "Kattintson a jobb gombbal a kijelölt szövegre, és válassza a fordítást.",
   "ui.onboarding-shortcut-change-hint": "A billentyűparancsot a beállításokban módosíthatja.",
-  "ui.could-not-copy-translations": "A fordítások másolása nem sikerült"
+  "ui.could-not-copy-translations": "A fordítások másolása nem sikerült",
+  "ui.history-record-limit": "Előzménybejegyzések korlátja",
+  "ui.history-record-limit-description": "1 és 5000 között. Bekapcsolt rotáció esetén a régi bejegyzések az új fordítás mentésekor törlődnek."
 }

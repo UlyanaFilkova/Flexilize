@@ -229,7 +229,7 @@
   "ui.every-translation-goes-straight-to-history": "- प्रत्येक अनुवाद सीधे इतिहास में जाता है।",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "- केवल आपके द्वारा चुने गए रिकॉर्ड ही आपकी शब्दावली में जोड़े जाते हैं।",
   "ui.refine-the-translation-context-transcription-and-source": "- अनुवाद, संदर्भ, प्रतिलेखन और स्रोत को परिष्कृत करें।",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "- 5,000-रिकॉर्ड सीमा पर, पुराने अनुवादों को स्वचालित रूप से बदला जा सकता है।",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "- {count}-रिकॉर्ड सीमा पर, पुराने अनुवादों को स्वचालित रूप से बदला जा सकता है।",
   "ui.open-history": "इतिहास खोलें",
   "ui.view-and-edit-records": "रिकॉर्ड देखें और संपादित करें",
   "ui.configure-saving": "सहेजने की सेटिंग बदलें",
@@ -252,7 +252,7 @@
   "ui.translation-or-speech-does-not-load": "अनुवाद या भाषण लोड नहीं होता",
   "ui.a-new-record-did-not-appear-in-history": "इतिहास में कोई नया रिकॉर्ड सामने नहीं आया",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "इन सुविधाओं के लिए इंटरनेट कनेक्शन की आवश्यकता होती है। अपना कनेक्शन जांचें और पुनः प्रयास करें। कुछ साइटें एम्बेडेड तत्वों को प्रतिबंधित कर सकती हैं; किसी अन्य साइट पर परिणाम की तुलना करें.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "सेविंग मोड की जाँच करें. मैन्युअल मोड में, अनुवाद विंडो में सहेजें पर क्लिक करें। यदि रोटेशन अक्षम है और 5,000-रिकॉर्ड की सीमा पूरी हो गई है, तो अनावश्यक रिकॉर्ड हटा दें या स्वचालित रोटेशन सक्षम करें।",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "सेविंग मोड की जाँच करें. मैन्युअल मोड में, अनुवाद विंडो में सहेजें पर क्लिक करें। यदि रोटेशन अक्षम है और {count}-रिकॉर्ड की सीमा पूरी हो गई है, तो अनावश्यक रिकॉर्ड हटा दें या स्वचालित रोटेशन सक्षम करें।",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "शॉर्टकट वेबसाइट या ब्राउज़र के साथ विरोध करता है",
   "ui.where-is-my-data-stored": "मेरा डेटा कहाँ संग्रहीत है?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "कीबोर्ड शॉर्टकट खोलें, वर्तमान संयोजन पर क्लिक करें, और Ctrl, Alt, Shift, या Meta का उपयोग करके दूसरा संयोजन दर्ज करें। ब्राउज़र या वर्तमान वेबसाइट द्वारा उपयोग नहीं किया जाने वाला शॉर्टकट चुनें।",
@@ -352,8 +352,8 @@
   "ui.speak-code": "बोलें ({code})",
   "ui.speech-error-error": "वाक् त्रुटि: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "अनुवादों की {count} सीमा पूरी हो चुकी है. सहेजे गए रिकॉर्ड डाउनलोड करें और नए रिकॉर्ड सहेजने के लिए भंडारण साफ़ करें।",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "जब रोटेशन अक्षम हो जाता है, तो नए रिकॉर्ड सहेजे नहीं जाएंगे जबकि {count}-रिकॉर्ड सीमा पूरी हो चुकी है।",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "जब नए अनुवाद {count}-रिकॉर्ड सीमा से अधिक हो जाते हैं, तो इतिहास को {count} रिकॉर्ड पर रखते हुए, सबसे पुराने रिकॉर्ड स्वचालित रूप से हटा दिए जाते हैं।",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "पुराने रिकॉर्ड अपने आप बदलने की सुविधा बंद होने पर, {count} की सीमा पूरी रहने तक नए रिकॉर्ड इतिहास में नहीं सहेजे जाएंगे। पुराने रिकॉर्ड इतिहास में बने रहेंगे।",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "नए अनुवाद जोड़ने पर {count} की सीमा पार होने से सबसे पुराने रिकॉर्ड इतिहास से अपने आप हटा दिए जाएंगे। इस तरह इतिहास में रिकॉर्ड की कुल संख्या {count} बनी रहेगी।",
   "ui.translated-from-english": "अंग्रेज़ी से अनुवादित",
   "ui.on-page-example": "पेज पर उदाहरण",
   "ui.select-a-phrase-and-get-an-instant-translation": "वाक्यांश चुनें और तुरंत अनुवाद पाएँ",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "कॉन्टेक्स्ट मेन्यू",
   "ui.onboarding-context-description": "चुने हुए टेक्स्ट पर राइट-क्लिक करें और अनुवाद चुनें।",
   "ui.onboarding-shortcut-change-hint": "आप सेटिंग में शॉर्टकट बदल सकते हैं।",
-  "ui.could-not-copy-translations": "अनुवाद कॉपी नहीं हो सके"
+  "ui.could-not-copy-translations": "अनुवाद कॉपी नहीं हो सके",
+  "ui.history-record-limit": "इतिहास में रिकॉर्ड की सीमा",
+  "ui.history-record-limit-description": "1 से 5000 तक। पुराने रिकॉर्ड अपने आप बदलने की सुविधा चालू होने पर, नया अनुवाद सहेजते समय पुराने रिकॉर्ड हटा दिए जाएंगे।"
 }

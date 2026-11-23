@@ -17,10 +17,10 @@ import {
 } from "../history";
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
-import {MAX_HISTORY_RECORDS} from "../history-config";
+import {MAX_HISTORY_RECORDS, MIN_HISTORY_RECORDS} from "../history-config";
 import {isMobileDevice} from "../device";
 import {getReviewStore} from "../review-store";
-import {getActiveLanguage, loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {formatMessage, getActiveLanguage, loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -1081,11 +1081,38 @@ function AdvancedSettings() {
               <span className="sr-only">Включить автоматическое сохранение</span>
             </label>
           </div>
+          <form className="setting-row setting-row-secondary history-limit-row" onSubmit={(event) => {
+            event.preventDefault();
+            if (!settings || !event.currentTarget.reportValidity()) return;
+            const historyRecordLimit = Number(new FormData(event.currentTarget).get("historyRecordLimit"));
+            void saveSetting({...settings, historyRecordLimit});
+          }}>
+            <div className="setting-copy">
+              <h2><label htmlFor="history-record-limit">Лимит записей в истории</label></h2>
+              <p id="history-record-limit-description">От 1 до 5000. При включённой ротации старые записи будут удаляться при сохранении нового перевода.</p>
+            </div>
+            <div className="history-limit-controls">
+              <input
+                key={settings?.historyRecordLimit ?? "loading"}
+                id="history-record-limit"
+                name="historyRecordLimit"
+                type="number"
+                min={MIN_HISTORY_RECORDS}
+                max={MAX_HISTORY_RECORDS}
+                step={1}
+                required
+                defaultValue={settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}
+                disabled={!settings}
+                aria-describedby="history-record-limit-description"
+              />
+              <button type="submit" disabled={!settings}>Сохранить</button>
+            </div>
+          </form>
           <div className="setting-row setting-row-secondary">
             <div className="setting-copy">
               <h2>Ротация истории</h2>
-              <p>{`При добавлении новых переводов сверх лимита в ${MAX_HISTORY_RECORDS} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет оставаться равным ${MAX_HISTORY_RECORDS}.`}</p>
-              <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${MAX_HISTORY_RECORDS}.`}</p>
+              <p>{`При добавлении новых переводов сверх лимита в ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS} самые старые записи будут автоматически удаляться из истории. Таким образом, общее количество записей в истории будет оставаться равным ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}.`}</p>
+              <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}. Старые будут оставаться в истории.`}</p>
             </div>
             <label className="switch">
               <input
@@ -1346,6 +1373,10 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 }
 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
+  const [historyRecordLimit, setHistoryRecordLimit] = useState(MAX_HISTORY_RECORDS);
+  useEffect(() => {
+    void getExtensionSettings().then((settings) => setHistoryRecordLimit(settings.historyRecordLimit)).catch(() => {});
+  }, []);
   return (
     <div className="help-page">
 <PageHeading title="Как пользоваться" description="Практическое руководство: от первого перевода до личного словаря и экспорта в другие приложения" />
@@ -1412,7 +1443,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         <div className="help-section-heading"><span>Задача 04</span><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
         <HistoryHelpExample />
         <div className="vocabulary-layout">
-          <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong> — при лимите в 5000 записей старые переводы могут автоматически заменяться новыми.</span></li></ul></article>
+          <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong>{" "}{formatMessage("ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically", {count: String(historyRecordLimit)})}</span></li></ul></article>
           <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
         </div>
       </section>
@@ -1433,7 +1464,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         <div className="faq-list">
           <details><summary>Окно перевода не появляется после выделения</summary><p>{translate("Проверьте настройку «Показывать окно перевода». Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения.")} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
           <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
-          <details><summary>Новая запись не появилась в истории</summary><p>Проверьте режим сохранения. При ручном режиме нажмите кнопку сохранения в окне перевода. Если ротация выключена и достигнут лимит 5000 записей, удалите ненужные записи или включите автоматическую ротацию.</p></details>
+          <details><summary>Новая запись не появилась в истории</summary><p>{formatMessage("ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation", {count: String(historyRecordLimit)})}</p></details>
           <details><summary>Горячая клавиша конфликтует с сайтом или браузером</summary><p>Откройте «Активация», нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом.</p></details>
           <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удалите данные расширения средствами браузера.</p></details>
         </div>

@@ -230,7 +230,7 @@
   "ui.every-translation-goes-straight-to-history": "— تُضاف كل ترجمة مباشرة إلى السجل.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "- تتم إضافة السجلات التي تختارها فقط إلى مفرداتك.",
   "ui.refine-the-translation-context-transcription-and-source": "— راجع الترجمة والسياق والكتابة الصوتية والمصدر.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— عند حد 5000 سجل، يمكن استبدال الترجمات القديمة تلقائيًا.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— عند حد {count} سجل، يمكن استبدال الترجمات القديمة تلقائيًا.",
   "ui.open-history": "فتح السجل",
   "ui.view-and-edit-records": "عرض وتحرير السجلات",
   "ui.configure-saving": "إعداد الحفظ",
@@ -253,7 +253,7 @@
   "ui.translation-or-speech-does-not-load": "لا يتم تحميل الترجمة أو الكلام",
   "ui.a-new-record-did-not-appear-in-history": "لم يظهر سجل جديد في سجل الترجمات",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "تتطلب هذه الميزات اتصالاً بالإنترنت. تحقق من اتصالك وحاول مرة أخرى. قد تقوم بعض المواقع بتقييد العناصر المضمنة؛ مقارنة النتيجة على موقع آخر.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "تحقق من وضع الحفظ. في الوضع اليدوي، انقر فوق حفظ في نافذة الترجمة. إذا تم تعطيل التدوير وتم الوصول إلى حد 5000 سجل، فاحذف السجلات غير الضرورية أو قم بتمكين التدوير التلقائي.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "تحقق من وضع الحفظ. في الوضع اليدوي، انقر فوق حفظ في نافذة الترجمة. إذا تم تعطيل التدوير وتم الوصول إلى حد {count} سجل، فاحذف السجلات غير الضرورية أو قم بتمكين التدوير التلقائي.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "يتعارض الاختصار مع موقع الويب أو المتصفح",
   "ui.where-is-my-data-stored": "أين يتم تخزين بياناتي؟",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "افتح اختصارات لوحة المفاتيح، وانقر فوق المجموعة الحالية، وأدخل مجموعة أخرى باستخدام Ctrl، أو Alt، أو Shift، أو Meta. اختر اختصارًا لا يستخدمه المتصفح أو موقع الويب الحالي.",
@@ -353,8 +353,8 @@
   "ui.speak-code": "تحدث ({code})",
   "ui.speech-error-error": "خطأ في الكلام: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "تم الوصول إلى الحد الأقصى لعدد الترجمات وهو {count}. قم بتنزيل السجلات المحفوظة ومسح مساحة التخزين لحفظ سجلات جديدة.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "عند تعطيل التدوير، لن يتم حفظ السجلات الجديدة أثناء الوصول إلى الحد الأقصى لعدد السجلات وهو {count}.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "عندما تتجاوز الترجمات الجديدة حد التسجيل البالغ {count}، تتم إزالة السجلات الأقدم تلقائيًا، مع الاحتفاظ بالسجل في {count} من السجلات.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "عند تعطيل التدوير، لن تُحفظ سجلات جديدة في المحفوظات ما دام الحد البالغ {count} قد تم بلوغه. وستبقى السجلات القديمة في المحفوظات.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "عند إضافة ترجمات جديدة تتجاوز الحد البالغ {count}، ستُحذف أقدم السجلات تلقائيًا من المحفوظات. وبذلك سيبقى إجمالي عدد السجلات في المحفوظات مساويًا لـ {count}.",
   "ui.translated-from-english": "مترجمة من الإنجليزية",
   "ui.on-page-example": "مثال على الصفحة",
   "ui.select-a-phrase-and-get-an-instant-translation": "حدد عبارة واحصل على ترجمة فورية",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "القائمة السياقية",
   "ui.onboarding-context-description": "انقر بزر الفأرة الأيمن على النص المحدد واختر الترجمة.",
   "ui.onboarding-shortcut-change-hint": "يمكنك تغيير الاختصار في الإعدادات.",
-  "ui.could-not-copy-translations": "تعذّر نسخ الترجمات"
+  "ui.could-not-copy-translations": "تعذّر نسخ الترجمات",
+  "ui.history-record-limit": "الحد الأقصى لسجلات المحفوظات",
+  "ui.history-record-limit-description": "من 1 إلى 5000. عند تفعيل التدوير، ستُحذف السجلات القديمة عند حفظ ترجمة جديدة."
 }

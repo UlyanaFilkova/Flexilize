@@ -222,7 +222,7 @@
   "ui.every-translation-goes-straight-to-history": "— varje översättning går direkt till historien.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— endast poster du väljer läggs till i ditt ordförråd.",
   "ui.refine-the-translation-context-transcription-and-source": "— förfina översättningen, sammanhanget, transkriptionen och källan.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— vid gränsen på 5 000 poster kan äldre översättningar ersättas automatiskt.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— vid gränsen på {count} poster kan äldre översättningar ersättas automatiskt.",
   "ui.open-history": "Öppna historiken",
   "ui.view-and-edit-records": "Visa och redigera poster",
   "ui.configure-saving": "Konfigurera sparande",
@@ -245,7 +245,7 @@
   "ui.translation-or-speech-does-not-load": "Översättning eller tal laddas inte",
   "ui.a-new-record-did-not-appear-in-history": "En ny post dök inte upp i historien",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Dessa funktioner kräver en internetanslutning. Kontrollera din anslutning och försök igen. Vissa webbplatser kan begränsa inbäddade element; jämför resultatet på en annan sida.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kontrollera sparläget. I manuellt läge klickar du på Spara i översättningsfönstret. Om rotation är inaktiverad och gränsen på 5 000 poster har nåtts, radera onödiga poster eller aktivera automatisk rotation.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kontrollera sparläget. I manuellt läge klickar du på Spara i översättningsfönstret. Om rotation är inaktiverad och gränsen på {count} poster har nåtts, radera onödiga poster eller aktivera automatisk rotation.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Genvägen är i konflikt med webbplatsen eller webbläsaren",
   "ui.where-is-my-data-stored": "Var lagras min data?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Öppna kortkommandon, klicka på den aktuella kombinationen och ange en annan med Ctrl, Alt, Shift eller Meta. Välj en genväg som inte används av webbläsaren eller den aktuella webbplatsen.",
@@ -344,8 +344,8 @@
   "ui.speak-code": "Tala ({code})",
   "ui.speech-error-error": "Talfel: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Gränsen på {count} översättningar har nåtts. Ladda ner de sparade posterna och rensa lagringen för att spara nya.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "När rotation är inaktiverad kommer nya poster inte att sparas medan gränsen för {count}-rekord har nåtts.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "När nya översättningar överskrider gränsen för {count}-poster tas de äldsta posterna bort automatiskt, och historiken finns kvar på {count} poster.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "När rotation är avstängd sparas inga nya poster i historiken så länge gränsen på {count} är nådd. Gamla poster finns kvar i historiken.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "När nya översättningar läggs till över gränsen på {count} tas de äldsta posterna automatiskt bort från historiken. Det totala antalet poster i historiken förblir därmed {count}.",
   "ui.translated-from-english": "Översatt från engelska",
   "ui.on-page-example": "Exempel på sidan",
   "ui.select-a-phrase-and-get-an-instant-translation": "Välj en fras och få en omedelbar översättning",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Snabbmeny",
   "ui.onboarding-context-description": "Högerklicka på den markerade texten och välj översättning.",
   "ui.onboarding-shortcut-change-hint": "Du kan ändra kortkommandot i inställningarna.",
-  "ui.could-not-copy-translations": "Det gick inte att kopiera översättningarna"
+  "ui.could-not-copy-translations": "Det gick inte att kopiera översättningarna",
+  "ui.history-record-limit": "Gräns för historikposter",
+  "ui.history-record-limit-description": "Från 1 till 5000. När rotation är aktiverad tas gamla poster bort när en ny översättning sparas."
 }

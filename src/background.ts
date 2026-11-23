@@ -1222,18 +1222,18 @@ async function saveRecordNow(record: TranslationRecord) {
       records[duplicateIndex] = { ...records[duplicateIndex], transcription: record.transcription };
       await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
     }
-    return { saved: true, limitReached: !settings.historyRotationEnabled && records.length >= MAX_HISTORY_RECORDS };
+    return { saved: true, limitReached: !settings.historyRotationEnabled && records.length >= settings.historyRecordLimit };
   }
-  if (!settings.historyRotationEnabled && records.length >= MAX_HISTORY_RECORDS) {
+  if (!settings.historyRotationEnabled && records.length >= settings.historyRecordLimit) {
     return { saved: false, limitReached: true };
   }
 
   records.unshift(record);
-  if (settings.historyRotationEnabled && records.length > MAX_HISTORY_RECORDS) {
-    records.length = MAX_HISTORY_RECORDS;
+  if (settings.historyRotationEnabled && records.length > settings.historyRecordLimit) {
+    records.length = settings.historyRecordLimit;
   }
   await extensionApi.storage.local.set({ [RECORDS_KEY]: records });
-  return { saved: true, limitReached: !settings.historyRotationEnabled && records.length >= MAX_HISTORY_RECORDS };
+  return { saved: true, limitReached: !settings.historyRotationEnabled && records.length >= settings.historyRecordLimit };
 }
 
 async function saveRequestedRecord(payload: {record?: unknown}) {

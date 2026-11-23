@@ -245,7 +245,7 @@
   "ui.every-translation-goes-straight-to-history": "— každý preklad prejde priamo do histórie.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— do vášho slovníka sa pridajú iba záznamy, ktoré si vyberiete.",
   "ui.refine-the-translation-context-transcription-and-source": "— spresnite preklad, kontext, prepis a zdroj.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— pri limite 5 000 záznamov možno staršie preklady automaticky nahradiť.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— pri limite {count} záznamov možno staršie preklady automaticky nahradiť.",
   "ui.open-history": "Otvoriť históriu",
   "ui.view-and-edit-records": "Zobrazenie a úprava záznamov",
   "ui.configure-saving": "Nastaviť ukladanie",
@@ -268,7 +268,7 @@
   "ui.translation-or-speech-does-not-load": "Preklad alebo reč sa nenačítajú",
   "ui.a-new-record-did-not-appear-in-history": "V histórii sa neobjavil nový záznam",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Tieto funkcie vyžadujú internetové pripojenie. Skontrolujte pripojenie a skúste to znova. Niektoré stránky môžu obmedziť vložené prvky; porovnajte výsledok na inej stránke.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Skontrolujte režim ukladania. V manuálnom režime kliknite v okne prekladu na Uložiť. Ak je rotácia vypnutá a dosiahol sa limit 5 000 záznamov, odstráňte nepotrebné záznamy alebo povoľte automatické otáčanie.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Skontrolujte režim ukladania. V manuálnom režime kliknite v okne prekladu na Uložiť. Ak je rotácia vypnutá a dosiahol sa limit {count} záznamov, odstráňte nepotrebné záznamy alebo povoľte automatické otáčanie.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Skratka je v konflikte s webovou stránkou alebo prehliadačom",
   "ui.where-is-my-data-stored": "Kde sú uložené moje údaje?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Otvorte klávesové skratky, kliknite na aktuálnu kombináciu a zadajte inú pomocou klávesov Ctrl, Alt, Shift alebo Meta. Vyberte skratku, ktorú nepoužíva prehliadač ani aktuálna webová lokalita.",
@@ -369,8 +369,8 @@
   "ui.speak-code": "Hovorte ({code})",
   "ui.speech-error-error": "Chyba reči: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Bol dosiahnutý limit {count} prekladov. Stiahnite si uložené záznamy a vyčistite úložisko, aby ste mohli uložiť nové.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Keď je rotácia zakázaná, nové záznamy sa nebudú ukladať, kým sa dosiahne limit {count}-záznamov.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Keď nové preklady prekročia limit {count}-záznamov, najstaršie záznamy sa automaticky odstránia, pričom história zostane na {count} záznamoch.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Pri vypnutej rotácii sa nové záznamy nebudú ukladať do histórie, kým je dosiahnutý limit {count}. Staré záznamy zostanú v histórii.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Pri pridávaní nových prekladov nad limit {count} sa najstaršie záznamy automaticky odstránia z histórie. Celkový počet záznamov v histórii tak zostane rovný {count}.",
   "ui.translated-from-english": "Preložené z angličtiny",
   "ui.on-page-example": "Príklad na stránke",
   "ui.select-a-phrase-and-get-an-instant-translation": "Vyberte frázu a získajte okamžitý preklad",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Kontextová ponuka",
   "ui.onboarding-context-description": "Kliknite pravým tlačidlom na vybraný text a zvoľte preklad.",
   "ui.onboarding-shortcut-change-hint": "Klávesovú skratku môžete zmeniť v nastaveniach.",
-  "ui.could-not-copy-translations": "Preklady sa nepodarilo skopírovať"
+  "ui.could-not-copy-translations": "Preklady sa nepodarilo skopírovať",
+  "ui.history-record-limit": "Limit záznamov histórie",
+  "ui.history-record-limit-description": "Od 1 do 5000. Pri zapnutej rotácii sa staré záznamy odstránia pri uložení nového prekladu."
 }

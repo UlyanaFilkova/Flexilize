@@ -248,7 +248,7 @@
   "ui.every-translation-goes-straight-to-history": "— every translation goes straight to history.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— only records you choose are added to your vocabulary.",
   "ui.refine-the-translation-context-transcription-and-source": "— refine the translation, context, transcription, and source.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— at the 5,000-record limit, older translations can be replaced automatically.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— at the {count}-record limit, older translations can be replaced automatically.",
   "ui.open-history": "Open history",
   "ui.view-and-edit-records": "View and edit records",
   "ui.configure-saving": "Configure saving",
@@ -273,7 +273,7 @@
   "ui.translation-or-speech-does-not-load": "Translation or speech does not load",
   "ui.a-new-record-did-not-appear-in-history": "A new record did not appear in history",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "These features require an internet connection. Check your connection and try again. Some sites may restrict embedded elements; compare the result on another site.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Check the saving mode. In manual mode, click Save in the translation window. If rotation is disabled and the 5,000-record limit has been reached, delete unneeded records or enable automatic rotation.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Check the saving mode. In manual mode, click Save in the translation window. If rotation is disabled and the {count}-record limit has been reached, delete unneeded records or enable automatic rotation.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "The shortcut conflicts with the website or browser",
   "ui.where-is-my-data-stored": "Where is my data stored?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Open Keyboard shortcuts, click the current combination, and enter another one using Ctrl, Alt, Shift, or Meta. Choose a shortcut not used by the browser or current website.",
@@ -374,8 +374,8 @@
   "ui.speak-code": "Speak ({code})",
   "ui.speech-error-error": "Speech error: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "The limit of {count} translations has been reached. Download the saved records and clear storage to save new ones.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "When rotation is disabled, new records will not be saved while the {count}-record limit has been reached.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "When new translations exceed the {count}-record limit, the oldest records are removed automatically, keeping history at {count} records.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "With rotation disabled, new records will not be saved to history while the limit of {count} has been reached. Existing records will remain in history.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "When new translations exceed the limit of {count}, the oldest records will be automatically deleted from history. This will keep the total number of records in history at {count}.",
   "ui.translated-from-english": "Translated from English",
   "ui.on-page-example": "On-page example",
   "ui.select-a-phrase-and-get-an-instant-translation": "Select a phrase and get an instant translation",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Context menu",
   "ui.onboarding-context-description": "Right-click the selected text and choose translation.",
   "ui.onboarding-shortcut-change-hint": "You can change the shortcut in settings.",
-  "ui.could-not-copy-translations": "Could not copy translations"
+  "ui.could-not-copy-translations": "Could not copy translations",
+  "ui.history-record-limit": "History record limit",
+  "ui.history-record-limit-description": "From 1 to 5000. With rotation enabled, old records will be deleted when a new translation is saved."
 }

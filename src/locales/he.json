@@ -248,7 +248,7 @@
   "ui.every-translation-goes-straight-to-history": "— כל תרגום עובר ישר להיסטוריה.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— רק רשומות שאתה בוחר מתווספות לאוצר המילים שלך.",
   "ui.refine-the-translation-context-transcription-and-source": "— צמצם את התרגום, ההקשר, התעתיק פונטי והמקור.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— במגבלה של 5,000 רשומות, ניתן להחליף תרגומים ישנים באופן אוטומטי.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— במגבלה של {count} רשומות, ניתן להחליף תרגומים ישנים באופן אוטומטי.",
   "ui.open-history": "פתיחת היסטוריה",
   "ui.view-and-edit-records": "הצג וערוך רשומות",
   "ui.configure-saving": "הגדרת שמירה",
@@ -271,7 +271,7 @@
   "ui.translation-or-speech-does-not-load": "תרגום או דיבור לא נטען",
   "ui.a-new-record-did-not-appear-in-history": "רשומה חדשה לא הופיעה בהיסטוריה",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "תכונות אלה דורשות חיבור לאינטרנט. בדוק את החיבור שלך ונסה שוב. חלק מהאתרים עשויים להגביל רכיבים מוטבעים; השוו את התוצאה באתר אחר.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "בדוק את מצב השמירה. במצב ידני, לחץ על שמור בחלון התרגום. אם הסיבוב מושבת והמגבלת של 5,000 רשומות הושגה, מחק רשומות לא נחוצות או הפעל סיבוב אוטומטי.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "בדוק את מצב השמירה. במצב ידני, לחץ על שמור בחלון התרגום. אם הסיבוב מושבת והמגבלת של {count} רשומות הושגה, מחק רשומות לא נחוצות או הפעל סיבוב אוטומטי.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "קיצור הדרך מתנגש עם האתר או הדפדפן",
   "ui.where-is-my-data-stored": "היכן מאוחסנים הנתונים שלי?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "פתח את מקשי הקיצור, לחץ על השילוב הנוכחי והזן אחד נוסף באמצעות Ctrl, Alt, Shift או Meta. בחר קיצור דרך שאינו בשימוש על ידי הדפדפן או האתר הנוכחי.",
@@ -372,8 +372,8 @@
   "ui.speak-code": "דבר ({code})",
   "ui.speech-error-error": "שגיאת דיבור: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "הגיעה למגבלה של {count} תרגומים. הורד את הרשומות השמורות ונקה את האחסון כדי לשמור רשומות חדשות.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "כאשר הסיבוב מושבת, רשומות חדשות לא יישמרו כל עוד הגעת למגבלת הרשומה של {count}.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "כאשר תרגומים חדשים חורגים ממגבלת ה-{count}-record, הרשומות הישנות ביותר מוסרות אוטומטית, תוך שמירה על ההיסטוריה ב-{count} רשומות.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "כשהתחלופה כבויה, רשומות חדשות לא יישמרו בהיסטוריה כל עוד הגעתם למגבלה של {count}. הרשומות הישנות יישארו בהיסטוריה.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "בעת הוספת תרגומים חדשים מעבר למגבלה של {count}, הרשומות הישנות ביותר יימחקו אוטומטית מההיסטוריה. כך המספר הכולל של הרשומות בהיסטוריה יישאר {count}.",
   "ui.translated-from-english": "מתורגם מאנגלית",
   "ui.on-page-example": "דוגמה בדף",
   "ui.select-a-phrase-and-get-an-instant-translation": "בחר ביטוי וקבל תרגום מיידי",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "תפריט ההקשר",
   "ui.onboarding-context-description": "לחצו לחיצה ימנית על הטקסט המסומן ובחרו בתרגום.",
   "ui.onboarding-shortcut-change-hint": "אפשר לשנות את קיצור המקשים בהגדרות.",
-  "ui.could-not-copy-translations": "העתקת התרגומים נכשלה"
+  "ui.could-not-copy-translations": "העתקת התרגומים נכשלה",
+  "ui.history-record-limit": "מגבלת רשומות בהיסטוריה",
+  "ui.history-record-limit-description": "מ־1 עד 5000. כשהתחלופה מופעלת, רשומות ישנות יימחקו בעת שמירת תרגום חדש."
 }

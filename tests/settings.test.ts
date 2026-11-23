@@ -107,6 +107,14 @@ describe("settings", () => {
     expect(saved.speechRate).toBe(MAX_SPEECH_RATE);
     expect(storageData[SETTINGS_KEY]).toEqual(saved);
   });
+
+  it.each([
+    [undefined, 5000], [1, 1], [250, 250], [5000, 5000],
+    [0, 5000], [-1, 5000], [5001, 5000], [2.5, 5000],
+    ["250", 5000], [NaN, 5000], [Infinity, 5000]
+  ])("normalizes history limit %s to %s", (historyRecordLimit, expected) => {
+    expect(normalizeSettings({historyRecordLimit}).historyRecordLimit).toBe(expected);
+  });
 });
 
 describe("keyboard shortcuts", () => {

@@ -80,8 +80,8 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
     [/^Достигнут лимит в (\d+) символов\.$/, (count) => formatMessage("Достигнут лимит в {count} символов.", {count}, language)],
     [/^Ошибка озвучки: (.+)$/, (error) => formatMessage("Ошибка озвучки: {error}", {error}, language)],
     [/^Достигнут лимит в (\d+) переводов\. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые\.$/, (count) => formatMessage("Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.", {count}, language)],
-    [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.", {count}, language)],
-    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удалены из истории\. Таким образом, общее количество записей в истории будет оставаться равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.", {count}, language)]
+    [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\. Старые будут оставаться в истории\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}. Старые будут оставаться в истории.", {count}, language)],
+    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удаляться из истории\. Таким образом, общее количество записей в истории будет оставаться равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удаляться из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.", {count}, language)]
   ];
   for (const [pattern, replacement] of patterns) {
     const match = text.match(pattern);
@@ -90,7 +90,7 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
   return value;
 }
 
-function formatMessage(template: string, values: Record<string, string>, language: InterfaceLanguage) {
+export function formatMessage(template: string, values: Record<string, string>, language: InterfaceLanguage = activeLanguage) {
   const translated = lookupMessage(template, language) || template;
   return translated.replace(/\{(\w+)}/g, (_, key) => values[key] ?? `{${key}}`);
 }

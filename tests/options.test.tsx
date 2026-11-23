@@ -73,6 +73,27 @@ describe("options page", () => {
     }
   });
 
+  it("saves a custom history limit and rejects values outside the allowed range", async () => {
+    const input = await waitFor(() => {
+      const field = screen.getByRole("spinbutton", {name: "Лимит записей в истории"}) as HTMLInputElement;
+      expect(field.disabled).toBe(false);
+      return field;
+    });
+    const form = input.closest("form")!;
+    for (const value of ["", "0", "5001", "1.5"]) {
+      fireEvent.change(input, {target: {value}});
+      fireEvent.submit(form);
+      expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(5000);
+      expect(input.checkValidity()).toBe(false);
+    }
+    fireEvent.change(input, {target: {value: "250"}});
+    fireEvent.submit(form);
+    await waitFor(() => expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(250));
+    expect(screen.getByText(/При выключенной ротации.*250/)).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(await screen.findByText(/— при лимите в 250 записей/)).toBeTruthy();
+  });
+
   it("shows a detailed help section and links it to settings", async () => {
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
     expect(screen.getByRole("heading", {name: "Как пользоваться"})).toBeTruthy();
@@ -123,7 +144,7 @@ describe("options page", () => {
   it("can hide the selection translation window", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
     expect(screen.getByRole("region", {name: "Перевод"}).querySelectorAll(".setting-row").length).toBe(1);
-    expect(screen.getByRole("region", {name: "Настройки сохранения"}).querySelectorAll(".setting-row").length).toBe(2);
+    expect(screen.getByRole("region", {name: "Настройки сохранения"}).querySelectorAll(".setting-row").length).toBe(3);
     await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
   });

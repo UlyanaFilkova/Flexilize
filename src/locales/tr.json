@@ -229,7 +229,7 @@
   "ui.every-translation-goes-straight-to-history": "— her çeviri doğrudan geçmişe gider.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— yalnızca seçtiğiniz kayıtlar kelime dağarcığınıza eklenir.",
   "ui.refine-the-translation-context-transcription-and-source": "— çeviriyi, bağlamı, transkripsiyonu ve kaynağı hassaslaştırın.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 5.000 kayıt sınırında, eski çeviriler otomatik olarak değiştirilebilir.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— {count} kayıt sınırında, eski çeviriler otomatik olarak değiştirilebilir.",
   "ui.open-history": "Geçmişi aç",
   "ui.view-and-edit-records": "Kayıtları görüntüleyin ve düzenleyin",
   "ui.configure-saving": "Kaydetmeyi yapılandırın",
@@ -252,7 +252,7 @@
   "ui.translation-or-speech-does-not-load": "Çeviri veya konuşma yüklenmiyor",
   "ui.a-new-record-did-not-appear-in-history": "Tarihte yeni bir kayıt görünmedi",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Bu özellikler internet bağlantısı gerektirir. Bağlantınızı kontrol edip tekrar deneyin. Bazı siteler gömülü öğeleri kısıtlayabilir; sonucu başka bir sitede karşılaştırın.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kaydetme modunu kontrol edin. Manuel modda çeviri penceresinde Kaydet'e tıklayın. Döndürme devre dışıysa ve 5.000 kayıt sınırına ulaşıldıysa gereksiz kayıtları silin veya otomatik döndürmeyi etkinleştirin.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kaydetme modunu kontrol edin. Manuel modda çeviri penceresinde Kaydet'e tıklayın. Döndürme devre dışıysa ve {count} kayıt sınırına ulaşıldıysa gereksiz kayıtları silin veya otomatik döndürmeyi etkinleştirin.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Kısayol web sitesi veya tarayıcıyla çakışıyor",
   "ui.where-is-my-data-stored": "Verilerim nerede saklanıyor?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Klavye kısayollarını açın, geçerli kombinasyona tıklayın ve Ctrl, Alt, Shift veya Meta'yı kullanarak başka bir kombinasyon girin. Tarayıcının veya mevcut web sitesinin kullanmadığı bir kısayol seçin.",
@@ -352,8 +352,8 @@
   "ui.speak-code": "Konuş ({code})",
   "ui.speech-error-error": "Konuşma hatası: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "{count} çeviri sınırına ulaşıldı. Kaydedilen kayıtları indirin ve yenilerini kaydetmek için depolama alanını temizleyin.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Döndürme devre dışı bırakıldığında, {count} kayıt sınırına ulaşıldığında yeni kayıtlar kaydedilmeyecektir.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Yeni çeviriler {count} kayıt sınırını aştığında, en eski kayıtlar otomatik olarak kaldırılır ve geçmiş {count} kayıtta tutulur.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Döngü devre dışıysa {count} sınırına ulaşıldığı sürece yeni kayıtlar geçmişe kaydedilmez. Eski kayıtlar geçmişte kalır.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Yeni çeviriler eklendiğinde {count} sınırı aşılırsa en eski kayıtlar geçmişten otomatik olarak silinir. Böylece geçmişteki toplam kayıt sayısı {count} olarak kalır.",
   "ui.translated-from-english": "İngilizceden çevrilmiştir",
   "ui.on-page-example": "Sayfa içi örnek",
   "ui.select-a-phrase-and-get-an-instant-translation": "Bir cümle seçin ve anında çeviri alın",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Bağlam menüsü",
   "ui.onboarding-context-description": "Seçili metne sağ tıklayın ve çeviriyi seçin.",
   "ui.onboarding-shortcut-change-hint": "Kısayolu ayarlardan değiştirebilirsiniz.",
-  "ui.could-not-copy-translations": "Çeviriler kopyalanamadı"
+  "ui.could-not-copy-translations": "Çeviriler kopyalanamadı",
+  "ui.history-record-limit": "Geçmiş kaydı sınırı",
+  "ui.history-record-limit-description": "1 ile 5000 arasında. Döngü etkinse yeni bir çeviri kaydedildiğinde eski kayıtlar silinir."
 }

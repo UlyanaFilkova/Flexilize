@@ -224,7 +224,7 @@
   "ui.every-translation-goes-straight-to-history": "— mọi bản dịch đều đi thẳng vào lịch sử.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— chỉ những bản ghi bạn chọn mới được thêm vào từ vựng của bạn.",
   "ui.refine-the-translation-context-transcription-and-source": "— tinh chỉnh bản dịch, ngữ cảnh, bản phiên âm và nguồn.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— ở giới hạn 5.000 bản ghi, các bản dịch cũ hơn có thể được thay thế tự động.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— ở giới hạn {count} bản ghi, các bản dịch cũ hơn có thể được thay thế tự động.",
   "ui.open-history": "Lịch sử mở",
   "ui.view-and-edit-records": "Xem và chỉnh sửa bản ghi",
   "ui.configure-saving": "Thiết lập lưu trữ",
@@ -247,7 +247,7 @@
   "ui.translation-or-speech-does-not-load": "Bản dịch hoặc lời nói không tải",
   "ui.a-new-record-did-not-appear-in-history": "Một bản ghi mới không xuất hiện trong lịch sử",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Những tính năng này yêu cầu kết nối internet. Hãy kiểm tra kết nối của bạn và thử lại. Một số trang web có thể hạn chế các phần tử được nhúng; so sánh kết quả trên một trang web khác.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kiểm tra chế độ lưu. Ở chế độ thủ công, nhấp vào Lưu trong cửa sổ dịch. Nếu tính năng xoay bị tắt và đã đạt đến giới hạn 5.000 bản ghi, hãy xóa các bản ghi không cần thiết hoặc bật tính năng xoay tự động.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Kiểm tra chế độ lưu. Ở chế độ thủ công, nhấp vào Lưu trong cửa sổ dịch. Nếu tính năng xoay bị tắt và đã đạt đến giới hạn {count} bản ghi, hãy xóa các bản ghi không cần thiết hoặc bật tính năng xoay tự động.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Phím tắt xung đột với trang web hoặc trình duyệt",
   "ui.where-is-my-data-stored": "Dữ liệu của tôi được lưu trữ ở đâu?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Mở Phím tắt, nhấp vào tổ hợp hiện tại và nhập một tổ hợp khác bằng Ctrl, Alt, Shift hoặc Meta. Chọn một phím tắt không được trình duyệt hoặc trang web hiện tại sử dụng.",
@@ -347,8 +347,8 @@
   "ui.speak-code": "Nói ({code})",
   "ui.speech-error-error": "Lỗi giọng nói: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Đã đạt đến giới hạn {count} bản dịch. Tải xuống các bản ghi đã lưu và xóa bộ nhớ để lưu bản ghi mới.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Khi tính năng xoay bị tắt, các bản ghi mới sẽ không được lưu khi đã đạt đến giới hạn bản ghi {count}.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Khi bản dịch mới vượt quá giới hạn bản ghi {count}, bản ghi cũ nhất sẽ tự động bị xóa, giữ lịch sử ở bản ghi {count}.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Khi tắt xoay vòng, bản ghi mới sẽ không được lưu vào lịch sử khi đã đạt giới hạn {count}. Các bản ghi cũ sẽ vẫn nằm trong lịch sử.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Khi thêm bản dịch mới vượt quá giới hạn {count}, các bản ghi cũ nhất sẽ tự động bị xóa khỏi lịch sử. Nhờ đó, tổng số bản ghi trong lịch sử sẽ luôn là {count}.",
   "ui.translated-from-english": "Được dịch từ tiếng Anh",
   "ui.on-page-example": "Ví dụ trên trang",
   "ui.select-a-phrase-and-get-an-instant-translation": "Chọn một cụm từ và nhận bản dịch ngay lập tức",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu ngữ cảnh",
   "ui.onboarding-context-description": "Nhấp chuột phải vào văn bản đã chọn và chọn dịch.",
   "ui.onboarding-shortcut-change-hint": "Bạn có thể thay đổi phím tắt trong phần cài đặt.",
-  "ui.could-not-copy-translations": "Không thể sao chép bản dịch"
+  "ui.could-not-copy-translations": "Không thể sao chép bản dịch",
+  "ui.history-record-limit": "Giới hạn bản ghi lịch sử",
+  "ui.history-record-limit-description": "Từ 1 đến 5000. Khi bật xoay vòng, các bản ghi cũ sẽ bị xóa khi lưu bản dịch mới."
 }

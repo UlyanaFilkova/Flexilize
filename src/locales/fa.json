@@ -230,7 +230,7 @@
   "ui.every-translation-goes-straight-to-history": "— هر ترجمه مستقیماً در سابقه ذخیره می‌شود.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "- فقط رکوردهایی که انتخاب می کنید به واژگان شما اضافه می شوند.",
   "ui.refine-the-translation-context-transcription-and-source": "— ترجمه، زمینه، آوانویسی و منبع را بازبینی کنید.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— در حد 5000 رکورد، ترجمه های قدیمی را می توان به طور خودکار جایگزین کرد.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— در حد {count} رکورد، ترجمه های قدیمی را می توان به طور خودکار جایگزین کرد.",
   "ui.open-history": "باز کردن تاریخچه",
   "ui.view-and-edit-records": "مشاهده و ویرایش سوابق",
   "ui.configure-saving": "پیکربندی ذخیره‌سازی",
@@ -253,7 +253,7 @@
   "ui.translation-or-speech-does-not-load": "ترجمه یا گفتار بارگیری نمی شود",
   "ui.a-new-record-did-not-appear-in-history": "رکورد جدیدی در سابقه ترجمه ظاهر نشد",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "این ویژگی ها نیاز به اتصال به اینترنت دارند. اتصال خود را بررسی کنید و دوباره امتحان کنید. برخی از سایت ها ممکن است عناصر تعبیه شده را محدود کنند. نتیجه را در سایت دیگری مقایسه کنید.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "حالت ذخیره را بررسی کنید. در حالت دستی، روی Save در پنجره ترجمه کلیک کنید. اگر چرخش غیرفعال است و به حداکثر 5000 رکورد رسیده است، رکوردهای غیر ضروری را حذف کنید یا چرخش خودکار را فعال کنید.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "حالت ذخیره را بررسی کنید. در حالت دستی، روی Save در پنجره ترجمه کلیک کنید. اگر چرخش غیرفعال است و به حداکثر {count} رکورد رسیده است، رکوردهای غیر ضروری را حذف کنید یا چرخش خودکار را فعال کنید.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "میانبر با وب سایت یا مرورگر تداخل دارد",
   "ui.where-is-my-data-stored": "اطلاعات من کجا ذخیره می شود؟",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "میانبرهای صفحه کلید را باز کنید، روی ترکیب فعلی کلیک کنید و یکی دیگر را با استفاده از Ctrl، Alt، Shift یا Meta وارد کنید. میانبری را انتخاب کنید که توسط مرورگر یا وب سایت فعلی استفاده نمی شود.",
@@ -353,8 +353,8 @@
   "ui.speak-code": "پخش صدا ({code})",
   "ui.speech-error-error": "خطای گفتاری: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "به حد مجاز {count} ترجمه رسیده است. رکوردهای ذخیره شده را دانلود کنید و فضای ذخیره سازی را برای ذخیره موارد جدید پاک کنید.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "وقتی چرخش غیرفعال باشد، پس از رسیدن به سقف {count} رکورد، موارد جدید ذخیره نمی‌شوند.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "با ثبت ترجمه‌های بیشتر از سقف {count} رکورد، قدیمی‌ترین موارد خودکار حذف می‌شوند تا تعداد رکوردها در سابقه روی {count} بماند.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "با غیرفعال بودن چرخش، تا زمانی که تعداد سوابق به حد {count} رسیده باشد، سوابق جدید در تاریخچه ذخیره نخواهند شد. سوابق قدیمی در تاریخچه باقی خواهند ماند.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "با افزودن ترجمه‌های جدید و عبور از حد {count}، قدیمی‌ترین سوابق به‌طور خودکار از تاریخچه حذف خواهند شد. به این ترتیب، تعداد کل سوابق در تاریخچه برابر با {count} باقی خواهد ماند.",
   "ui.translated-from-english": "از انگلیسی ترجمه شده است",
   "ui.on-page-example": "نمونه روی صفحه",
   "ui.select-a-phrase-and-get-an-instant-translation": "یک عبارت را انتخاب کنید و ترجمه فوری دریافت کنید",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "منوی زمینه",
   "ui.onboarding-context-description": "روی متن انتخاب‌شده راست‌کلیک کنید و ترجمه را انتخاب کنید.",
   "ui.onboarding-shortcut-change-hint": "می‌توانید میان‌بر را در تنظیمات تغییر دهید.",
-  "ui.could-not-copy-translations": "کپی کردن ترجمه‌ها ممکن نشد"
+  "ui.could-not-copy-translations": "کپی کردن ترجمه‌ها ممکن نشد",
+  "ui.history-record-limit": "حداکثر تعداد سوابق",
+  "ui.history-record-limit-description": "از 1 تا 5000. با فعال بودن چرخش، هنگام ذخیره ترجمه جدید، سوابق قدیمی حذف خواهند شد."
 }

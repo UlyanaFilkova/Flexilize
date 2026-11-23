@@ -230,7 +230,7 @@
   "ui.every-translation-goes-straight-to-history": "— κάθε μετάφραση πηγαίνει κατευθείαν στο ιστορικό.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— μόνο οι εγγραφές που επιλέγετε προστίθενται στο λεξιλόγιό σας.",
   "ui.refine-the-translation-context-transcription-and-source": "— βελτιώστε τη μετάφραση, το πλαίσιο, τη μεταγραφή και την πηγή.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— στο όριο των 5.000 εγγραφών, οι παλαιότερες μεταφράσεις μπορούν να αντικατασταθούν αυτόματα.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— στο όριο των {count} εγγραφών, οι παλαιότερες μεταφράσεις μπορούν να αντικατασταθούν αυτόματα.",
   "ui.open-history": "Ανοίξτε το ιστορικό",
   "ui.view-and-edit-records": "Προβολή και επεξεργασία εγγραφών",
   "ui.configure-saving": "Ρύθμιση αποθήκευσης",
@@ -253,7 +253,7 @@
   "ui.translation-or-speech-does-not-load": "Δεν φορτώνεται η μετάφραση ή η ομιλία",
   "ui.a-new-record-did-not-appear-in-history": "Δεν εμφανίστηκε νέα εγγραφή στο ιστορικό",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Αυτές οι λειτουργίες απαιτούν σύνδεση στο Διαδίκτυο. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά. Ορισμένοι ιστότοποι ενδέχεται να περιορίζουν τα ενσωματωμένα στοιχεία. συγκρίνετε το αποτέλεσμα σε άλλο ιστότοπο.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Ελέγξτε τη λειτουργία αποθήκευσης. Στη χειροκίνητη λειτουργία, κάντε κλικ στην επιλογή Αποθήκευση στο παράθυρο μετάφρασης. Εάν η εναλλαγή είναι απενεργοποιημένη και έχει συμπληρωθεί το όριο των 5.000 εγγραφών, διαγράψτε τις εγγραφές που δεν χρειάζεστε ή ενεργοποιήστε την αυτόματη εναλλαγή.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Ελέγξτε τη λειτουργία αποθήκευσης. Στη χειροκίνητη λειτουργία, κάντε κλικ στην επιλογή Αποθήκευση στο παράθυρο μετάφρασης. Εάν η εναλλαγή είναι απενεργοποιημένη και έχει συμπληρωθεί το όριο των {count} εγγραφών, διαγράψτε τις εγγραφές που δεν χρειάζεστε ή ενεργοποιήστε την αυτόματη εναλλαγή.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Η συντόμευση έρχεται σε διένεξη με τον ιστότοπο ή το πρόγραμμα περιήγησης",
   "ui.where-is-my-data-stored": "Πού αποθηκεύονται τα δεδομένα μου;",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Ανοίξτε τις συντομεύσεις πληκτρολογίου, κάντε κλικ στον τρέχοντα συνδυασμό και εισαγάγετε έναν άλλο χρησιμοποιώντας Ctrl, Alt, Shift ή Meta. Επιλέξτε μια συντόμευση που δεν χρησιμοποιείται από το πρόγραμμα περιήγησης ή τον τρέχοντα ιστότοπο.",
@@ -353,8 +353,8 @@
   "ui.speak-code": "Speak) ({code})",
   "ui.speech-error-error": "Σφάλμα ομιλίας: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Το όριο των {count} μεταφράσεων έχει συμπληρωθεί. Κάντε λήψη των αποθηκευμένων εγγραφών και εκκαθαρίστε τον χώρο αποθήκευσης για να αποθηκεύσετε νέες.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Όταν η εναλλαγή είναι απενεργοποιημένη, οι νέες εγγραφές δεν θα αποθηκευτούν ενώ έχει συμπληρωθεί το όριο {count}-record.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Όταν οι νέες μεταφράσεις υπερβαίνουν το όριο {count}-record, οι παλαιότερες εγγραφές αφαιρούνται αυτόματα, διατηρώντας το ιστορικό σε {count} εγγραφές.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Με απενεργοποιημένη εναλλαγή, οι νέες εγγραφές δεν θα αποθηκεύονται στο ιστορικό όσο έχει συμπληρωθεί το όριο των {count}. Οι παλιές εγγραφές θα παραμένουν στο ιστορικό.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Όταν προστίθενται νέες μεταφράσεις πέρα από το όριο των {count}, οι παλαιότερες εγγραφές θα διαγράφονται αυτόματα από το ιστορικό. Έτσι, ο συνολικός αριθμός εγγραφών στο ιστορικό θα παραμένει {count}.",
   "ui.translated-from-english": "Μετάφραση από τα Αγγλικά",
   "ui.on-page-example": "Παράδειγμα στη σελίδα",
   "ui.select-a-phrase-and-get-an-instant-translation": "Επιλέξτε μια φράση και λάβετε μια άμεση μετάφραση",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Μενού περιβάλλοντος",
   "ui.onboarding-context-description": "Κάντε δεξί κλικ στο επιλεγμένο κείμενο και επιλέξτε μετάφραση.",
   "ui.onboarding-shortcut-change-hint": "Μπορείτε να αλλάξετε τη συντόμευση στις ρυθμίσεις.",
-  "ui.could-not-copy-translations": "Δεν ήταν δυνατή η αντιγραφή των μεταφράσεων"
+  "ui.could-not-copy-translations": "Δεν ήταν δυνατή η αντιγραφή των μεταφράσεων",
+  "ui.history-record-limit": "Όριο εγγραφών ιστορικού",
+  "ui.history-record-limit-description": "Από 1 έως 5000. Με ενεργή εναλλαγή, οι παλιές εγγραφές θα διαγράφονται κατά την αποθήκευση νέας μετάφρασης."
 }

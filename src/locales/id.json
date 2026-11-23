@@ -222,7 +222,7 @@
   "ui.every-translation-goes-straight-to-history": "— setiap terjemahan langsung masuk ke riwayat.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— hanya catatan yang Anda pilih yang ditambahkan ke kosakata Anda.",
   "ui.refine-the-translation-context-transcription-and-source": "— menyempurnakan terjemahan, konteks, transkripsi, dan sumber.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— pada batas 5.000 catatan, terjemahan lama dapat diganti secara otomatis.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— pada batas {count} catatan, terjemahan lama dapat diganti secara otomatis.",
   "ui.open-history": "Buka riwayat",
   "ui.view-and-edit-records": "Lihat dan edit catatan",
   "ui.configure-saving": "Atur penyimpanan",
@@ -245,7 +245,7 @@
   "ui.translation-or-speech-does-not-load": "Terjemahan atau ucapan tidak dimuat",
   "ui.a-new-record-did-not-appear-in-history": "Rekor baru tidak muncul dalam riwayat",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Fitur-fitur ini memerlukan koneksi internet. Periksa koneksi Anda dan coba lagi. Beberapa situs mungkin membatasi elemen yang disematkan; bandingkan hasilnya di situs lain.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Periksa mode hemat. Dalam mode manual, klik Simpan di jendela terjemahan. Jika rotasi dinonaktifkan dan batas 5.000 catatan telah tercapai, hapus catatan yang tidak diperlukan atau aktifkan rotasi otomatis.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Periksa mode hemat. Dalam mode manual, klik Simpan di jendela terjemahan. Jika rotasi dinonaktifkan dan batas {count} catatan telah tercapai, hapus catatan yang tidak diperlukan atau aktifkan rotasi otomatis.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Pintasannya bertentangan dengan situs web atau browser",
   "ui.where-is-my-data-stored": "Di mana data saya disimpan?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Buka pintasan keyboard, klik kombinasi saat ini, dan masukkan kombinasi lainnya menggunakan Ctrl, Alt, Shift, atau Meta. Pilih pintasan yang tidak digunakan oleh browser atau situs web saat ini.",
@@ -345,8 +345,8 @@
   "ui.speak-code": "Bicaralah ({code})",
   "ui.speech-error-error": "Kesalahan ucapan: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Batas {count} terjemahan telah tercapai. Unduh catatan yang disimpan dan hapus penyimpanan untuk menyimpan yang baru.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Jika rotasi dinonaktifkan, rekaman baru tidak akan disimpan hingga batas rekaman {count} tercapai.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Ketika terjemahan baru melebihi batas catatan {count}, catatan terlama akan dihapus secara otomatis, menyimpan riwayat di catatan {count}.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Jika rotasi dinonaktifkan, catatan baru tidak akan disimpan ke riwayat selama batas {count} telah tercapai. Catatan lama akan tetap ada dalam riwayat.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Saat terjemahan baru melampaui batas {count}, catatan paling lama akan dihapus secara otomatis dari riwayat. Dengan demikian, jumlah total catatan dalam riwayat akan tetap {count}.",
   "ui.translated-from-english": "Diterjemahkan dari bahasa Inggris",
   "ui.on-page-example": "Contoh di halaman",
   "ui.select-a-phrase-and-get-an-instant-translation": "Pilih frasa dan dapatkan terjemahan seketika",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Menu konteks",
   "ui.onboarding-context-description": "Klik kanan teks yang dipilih dan pilih terjemahan.",
   "ui.onboarding-shortcut-change-hint": "Anda dapat mengubah pintasan di pengaturan.",
-  "ui.could-not-copy-translations": "Terjemahan tidak dapat disalin"
+  "ui.could-not-copy-translations": "Terjemahan tidak dapat disalin",
+  "ui.history-record-limit": "Batas catatan riwayat",
+  "ui.history-record-limit-description": "Dari 1 hingga 5000. Jika rotasi diaktifkan, catatan lama akan dihapus saat terjemahan baru disimpan."
 }

@@ -227,7 +227,7 @@
   "ui.every-translation-goes-straight-to-history": "— jokainen käännös menee suoraan historiaan.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— vain valitsemasi tietueet lisätään sanastoon.",
   "ui.refine-the-translation-context-transcription-and-source": "— tarkenna käännöstä, kontekstia, transkriptiota ja lähdettä.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— 5 000 tietueen rajalla vanhemmat käännökset voidaan korvata automaattisesti.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— {count} tietueen rajalla vanhemmat käännökset voidaan korvata automaattisesti.",
   "ui.open-history": "Avaa historia",
   "ui.view-and-edit-records": "Tarkastele ja muokkaa tietueita",
   "ui.configure-saving": "Määritä tallennus",
@@ -250,7 +250,7 @@
   "ui.translation-or-speech-does-not-load": "Käännös tai puhe ei lataudu",
   "ui.a-new-record-did-not-appear-in-history": "Uutta ennätystä ei ilmestynyt historiaan",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Nämä ominaisuudet vaativat Internet-yhteyden. Tarkista yhteys ja yritä uudelleen. Jotkut sivustot voivat rajoittaa upotettuja elementtejä. vertaa tulosta toisella sivustolla.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Tarkista tallennustila. Napsauta manuaalisessa tilassa käännösikkunassa Tallenna. Jos kierto on poistettu käytöstä ja 5 000 tietueen raja on saavutettu, poista tarpeettomat tietueet tai ota automaattinen kierto käyttöön.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Tarkista tallennustila. Napsauta manuaalisessa tilassa käännösikkunassa Tallenna. Jos kierto on poistettu käytöstä ja {count} tietueen raja on saavutettu, poista tarpeettomat tietueet tai ota automaattinen kierto käyttöön.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Pikanäppäin on ristiriidassa verkkosivuston tai selaimen kanssa",
   "ui.where-is-my-data-stored": "Mihin tietoni on tallennettu?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Avaa Pikanäppäimet, napsauta nykyistä yhdistelmää ja syötä toinen Ctrl-, Alt-, Shift- tai Meta-näppäimillä. Valitse pikakuvake, jota selain tai nykyinen verkkosivusto ei käytä.",
@@ -349,8 +349,8 @@
   "ui.speak-code": "Puhu ({code})",
   "ui.speech-error-error": "Puhevirhe: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Käännösten enimmäismäärä {count} on saavutettu. Lataa tallennetut tietueet ja tyhjennä tallennustila uusien tallentamiseksi.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kun kierto on poistettu käytöstä, uusia tietueita ei tallenneta, kun {count}-tietueen raja on saavutettu.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kun uudet käännökset ylittävät {count}-tietueen rajan, vanhimmat tietueet poistetaan automaattisesti ja historia säilyy {count} tietueessa.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Kun kierto on pois käytöstä, uusia tietueita ei tallenneta historiaan niin kauan kuin {count} tietueen raja on saavutettu. Vanhat tietueet säilyvät historiassa.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Kun uusia käännöksiä lisätään yli {count} tietueen rajan, vanhimmat tietueet poistetaan automaattisesti historiasta. Näin historian tietueiden kokonaismäärä pysyy arvossa {count}.",
   "ui.translated-from-english": "Käännetty englannista",
   "ui.on-page-example": "Esimerkki sivulla",
   "ui.select-a-phrase-and-get-an-instant-translation": "Valitse lause ja hanki välitön käännös",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Pikavalikko",
   "ui.onboarding-context-description": "Napsauta valittua tekstiä hiiren oikealla painikkeella ja valitse käännös.",
   "ui.onboarding-shortcut-change-hint": "Voit muuttaa pikanäppäintä asetuksissa.",
-  "ui.could-not-copy-translations": "Käännösten kopioiminen epäonnistui"
+  "ui.could-not-copy-translations": "Käännösten kopioiminen epäonnistui",
+  "ui.history-record-limit": "Historiatietueiden enimmäismäärä",
+  "ui.history-record-limit-description": "1–5000. Kun kierto on käytössä, vanhat tietueet poistetaan uuden käännöksen tallennuksen yhteydessä."
 }

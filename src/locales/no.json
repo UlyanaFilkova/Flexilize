@@ -224,7 +224,7 @@
   "ui.every-translation-goes-straight-to-history": "— hver oversettelse går rett til historien.",
   "ui.only-records-you-choose-are-added-to-your-vocabulary": "— bare poster du velger legges til i vokabularet ditt.",
   "ui.refine-the-translation-context-transcription-and-source": "— finjuster oversettelsen, konteksten, transkripsjonen og kilden.",
-  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— ved grensen på 5000 poster kan eldre oversettelser erstattes automatisk.",
+  "ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically": "— ved grensen på {count} poster kan eldre oversettelser erstattes automatisk.",
   "ui.open-history": "Åpne loggen",
   "ui.view-and-edit-records": "Se og rediger poster",
   "ui.configure-saving": "Konfigurer lagring",
@@ -247,7 +247,7 @@
   "ui.translation-or-speech-does-not-load": "Oversettelse eller tale lastes ikke inn",
   "ui.a-new-record-did-not-appear-in-history": "En ny post dukket ikke opp i historien",
   "ui.these-features-require-an-internet-connection-check-your-connection-and-try-again-some-sites-may-restrict-embedded-elements-compare-the-result-on-another-site": "Disse funksjonene krever en internettforbindelse. Sjekk tilkoblingen og prøv igjen. Noen nettsteder kan begrense innebygde elementer; sammenligne resultatet på et annet nettsted.",
-  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Sjekk lagringsmodusen. I manuell modus klikker du på Lagre i oversettelsesvinduet. Hvis rotasjon er deaktivert og grensen på 5000 poster er nådd, slett unødvendige poster eller aktiver automatisk rotasjon.",
+  "ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation": "Sjekk lagringsmodusen. I manuell modus klikker du på Lagre i oversettelsesvinduet. Hvis rotasjon er deaktivert og grensen på {count} poster er nådd, slett unødvendige poster eller aktiver automatisk rotasjon.",
   "ui.the-shortcut-conflicts-with-the-website-or-browser": "Snarveien er i konflikt med nettstedet eller nettleseren",
   "ui.where-is-my-data-stored": "Hvor lagres dataene mine?",
   "ui.open-keyboard-shortcuts-click-the-current-combination-and-enter-another-one-using-ctrl-alt-shift-or-meta-choose-a-shortcut-not-used-by-the-browser-or-current-website": "Åpne tastatursnarveier, klikk på gjeldende kombinasjon, og skriv inn en annen med Ctrl, Alt, Shift eller Meta. Velg en snarvei som ikke brukes av nettleseren eller gjeldende nettside.",
@@ -346,8 +346,8 @@
   "ui.speak-code": "Snakk ({code})",
   "ui.speech-error-error": "Talefeil: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Grensen på {count} oversettelser er nådd. Last ned de lagrede postene og tøm lagringen for å lagre nye.",
-  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Når rotasjon er deaktivert, vil ikke nye poster bli lagret mens grensen for {count}-rekord er nådd.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Når nye oversettelser overskrider grensen for {count}-poster, fjernes de eldste postene automatisk, og historikken holdes på {count} poster.",
+  "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "Når rotasjon er deaktivert, lagres ikke nye oppføringer i historikken så lenge grensen på {count} er nådd. Gamle oppføringer blir værende i historikken.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "Når nye oversettelser legges til utover grensen på {count}, slettes de eldste oppføringene automatisk fra historikken. Det totale antallet oppføringer i historikken forblir dermed {count}.",
   "ui.translated-from-english": "Oversatt fra engelsk",
   "ui.on-page-example": "Eksempel på siden",
   "ui.select-a-phrase-and-get-an-instant-translation": "Velg en setning og få en umiddelbar oversettelse",
@@ -460,5 +460,7 @@
   "ui.onboarding-context-title": "Hurtigmeny",
   "ui.onboarding-context-description": "Høyreklikk på den markerte teksten og velg oversettelse.",
   "ui.onboarding-shortcut-change-hint": "Du kan endre hurtigtasten i innstillingene.",
-  "ui.could-not-copy-translations": "Kunne ikke kopiere oversettelsene"
+  "ui.could-not-copy-translations": "Kunne ikke kopiere oversettelsene",
+  "ui.history-record-limit": "Grense for historikkoppføringer",
+  "ui.history-record-limit-description": "Fra 1 til 5000. Når rotasjon er aktivert, slettes gamle oppføringer når en ny oversettelse lagres."
 }
