@@ -19,6 +19,7 @@ describe("English options interface", () => {
   it("localizes navigation, settings, language names, and help", async () => {
     expect(screen.getByRole("button", {name: /^Activation$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Advanced settings$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Saving$/})).toBeTruthy();
     expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
     await userEvent.click(screen.getByRole("button", {name: /^Languages$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();

@@ -83,6 +83,7 @@ const settingsSidebarItems = [
   {id: "general", label: "Активация", icon: <LightningIcon />},
   {id: "translation", label: "Языки", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
+  {id: "saving", label: "Сохранение", icon: <BookmarkIcon />},
   {id: "advanced", label: "Расширенные настройки", icon: <SlidersIcon />}
 ];
 
@@ -151,7 +152,7 @@ function App() {
     if (section === "overview") {
       window.scrollTo({top: 0, behavior: "smooth"});
     } else {
-      const targetId = `settings-${section === "saving" ? "advanced" : section}`;
+      const targetId = `settings-${section}`;
       requestAnimationFrame(() => requestAnimationFrame(() => {
         scrollToSettingsAnchor(targetId);
       }));
@@ -160,7 +161,7 @@ function App() {
 
   useEffect(() => {
     if (page !== "settings" || settingsSection === "overview") return;
-    const targetId = `settings-${settingsSection === "saving" ? "advanced" : settingsSection}`;
+    const targetId = `settings-${settingsSection}`;
     requestAnimationFrame(() => scrollToSettingsAnchor(targetId));
   }, []);
 
@@ -307,10 +308,7 @@ function App() {
                 <PageHeading title="Звук" description="" showEyebrow={false} />
                 <SoundSettings />
               </div>
-              <div id="settings-advanced" className="settings-scroll-anchor">
-                <PageHeading title="Расширенные настройки" description="" showEyebrow={false} />
-                <AdvancedSettings />
-              </div>
+              <AdditionalSettings />
             </div>
           ) : historySection === "records" ? (
             <HistoryView records={records} loading={loading} onClear={clearRecords} onDelete={removeRecord} onUpdate={updateRecord} onOpenExport={() => openHistorySection("export")} />
@@ -1016,7 +1014,7 @@ function TranslationSettings() {
   );
 }
 
-function AdvancedSettings() {
+function AdditionalSettings() {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [error, setError] = useState("");
 
@@ -1039,91 +1037,97 @@ function AdvancedSettings() {
 
   return (
     <>
-      <div className="settings-group">
-        <h2 className="settings-group-title">Перевод</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Перевод">
-          <div className="setting-row activation-setting-row">
-            <div className="setting-copy">
-              <h2>Показывать окно перевода</h2>
-              <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
-              <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
+      <div id="settings-saving" className="settings-scroll-anchor">
+        <PageHeading title="Сохранение" description="" showEyebrow={false} />
+        <div className="settings-group">
+          <h2 className="settings-group-title">Сохранение истории</h2>
+          <section className="settings-panel settings-panel-grouped" aria-label="Настройки сохранения">
+            <div className="setting-row">
+              <div className="setting-copy">
+                <h2>Автоматическое сохранение</h2>
+                <p>Сохранять каждый выполненный перевод в истории автоматически.<br/>Если выключено, то сохранение происходит только по нажатию кнопки "Сохранить".</p>
+              </div>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={settings?.autoSaveTranslations ?? true}
+                  disabled={!settings}
+                  onChange={(event) => settings && void saveSetting({...settings, autoSaveTranslations: event.target.checked})}
+                />
+                <span aria-hidden="true" />
+                <span className="sr-only">Включить автоматическое сохранение</span>
+              </label>
             </div>
-            <ActivationIllustration kind="window" />
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={settings?.showSelectionTranslationModal ?? true}
-                disabled={!settings}
-                onChange={(event) => settings && void saveSetting({...settings, showSelectionTranslationModal: event.target.checked})}
-              />
-              <span aria-hidden="true" />
-              <span className="sr-only">Показывать окно перевода</span>
-            </label>
-          </div>
-        </section>
+            <div className="setting-row setting-row-secondary history-limit-row">
+              <div className="setting-copy">
+                <h2><label htmlFor="history-record-limit">Лимит записей в истории</label></h2>
+                <p id="history-record-limit-description">От 1 до 5000. При включённой ротации старые записи будут удаляться при сохранении нового перевода.</p>
+              </div>
+              <div className="history-limit-controls">
+                <input
+                  key={settings ? "loaded" : "loading"}
+                  id="history-record-limit"
+                  name="historyRecordLimit"
+                  type="number"
+                  min={MIN_HISTORY_RECORDS}
+                  max={MAX_HISTORY_RECORDS}
+                  step={1}
+                  required
+                  defaultValue={settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}
+                  disabled={!settings}
+                  aria-describedby="history-record-limit-description"
+                  onChange={(event) => {
+                    if (!settings || !event.currentTarget.checkValidity()) return;
+                    void saveSetting({...settings, historyRecordLimit: event.currentTarget.valueAsNumber});
+                  }}
+                />
+              </div>
+            </div>
+            <div className="setting-row setting-row-secondary">
+              <div className="setting-copy">
+                <h2>Ротация истории</h2>
+                <p>{`При добавлении новых переводов сверх лимита в ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS} самые старые записи будут автоматически удаляться из истории. Таким образом, общее количество записей в истории будет оставаться равным ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}.`}</p>
+                <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}. Старые будут оставаться в истории.`}</p>
+              </div>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={settings?.historyRotationEnabled ?? true}
+                  disabled={!settings}
+                  onChange={(event) => settings && void saveSetting({...settings, historyRotationEnabled: event.target.checked})}
+                />
+                <span aria-hidden="true" />
+                <span className="sr-only">Включить ротацию истории</span>
+              </label>
+            </div>
+          </section>
+        </div>
       </div>
-      <div className="settings-group settings-group-following">
-        <h2 className="settings-group-title">Сохранение истории</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Настройки сохранения">
-          <div className="setting-row">
-            <div className="setting-copy">
-              <h2>Автоматическое сохранение</h2>
-              <p>Сохранять каждый выполненный перевод в истории автоматически.<br/>Если выключено, то сохранение происходит только по нажатию кнопки "Сохранить".</p>
+      <div id="settings-advanced" className="settings-scroll-anchor">
+        <PageHeading title="Расширенные настройки" description="" showEyebrow={false} />
+        <div className="settings-group">
+          <h2 className="settings-group-title">Перевод</h2>
+          <section className="settings-panel settings-panel-grouped" aria-label="Перевод">
+            <div className="setting-row activation-setting-row">
+              <div className="setting-copy">
+                <h2>Показывать окно перевода</h2>
+                <p>Если выключено, перевод от Context Translator не будет появляться на странице, но продолжит сохраняться в истории.</p>
+                <p>Тогда вы сможете использовать другие расширения для мгновенного перевода, а Context Translator – для сохранения переводов.</p>
+              </div>
+              <ActivationIllustration kind="window" />
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={settings?.showSelectionTranslationModal ?? true}
+                  disabled={!settings}
+                  onChange={(event) => settings && void saveSetting({...settings, showSelectionTranslationModal: event.target.checked})}
+                />
+                <span aria-hidden="true" />
+                <span className="sr-only">Показывать окно перевода</span>
+              </label>
             </div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={settings?.autoSaveTranslations ?? true}
-                disabled={!settings}
-                onChange={(event) => settings && void saveSetting({...settings, autoSaveTranslations: event.target.checked})}
-              />
-              <span aria-hidden="true" />
-              <span className="sr-only">Включить автоматическое сохранение</span>
-            </label>
-          </div>
-          <div className="setting-row setting-row-secondary history-limit-row">
-            <div className="setting-copy">
-              <h2><label htmlFor="history-record-limit">Лимит записей в истории</label></h2>
-              <p id="history-record-limit-description">От 1 до 5000. При включённой ротации старые записи будут удаляться при сохранении нового перевода.</p>
-            </div>
-            <div className="history-limit-controls">
-              <input
-                key={settings ? "loaded" : "loading"}
-                id="history-record-limit"
-                name="historyRecordLimit"
-                type="number"
-                min={MIN_HISTORY_RECORDS}
-                max={MAX_HISTORY_RECORDS}
-                step={1}
-                required
-                defaultValue={settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}
-                disabled={!settings}
-                aria-describedby="history-record-limit-description"
-                onChange={(event) => {
-                  if (!settings || !event.currentTarget.checkValidity()) return;
-                  void saveSetting({...settings, historyRecordLimit: event.currentTarget.valueAsNumber});
-                }}
-              />
-            </div>
-          </div>
-          <div className="setting-row setting-row-secondary">
-            <div className="setting-copy">
-              <h2>Ротация истории</h2>
-              <p>{`При добавлении новых переводов сверх лимита в ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS} самые старые записи будут автоматически удаляться из истории. Таким образом, общее количество записей в истории будет оставаться равным ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}.`}</p>
-              <p>{`При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в ${settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}. Старые будут оставаться в истории.`}</p>
-            </div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={settings?.historyRotationEnabled ?? true}
-                disabled={!settings}
-                onChange={(event) => settings && void saveSetting({...settings, historyRotationEnabled: event.target.checked})}
-              />
-              <span aria-hidden="true" />
-              <span className="sr-only">Включить ротацию истории</span>
-            </label>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
       {error && <div className="settings-error" role="alert">{error}</div>}
     </>

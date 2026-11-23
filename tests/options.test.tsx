@@ -26,7 +26,8 @@ describe("options page", () => {
     expect(screen.getByRole("button", {name: /^Активация$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Языки$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Звук$/})).toBeTruthy();
-    expect(screen.queryByRole("button", {name: /^Сохранение$/})).toBeNull();
+    const saving = screen.getByRole("button", {name: /^Сохранение$/});
+    expect(screen.getByRole("button", {name: /^Звук$/}).nextElementSibling).toBe(saving);
     expect(screen.getByRole("button", {name: /^Расширенные настройки$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Как пользоваться/})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
@@ -43,10 +44,14 @@ describe("options page", () => {
     await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith(expect.objectContaining({behavior: "smooth"})));
   });
 
-  it("scrolls to advanced settings from the navigation and saves its options", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
-    expect(screen.getByRole("heading", {name: "Расширенные настройки"})).toBeTruthy();
-    expect(location.hash).toBe("#settings/advanced");
+  it("opens saving settings from navigation and saves its options", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Сохранение$/}));
+    expect(screen.getByRole("heading", {name: "Сохранение"})).toBeTruthy();
+    expect(location.hash).toBe("#settings/saving");
+    const section = document.getElementById("settings-saving")!;
+    expect(within(section).getByRole("spinbutton", {name: "Лимит записей в истории"})).toBeTruthy();
+    expect(section.previousElementSibling?.id).toBe("settings-sound");
+    expect(within(section).queryByRole("checkbox", {name: "Показывать окно перевода"})).toBeNull();
 
     await userEvent.click(screen.getByRole("checkbox", {name: "Включить автоматическое сохранение"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].autoSaveTranslations).toBe(false));
@@ -144,8 +149,11 @@ describe("options page", () => {
 
   it("can hide the selection translation window", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
-    expect(screen.getByRole("region", {name: "Перевод"}).querySelectorAll(".setting-row").length).toBe(1);
-    expect(screen.getByRole("region", {name: "Настройки сохранения"}).querySelectorAll(".setting-row").length).toBe(3);
+    expect(location.hash).toBe("#settings/advanced");
+    const advanced = document.getElementById("settings-advanced")!;
+    expect(within(advanced).getAllByRole("checkbox")).toHaveLength(1);
+    expect(within(advanced).queryByRole("region", {name: "Настройки сохранения"})).toBeNull();
+    expect(within(advanced).queryByRole("spinbutton")).toBeNull();
     await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
   });
