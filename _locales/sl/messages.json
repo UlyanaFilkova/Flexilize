@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Context Translator"
+  },
+  "extensionDescription": {
+    "message": "Takoj prevedite, poslušajte in shranite besedilo v katerem koli jeziku."
+  },
+  "actionTitle": {
+    "message": "Shranjeni prevodi"
+  }
+}

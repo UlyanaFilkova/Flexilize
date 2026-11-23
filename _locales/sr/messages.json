@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Context Translator"
+  },
+  "extensionDescription": {
+    "message": "Одмах преведите, преслушајте и сачувајте текст на било ком језику."
+  },
+  "actionTitle": {
+    "message": "Сачувани преводи"
+  }
+}
