@@ -81,7 +81,7 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
     [/^Ошибка озвучки: (.+)$/, (error) => formatMessage("Ошибка озвучки: {error}", {error}, language)],
     [/^Достигнут лимит в (\d+) переводов\. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые\.$/, (count) => formatMessage("Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.", {count}, language)],
     [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.", {count}, language)],
-    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удалены из истории\. Таким образом, общее количество записей в истории будет остается равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.", {count}, language)]
+    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удалены из истории\. Таким образом, общее количество записей в истории будет оставаться равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.", {count}, language)]
   ];
   for (const [pattern, replacement] of patterns) {
     const match = text.match(pattern);
@@ -110,16 +110,17 @@ export function formatRecordCount(count: number, language: InterfaceLanguage = a
     sl: ["zapis", "zapisi"], sk: ["záznam", "záznamov"],
     sq: ["regjistrim", "regjistrime"], sr: ["запис", "записа"]
   };
-  if (language === "ar") {
-    if (count === 2) return `${count} سجلان`;
-    if (count >= 3 && count <= 10) return `${count} سجلات`;
-    if (count > 10) return `${count} سجلًا`;
-  }
-  if (["pl", "cs"].includes(language) && count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)) {
-    return `${count} ${language === "pl" ? "rekordy" : "záznamy"}`;
-  }
+  const forms: Partial<Record<InterfaceLanguage, Partial<Record<Intl.LDMLPluralRule, string>>>> = {
+    ru: {few: "записи", other: "записи"},
+    pl: {few: "rekordy", other: "rekordu"},
+    cs: {few: "záznamy", many: "záznamu"},
+    sk: {few: "záznamy", many: "záznamu"},
+    sl: {two: "zapisa", few: "zapisi", other: "zapisov"},
+    ar: {two: "سجلان", many: "سجلًا", other: "سجل"}
+  };
+  const category = new Intl.PluralRules(language).select(count);
   const [one, many] = labels[language];
-  return `${count} ${count === 1 ? one : many}`;
+  return `${count} ${forms[language]?.[category] || (category === "one" ? one : many)}`;
 }
 
 const excludedTextSelector = [
