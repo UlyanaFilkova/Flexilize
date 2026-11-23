@@ -1081,19 +1081,14 @@ function AdvancedSettings() {
               <span className="sr-only">Включить автоматическое сохранение</span>
             </label>
           </div>
-          <form className="setting-row setting-row-secondary history-limit-row" onSubmit={(event) => {
-            event.preventDefault();
-            if (!settings || !event.currentTarget.reportValidity()) return;
-            const historyRecordLimit = Number(new FormData(event.currentTarget).get("historyRecordLimit"));
-            void saveSetting({...settings, historyRecordLimit});
-          }}>
+          <div className="setting-row setting-row-secondary history-limit-row">
             <div className="setting-copy">
               <h2><label htmlFor="history-record-limit">Лимит записей в истории</label></h2>
               <p id="history-record-limit-description">От 1 до 5000. При включённой ротации старые записи будут удаляться при сохранении нового перевода.</p>
             </div>
             <div className="history-limit-controls">
               <input
-                key={settings?.historyRecordLimit ?? "loading"}
+                key={settings ? "loaded" : "loading"}
                 id="history-record-limit"
                 name="historyRecordLimit"
                 type="number"
@@ -1104,10 +1099,13 @@ function AdvancedSettings() {
                 defaultValue={settings?.historyRecordLimit ?? MAX_HISTORY_RECORDS}
                 disabled={!settings}
                 aria-describedby="history-record-limit-description"
+                onChange={(event) => {
+                  if (!settings || !event.currentTarget.checkValidity()) return;
+                  void saveSetting({...settings, historyRecordLimit: event.currentTarget.valueAsNumber});
+                }}
               />
-              <button type="submit" disabled={!settings}>Сохранить</button>
             </div>
-          </form>
+          </div>
           <div className="setting-row setting-row-secondary">
             <div className="setting-copy">
               <h2>Ротация истории</h2>

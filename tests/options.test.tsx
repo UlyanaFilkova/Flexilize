@@ -73,21 +73,22 @@ describe("options page", () => {
     }
   });
 
-  it("saves a custom history limit and rejects values outside the allowed range", async () => {
+  it("automatically saves a custom history limit and rejects values outside the allowed range", async () => {
     const input = await waitFor(() => {
       const field = screen.getByRole("spinbutton", {name: "Лимит записей в истории"}) as HTMLInputElement;
       expect(field.disabled).toBe(false);
       return field;
     });
-    const form = input.closest("form")!;
     for (const value of ["", "0", "5001", "1.5"]) {
       fireEvent.change(input, {target: {value}});
-      fireEvent.submit(form);
       expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(5000);
       expect(input.checkValidity()).toBe(false);
     }
-    fireEvent.change(input, {target: {value: "250"}});
-    fireEvent.submit(form);
+    await userEvent.clear(input);
+    await userEvent.type(input, "250");
+    expect(document.activeElement).toBe(input);
+    expect(input.value).toBe("250");
+    expect(within(input.closest(".history-limit-row")!).queryByRole("button")).toBeNull();
     await waitFor(() => expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(250));
     expect(screen.getByText(/При выключенной ротации.*250/)).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));

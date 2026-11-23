@@ -809,17 +809,6 @@ h1 {
   font: inherit;
 }
 
-.history-limit-controls button {
-  min-height: 42px;
-  padding: 8px 14px;
-  border: 1px solid #d8dee8;
-  border-radius: 10px;
-  background: #fff;
-  color: #315be8;
-  cursor: pointer;
-  font: inherit;
-}
-
 .history-limit-controls :focus-visible {
   outline: 3px solid rgba(49, 91, 232, .3);
 }
