@@ -40,7 +40,7 @@
   "ui.selected-text-translation": "Napiling pagsasalin ng teksto",
   "ui.activate-with-a-keyboard-shortcut": "I-activate gamit ang isang keyboard shortcut",
   "ui.translation-starts-only-after-you-press-the-selected-shortcut-with-text-selected": "Magsisimula lamang ang pagsasalin pagkatapos mong pindutin ang napiling shortcut na may napiling teksto.",
-  "ui.enable-shortcut-activation": "Paganahin ang shortcut activation",
+  "ui.enable-shortcut-activation": "I-enable ang keyboard shortcut activation",
   "ui.click-the-button-and-press-a-new-shortcut": "I-click ang button at pindutin ang isang bagong shortcut.",
   "ui.press-keys": "Pindutin ang mga key...",
   "ui.selected-text-translation-shortcuts": "Napiling mga shortcut sa pagsasalin ng teksto",
@@ -79,7 +79,7 @@
   "ui.enable-history-rotation": "Paganahin ang pag-ikot ng kasaysayan",
   "ui.transcription": "Transkripsyon",
   "ui.sound-settings": "Mga setting ng tunog",
-  "ui.saving-settings": "Pag-save ng mga setting",
+  "ui.saving-settings": "Mga setting ng pag-save",
   "ui.settings-area": "Lugar ng mga setting",
   "ui.show-transcription-for-selected-text": "Ipakita ang transkripsyon para sa napiling teksto.",
   "ui.enable-transcription": "Paganahin ang transkripsyon",
@@ -102,7 +102,7 @@
   "ui.other-translations-one-per-line": "Iba pang mga pagsasalin — isa sa bawat linya",
   "ui.source-title": "Pamagat ng pinagmulan",
   "ui.cancel": "Kanselahin",
-  "ui.saving-2": "Sine-save...",
+  "ui.saving-2": "Sine-save…",
   "ui.save": "I-save",
   "ui.choose-a-format": "Pumili ng format",
   "ui.preparing": "Naghahanda…",
@@ -293,7 +293,7 @@
   "ui.format-file-is-ready": "{format} file ay handa na",
   "ui.delete-translation-term": "Tanggalin ang pagsasalin \"{term}\"",
   "ui.edit-translation-term": "I-edit ang pagsasalin \"{term}\"",
-  "ui.current-rate-rate": "Kasalukuyang rate {rate}",
+  "ui.current-rate-rate": "Kasalukuyang bilis ng pagsasalita {rate}",
   "ui.speak-code": "Magsalita ({code})",
   "ui.speech-error-error": "Error sa pananalita: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Naabot na ang limitasyon ng {count} na pagsasalin. I-download ang mga naka-save na tala at i-clear ang storage para mag-save ng mga bago.",
@@ -459,5 +459,6 @@
   "ui.onboarding-hotkey-description": "Pumili ng teksto at pindutin ang keyboard shortcut",
   "ui.onboarding-context-title": "Menu ng konteksto",
   "ui.onboarding-context-description": "I-right-click ang napiling teksto at piliin ang pagsasalin.",
-  "ui.onboarding-shortcut-change-hint": "Maaari mong baguhin ang shortcut sa mga setting."
+  "ui.onboarding-shortcut-change-hint": "Maaari mong baguhin ang shortcut sa mga setting.",
+  "ui.could-not-copy-translations": "Hindi makopya ang mga pagsasalin"
 }

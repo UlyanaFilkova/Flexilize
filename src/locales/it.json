@@ -41,7 +41,7 @@
   "ui.selected-text-translation": "Traduzione del testo selezionata",
   "ui.activate-with-a-keyboard-shortcut": "Attiva con una scorciatoia da tastiera",
   "ui.translation-starts-only-after-you-press-the-selected-shortcut-with-text-selected": "La traduzione inizia solo dopo aver premuto la scorciatoia selezionata con il testo selezionato.",
-  "ui.enable-shortcut-activation": "Abilita l'attivazione della scorciatoia",
+  "ui.enable-shortcut-activation": "Abilita l'attivazione della scorciatoia da tastiera",
   "ui.keyboard-shortcut": "Scorciatoia da tastiera",
   "ui.click-the-button-and-press-a-new-shortcut": "Fai clic sul pulsante e premi una nuova scorciatoia.",
   "ui.press-keys": "Premi i tasti…",
@@ -127,7 +127,7 @@
   "ui.enable-history-rotation": "Abilita rotazione cronologia",
   "ui.transcription": "Trascrizione",
   "ui.sound-settings": "Impostazioni audio",
-  "ui.saving-settings": "Salvataggio impostazioni",
+  "ui.saving-settings": "Impostazioni di salvataggio",
   "ui.settings-area": "Area impostazioni",
   "ui.show-transcription-for-selected-text": "Mostra trascrizione per il testo selezionato.",
   "ui.enable-transcription": "Abilita trascrizione",
@@ -288,7 +288,7 @@
   "ui.clear-language": "Cancella lingua",
   "ui.clear": "Cancella",
   "ui.show-all-languages": "Mostra tutte le lingue",
-  "ui.saved-2": " ✓ Salvato",
+  "ui.saved-2": "✓ Salvato",
   "ui.could-not-save-translation": "Impossibile salvare la traduzione",
   "ui.save-error": "Salva errore",
   "ui.later": "Più tardi",
@@ -345,7 +345,7 @@
   "ui.format-file-is-ready": "Il file {format} è pronto",
   "ui.delete-translation-term": "Elimina la traduzione “{term}”",
   "ui.edit-translation-term": "Modifica la traduzione “{term}”",
-  "ui.current-rate-rate": "Tariffa attuale {rate}",
+  "ui.current-rate-rate": "Velocità di lettura attuale {rate}",
   "ui.language-code-code": "Codice lingua: {code}",
   "ui.speak-code": "Parla ({code})",
   "ui.speech-error-error": "Errore vocale: {error}",
@@ -459,5 +459,6 @@
   "ui.onboarding-hotkey-description": "Seleziona il testo e premi la combinazione di tasti",
   "ui.onboarding-context-title": "Menu contestuale",
   "ui.onboarding-context-description": "Fai clic con il tasto destro sul testo selezionato e scegli la traduzione.",
-  "ui.onboarding-shortcut-change-hint": "Puoi modificare la scorciatoia nelle impostazioni."
+  "ui.onboarding-shortcut-change-hint": "Puoi modificare la scorciatoia nelle impostazioni.",
+  "ui.could-not-copy-translations": "Impossibile copiare le traduzioni"
 }

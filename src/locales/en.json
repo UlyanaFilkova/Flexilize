@@ -58,7 +58,7 @@
   "ui.preserve-translator-text-description": "When you close the translator, the entered text and its translation are saved and available the next time you open it.",
   "ui.activate-with-a-keyboard-shortcut": "Activate with a keyboard shortcut",
   "ui.translation-starts-only-after-you-press-the-selected-shortcut-with-text-selected": "Translation starts only after you press the selected shortcut with text selected.",
-  "ui.enable-shortcut-activation": "Enable shortcut activation",
+  "ui.enable-shortcut-activation": "Enable keyboard shortcut activation",
   "ui.keyboard-shortcut": "Keyboard shortcut",
   "ui.click-the-button-and-press-a-new-shortcut": "Click the button and press a new shortcut.",
   "ui.press-keys": "Press keys…",
@@ -369,7 +369,7 @@
   "ui.format-file-is-ready": "{format} file is ready",
   "ui.delete-translation-term": "Delete translation “{term}”",
   "ui.edit-translation-term": "Edit translation “{term}”",
-  "ui.current-rate-rate": "Current rate {rate}",
+  "ui.current-rate-rate": "Current speech rate {rate}",
   "ui.language-code-code": "Language code: {code}",
   "ui.speak-code": "Speak ({code})",
   "ui.speech-error-error": "Speech error: {error}",
@@ -459,5 +459,6 @@
   "ui.onboarding-hotkey-description": "Select text and press the keyboard shortcut",
   "ui.onboarding-context-title": "Context menu",
   "ui.onboarding-context-description": "Right-click the selected text and choose translation.",
-  "ui.onboarding-shortcut-change-hint": "You can change the shortcut in settings."
+  "ui.onboarding-shortcut-change-hint": "You can change the shortcut in settings.",
+  "ui.could-not-copy-translations": "Could not copy translations"
 }

@@ -375,7 +375,7 @@
   "ui.speech-error-error": "Ошибка озвучки: {error}",
   "ui.the-limit-of-count-translations-has-been-reached-download-the-saved-records-and-clear-storage-to-save-new-ones": "Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.",
   "ui.when-rotation-is-disabled-new-records-will-not-be-saved-while-the-count-record-limit-has-been-reached": "При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.",
-  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.",
+  "ui.when-new-translations-exceed-the-count-record-limit-the-oldest-records-are-removed-automatically-keeping-history-at-count-records": "При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.",
   "ui.translated-from-english": "Перевод с английского",
   "ui.on-page-example": "Пример на странице",
   "ui.select-a-phrase-and-get-an-instant-translation": "Выделили фразу — сразу получили перевод",
@@ -416,7 +416,7 @@
   "ui.context-copy": "Копировать",
   "ui.search-the-web": "Искать в интернете",
   "ui.rate-and-review": "Оценка и отзыв",
-  "ui.rate-and-review-description": "Поделитесь впечатлением о Context Translator. Оценки и отзывы помогут другим пользователям и поддержат развитие расширения.",
+  "ui.rate-and-review-description": "Расскажите, как вам Context Translator. Ваша оценка и отзыв помогут другим пользователям и поддержат развитие расширения.",
   "ui.rate-context-translator": "Оцените Context Translator",
   "ui.detected-browser": "Обнаруженный браузер:",
   "ui.extension-store": "Магазин расширений:",
@@ -459,5 +459,6 @@
   "ui.onboarding-hotkey-description": "Выделите текст и нажмите комбинацию клавиш",
   "ui.onboarding-context-title": "Через контекстное меню",
   "ui.onboarding-context-description": "Щёлкните правой кнопкой по выделенному тексту и выберите перевод.",
-  "ui.onboarding-shortcut-change-hint": "Комбинацию можно изменить в настройках."
+  "ui.onboarding-shortcut-change-hint": "Комбинацию можно изменить в настройках.",
+  "ui.could-not-copy-translations": "Не удалось скопировать переводы"
 }
