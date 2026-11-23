@@ -359,8 +359,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "구문을 선택하면 즉시 번역됩니다.",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "창이 텍스트 옆에 있으므로 읽는 동안 문맥과 위치가 유지됩니다.",
   "ui.standalone-translator-example": "독립형 번역기의 예",
-  "ui.paste-your-text-and-keep-working-on-the-page": "텍스트를 붙여넣고 페이지 작업을 계속하세요.",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "창에서 언어를 선택하고 한 번의 클릭으로 결과를 복사하세요.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "이메일을 쓰면서 같은 페이지에서 단어를 번역하세요",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "키보드 단축키로 번역기를 열고 번역을 복사한 다음 이메일을 계속 작성하세요.",
   "ui.source-text": "원본 텍스트",
   "ui.could-you-send-me-the-updated-document": "업데이트된 문서를 보내주시겠어요?",
   "ui.slower": "느리게",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "단축키는 설정에서 변경할 수 있습니다.",
   "ui.could-not-copy-translations": "번역을 복사하지 못했습니다",
   "ui.history-record-limit": "기록 저장 개수 제한",
-  "ui.history-record-limit-description": "1~5000. 순환 저장을 사용하면 새 번역을 저장할 때 오래된 기록이 삭제됩니다."
+  "ui.history-record-limit-description": "1~5000. 순환 저장을 사용하면 새 번역을 저장할 때 오래된 기록이 삭제됩니다.",
+  "ui.help-new-email": "새 이메일",
+  "ui.help-email-to": "받는 사람",
+  "ui.help-email-subject": "제목",
+  "ui.help-updated-word": "업데이트된",
+  "ui.help-email-draft": "혹시 {updated} 문서를 보내 주실 수 있나요?",
+  "ui.help-good-morning": "좋은 아침입니다",
+  "ui.help-email-subject-example": "프로젝트 파일"
 }

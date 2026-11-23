@@ -44,10 +44,19 @@ describe("English options interface", () => {
     await userEvent.click(screen.getByRole("button", {name: /How to use/}));
     await waitFor(() => expect(screen.getByRole("heading", {name: "Frequently asked questions"})).toBeTruthy());
     expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(0);
     expect(screen.getByText("On-page example")).toBeTruthy();
     expect(screen.getByText("Standalone translator example")).toBeTruthy();
+    expect(document.querySelector(".demo-translation > small")?.textContent).toBe("ES → EN");
+    expect(document.querySelector(".visual-popup-source strong")?.textContent).toBe("el contexto importa");
+    expect(document.querySelector(".visual-translator-input")?.textContent).toBe("updated");
+    expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("en");
+    expect(document.querySelector(".visual-translator-panes > div:last-child p")?.textContent).toBe("actualizado");
+    expect(document.querySelector(".visual-page-draft")?.textContent?.replace(/\s+/g, " ").trim()).toBe("¿Podrías enviar el documento actualizado?");
+    expect(document.querySelector(".visual-history-record > div > strong")?.textContent).toBe("averiguar");
     const helpPage = document.querySelector(".help-page")!.cloneNode(true) as HTMLElement;
-    helpPage.querySelectorAll(".brand-mark").forEach((element) => element.remove());
+    helpPage.querySelectorAll('.brand-mark, [translate="no"]').forEach((element) => element.remove());
     expect(helpPage.textContent).toContain("Extensions cannot run on internal browser pages such as chrome://…");
     expect(helpPage.textContent).not.toMatch(/[А-Яа-яЁё]/u);
 

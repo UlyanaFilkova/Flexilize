@@ -360,8 +360,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "یک عبارت را انتخاب کنید و ترجمه فوری دریافت کنید",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "پنجره در کنار متن باقی می ماند، بنابراین در حین خواندن، زمینه و مکان خود را حفظ می کنید.",
   "ui.standalone-translator-example": "نمونه مترجم مستقل",
-  "ui.paste-your-text-and-keep-working-on-the-page": "متن خود را جایگذاری کنید و به کار در صفحه ادامه دهید",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "زبان ها را در پنجره انتخاب کنید و نتیجه را با یک کلیک کپی کنید.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "ایمیل بنویسید و واژه‌ها را در همان صفحه ترجمه کنید",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "مترجم را با میان‌بر صفحه‌کلید باز کنید، ترجمه را کپی کنید و نوشتن ایمیل را ادامه دهید.",
   "ui.source-text": "متن منبع",
   "ui.could-you-send-me-the-updated-document": "آیا می توانید سند به روز شده را برای من ارسال کنید؟",
   "ui.slower": "کندتر",
@@ -372,7 +372,7 @@
   "ui.vocabulary-entry-example": "مثال ورود واژگان",
   "ui.everything-you-need-for-review-stays-together": "هر چیزی که برای بررسی نیاز دارید با هم می ماند",
   "ui.the-original-translation-context-source-and-date-are-available-in-one-card": "اصل، ترجمه، متن، منبع و تاریخ در یک کارت موجود است.",
-  "ui.figure-out-understand": "فهمیدن · فهمیدن",
+  "ui.figure-out-understand": "پی بردن · فهمیدن",
   "ui.today-14-32": "امروز ساعت 14:32",
   "ui.selected-text-translation-multiple": "ترجمه متن انتخاب شده (چند انتخاب مجاز است)",
   "ui.automatic-activation": "فعال سازی خودکار",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "می‌توانید میان‌بر را در تنظیمات تغییر دهید.",
   "ui.could-not-copy-translations": "کپی کردن ترجمه‌ها ممکن نشد",
   "ui.history-record-limit": "حداکثر تعداد سوابق",
-  "ui.history-record-limit-description": "از 1 تا 5000. با فعال بودن چرخش، هنگام ذخیره ترجمه جدید، سوابق قدیمی حذف خواهند شد."
+  "ui.history-record-limit-description": "از 1 تا 5000. با فعال بودن چرخش، هنگام ذخیره ترجمه جدید، سوابق قدیمی حذف خواهند شد.",
+  "ui.help-new-email": "ایمیل جدید",
+  "ui.help-email-to": "گیرنده",
+  "ui.help-email-subject": "موضوع",
+  "ui.help-updated-word": "به‌روزشده",
+  "ui.help-email-draft": "آیا می‌توانید سند {updated} را بفرستید؟",
+  "ui.help-good-morning": "صبح بخیر",
+  "ui.help-email-subject-example": "فایل‌های پروژه"
 }

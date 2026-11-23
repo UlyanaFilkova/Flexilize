@@ -124,6 +124,7 @@ export function formatRecordCount(count: number, language: InterfaceLanguage = a
 }
 
 const excludedTextSelector = [
+  '[translate="no"]',
   ".record-original", ".record-translation", ".record-transcription", ".record-sentence", ".record-alternatives", ".record-meta a", ".original", ".translated",
   ".translation-alternatives", ".translation-option", ".sentence", ".original-text", ".translation", ".context-translation",
   ".translator-output", ".source", ".source-link", "time"

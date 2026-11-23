@@ -356,8 +356,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Valitse lause ja hanki välitön käännös",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Ikkuna pysyy tekstin vieressä, joten säilytät kontekstin ja paikkasi lukiessasi.",
   "ui.standalone-translator-example": "Esimerkki erillisestä kääntäjästä",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Liitä tekstisi ja jatka sivun käsittelyä",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Valitse ikkunasta kielet ja kopioi tulos yhdellä napsautuksella.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Kirjoita sähköpostia ja käännä sanoja samalla sivulla",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Avaa kääntäjä pikanäppäimellä, kopioi käännös ja jatka sähköpostin kirjoittamista.",
   "ui.source-text": "Lähdeteksti",
   "ui.could-you-send-me-the-updated-document": "Voisitko lähettää minulle päivitetyn asiakirjan?",
   "ui.slower": "Hitaammin",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Voit muuttaa pikanäppäintä asetuksissa.",
   "ui.could-not-copy-translations": "Käännösten kopioiminen epäonnistui",
   "ui.history-record-limit": "Historiatietueiden enimmäismäärä",
-  "ui.history-record-limit-description": "1–5000. Kun kierto on käytössä, vanhat tietueet poistetaan uuden käännöksen tallennuksen yhteydessä."
+  "ui.history-record-limit-description": "1–5000. Kun kierto on käytössä, vanhat tietueet poistetaan uuden käännöksen tallennuksen yhteydessä.",
+  "ui.help-new-email": "Uusi sähköposti",
+  "ui.help-email-to": "Vastaanottaja",
+  "ui.help-email-subject": "Aihe",
+  "ui.help-updated-word": "päivitetyn",
+  "ui.help-email-draft": "Voisitko lähettää {updated} asiakirjan?",
+  "ui.help-good-morning": "Hyvää huomenta",
+  "ui.help-email-subject-example": "Projektin tiedostot"
 }

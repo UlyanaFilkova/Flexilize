@@ -1,4 +1,4 @@
-import {useEffect, useState, type ReactNode} from "react";
+import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from "react";
 import {createRoot} from "react-dom/client";
 import {useDropzone} from "react-dropzone";
 import browser from "webextension-polyfill";
@@ -35,6 +35,7 @@ import {
   TRANSLATION_LANGUAGES,
   type ExtensionSettings
 } from "../settings";
+import {helpExamples} from "./help-examples";
 import "./options.css";
 
 type Page = "settings" | "history" | "help" | "review" | "welcome";
@@ -490,6 +491,7 @@ function ScreenshotPreview({file, onRemove}: {file: File; onRemove: () => void})
 }
 
 function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => void}) {
+  const example = helpExamples();
   return (
     <section className="settings-banner">
       <div className="settings-banner-copy">
@@ -500,7 +502,7 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
       </div>
       <div className="settings-banner-visual" aria-hidden="true">
         <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
-        <div className="banner-control banner-control-language"><LanguagesIcon /><span><strong>English</strong><small>на русский</small></span></div>
+        <div className="banner-control banner-control-language"><LanguagesIcon /><span translate="no"><strong>{example.sourceName}</strong><small>→ {example.targetName}</small></span></div>
         <div className="banner-control banner-control-sound"><SoundIcon /><span><strong>Скорость речи</strong><small>1,0×</small></span><b>−</b><em>+</em></div>
         <div className="banner-orbit banner-orbit-one" />
         <div className="banner-orbit banner-orbit-two" />
@@ -854,6 +856,7 @@ function SelectionActivationSettings({settings, persist, isMobile, shortCopy = f
 }
 
 function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "window" | "automatic" | "button" | "context" | "shortcut" | "translator" | "reverse"; shortcut?: string}) {
+  const example = helpExamples();
   return (
     <div className={`activation-illustration activation-illustration-${kind}`} aria-hidden="true">
       <div className="activation-preview-scene" aria-hidden="true">
@@ -861,14 +864,14 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
           <div className="activation-preview-translator-backdrop">
             <div className="activation-preview-translator">
               <div className="activation-preview-translator-title"><strong>Context Translator</strong><b>{shortcut}</b><i>×</i></div>
-              <div className="activation-preview-languages"><i>Russian</i><b>⇄</b><i>English</i></div>
+              <div className="activation-preview-languages" translate="no" dir="ltr"><i>{example.sourceName}</i><b>⇄</b><i>{example.targetName}</i></div>
               <div className="activation-preview-panes"><div /><div /></div>
             </div>
           </div>
         ) : kind === "reverse" ? (
           <div className="activation-preview-reverse">
-            <p><span>Russian</span><b>→</b><span>English</span></p>
-            <p><span>English</span><b>→</b><span>Russian</span></p>
+            <p translate="no" dir="ltr"><span>{example.sourceName}</span><b>→</b><span>{example.targetName}</span></p>
+            <p translate="no" dir="ltr"><span>{example.targetName}</span><b>→</b><span>{example.sourceName}</span></p>
             <i>{shortcut}</i>
           </div>
         ) : (
@@ -876,17 +879,17 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
             <div className="activation-preview-toolbar"><i /><i /><i /><span /></div>
             <div className="activation-preview-page">
               <b />
-              <p>{kind === "button" ? <mark>Context</mark> : <><mark>Context</mark> can change meaning.</>}</p>
+              <p translate="no" lang={example.sourceLanguage} dir="ltr"><mark>{example.context.source}</mark>{kind !== "button" && example.context.after}</p>
               <i className="line-long" /><i className="line-medium" />
               <i className="line-short" />
             </div>
-            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong>Context</strong><span /><b>{translate("Контекст")}</b></div>}
+            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>}
             {kind === "button" && <>
               <div className="activation-preview-selection-button"><strong>A<span>a</span></strong></div>
               <svg className="activation-preview-selection-arrow" viewBox="0 0 24 12" aria-hidden="true">
                 <path d="M1 6h21M17 1l5 5-5 5" />
               </svg>
-              <div className="activation-preview-result activation-preview-button-result"><strong>Context</strong><span /><b>{translate("Контекст")}</b></div>
+              <div className="activation-preview-result activation-preview-button-result"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>
             </>}
             {kind === "context" && <div className="activation-preview-context-menu"><span>Копировать</span><b><img className="activation-preview-brand-icon" src="../icons/icon-32.png" alt="" />Context Translator</b><span>Искать в интернете</span></div>}
             {kind === "shortcut" && <div className="activation-preview-shortcut">{shortcut.split(" + ").map((key) => <span key={key}>{key}</span>)}<i>↵</i></div>}
@@ -1375,6 +1378,7 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 }
 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
+  const example = helpExamples();
   const [historyRecordLimit, setHistoryRecordLimit] = useState(MAX_HISTORY_RECORDS);
   useEffect(() => {
     void getExtensionSettings().then((settings) => setHistoryRecordLimit(settings.historyRecordLimit)).catch(() => {});
@@ -1395,8 +1399,8 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         </div>
         <div className="help-demo" aria-hidden="true">
           <div className="demo-browser-bar"><i /><i /><i /><span>example.com/article</span></div>
-          <div className="demo-copy"><span /><span /><em>context matters</em><span /><span /></div>
-          <div className="demo-translation"><small>EN → RU</small><strong>контекст имеет значение</strong><p>/ˈkɒntekst/</p><div><span>Слушать</span><span>Сохранено</span></div></div>
+          <div className="demo-copy"><span /><span /><em translate="no" lang={example.sourceLanguage} dir="ltr">{example.selection.source}</em><span /><span /></div>
+          <div className="demo-translation"><small translate="no" dir="ltr">{example.directionCodes}</small><strong translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.selection.translation}</strong><p translate="no" dir="ltr">{example.selection.transcription}</p><div><span>Слушать</span><span>Сохранено</span></div></div>
         </div>
       </section>
 
@@ -1477,55 +1481,111 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
   );
 }
 
-function SelectionHelpExample() {
+function AnimatedHelpExample({className, children}: {className: string; children: ReactNode}) {
+  const figureRef = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
+  useEffect(() => {
+    const preference = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!preference) return;
+    const update = () => setReducedMotion(preference.matches);
+    preference.addEventListener("change", update);
+    return () => preference.removeEventListener("change", update);
+  }, []);
+  useEffect(() => {
+    setInView(false);
+    if (reducedMotion || !figureRef.current || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setInView(entry.isIntersecting && entry.intersectionRatio >= 0.25);
+    }, {threshold: [0, 0.25], rootMargin: "-76px 0px 0px"});
+    observer.observe(figureRef.current);
+    return () => observer.disconnect();
+  }, [reducedMotion]);
   return (
-    <figure className="help-visual-example help-selection-example">
+    <figure ref={figureRef} className={`help-visual-example ${className}${inView && !reducedMotion ? " help-demo-playing" : ""}`}>
+      {children}
+    </figure>
+  );
+}
+
+function DemoCursor() {
+  return <svg className="help-demo-cursor" viewBox="0 0 24 28" aria-hidden="true"><path d="M3 2v21l5-5 4 8 4-2-4-8h8Z" fill="#fff" stroke="#315be8" strokeWidth="1.8" strokeLinejoin="round" /></svg>;
+}
+
+function SelectionHelpExample() {
+  const example = helpExamples();
+  return (
+    <AnimatedHelpExample className="help-selection-example">
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-browser">
           <div className="visual-browser-toolbar"><i /><i /><i /><span>learn.example.com/article</span></div>
-          <div className="visual-article">
-            <b>Why context matters</b>
+          <div className="visual-article" translate="no" lang={example.sourceLanguage} dir="ltr">
+            <b>{example.selection.title}</b>
             <span className="visual-line visual-line-long" /><span className="visual-line visual-line-medium" />
-            <p>Words become clearer when <mark>context matters</mark> in a real sentence.</p>
+            <p>{example.selection.before}<mark>{example.selection.source}<DemoCursor /></mark>{example.selection.after}</p>
             <span className="visual-line visual-line-short" />
           </div>
           <div className="visual-selection-popup">
-            <div className="visual-popup-source"><span><strong>context matters</strong><small>/ˈkɒntekst ˈmætəz/</small></span><em>▶</em></div>
+            <div className="visual-popup-source" translate="no" lang={example.sourceLanguage} dir="ltr"><span><strong>{example.selection.source}</strong><small>{example.selection.transcription}</small></span><em>▶</em></div>
             <div className="visual-popup-divider" />
-            <strong className="visual-popup-result">контекст имеет значение</strong>
-            <small>Перевод с английского</small>
+            <strong className="visual-popup-result" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.selection.translation}</strong>
+            <small translate="no" dir="ltr">{example.directionLabel}</small>
           </div>
         </div>
       </div>
       <figcaption><span>Пример на странице</span><strong>Выделили фразу — сразу получили перевод</strong><p>Окно остаётся рядом с текстом, поэтому контекст и место чтения не теряются.</p></figcaption>
-    </figure>
+    </AnimatedHelpExample>
   );
 }
 
+function exampleTypingStyle(text: string, direction: string): CSSProperties {
+  return {
+    "--typing-start": direction === "rtl" ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)",
+    animationTimingFunction: `steps(${Math.max(1, [...text].length)}, end)`
+  } as CSSProperties;
+}
+
 function TranslatorHelpExample() {
+  const example = helpExamples();
   return (
-    <figure className="help-visual-example help-translator-example">
-      <figcaption><span>Пример отдельного переводчика</span><strong>Вставьте свой текст и продолжайте работать на странице</strong><p>Языки выбираются прямо в окне, а результат можно скопировать одной кнопкой.</p></figcaption>
-      <div className="help-visual-canvas" aria-hidden="true">
+    <AnimatedHelpExample className="help-translator-example">
+      <figcaption><span>Пример отдельного переводчика</span><strong>{translate("ui.paste-your-text-and-keep-working-on-the-page")}</strong><p>{translate("ui.choose-languages-in-the-window-and-copy-the-result-with-one-click")}</p></figcaption>
+      <div className="help-visual-canvas visual-translator-scene" aria-hidden="true">
+        <div className="visual-translator-page">
+          <div className="visual-browser-toolbar"><i /><i /><i /><span>mail.example.com/inbox</span></div>
+          <div className="visual-mail-title"><span><Icon><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" /></Icon>Новое письмо</span><i>− ×</i></div>
+          <div className="visual-mail-meta"><small>Кому</small><span className="visual-mail-recipient" translate="no" dir="ltr"><b>A</b>alex@example.com</span></div>
+          <div className="visual-mail-meta"><small>Тема</small><span translate="no" lang={example.email.targetLanguage} dir={example.email.targetDirection}>{example.email.subject}</span></div>
+          <div className="visual-compose-field">
+            <small>Сообщение</small>
+            <p className="visual-page-draft" lang={example.email.targetLanguage} translate="no" dir={example.email.targetDirection}>
+              <span className="visual-draft-initial" style={exampleTypingStyle(example.email.prefix, example.email.targetDirection)}>{example.email.prefix}</span><span className="visual-draft-updated" style={exampleTypingStyle(example.email.translation, example.email.targetDirection)}>{example.email.translation}</span><span className="visual-draft-document" style={exampleTypingStyle(example.email.suffix, example.email.targetDirection)}>{example.email.suffix}</span>
+            </p>
+          </div>
+          <div className="visual-mail-footer"><span>Отправить<ArrowIcon /></span><TrashIcon /></div>
+        </div>
+        <div className="visual-shortcut-keys"><small>Комбинация клавиш</small><span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>'</kbd></span></div>
         <div className="visual-translator-window">
           <div className="visual-translator-header"><strong>Переводчик</strong><span>Ctrl + Shift + '</span><i>×</i></div>
-          <div className="visual-language-row"><span>English<span aria-hidden="true">⌄</span></span><b>⇄</b><span>Русский<span aria-hidden="true">⌄</span></span></div>
-          <div className="visual-translator-panes">
-            <div><small>Исходный текст</small><p>Could you send me the updated document?</p><i className="visual-copy-icon" /></div>
-            <div><small>Перевод</small><p>Не могли бы вы отправить мне обновлённый документ?</p><i className="visual-copy-icon" /></div>
+          <div className="visual-language-row" dir="ltr"><span><bdi translate="no">{example.email.sourceName}</bdi><span aria-hidden="true">⌄</span></span><b>⇄</b><span><bdi translate="no">{example.email.targetName}</bdi><span aria-hidden="true">⌄</span></span></div>
+          <div className="visual-translator-panes" dir="ltr">
+            <div dir={example.targetDirection}><small>Исходный текст</small><p className="visual-translator-input" lang={example.email.sourceLanguage} translate="no" dir={example.email.sourceDirection} style={exampleTypingStyle(example.email.source, example.email.sourceDirection)}>{example.email.source}</p><i className="visual-copy-icon" /></div>
+            <div dir={example.targetDirection}><small>Перевод</small><p lang={example.email.targetLanguage} translate="no" dir={example.email.targetDirection}>{example.email.translation}</p><i className="visual-copy-icon"><span className="visual-copy-check">✓</span><svg className="visual-copy-cursor" viewBox="0 0 24 28"><path d="M3 2v21l5-5 4 8 4-2-4-8h8Z" fill="#fff" stroke="#315be8" strokeWidth="1.8" strokeLinejoin="round" /></svg></i></div>
           </div>
         </div>
       </div>
-    </figure>
+    </AnimatedHelpExample>
   );
 }
 
 function SpeechHelpExample() {
+  const example = helpExamples();
   return (
     <figure className="help-visual-example help-speech-example">
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-speech-card">
-          <div className="visual-speech-top"><span><strong>Good morning</strong><small>/ɡʊd ˈmɔːnɪŋ/</small></span><i>■</i></div>
+          <div className="visual-speech-top"><span translate="no" lang={example.sourceLanguage} dir="ltr"><strong>{example.speech.source}</strong><small>{example.speech.transcription}</small></span><i>■</i></div>
+          <p className="visual-speech-translation" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.speech.translation}</p>
           <div className="visual-waveform">{[14, 25, 18, 34, 28, 43, 22, 38, 30, 18, 27, 13].map((height, index) => <span key={index} style={{height}} />)}</div>
           <div className="visual-speech-progress"><span /><i /></div>
           <div className="visual-speed"><span>Медленнее</span><strong>0,8×</strong><span>Быстрее</span></div>
@@ -1537,6 +1597,7 @@ function SpeechHelpExample() {
 }
 
 function HistoryHelpExample() {
+  const example = helpExamples();
   return (
     <figure className="help-visual-example help-history-example">
       <figcaption><span>Пример записи в словаре</span><strong>Всё нужное для повторения хранится вместе</strong><p>Оригинал, перевод, контекст, источник и дата доступны в одной карточке.</p></figcaption>
@@ -1544,8 +1605,8 @@ function HistoryHelpExample() {
         <div className="visual-history-window">
           <div className="visual-history-heading"><span><strong>История переводов</strong><small>24 записи</small></span><em>Экспорт</em></div>
           <div className="visual-history-record">
-            <div><strong>to figure out</strong><span>разобраться · выяснить</span></div><i>/tə ˈfɪɡər aʊt/</i>
-            <p>I need to figure out how this feature works.</p>
+            <div><strong translate="no" lang={example.sourceLanguage} dir="ltr">{example.history.source}</strong><span translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.history.translation}</span></div><i translate="no" dir="ltr">{example.history.transcription}</i>
+            <p translate="no" lang={example.sourceLanguage} dir="ltr">{example.history.sentence}</p>
             <footer><div><span>example.com</span><span>Сегодня, 14:32</span></div><div className="visual-history-actions"><span><EditIcon /></span><span><TrashIcon /></span></div></footer>
           </div>
         </div>

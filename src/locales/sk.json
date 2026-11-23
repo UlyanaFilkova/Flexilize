@@ -376,8 +376,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Vyberte frázu a získajte okamžitý preklad",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Okno zostane vedľa textu, takže si pri čítaní zachováte kontext a svoje miesto.",
   "ui.standalone-translator-example": "Príklad samostatného prekladateľa",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Prilepte svoj text a pokračujte v práci na stránke",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Vyberte jazyky v okne a skopírujte výsledok jedným kliknutím.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Píšte e-mail a prekladajte slová na rovnakej stránke",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Otvorte prekladač klávesovou skratkou, skopírujte preklad a pokračujte v písaní e-mailu.",
   "ui.source-text": "Zdrojový text",
   "ui.could-you-send-me-the-updated-document": "Mohli by ste mi poslať aktualizovaný dokument?",
   "ui.slower": "Pomalšie",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Klávesovú skratku môžete zmeniť v nastaveniach.",
   "ui.could-not-copy-translations": "Preklady sa nepodarilo skopírovať",
   "ui.history-record-limit": "Limit záznamov histórie",
-  "ui.history-record-limit-description": "Od 1 do 5000. Pri zapnutej rotácii sa staré záznamy odstránia pri uložení nového prekladu."
+  "ui.history-record-limit-description": "Od 1 do 5000. Pri zapnutej rotácii sa staré záznamy odstránia pri uložení nového prekladu.",
+  "ui.help-new-email": "Nový e-mail",
+  "ui.help-email-to": "Komu",
+  "ui.help-email-subject": "Predmet",
+  "ui.help-updated-word": "aktualizovaný",
+  "ui.help-email-draft": "Môžete poslať {updated} dokument?",
+  "ui.help-good-morning": "Dobré ráno",
+  "ui.help-email-subject-example": "Súbory projektu"
 }

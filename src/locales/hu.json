@@ -167,7 +167,7 @@
   "ui.you-can-select-a-word-phrase-or-entire-paragraph": "Kiválaszthat egy szót, kifejezést vagy teljes bekezdést.",
   "ui.review-the-result": "Tekintse át az eredményt.",
   "ui.the-window-shows-the-translation-context-alternatives-transcription-and-speech-button": "Az ablak a fordítást, a szövegkörnyezetet, az alternatívákat, az átírást és a beszédgombot mutatja.",
-  "ui.context-matters": "kontextus számít",
+  "ui.context-matters": "a kontextus számít",
   "ui.listen": "Meghallgat",
   "ui.saved": "Menve",
   "ui.help-contents": "Súgótartalom",
@@ -358,8 +358,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Válasszon ki egy kifejezést, és azonnali fordítást kap",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Az ablak a szöveg mellett marad, így olvasás közben megőrzi a szövegkörnyezetet és a helyet.",
   "ui.standalone-translator-example": "Példa önálló fordítóra",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Illessze be a szöveget, és folytassa a munkát az oldalon",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Válasszon nyelveket az ablakban, és egy kattintással másolja ki az eredményt.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Írjon e-mailt, és fordítson szavakat ugyanazon az oldalon",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Nyissa meg a fordítót billentyűparanccsal, másolja ki a fordítást, majd folytassa az e-mail írását.",
   "ui.source-text": "Forrásszöveg",
   "ui.could-you-send-me-the-updated-document": "El tudná küldeni a frissített dokumentumot?",
   "ui.slower": "Lassabban",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "A billentyűparancsot a beállításokban módosíthatja.",
   "ui.could-not-copy-translations": "A fordítások másolása nem sikerült",
   "ui.history-record-limit": "Előzménybejegyzések korlátja",
-  "ui.history-record-limit-description": "1 és 5000 között. Bekapcsolt rotáció esetén a régi bejegyzések az új fordítás mentésekor törlődnek."
+  "ui.history-record-limit-description": "1 és 5000 között. Bekapcsolt rotáció esetén a régi bejegyzések az új fordítás mentésekor törlődnek.",
+  "ui.help-new-email": "Új e-mail",
+  "ui.help-email-to": "Címzett",
+  "ui.help-email-subject": "Tárgy",
+  "ui.help-updated-word": "frissített",
+  "ui.help-email-draft": "El tudnád küldeni a {updated} dokumentumot?",
+  "ui.help-good-morning": "Jó reggelt",
+  "ui.help-email-subject-example": "Projektfájlok"
 }

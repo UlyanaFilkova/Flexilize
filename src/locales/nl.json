@@ -348,8 +348,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Selecteer een zin en krijg direct een vertaling",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Het venster blijft naast de tekst, zodat de context en je leespositie behouden blijven.",
   "ui.standalone-translator-example": "Voorbeeld van de losse vertaler",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Plak je tekst en werk verder op de pagina",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Kies talen in het venster en kopieer het resultaat met één klik.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Schrijf een e-mail en vertaal woorden op dezelfde pagina",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Open de vertaler met een sneltoets, kopieer de vertaling en schrijf je e-mail verder.",
   "ui.source-text": "Bront tekst",
   "ui.could-you-send-me-the-updated-document": "Kun je me het bijgewerkte document sturen?",
   "ui.slower": "Langzamer",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Je kunt de sneltoets wijzigen in de instellingen.",
   "ui.could-not-copy-translations": "De vertalingen konden niet worden gekopieerd",
   "ui.history-record-limit": "Limiet voor geschiedenisitems",
-  "ui.history-record-limit-description": "Van 1 tot 5000. Als rotatie is ingeschakeld, worden oude items verwijderd wanneer een nieuwe vertaling wordt opgeslagen."
+  "ui.history-record-limit-description": "Van 1 tot 5000. Als rotatie is ingeschakeld, worden oude items verwijderd wanneer een nieuwe vertaling wordt opgeslagen.",
+  "ui.help-new-email": "Nieuwe e-mail",
+  "ui.help-email-to": "Aan",
+  "ui.help-email-subject": "Onderwerp",
+  "ui.help-updated-word": "bijgewerkte",
+  "ui.help-email-draft": "Kun je het {updated} document sturen?",
+  "ui.help-good-morning": "Goedemorgen",
+  "ui.help-email-subject-example": "Projectbestanden"
 }

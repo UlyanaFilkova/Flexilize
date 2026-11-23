@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {fireEvent, screen, waitFor, within} from "@testing-library/react";
+import {act, fireEvent, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {defaultSettings, SETTINGS_KEY} from "../src/settings";
 
@@ -112,6 +112,55 @@ describe("options page", () => {
     await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
     expect(screen.getByRole("heading", {name: "Активация"})).toBeTruthy();
     expect(location.hash).toBe("#settings/general");
+  });
+
+  it("starts help demonstrations only when scrolled into view and stops them outside the viewport", async () => {
+    const observers: Array<{callback: IntersectionObserverCallback; target?: Element; disconnect: ReturnType<typeof vi.fn>}> = [];
+    vi.stubGlobal("IntersectionObserver", class {
+      target?: Element;
+      disconnect = vi.fn();
+      constructor(public callback: IntersectionObserverCallback) { observers.push(this); }
+      observe(target: Element) { this.target = target; }
+    });
+    const before = structuredClone(storageData);
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    expect(observers).toHaveLength(2);
+    expect(document.querySelector(".demo-translation > small")?.textContent).toBe("EN → RU");
+    expect(document.querySelector(".visual-translator-input")?.textContent).toBe("обновленный");
+    expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("ru");
+    expect(document.querySelector(".visual-translator-panes > div:last-child p")?.textContent).toBe("updated");
+    expect(document.querySelector(".visual-page-draft")?.textContent?.replace(/\s+/g, " ").trim()).toBe("Could you send the updated document?");
+    const visibility = (index: number, ratio: number) => act(() => observers[index].callback([
+      {target: observers[index].target, isIntersecting: ratio > 0, intersectionRatio: ratio} as IntersectionObserverEntry
+    ], {} as IntersectionObserver));
+    visibility(0, 0.1);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    visibility(0, 0.5);
+    expect(observers[0].target!.classList.contains("help-demo-playing")).toBe(true);
+    expect(observers[1].target!.classList.contains("help-demo-playing")).toBe(false);
+    visibility(0, 0);
+    visibility(1, 0.5);
+    expect(observers[0].target!.classList.contains("help-demo-playing")).toBe(false);
+    expect(observers[1].target!.classList.contains("help-demo-playing")).toBe(true);
+    visibility(0, 0.5);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(2);
+    for (const selector of [".help-speech-example", ".help-history-example"]) {
+      expect(document.querySelector(selector)!.classList.contains("help-demo-playing")).toBe(false);
+    }
+    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(0);
+    expect(storageData).toEqual(before);
+    await userEvent.click(screen.getByRole("button", {name: /^Все настройки$/}));
+    expect(observers.every((observer) => observer.disconnect.mock.calls.length === 1)).toBe(true);
+  });
+
+  it("keeps help demonstrations static when reduced motion is requested", async () => {
+    vi.stubGlobal("matchMedia", vi.fn(() => ({matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn()})));
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    expect(screen.queryByRole("button", {name: "Посмотреть демонстрацию"})).toBeNull();
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {

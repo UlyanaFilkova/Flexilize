@@ -357,8 +357,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Seleziona una frase e ottieni subito la traduzione",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "La finestra resta accanto al testo, così non perdi il contesto né il punto di lettura.",
   "ui.standalone-translator-example": "Esempio del traduttore autonomo",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Incolla il testo e continua a lavorare sulla pagina",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Scegli le lingue nella finestra e copia il risultato con un clic.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Scrivi un’email e traduci parole sulla stessa pagina",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Apri il traduttore con una scorciatoia da tastiera, copia la traduzione e continua a scrivere l’email.",
   "ui.source-text": "Testo originale",
   "ui.could-you-send-me-the-updated-document": "Potrebbe inviarmi il documento aggiornato?",
   "ui.slower": "Più lentamente",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Puoi modificare la scorciatoia nelle impostazioni.",
   "ui.could-not-copy-translations": "Impossibile copiare le traduzioni",
   "ui.history-record-limit": "Limite delle voci della cronologia",
-  "ui.history-record-limit-description": "Da 1 a 5000. Con la rotazione attiva, le vecchie voci verranno eliminate al salvataggio di una nuova traduzione."
+  "ui.history-record-limit-description": "Da 1 a 5000. Con la rotazione attiva, le vecchie voci verranno eliminate al salvataggio di una nuova traduzione.",
+  "ui.help-new-email": "Nuova email",
+  "ui.help-email-to": "A",
+  "ui.help-email-subject": "Oggetto",
+  "ui.help-updated-word": "aggiornato",
+  "ui.help-email-draft": "Potresti inviare il documento {updated}?",
+  "ui.help-good-morning": "Buongiorno",
+  "ui.help-email-subject-example": "File del progetto"
 }

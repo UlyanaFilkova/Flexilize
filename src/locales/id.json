@@ -352,8 +352,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Pilih frasa dan dapatkan terjemahan seketika",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Jendela tetap di samping teks agar konteks dan posisi membaca tetap terjaga.",
   "ui.standalone-translator-example": "Contoh penerjemah mandiri",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Tempel teks Anda dan lanjutkan bekerja di halaman",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Pilih bahasa di jendela dan salin hasilnya dengan satu klik.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Tulis email dan terjemahkan kata di halaman yang sama",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Buka penerjemah dengan pintasan keyboard, salin terjemahan, lalu lanjutkan menulis email.",
   "ui.source-text": "Teks sumber",
   "ui.could-you-send-me-the-updated-document": "Bisakah Anda mengirimkan dokumen terbaru kepada saya?",
   "ui.slower": "Lebih lambat",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Anda dapat mengubah pintasan di pengaturan.",
   "ui.could-not-copy-translations": "Terjemahan tidak dapat disalin",
   "ui.history-record-limit": "Batas catatan riwayat",
-  "ui.history-record-limit-description": "Dari 1 hingga 5000. Jika rotasi diaktifkan, catatan lama akan dihapus saat terjemahan baru disimpan."
+  "ui.history-record-limit-description": "Dari 1 hingga 5000. Jika rotasi diaktifkan, catatan lama akan dihapus saat terjemahan baru disimpan.",
+  "ui.help-new-email": "Email baru",
+  "ui.help-email-to": "Kepada",
+  "ui.help-email-subject": "Subjek",
+  "ui.help-updated-word": "diperbarui",
+  "ui.help-email-draft": "Bisakah Anda mengirim dokumen yang {updated}?",
+  "ui.help-good-morning": "Selamat pagi",
+  "ui.help-email-subject-example": "Berkas proyek"
 }

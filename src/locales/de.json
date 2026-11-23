@@ -350,8 +350,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Phrase markiert – Übersetzung sofort erhalten",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Das Fenster bleibt neben dem Text, damit Kontext und Leseposition erhalten bleiben.",
   "ui.standalone-translator-example": "Beispiel für den eigenständigen Übersetzer",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Fügen Sie Ihren Text ein und arbeiten Sie auf der Seite weiter",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Wählen Sie Sprachen direkt im Fenster aus und kopieren Sie das Ergebnis mit einem Klick.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Schreiben Sie eine E-Mail und übersetzen Sie Wörter direkt auf der Seite",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Öffnen Sie den Übersetzer per Tastenkürzel, kopieren Sie die Übersetzung und schreiben Sie Ihre E-Mail weiter.",
   "ui.source-text": "Quelltext",
   "ui.could-you-send-me-the-updated-document": "Könnten Sie mir das aktualisierte Dokument schicken?",
   "ui.slower": "Langsamer",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Sie können die Tastenkombination in den Einstellungen ändern.",
   "ui.could-not-copy-translations": "Die Übersetzungen konnten nicht kopiert werden",
   "ui.history-record-limit": "Maximale Anzahl der Verlaufseinträge",
-  "ui.history-record-limit-description": "Von 1 bis 5000. Bei aktivierter Rotation werden alte Einträge beim Speichern einer neuen Übersetzung gelöscht."
+  "ui.history-record-limit-description": "Von 1 bis 5000. Bei aktivierter Rotation werden alte Einträge beim Speichern einer neuen Übersetzung gelöscht.",
+  "ui.help-new-email": "Neue E-Mail",
+  "ui.help-email-to": "An",
+  "ui.help-email-subject": "Betreff",
+  "ui.help-updated-word": "aktualisierte",
+  "ui.help-email-draft": "Könnten Sie das {updated} Dokument senden?",
+  "ui.help-good-morning": "Guten Morgen",
+  "ui.help-email-subject-example": "Projektdateien"
 }

@@ -381,8 +381,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Select a phrase and get an instant translation",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "The window stays beside the text, so you keep the context and your place while reading.",
   "ui.standalone-translator-example": "Standalone translator example",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Paste your text and keep working on the page",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Choose languages in the window and copy the result with one click.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Write an email and translate words on the same page",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Open the translator with a keyboard shortcut, copy the translation, and continue your email.",
   "ui.source-text": "Source text",
   "ui.could-you-send-me-the-updated-document": "Could you send me the updated document?",
   "ui.slower": "Slower",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "You can change the shortcut in settings.",
   "ui.could-not-copy-translations": "Could not copy translations",
   "ui.history-record-limit": "History record limit",
-  "ui.history-record-limit-description": "From 1 to 5000. With rotation enabled, old records will be deleted when a new translation is saved."
+  "ui.history-record-limit-description": "From 1 to 5000. With rotation enabled, old records will be deleted when a new translation is saved.",
+  "ui.help-new-email": "New email",
+  "ui.help-email-to": "To",
+  "ui.help-email-subject": "Subject",
+  "ui.help-updated-word": "updated",
+  "ui.help-email-draft": "Could you send the {updated} document?",
+  "ui.help-good-morning": "Good morning",
+  "ui.help-email-subject-example": "Project files"
 }

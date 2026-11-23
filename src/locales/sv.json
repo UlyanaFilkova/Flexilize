@@ -351,8 +351,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Välj en fras och få en omedelbar översättning",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Fönstret stannar bredvid texten, så att du behåller sammanhanget och din plats medan du läser.",
   "ui.standalone-translator-example": "Exempel på fristående översättare",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Klistra in din text och fortsätt arbeta på sidan",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Välj språk i fönstret och kopiera resultatet med ett klick.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Skriv ett mejl och översätt ord på samma sida",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Öppna översättaren med ett kortkommando, kopiera översättningen och fortsätt skriva mejlet.",
   "ui.source-text": "Källtext",
   "ui.could-you-send-me-the-updated-document": "Kan du skicka mig det uppdaterade dokumentet?",
   "ui.slower": "Långsammare",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Du kan ändra kortkommandot i inställningarna.",
   "ui.could-not-copy-translations": "Det gick inte att kopiera översättningarna",
   "ui.history-record-limit": "Gräns för historikposter",
-  "ui.history-record-limit-description": "Från 1 till 5000. När rotation är aktiverad tas gamla poster bort när en ny översättning sparas."
+  "ui.history-record-limit-description": "Från 1 till 5000. När rotation är aktiverad tas gamla poster bort när en ny översättning sparas.",
+  "ui.help-new-email": "Nytt mejl",
+  "ui.help-email-to": "Till",
+  "ui.help-email-subject": "Ämne",
+  "ui.help-updated-word": "uppdaterade",
+  "ui.help-email-draft": "Kan du skicka det {updated} dokumentet?",
+  "ui.help-good-morning": "God morgon",
+  "ui.help-email-subject-example": "Projektfiler"
 }

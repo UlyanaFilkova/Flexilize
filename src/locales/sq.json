@@ -372,8 +372,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Zgjidhni një frazë dhe merrni një përkthim të menjëhershëm",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Dritarja qëndron pranë tekstit, kështu që ju mbani kontekstin dhe vendin tuaj gjatë leximit.",
   "ui.standalone-translator-example": "Shembull i përkthyesit të pavarur",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Ngjitni tekstin tuaj dhe vazhdoni të punoni në faqe",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Zgjidhni gjuhët në dritare dhe kopjoni rezultatin me një klikim.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Shkruani email dhe përktheni fjalë në të njëjtën faqe",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Hapni përkthyesin me shkurtoren e tastierës, kopjoni përkthimin dhe vazhdoni emailin.",
   "ui.source-text": "Teksti burimor",
   "ui.could-you-send-me-the-updated-document": "A mund të më dërgoni dokumentin e përditësuar?",
   "ui.slower": "Më ngadalë",
@@ -384,7 +384,7 @@
   "ui.vocabulary-entry-example": "Shembulli i hyrjes së fjalorit",
   "ui.everything-you-need-for-review-stays-together": "Gjithçka që ju nevojitet për rishikim qëndron së bashku",
   "ui.the-original-translation-context-source-and-date-are-available-in-one-card": "Origjinali, përkthimi, konteksti, burimi dhe data janë të disponueshme në një kartë.",
-  "ui.figure-out-understand": "kuptoj · kuptoj",
+  "ui.figure-out-understand": "zbuloj · kuptoj",
   "ui.today-14-32": "Sot, ora 14:32",
   "ui.activation": "Aktivizimi",
   "ui.languages": "Gjuhët",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Shkurtoren mund ta ndryshoni te cilësimet.",
   "ui.could-not-copy-translations": "Përkthimet nuk mund të kopjoheshin",
   "ui.history-record-limit": "Kufiri i regjistrimeve në historik",
-  "ui.history-record-limit-description": "Nga 1 deri në 5000. Kur rrotullimi është aktiv, regjistrimet e vjetra do të fshihen kur ruhet një përkthim i ri."
+  "ui.history-record-limit-description": "Nga 1 deri në 5000. Kur rrotullimi është aktiv, regjistrimet e vjetra do të fshihen kur ruhet një përkthim i ri.",
+  "ui.help-new-email": "Email i ri",
+  "ui.help-email-to": "Për",
+  "ui.help-email-subject": "Subjekti",
+  "ui.help-updated-word": "përditësuar",
+  "ui.help-email-draft": "A mund ta dërgosh dokumentin e {updated}?",
+  "ui.help-good-morning": "Mirëmëngjes",
+  "ui.help-email-subject-example": "Skedarët e projektit"
 }

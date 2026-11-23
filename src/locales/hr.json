@@ -378,8 +378,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Odaberite frazu i dobijte trenutni prijevod",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Prozor ostaje pored teksta, tako da zadržavate kontekst i svoje mjesto dok čitate.",
   "ui.standalone-translator-example": "Primjer samostalnog prevoditelja",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Zalijepite svoj tekst i nastavite raditi na stranici",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Odaberite jezike u prozoru i kopirajte rezultat jednim klikom.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Pišite e-poruku i prevodite riječi na istoj stranici",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Otvorite prevoditelj tipkovničkim prečacem, kopirajte prijevod i nastavite pisati e-poruku.",
   "ui.source-text": "Izvorni tekst",
   "ui.could-you-send-me-the-updated-document": "Možete li mi poslati ažurirani dokument?",
   "ui.slower": "Sporije",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Prečac možete promijeniti u postavkama.",
   "ui.could-not-copy-translations": "Nije moguće kopirati prijevode",
   "ui.history-record-limit": "Ograničenje zapisa povijesti",
-  "ui.history-record-limit-description": "Od 1 do 5000. Uz uključenu rotaciju, stari zapisi brisat će se pri spremanju novog prijevoda."
+  "ui.history-record-limit-description": "Od 1 do 5000. Uz uključenu rotaciju, stari zapisi brisat će se pri spremanju novog prijevoda.",
+  "ui.help-new-email": "Nova e-poruka",
+  "ui.help-email-to": "Prima",
+  "ui.help-email-subject": "Predmet",
+  "ui.help-updated-word": "ažurirani",
+  "ui.help-email-draft": "Možete li poslati {updated} dokument?",
+  "ui.help-good-morning": "Dobro jutro",
+  "ui.help-email-subject-example": "Datoteke projekta"
 }

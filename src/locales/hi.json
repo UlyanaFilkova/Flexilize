@@ -359,8 +359,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "वाक्यांश चुनें और तुरंत अनुवाद पाएँ",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "संदर्भ और पढ़ने की जगह बनाए रखने के लिए विंडो टेक्स्ट के पास रहती है।",
   "ui.standalone-translator-example": "अलग अनुवादक का उदाहरण",
-  "ui.paste-your-text-and-keep-working-on-the-page": "अपना टेक्स्ट चिपकाएँ और पेज पर काम जारी रखें",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "विंडो में भाषाएँ चुनें और एक क्लिक में परिणाम कॉपी करें।",
+  "ui.paste-your-text-and-keep-working-on-the-page": "ईमेल लिखते समय उसी पेज पर शब्दों का अनुवाद करें",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "कीबोर्ड शॉर्टकट से अनुवादक खोलें, अनुवाद कॉपी करें और ईमेल लिखना जारी रखें।",
   "ui.source-text": "मूल टेक्स्ट",
   "ui.could-you-send-me-the-updated-document": "क्या आप मुझे अपडेट किया हुआ दस्तावेज़ भेज सकते हैं?",
   "ui.slower": "धीमा",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "आप सेटिंग में शॉर्टकट बदल सकते हैं।",
   "ui.could-not-copy-translations": "अनुवाद कॉपी नहीं हो सके",
   "ui.history-record-limit": "इतिहास में रिकॉर्ड की सीमा",
-  "ui.history-record-limit-description": "1 से 5000 तक। पुराने रिकॉर्ड अपने आप बदलने की सुविधा चालू होने पर, नया अनुवाद सहेजते समय पुराने रिकॉर्ड हटा दिए जाएंगे।"
+  "ui.history-record-limit-description": "1 से 5000 तक। पुराने रिकॉर्ड अपने आप बदलने की सुविधा चालू होने पर, नया अनुवाद सहेजते समय पुराने रिकॉर्ड हटा दिए जाएंगे।",
+  "ui.help-new-email": "नया ईमेल",
+  "ui.help-email-to": "प्रति",
+  "ui.help-email-subject": "विषय",
+  "ui.help-updated-word": "अपडेट किया हुआ",
+  "ui.help-email-draft": "क्या आप {updated} दस्तावेज़ भेज सकते हैं?",
+  "ui.help-good-morning": "सुप्रभात",
+  "ui.help-email-subject-example": "प्रोजेक्ट की फ़ाइलें"
 }

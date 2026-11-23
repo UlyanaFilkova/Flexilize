@@ -354,8 +354,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Chọn một cụm từ và nhận bản dịch ngay lập tức",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Cửa sổ nằm bên cạnh văn bản, do đó bạn giữ được ngữ cảnh và vị trí của mình trong khi đọc.",
   "ui.standalone-translator-example": "Ví dụ về trình dịch độc lập",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Dán văn bản của bạn và tiếp tục làm việc trên trang",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Chọn ngôn ngữ trong cửa sổ và sao chép kết quả chỉ bằng một cú nhấp chuột.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Viết email và dịch từ ngay trên cùng trang",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Mở trình dịch bằng phím tắt, sao chép bản dịch rồi tiếp tục viết email.",
   "ui.source-text": "Văn bản nguồn",
   "ui.could-you-send-me-the-updated-document": "Bạn có thể gửi cho tôi tài liệu cập nhật không?",
   "ui.slower": "Chậm hơn",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Bạn có thể thay đổi phím tắt trong phần cài đặt.",
   "ui.could-not-copy-translations": "Không thể sao chép bản dịch",
   "ui.history-record-limit": "Giới hạn bản ghi lịch sử",
-  "ui.history-record-limit-description": "Từ 1 đến 5000. Khi bật xoay vòng, các bản ghi cũ sẽ bị xóa khi lưu bản dịch mới."
+  "ui.history-record-limit-description": "Từ 1 đến 5000. Khi bật xoay vòng, các bản ghi cũ sẽ bị xóa khi lưu bản dịch mới.",
+  "ui.help-new-email": "Email mới",
+  "ui.help-email-to": "Đến",
+  "ui.help-email-subject": "Chủ đề",
+  "ui.help-updated-word": "đã cập nhật",
+  "ui.help-email-draft": "Bạn có thể gửi tài liệu {updated} không?",
+  "ui.help-good-morning": "Chào buổi sáng",
+  "ui.help-email-subject-example": "Tệp dự án"
 }

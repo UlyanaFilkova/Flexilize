@@ -349,8 +349,8 @@
   "ui.select-a-phrase-and-get-an-instant-translation": "Vælg en sætning, og få en øjeblikkelig oversættelse",
   "ui.the-window-stays-beside-the-text-so-you-keep-the-context-and-your-place-while-reading": "Vinduet forbliver ved siden af ​​teksten, så du bevarer konteksten og din plads, mens du læser.",
   "ui.standalone-translator-example": "Fristående oversættereksempel",
-  "ui.paste-your-text-and-keep-working-on-the-page": "Indsæt din tekst og fortsæt med at arbejde på siden",
-  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Vælg sprog i vinduet, og kopier resultatet med ét klik.",
+  "ui.paste-your-text-and-keep-working-on-the-page": "Skriv en mail og oversæt ord på samme side",
+  "ui.choose-languages-in-the-window-and-copy-the-result-with-one-click": "Åbn oversætteren med en tastaturgenvej, kopiér oversættelsen, og fortsæt med din mail.",
   "ui.source-text": "Kildetekst",
   "ui.could-you-send-me-the-updated-document": "Kan du sende mig det opdaterede dokument?",
   "ui.slower": "Langsommere",
@@ -462,5 +462,12 @@
   "ui.onboarding-shortcut-change-hint": "Du kan ændre tastaturgenvejen i indstillingerne.",
   "ui.could-not-copy-translations": "Oversættelserne kunne ikke kopieres",
   "ui.history-record-limit": "Grænse for historikposter",
-  "ui.history-record-limit-description": "Fra 1 til 5000. Når rotation er aktiveret, slettes gamle poster, når en ny oversættelse gemmes."
+  "ui.history-record-limit-description": "Fra 1 til 5000. Når rotation er aktiveret, slettes gamle poster, når en ny oversættelse gemmes.",
+  "ui.help-new-email": "Ny mail",
+  "ui.help-email-to": "Til",
+  "ui.help-email-subject": "Emne",
+  "ui.help-updated-word": "opdaterede",
+  "ui.help-email-draft": "Kan du sende det {updated} dokument?",
+  "ui.help-good-morning": "Godmorgen",
+  "ui.help-email-subject-example": "Projektfiler"
 }
