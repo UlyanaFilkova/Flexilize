@@ -78,6 +78,11 @@ const routeHashes: Record<Route, string> = {
 };
 
 const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving", "advanced"]);
+const settingsDetailParents = new Map([
+  ["translator-shortcuts", "general"],
+  ["translator-languages", "translation"],
+  ["translator-text", "general"]
+]);
 
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
@@ -97,7 +102,12 @@ function settingsSectionFromHash() {
   const section = location.hash.startsWith(`${routeHashes.settings}/`)
     ? location.hash.slice(`${routeHashes.settings}/`.length)
     : "overview";
-  return settingsSectionIds.has(section) ? section : "overview";
+  return settingsDetailParents.get(section) || (settingsSectionIds.has(section) ? section : "overview");
+}
+
+function settingsScrollTarget(section: string) {
+  const target = `settings-${section}`;
+  return document.getElementById(target) ? target : `settings-${settingsDetailParents.get(section) || section}`;
 }
 
 function resetScrollPosition() {
@@ -148,22 +158,21 @@ function App() {
 
   const openSettingsSection = (section: string) => {
     setPage("settings");
-    setSettingsSection(section);
+    setSettingsSection(settingsDetailParents.get(section) || section);
     window.history.replaceState(null, "", section === "overview" ? routeHashes.settings : `${routeHashes.settings}/${section}`);
     if (section === "overview") {
       window.scrollTo({top: 0, behavior: "smooth"});
     } else {
-      const targetId = `settings-${section}`;
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        scrollToSettingsAnchor(targetId);
+        scrollToSettingsAnchor(settingsScrollTarget(section));
       }));
     }
   };
 
   useEffect(() => {
     if (page !== "settings" || settingsSection === "overview") return;
-    const targetId = `settings-${settingsSection}`;
-    requestAnimationFrame(() => scrollToSettingsAnchor(targetId));
+    const section = location.hash.slice(`${routeHashes.settings}/`.length);
+    requestAnimationFrame(() => scrollToSettingsAnchor(settingsScrollTarget(section)));
   }, []);
 
   const openHelp = () => {
@@ -703,7 +712,7 @@ function GeneralSettings() {
       </div>}
         </section>
       </div>
-      {!isMobile && <div className="settings-group settings-group-following translator-shortcuts-settings-group">
+      {!isMobile && <div id="settings-translator-shortcuts" className="settings-group settings-group-following translator-shortcuts-settings-group">
         <h2 className="settings-group-title">Переводчик</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
           <div className="setting-row activation-setting-row">
@@ -740,7 +749,7 @@ function GeneralSettings() {
               {reverseTranslationRecording ? "Нажмите клавиши…" : formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)}
             </button>
           </div>
-          <div className="setting-row setting-row-secondary">
+          <div id="settings-translator-text" className="setting-row setting-row-secondary">
             <div className="setting-copy">
               <h2>Сохранять предыдущий текст при повторном открытии переводчика</h2>
               <p>При закрытии окна переводчика введенный текст и его перевод сохранятся и будут доступны при повторном открытии переводчика.</p>
@@ -989,7 +998,7 @@ function TranslationSettings() {
         </div>
         </section>
       </div>
-      <div className="settings-group settings-group-following">
+      <div id="settings-translator-languages" className="settings-group settings-group-following">
         <h2 className="settings-group-title">Переводчик</h2>
         <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
         <div className="setting-row">
@@ -1415,17 +1424,17 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-writing">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><h2>Нужно перевести собственный текст</h2><p>Откройте отдельный переводчик поверх текущей страницы, напечатайте или вставьте текст и продолжайте работу в той же вкладке.</p></div>
+          <div className="help-section-heading"><h2>Вызывайте переводчик на любой странице</h2><p>Откройте переводчик поверх текущей страницы, выполните перевод и вернитесь к работе в той же вкладке</p></div>
           <TranslatorHelpExample />
         </div>
         <div className="workflow-card">
-          <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Нажмите назначенную горячую клавишу. По умолчанию комбинацию можно посмотреть или изменить в настройках.</p></div></div>
+          <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Используйте горячие клавиши. Посмотреть комбинацию клавиш по умолчанию или задать свою можно в <a className="help-text-link" href="#settings/translator-shortcuts" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("translator-shortcuts"); }}>настройках</a>.</p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
-          <div className="workflow-step"><span>2</span><div><h3>Выберите языки</h3><p>Исходный язык и язык результата для переводчика настраиваются отдельно от перевода выделений.</p></div></div>
+          <div className="workflow-step"><span>2</span><div><h3>Выберите языки</h3><p>Можно задать <a className="help-text-link" href="#settings/translator-languages" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("translator-languages"); }}>языки по умолчанию</a>. Исходный язык и язык результата для переводчика настраиваются отдельно от языков перевода по выделению.</p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
-          <div className="workflow-step"><span>3</span><div><h3>Введите текст</h3><p>Напечатайте фразу или вставьте её из буфера обмена, затем используйте готовый перевод.</p></div></div>
+          <div className="workflow-step"><span>3</span><div><h3>Введите текст</h3><p>Напечатайте фразу или вставьте её из буфера обмена. Затем скопируйте и используйте готовый перевод.</p></div></div>
         </div>
-        <button className="help-inline-link" type="button" onClick={() => onOpenSettings("translation")}><LanguagesIcon />Открыть настройки языков<ArrowIcon /></button>
+        <div className="help-callout"><InfoIcon /><div><strong>Хотите видеть старый перевод при повторном открытии переводчика?</strong><p>Включите опцию «Сохранять предыдущий текст при повторном открытии переводчика». Введённый текст и его перевод будут доступны, когда вы снова откроете окно.</p></div><button type="button" onClick={() => onOpenSettings("translator-text")}>Настроить сохранение текста</button></div>
       </section>
 
       <section className="help-section" id="help-listening">
@@ -1550,7 +1559,14 @@ function TranslatorHelpExample() {
   const example = helpExamples();
   return (
     <AnimatedHelpExample className="help-translator-example">
-      <figcaption><span>Пример отдельного переводчика</span><strong>{translate("ui.paste-your-text-and-keep-working-on-the-page")}</strong><p>{translate("ui.choose-languages-in-the-window-and-copy-the-result-with-one-click")}</p></figcaption>
+      <figcaption>
+        <strong>Откройте переводчик горячими клавишами</strong>
+        <ul className="check-list help-translator-features">
+          <li><CheckIcon /><span>Доступно <strong>{TRANSLATION_LANGUAGES.length} языков</strong> для перевода.</span></li>
+          <li><CheckIcon /><span>Смена языков горячими клавишами.</span></li>
+          <li><CheckIcon /><span>Сочетания клавиш можно настроить под себя.</span></li>
+        </ul>
+      </figcaption>
       <div className="help-visual-canvas visual-translator-scene" aria-hidden="true">
         <div className="visual-translator-page">
           <div className="visual-browser-toolbar"><i /><i /><i /><span>mail.example.com/inbox</span></div>

@@ -124,6 +124,26 @@ describe("options page", () => {
     expect(location.hash).toBe("#settings/general");
   });
 
+  it.each([
+    ["настройках", "translator-shortcuts", "Активация"],
+    ["языки по умолчанию", "translator-languages", "Языки"],
+    ["Настроить сохранение текста", "translator-text", "Активация"]
+  ])("opens the exact translator settings group from the %s help link", async (name, detail, section) => {
+    const anchorId = `settings-${detail}`;
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+      return {top: this.id === anchorId ? 500 : 0, height: 0} as DOMRect;
+    });
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    const link = screen.getByRole(detail === "translator-text" ? "button" : "link", {name});
+    if (detail !== "translator-text") expect(link.getAttribute("href")).toBe(`#settings/${detail}`);
+    vi.mocked(window.scrollTo).mockClear();
+    await userEvent.click(link);
+    expect(location.hash).toBe(`#settings/${detail}`);
+    expect(screen.getByRole("button", {name: section}).classList.contains("active")).toBe(true);
+    expect(document.getElementById(anchorId)).toBeTruthy();
+    await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith({top: 516, behavior: "smooth"}));
+  });
+
   it("starts help demonstrations only when scrolled into view and stops them outside the viewport", async () => {
     const observers: Array<{callback: IntersectionObserverCallback; target?: Element; disconnect: ReturnType<typeof vi.fn>}> = [];
     vi.stubGlobal("IntersectionObserver", class {
