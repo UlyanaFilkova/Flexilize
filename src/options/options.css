@@ -2303,16 +2303,17 @@ h1 {
   color: #315be8;
 }
 
-.help-callout strong { color: #31405b; font-size: 13px; }
-.help-callout p { margin: 5px 0 0; color: #71809b; font-size: 11px; line-height: 1.5; }
+.help-callout strong { color: #31405b; font-size: 15px; }
+.help-callout p { margin: 5px 0 0; color: #71809b; font-size: 13px; line-height: 1.5; }
 .help-callout button {
   min-height: 38px;
+  margin-inline-start: 12px;
   padding: 0 13px;
   border-radius: 9px;
   background: #315be8;
   color: #fff;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -2347,11 +2348,13 @@ h1 {
   font-weight: 700;
 }
 
-.workflow-step h3 { font-size: 13px; }
+.workflow-step > span { font-size: 12px; }
+.workflow-step h3 { font-size: 15px; }
 .workflow-step p,
 .help-mini-card p,
 .format-guide p { margin: 7px 0 0; color: #7b8595; font-size: 11px; line-height: 1.55; }
-.workflow-arrow { align-self: center; color: #bdc5d1; }
+.workflow-step p { font-size: 13px; }
+.workflow-arrow { align-self: center; color: #bdc5d1; font-size: 18px; }
 
 .help-text-link { color: #315be8; text-decoration: underline; text-underline-offset: 3px; }
 .help-text-link:hover { color: #274ecb; }
@@ -2746,7 +2749,7 @@ h1 {
   .format-guide { grid-template-columns: 1fr; }
 
   .help-callout { grid-template-columns: 22px minmax(0, 1fr); }
-  .help-callout button { grid-column: 2; justify-self: start; }
+  .help-callout button { grid-column: 2; justify-self: start; margin-inline-start: 0; margin-top: 12px; }
   .help-section { margin-top: 48px; }
   .help-page .help-footer { display: none; }
 }

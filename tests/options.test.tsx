@@ -127,8 +127,9 @@ describe("options page", () => {
   it.each([
     ["настройках", "translator-shortcuts", "Переводчик"],
     ["языки по умолчанию", "translator-languages", "Языки"],
-    ["Настроить сохранение текста", "translator-text", "Переводчик"]
-  ])("opens the exact translator settings group from the %s help link", async (name, detail, section) => {
+    ["Настроить сохранение текста", "translator-text", "Переводчик"],
+    ["скорости", "speech-rate", "Звук"]
+  ])("centers the exact settings group from the %s help link", async (name, detail, section) => {
     const anchorId = `settings-${detail}`;
     vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
       return {top: this.id === anchorId ? 500 : 0, height: this.id === anchorId ? 200 : this.classList.contains("topbar") ? 80 : 0} as DOMRect;

@@ -81,7 +81,8 @@ const settingsSectionIds = new Set(["overview", "general", "translator", "transl
 const settingsDetailParents = new Map([
   ["translator-shortcuts", "translator"],
   ["translator-languages", "translation"],
-  ["translator-text", "translator"]
+  ["translator-text", "translator"],
+  ["speech-rate", "sound"]
 ]);
 
 const settingsSidebarItems = [
@@ -1246,7 +1247,7 @@ function SoundSettings() {
           <span className="sr-only">Включить озвучку</span>
         </label>
       </div>
-      <div className={`setting-row setting-row-secondary${settings?.speechEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.speechEnabled}>
+      <div id="settings-speech-rate" className={`setting-row setting-row-secondary${settings?.speechEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.speechEnabled}>
         <div className="setting-copy">
           <h2>Скорость озвучки</h2>
           <p>Скорость воспроизведения озвученного текста.</p>
@@ -1425,7 +1426,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       <div className="help-card-grid help-reading-details">
         <article className="help-card">
           <div className="help-card-heading"><div className="help-card-icon"><SoundIcon /></div><h3>Транскрипция и озвучка</h3></div>
-          <p className="help-card-description">Транскрипция подскажет, как читается выделенное слово. А озвучка позволит услышать его произношение на заданной скорости.</p>
+          <p className="help-card-description">Транскрипция подскажет, как читается выделенное слово. А озвучка позволит услышать его произношение на заданной <a className="help-text-link" href="#settings/speech-rate" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("speech-rate"); }}>скорости</a>.</p>
         </article>
         <article className="help-card">
           <div className="help-card-heading"><div className="help-card-icon"><TextIcon /></div><h3>Перевод контекста</h3></div>
