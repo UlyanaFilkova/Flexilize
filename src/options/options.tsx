@@ -77,16 +77,17 @@ const routeHashes: Record<Route, string> = {
   welcome: "#welcome"
 };
 
-const settingsSectionIds = new Set(["overview", "general", "translation", "sound", "saving", "advanced"]);
+const settingsSectionIds = new Set(["overview", "general", "translator", "translation", "sound", "saving", "advanced"]);
 const settingsDetailParents = new Map([
-  ["translator-shortcuts", "general"],
+  ["translator-shortcuts", "translator"],
   ["translator-languages", "translation"],
-  ["translator-text", "general"]
+  ["translator-text", "translator"]
 ]);
 
 const settingsSidebarItems = [
   {id: "overview", label: "Все настройки", icon: <SettingsIcon />},
   {id: "general", label: "Активация", icon: <LightningIcon />},
+  {id: "translator", label: "Переводчик", icon: <KeyboardIcon />},
   {id: "translation", label: "Языки", icon: <LanguagesIcon />},
   {id: "sound", label: "Звук", icon: <SoundIcon />},
   {id: "saving", label: "Сохранение", icon: <BookmarkIcon />},
@@ -107,7 +108,9 @@ function settingsSectionFromHash() {
 
 function settingsScrollTarget(section: string) {
   const target = `settings-${section}`;
-  return document.getElementById(target) ? target : `settings-${settingsDetailParents.get(section) || section}`;
+  if (document.getElementById(target)) return target;
+  const parent = settingsDetailParents.get(section) || section;
+  return `settings-${parent === "translator" && isMobileDevice() ? "general" : parent}`;
 }
 
 function resetScrollPosition() {
@@ -116,12 +119,18 @@ function resetScrollPosition() {
   }
 }
 
-function scrollToSettingsAnchor(id: string) {
+function scrollToSettingsAnchor(id: string, center = false) {
   const anchor = document.getElementById(id);
   if (!anchor) return;
+  const rect = anchor.getBoundingClientRect();
   const marginTop = Number.parseFloat(getComputedStyle(anchor).marginTop) || 0;
   const stickyHeaderHeight = document.querySelector<HTMLElement>(".topbar")?.getBoundingClientRect().height || 0;
-  const marginTopPosition = window.scrollY + anchor.getBoundingClientRect().top - marginTop;
+  if (center) {
+    const topOffset = stickyHeaderHeight + Math.max(24, (window.innerHeight - stickyHeaderHeight - rect.height) / 2);
+    window.scrollTo({top: Math.max(0, window.scrollY + rect.top - topOffset), behavior: "smooth"});
+    return;
+  }
+  const marginTopPosition = window.scrollY + rect.top - marginTop;
   window.scrollTo({top: Math.max(0, marginTopPosition - stickyHeaderHeight + 16), behavior: "smooth"});
 }
 
@@ -135,6 +144,13 @@ function App() {
   const [exporting, setExporting] = useState<ExportFormat | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(isMobileDevice);
+
+  useEffect(() => {
+    const updateDeviceType = () => setIsMobile(isMobileDevice());
+    window.addEventListener("resize", updateDeviceType);
+    return () => window.removeEventListener("resize", updateDeviceType);
+  }, []);
 
   useEffect(() => {
     void getTranslationRecords()
@@ -164,7 +180,7 @@ function App() {
       window.scrollTo({top: 0, behavior: "smooth"});
     } else {
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        scrollToSettingsAnchor(settingsScrollTarget(section));
+        scrollToSettingsAnchor(settingsScrollTarget(section), settingsDetailParents.has(section));
       }));
     }
   };
@@ -172,7 +188,7 @@ function App() {
   useEffect(() => {
     if (page !== "settings" || settingsSection === "overview") return;
     const section = location.hash.slice(`${routeHashes.settings}/`.length);
-    requestAnimationFrame(() => scrollToSettingsAnchor(settingsScrollTarget(section)));
+    requestAnimationFrame(() => scrollToSettingsAnchor(settingsScrollTarget(section), settingsDetailParents.has(section)));
   }, []);
 
   const openHelp = () => {
@@ -277,7 +293,7 @@ function App() {
           </nav>
           <div className="sidebar-heading sidebar-section-heading">Настройки</div>
           <nav>
-            {settingsSidebarItems.map((item) => (
+            {settingsSidebarItems.filter((item) => item.id !== "translator" || !isMobile).map((item) => (
               <button key={item.id} className={page === "settings" && settingsSection === item.id ? "active" : ""} type="button" onClick={() => { openSettingsSection(item.id); setMobileMenuOpen(false); }}>
                 {item.icon}<span>{item.label}</span>
               </button>
@@ -306,10 +322,7 @@ function App() {
             <div id="settings-top">
               <PageHeading title="Настройки" description="Настройте работу расширения под себя." />
               <SettingsBanner onOpenSection={openSettingsSection} />
-              <div id="settings-general" className="settings-scroll-anchor">
-                <PageHeading title="Активация" description="" showEyebrow={false} />
-                <GeneralSettings />
-              </div>
+              <ActivationAndTranslatorSettings isMobile={isMobile} />
               <div id="settings-translation" className="settings-scroll-anchor">
                 <PageHeading title="Языки" description="" showEyebrow={false} />
                 <TranslationSettings />
@@ -602,8 +615,7 @@ function OnboardingView({onComplete}: {onComplete: () => void}) {
   );
 }
 
-function GeneralSettings() {
-  const [isMobile, setIsMobile] = useState(isMobileDevice);
+function ActivationAndTranslatorSettings({isMobile}: {isMobile: boolean}) {
   const [settings, setSettings] = useState<ExtensionSettings | null>(null);
   const [recording, setRecording] = useState(false);
   const [translatorRecording, setTranslatorRecording] = useState(false);
@@ -614,11 +626,6 @@ function GeneralSettings() {
     void getExtensionSettings().then(setSettings).catch(() => setError("Не удалось загрузить настройки"));
   }, []);
 
-  useEffect(() => {
-    const updateDeviceType = () => setIsMobile(isMobileDevice());
-    window.addEventListener("resize", updateDeviceType);
-    return () => window.removeEventListener("resize", updateDeviceType);
-  }, []);
 
   const persist = async (nextSettings: ExtensionSettings) => {
     setSettings(nextSettings);
@@ -689,84 +696,89 @@ function GeneralSettings() {
 
   return (
     <>
-      <div className="settings-group settings-group-following">
-        <h2 className="settings-group-title">Перевод по выделению</h2>
-        <section className="settings-panel settings-panel-grouped activation-options-grid" aria-label="Перевод по выделению">
-      <SelectionActivationSettings settings={settings} persist={persist} isMobile={isMobile} />
+      <div id="settings-general" className="settings-scroll-anchor">
+        <PageHeading title="Активация" description="" showEyebrow={false} />
+        <div className="settings-group settings-group-following">
+          <h2 className="settings-group-title">Перевод по выделению</h2>
+          <section className="settings-panel settings-panel-grouped activation-options-grid" aria-label="Перевод по выделению">
+        <SelectionActivationSettings settings={settings} persist={persist} isMobile={isMobile} />
 
-      {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
-        <div className="setting-copy">
-          <h2>Комбинация клавиш</h2>
-          <p>Нажмите кнопку и введите новую комбинацию.</p>
+        {!isMobile && <div className={`setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row${settings?.hotkeyActivationEnabled ? "" : " setting-row-disabled"}`} aria-disabled={!settings?.hotkeyActivationEnabled}>
+          <div className="setting-copy">
+            <h2>Комбинация клавиш</h2>
+            <p>Нажмите кнопку и введите новую комбинацию.</p>
+          </div>
+          <button
+            className={recording ? "hotkey-button recording" : "hotkey-button"}
+            type="button"
+            disabled={!settings?.hotkeyActivationEnabled}
+            onClick={() => { setRecording(true); setError(""); }}
+            onBlur={() => setRecording(false)}
+            onKeyDown={captureShortcut}
+          >
+            {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
+          </button>
+        </div>}
+          </section>
         </div>
-        <button
-          className={recording ? "hotkey-button recording" : "hotkey-button"}
-          type="button"
-          disabled={!settings?.hotkeyActivationEnabled}
-          onClick={() => { setRecording(true); setError(""); }}
-          onBlur={() => setRecording(false)}
-          onKeyDown={captureShortcut}
-        >
-          {recording ? "Нажмите клавиши…" : formatShortcut(settings?.activationShortcut || defaultSettings.activationShortcut)}
-        </button>
-      </div>}
-        </section>
       </div>
-      {!isMobile && <div id="settings-translator-shortcuts" className="settings-group settings-group-following translator-shortcuts-settings-group">
-        <h2 className="settings-group-title">Переводчик</h2>
-        <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
-          <div className="setting-row activation-setting-row">
-            <div className="setting-copy">
-              <h2>Горячая клавиша переводчика</h2>
-              <p>Открывает отдельное окно для ввода и перевода текста.</p>
-            </div>
-            <ActivationIllustration kind="translator" shortcut={formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)} />
-            <button
-              className={translatorRecording ? "hotkey-button recording" : "hotkey-button"}
-              type="button"
-              disabled={!settings}
-              onClick={() => { setTranslatorRecording(true); setError(""); }}
-              onBlur={() => setTranslatorRecording(false)}
-              onKeyDown={captureTranslatorShortcut}
-            >
-              {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
-            </button>
-          </div>
-          <div className="setting-row setting-row-secondary activation-setting-row">
-            <div className="setting-copy">
-              <h2>Горячая клавиша обратного перевода</h2>
-              <p>Меняет местами исходный язык и язык перевода.</p>
-            </div>
-            <ActivationIllustration kind="reverse" shortcut={formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)} />
-            <button
-              className={reverseTranslationRecording ? "hotkey-button recording" : "hotkey-button"}
-              type="button"
-              disabled={!settings}
-              onClick={() => { setReverseTranslationRecording(true); setError(""); }}
-              onBlur={() => setReverseTranslationRecording(false)}
-              onKeyDown={captureReverseTranslationShortcut}
-            >
-              {reverseTranslationRecording ? "Нажмите клавиши…" : formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)}
-            </button>
-          </div>
-          <div id="settings-translator-text" className="setting-row setting-row-secondary">
-            <div className="setting-copy">
-              <h2>Сохранять предыдущий текст при повторном открытии переводчика</h2>
-              <p>При закрытии окна переводчика введенный текст и его перевод сохранятся и будут доступны при повторном открытии переводчика.</p>
-            </div>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={settings?.preserveTranslatorText ?? false}
+      {!isMobile && <div id="settings-translator" className="settings-scroll-anchor">
+        <PageHeading title="Переводчик" description="" showEyebrow={false} />
+        <div id="settings-translator-shortcuts" className="settings-group settings-group-following translator-shortcuts-settings-group">
+          <section className="settings-panel settings-panel-grouped" aria-label="Переводчик">
+            <div className="setting-row activation-setting-row">
+              <div className="setting-copy">
+                <h2>Горячая клавиша переводчика</h2>
+                <p>Открывает отдельное окно для ввода и перевода текста.</p>
+              </div>
+              <ActivationIllustration kind="translator" shortcut={formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)} />
+              <button
+                className={translatorRecording ? "hotkey-button recording" : "hotkey-button"}
+                type="button"
                 disabled={!settings}
-                onChange={(event) => settings && void persist({...settings, preserveTranslatorText: event.target.checked})}
-              />
-              <span aria-hidden="true" />
-              <span className="sr-only">Сохранять предыдущий текст при повторном открытии переводчика</span>
-            </label>
-          </div>
-          {error && <div className="settings-error" role="alert">{error}</div>}
-        </section>
+                onClick={() => { setTranslatorRecording(true); setError(""); }}
+                onBlur={() => setTranslatorRecording(false)}
+                onKeyDown={captureTranslatorShortcut}
+              >
+                {translatorRecording ? "Нажмите клавиши…" : formatShortcut(settings?.translatorShortcut || defaultSettings.translatorShortcut)}
+              </button>
+            </div>
+            <div className="setting-row setting-row-secondary activation-setting-row">
+              <div className="setting-copy">
+                <h2>Горячая клавиша обратного перевода</h2>
+                <p>Меняет местами исходный язык и язык перевода.</p>
+              </div>
+              <ActivationIllustration kind="reverse" shortcut={formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)} />
+              <button
+                className={reverseTranslationRecording ? "hotkey-button recording" : "hotkey-button"}
+                type="button"
+                disabled={!settings}
+                onClick={() => { setReverseTranslationRecording(true); setError(""); }}
+                onBlur={() => setReverseTranslationRecording(false)}
+                onKeyDown={captureReverseTranslationShortcut}
+              >
+                {reverseTranslationRecording ? "Нажмите клавиши…" : formatShortcut(settings?.reverseTranslationShortcut || defaultSettings.reverseTranslationShortcut)}
+              </button>
+            </div>
+            <div id="settings-translator-text" className="setting-row setting-row-secondary">
+              <div className="setting-copy">
+                <h2>Сохранять предыдущий текст при повторном открытии переводчика</h2>
+                <p>При закрытии окна переводчика введенный текст и его перевод сохранятся и будут доступны при повторном открытии переводчика.</p>
+              </div>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={settings?.preserveTranslatorText ?? false}
+                  disabled={!settings}
+                  onChange={(event) => settings && void persist({...settings, preserveTranslatorText: event.target.checked})}
+                />
+                <span aria-hidden="true" />
+                <span className="sr-only">Сохранять предыдущий текст при повторном открытии переводчика</span>
+              </label>
+            </div>
+            {error && <div className="settings-error" role="alert">{error}</div>}
+          </section>
+        </div>
       </div>}
     </>
   );

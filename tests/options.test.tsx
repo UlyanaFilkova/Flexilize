@@ -125,13 +125,13 @@ describe("options page", () => {
   });
 
   it.each([
-    ["настройках", "translator-shortcuts", "Активация"],
+    ["настройках", "translator-shortcuts", "Переводчик"],
     ["языки по умолчанию", "translator-languages", "Языки"],
-    ["Настроить сохранение текста", "translator-text", "Активация"]
+    ["Настроить сохранение текста", "translator-text", "Переводчик"]
   ])("opens the exact translator settings group from the %s help link", async (name, detail, section) => {
     const anchorId = `settings-${detail}`;
     vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
-      return {top: this.id === anchorId ? 500 : 0, height: 0} as DOMRect;
+      return {top: this.id === anchorId ? 500 : 0, height: this.id === anchorId ? 200 : this.classList.contains("topbar") ? 80 : 0} as DOMRect;
     });
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
     const link = screen.getByRole(detail === "translator-text" ? "button" : "link", {name});
@@ -141,7 +141,8 @@ describe("options page", () => {
     expect(location.hash).toBe(`#settings/${detail}`);
     expect(screen.getByRole("button", {name: section}).classList.contains("active")).toBe(true);
     expect(document.getElementById(anchorId)).toBeTruthy();
-    await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith({top: 516, behavior: "smooth"}));
+    const centeredTop = 500 + 100 - (window.innerHeight + 80) / 2;
+    await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith({top: centeredTop, behavior: "smooth"}));
   });
 
   it("starts help demonstrations only when scrolled into view and stops them outside the viewport", async () => {
@@ -201,8 +202,13 @@ describe("options page", () => {
     expect(storageData[SETTINGS_KEY].hotkeyActivationEnabled).toBe(true);
   });
 
-  it("records a new translator shortcut", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Активация$/}));
+  it("records a new translator shortcut in its own settings section", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Переводчик$/}));
+    expect(location.hash).toBe("#settings/translator");
+    const translator = document.getElementById("settings-translator")!;
+    expect(translator.previousElementSibling?.id).toBe("settings-general");
+    expect(document.getElementById("settings-general")!.querySelector("#settings-translator-shortcuts")).toBeNull();
+    expect(within(translator).getByRole("checkbox", {name: "Сохранять предыдущий текст при повторном открытии переводчика"})).toBeTruthy();
     const button = screen.getByRole("button", {name: "Ctrl + Shift + '"});
     await userEvent.click(button);
     fireEvent.keyDown(button, {key: "T", code: "KeyT", ctrlKey: true, altKey: true});
