@@ -5,6 +5,7 @@ export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "i
 export type InterfaceLanguage = typeof INTERFACE_LANGUAGES[number];
 
 let activeLanguage: InterfaceLanguage = "ru";
+const languageListeners = new Set<() => void>();
 const loadedCatalogs: Partial<Record<InterfaceLanguage, Record<string, string>>> = {};
 const en: Record<string, string> = englishCatalog;
 const ru: Record<string, string> = russianCatalog;
@@ -52,7 +53,14 @@ export async function loadInterfaceLanguage(language: InterfaceLanguage) {
 }
 
 export function setActiveLanguage(language: InterfaceLanguage) {
+  if (activeLanguage === language) return;
   activeLanguage = language;
+  languageListeners.forEach(listener => listener());
+}
+
+export function subscribeInterfaceLanguage(listener: () => void) {
+  languageListeners.add(listener);
+  return () => { languageListeners.delete(listener); };
 }
 
 export function getActiveLanguage() {

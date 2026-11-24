@@ -43,10 +43,10 @@ describe("English options interface", () => {
     }
     await userEvent.click(screen.getByRole("button", {name: /How to use/}));
     await waitFor(() => expect(screen.getByRole("heading", {name: "Frequently asked questions"})).toBeTruthy());
-    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
     expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
-    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(0);
-    expect(screen.getByText("Standalone translator example")).toBeTruthy();
+    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(4);
+    expect(screen.getByText("Open the translator with a keyboard shortcut")).toBeTruthy();
     expect(document.querySelector(".visual-popup-source strong")?.textContent).toBe("el contexto importa");
     expect(document.querySelector(".visual-translator-input")?.textContent).toBe("updated");
     expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("en");

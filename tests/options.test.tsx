@@ -97,7 +97,7 @@ describe("options page", () => {
     await waitFor(() => expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(250));
     expect(screen.getByText(/При выключенной ротации.*250/)).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
-    expect(await screen.findByText(/— при лимите в 250 записей/)).toBeTruthy();
+    expect(await screen.findByText(/Если ротация выключена и достигнут лимит в указанное число записей/)).toBeTruthy();
   });
 
   it("shows a detailed help section and links it to settings", async () => {
@@ -113,9 +113,9 @@ describe("options page", () => {
     expect(reading.nextElementSibling?.querySelectorAll(".help-card")).toHaveLength(2);
     expect(reading.nextElementSibling?.nextElementSibling?.classList.contains("help-callout")).toBe(true);
     expect(screen.getByRole("heading", {name: "Частые вопросы"})).toBeTruthy();
-    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
     expect(document.querySelectorAll(".help-task-hero")).toHaveLength(6);
-    expect(document.querySelectorAll(".help-task-hero .help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-task-hero .help-visual-example")).toHaveLength(6);
     expect(document.querySelectorAll(".help-task-hero .help-card-grid, .help-task-hero .workflow-card, .help-task-hero .vocabulary-layout, .help-task-hero .format-guide")).toHaveLength(0);
     expect(location.hash).toBe("#help");
 
@@ -156,9 +156,10 @@ describe("options page", () => {
     });
     const before = structuredClone(storageData);
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
-    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
     expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
-    expect(observers).toHaveLength(2);
+    expect(observers).toHaveLength(4);
+    const helpObservers = [...observers];
     expect(document.querySelector(".visual-translator-input")?.textContent).toBe("обновленный");
     expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("ru");
     expect(document.querySelector(".visual-translator-panes > div:last-child p")?.textContent).toBe("updated");
@@ -180,16 +181,16 @@ describe("options page", () => {
     for (const selector of [".help-speech-example", ".help-history-example"]) {
       expect(document.querySelector(selector)!.classList.contains("help-demo-playing")).toBe(false);
     }
-    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(0);
+    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(4);
     expect(storageData).toEqual(before);
     await userEvent.click(screen.getByRole("button", {name: /^Все настройки$/}));
-    expect(observers.every((observer) => observer.disconnect.mock.calls.length === 1)).toBe(true);
+    expect(helpObservers.every((observer) => observer.disconnect.mock.calls.length === 1)).toBe(true);
   });
 
   it("keeps help demonstrations static when reduced motion is requested", async () => {
     vi.stubGlobal("matchMedia", vi.fn(() => ({matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn()})));
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
-    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
     expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
     expect(screen.queryByRole("button", {name: "Посмотреть демонстрацию"})).toBeNull();
   });

@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from "react";
+import {Fragment, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode} from "react";
 import {createRoot} from "react-dom/client";
 import {useDropzone} from "react-dropzone";
 import browser from "webextension-polyfill";
@@ -20,7 +20,7 @@ import {uniqueTranslationForms} from "../translation-variants";
 import {MAX_HISTORY_RECORDS, MIN_HISTORY_RECORDS} from "../history-config";
 import {isMobileDevice} from "../device";
 import {getReviewStore} from "../review-store";
-import {formatMessage, getActiveLanguage, loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
+import {formatMessage, getActiveLanguage, loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, subscribeInterfaceLanguage, translate, type InterfaceLanguage} from "../i18n";
 import {
   defaultSettings,
   formatShortcut,
@@ -136,6 +136,7 @@ function scrollToSettingsAnchor(id: string, center = false) {
 }
 
 function App() {
+  useSyncExternalStore(subscribeInterfaceLanguage, getActiveLanguage);
   const initialRoute = routeFromHash();
   const [page, setPage] = useState<Page>(initialRoute === "welcome" ? "welcome" : initialRoute === "help" || initialRoute === "review" ? initialRoute : initialRoute === "settings" ? "settings" : "history");
   const [settingsSection, setSettingsSection] = useState(settingsSectionFromHash);
@@ -356,6 +357,14 @@ function PageHeading({title, description, action, showEyebrow = true}: {title: s
   return <div className="content-heading-row"><div className="content-heading">{showEyebrow && <span className="eyebrow">Context Translator</span>}<h1>{title}</h1><p>{description}</p></div>{action}</div>;
 }
 
+
+function HelpMessage({id, links}: {id: string; links: Record<string, ReactNode>}) {
+  return <>{translate(id).split(/(\{\w+\})/g).map((part, index) => {
+    const name = part.match(/^\{(\w+)\}$/)?.[1];
+    return <Fragment key={index}>{name && links[name] ? links[name] : part}</Fragment>;
+  })}</>;
+}
+
 function ReviewView() {
   const store = getReviewStore(navigator.userAgent, getActiveLanguage());
   return (
@@ -531,14 +540,7 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
 
 function BannerExtensionExample() {
   const example = helpExamples();
-  const selection = getActiveLanguage() === "ru" ? {
-    ...example.selection,
-    before: "Even familiar words can ",
-    source: "take on a different meaning",
-    after: " depending on the context.",
-    transcription: "/teɪk ɒn ə ˈdɪfrənt ˈmiːnɪŋ/",
-    translation: "приобретать другое значение"
-  } : example.selection;
+  const selection = example.banner;
   return (
     <AnimatedHelpExample className="banner-extension-example">
       <div className="banner-demo-browser">
@@ -552,7 +554,7 @@ function BannerExtensionExample() {
         <div className="banner-demo-popup">
           <div className="banner-demo-source"><strong translate="no" lang={example.sourceLanguage} dir="ltr">{selection.source}</strong><small translate="no" dir="ltr">{selection.transcription}</small><em className="banner-demo-audio"><SoundIcon /><svg className="banner-demo-audio-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none" /></svg><DemoCursor /></em></div>
           <div className="banner-demo-translation" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{selection.translation}</div>
-          <p className="banner-demo-context">Даже знакомые слова могут приобретать другое значение в зависимости от контекста.</p>
+          <p className="banner-demo-context" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{selection.contextTranslation}</p>
         </div>
       </div>
     </AnimatedHelpExample>
@@ -1433,10 +1435,6 @@ function ExportView({recordsCount, exporting, onExport}: {recordsCount: number; 
 }
 
 function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings: (section: string) => void; onOpenHistory: () => void; onOpenExport: () => void}) {
-  const [historyRecordLimit, setHistoryRecordLimit] = useState(MAX_HISTORY_RECORDS);
-  useEffect(() => {
-    void getExtensionSettings().then((settings) => setHistoryRecordLimit(settings.historyRecordLimit)).catch(() => {});
-  }, []);
   return (
     <div className="help-page">
 <PageHeading title="Как пользоваться" description="Практическое руководство по использованию расширения" />
@@ -1459,7 +1457,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       <div className="help-card-grid help-reading-details">
         <article className="help-card">
           <div className="help-card-heading"><div className="help-card-icon"><SoundIcon /></div><h3>Транскрипция и озвучка</h3></div>
-          <p className="help-card-description">Транскрипция подскажет, как читается выделенное слово. А озвучка позволит услышать его произношение на заданной <a className="help-text-link" href="#settings/speech-rate" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("speech-rate"); }}>скорости</a>.</p>
+          <p className="help-card-description"><HelpMessage id="ui.help-transcription-and-speech-description" links={{speed: <a className="help-text-link" href="#settings/speech-rate" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("speech-rate"); }}>скорости</a>}} /></p>
         </article>
         <article className="help-card">
           <div className="help-card-heading"><div className="help-card-icon"><TextIcon /></div><h3>Перевод контекста</h3></div>
@@ -1474,13 +1472,13 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
           <TranslatorHelpExample />
         </div>
         <div className="workflow-card">
-          <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p>Используйте горячие клавиши. Посмотреть комбинацию клавиш по умолчанию или задать свою можно в <a className="help-text-link" href="#settings/translator-shortcuts" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("translator-shortcuts"); }}>настройках</a>.</p></div></div>
+          <div className="workflow-step"><span>1</span><div><h3>Вызовите переводчик</h3><p><HelpMessage id="ui.help-translator-shortcut-instructions" links={{settings: <a className="help-text-link" href="#settings/translator-shortcuts" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("translator-shortcuts"); }}>настройках</a>}} /></p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
-          <div className="workflow-step"><span>2</span><div><h3>Выберите языки</h3><p>Вы можете задать <a className="help-text-link" href="#settings/translator-languages" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("translator-languages"); }}>языки по умолчанию</a>. Исходный язык и язык результата для переводчика настраиваются отдельно от языка перевода по выделению.</p></div></div>
+          <div className="workflow-step"><span>2</span><div><h3>Выберите языки</h3><p><HelpMessage id="ui.help-default-languages-instructions" links={{languages: <a className="help-text-link" href="#settings/translator-languages" onClick={(event) => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenSettings("translator-languages"); }}>языки по умолчанию</a>}} /></p></div></div>
           <div className="workflow-arrow" aria-hidden="true">→</div>
           <div className="workflow-step"><span>3</span><div><h3>Введите текст</h3><p>Напечатайте фразу или вставьте её из буфера обмена. Затем скопируйте перевод и используйте на странице.</p></div></div>
         </div>
-        <div className="help-callout"><InfoIcon /><div><strong>Хотите видеть старый перевод при повторном открытии переводчика?</strong><p>Включите опцию «Сохранять предыдущий текст при повторном открытии переводчика». Введённый текст и его перевод будут доступны, когда вы снова откроете окно.</p></div><button type="button" onClick={() => onOpenSettings("translator-text")}>Настроить сохранение текста</button></div>
+        <div className="help-callout"><InfoIcon /><div><strong>Хотите видеть старый перевод при повторном открытии переводчика?</strong><p>{formatMessage("ui.help-enable-keep-the-previous-text-when-reopening-the-translator-your", {setting: translate("Сохранять предыдущий текст при повторном открытии переводчика")})}</p></div><button type="button" onClick={() => onOpenSettings("translator-text")}>Настроить сохранение текста</button></div>
       </section>
 
       <section className="help-section" id="help-listening">
@@ -1492,9 +1490,9 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         <div className="help-card-grid help-card-grid-three">
           <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка.</p></article>
           <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку озвучки в окне перевода рядом с транскрипцией.</p></article>
-          <article className="help-mini-card"><span className="mini-card-number">03</span><h3>Подберите темп</h3><p>В разделе «Звук» в настройках установите скорость от 0,3× до 2×.</p></article>
+          <article className="help-mini-card"><span className="mini-card-number">03</span><h3>Подберите темп</h3><p>{formatMessage("ui.help-in-the-sound-section-of-settings-choose-a-speed-from-0-3-to-2", {sound: translate("Звук")})}</p></article>
         </div>
-        <div className="help-callout"><InfoIcon /><div><strong>Не видите транскрипцию или кнопку озвучки?</strong><p>Проверьте, включены ли опции «Транскрипция» и «Озвучка» в разделе «Звук» в настройках.</p></div><button type="button" onClick={() => onOpenSettings("sound")}>Открыть настройки звука</button></div>
+        <div className="help-callout"><InfoIcon /><div><strong>Не видите транскрипцию или кнопку озвучки?</strong><p>{formatMessage("ui.help-check-that-transcription-and-speech-are-enabled-in-the-sound-sect", {transcription: translate("Транскрипция"), speech: translate("Озвучка"), sound: translate("Звук")})}</p></div><button type="button" onClick={() => onOpenSettings("sound")}>Открыть настройки звука</button></div>
       </section>
 
       <section className="help-section" id="help-vocabulary">
@@ -1506,7 +1504,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
           <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Повторение</strong> — возвращайтесь к сохранённым словам в любой момент.</span></li></ul></article>
           <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
         </div>
-        <div className="help-callout"><InfoIcon /><div><strong>Хотите сохранять только нужные переводы?</strong><p>Отключите автосохранение в настройках. Появится кнопка «Сохранить» для ручного добавления в словарь в окне перевода.</p></div><button type="button" onClick={() => onOpenSettings("saving")}>Настроить сохранение</button></div>
+        <div className="help-callout"><InfoIcon /><div><strong>Хотите сохранять только нужные переводы?</strong><p>{formatMessage("ui.help-turn-off-automatic-saving-in-settings-a-save-button-will-appear-i", {save: translate("Сохранить")})}</p></div><button type="button" onClick={() => onOpenSettings("saving")}>Настроить сохранение</button></div>
       </section>
 
       <section className="help-section">
@@ -1521,10 +1519,10 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         <div className="help-hero help-task-hero">
           <div className="help-section-heading"><span>Если что-то не работает</span><h2>Частые вопросы</h2></div>
           <div className="faq-list">
-            <details><summary>Окно перевода не появляется после выделения текста</summary><p>{translate("Проверьте настройку «Показывать окно перевода» в расширенных настройках. Затем проверьте настройки активации. Если включена активация горячими клавишами, после выделения нужно нажать назначенную комбинацию. Обновите вкладку после установки или обновления расширения.")} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
+            <details><summary>Окно перевода не появляется после выделения текста</summary><p>{formatMessage("ui.help-check-show-translation-window-in-advanced-settings-then-check-the", {showWindow: translate("Показывать окно перевода")})} {translate("Расширения не запускаются на внутренних страницах браузера, таких как")} <code>chrome://…</code>.</p></details>
             <details><summary>Перевод или озвучивание не загружается</summary><p>Этим функциям нужен интернет. Проверьте соединение и повторите попытку. Некоторые сайты также могут ограничивать работу встроенных элементов; в таком случае откройте другой сайт и сравните результат.</p></details>
-            <details><summary>Новая запись не появилась в истории</summary><p>{formatMessage("ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation", {count: String(historyRecordLimit)})}</p></details>
-            <details><summary>Горячая клавиша конфликтует с горячими клавишами сайта или браузера</summary><p>Откройте настройку «Активация», найдите горячие клавиши, нажмите кнопку с текущей комбинацией и задайте другую с Ctrl, Alt, Shift или Meta. Выбирайте сочетание, которое не используется браузером и текущим сайтом. Некоторые сайты блокируют горячие клавиши в принципе.</p></details>
+            <details><summary>Новая запись не появилась в истории</summary><p>{translate("ui.check-the-saving-mode-in-manual-mode-click-save-in-the-translation-window-if-rotation-is-disabled-and-the-5-000-record-limit-has-been-reached-delete-unneeded-records-or-enable-automatic-rotation")}</p></details>
+            <details><summary>Горячая клавиша конфликтует с горячими клавишами сайта или браузера</summary><p>{formatMessage("ui.help-open-activation-find-the-keyboard-shortcuts-click-the-current-sho", {activation: translate("Активация")})}</p></details>
             <details><summary>Где хранятся мои данные?</summary><p>История, настройки и кэш хранятся локально на вашем устройстве. Удаляйте отдельные записи в истории, очищайте весь список одной кнопкой или удаляйте данные расширения средствами браузера.</p></details>
           </div>
         </div>
@@ -1608,12 +1606,13 @@ function exampleTypingStyle(text: string, direction: string): CSSProperties {
 
 function TranslatorHelpExample() {
   const example = helpExamples();
+  const languageCount = translate("ui.help-language-count").split("{count}");
   return (
     <AnimatedHelpExample className="help-translator-example">
       <figcaption>
         <strong>Откройте переводчик горячими клавишами</strong>
         <ul className="check-list help-translator-features">
-          <li><CheckIcon /><span>Доступно <strong>{TRANSLATION_LANGUAGES.length} языков</strong> для перевода.</span></li>
+          <li><CheckIcon /><span>{languageCount[0]}<strong>{TRANSLATION_LANGUAGES.length}</strong>{languageCount[1]}</span></li>
           <li><CheckIcon /><span>Смена языков горячими клавишами.</span></li>
           <li><CheckIcon /><span>Сочетания клавиш можно настроить под себя.</span></li>
         </ul>
@@ -1671,6 +1670,7 @@ function SpeechHelpExample() {
 }
 
 function LongSpeechHelpExample() {
+  const example = helpExamples();
   const cardRef = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -1694,8 +1694,8 @@ function LongSpeechHelpExample() {
       ], timing));
     }
     return () => animations.forEach(animation => animation.cancel());
-  }, [playing]);
-  const words = "Every day brings a new opportunity to learn something interesting. Take your time, listen to the whole sentence, and notice how the words connect. With a little practice, understanding spoken English becomes easier and more natural.".split(" ");
+  }, [playing, example.longSpeech]);
+  const words = example.longSpeech.split(" ");
   return (
     <AnimatedHelpExample className="help-long-speech-example" onPlayingChange={setPlaying}>
       <figcaption>
@@ -1707,8 +1707,8 @@ function LongSpeechHelpExample() {
       </figcaption>
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-long-speech-card" ref={cardRef}>
-          <div className="visual-long-speech-heading"><span>Исходный текст · Английский</span><span className="visual-long-speech-button"><span className="visual-speech-play">▶</span><span className="visual-speech-stop">■</span><DemoCursor /></span></div>
-          <p className="visual-long-speech-text" lang="en" dir="ltr" translate="no">{words.map((word, index) => <span key={index}>{word}{index < words.length - 1 ? " " : ""}</span>)}</p>
+          <div className="visual-long-speech-heading"><span>{formatMessage("ui.help-source-text-language", {language: example.sourceName})}</span><span className="visual-long-speech-button"><span className="visual-speech-play">▶</span><span className="visual-speech-stop">■</span><DemoCursor /></span></div>
+          <p className="visual-long-speech-text" lang={example.sourceLanguage} dir="ltr" translate="no">{words.map((word, index) => <span key={index}>{word}{index < words.length - 1 ? " " : ""}</span>)}</p>
           <div className="visual-long-speech-controls"><SoundIcon /><div className="visual-long-speech-track"><span /><i /></div><span>1×</span></div>
         </div>
       </div>
@@ -1722,7 +1722,7 @@ function HistoryHelpExample() {
     <figure className="help-visual-example help-history-example">
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-history-window">
-          <div className="visual-history-heading"><span><strong>История переводов</strong><small>24 записи</small></span><em>Экспорт</em></div>
+          <div className="visual-history-heading"><span><strong>История переводов</strong><small>{pluralizeRecords(24)}</small></span><em>Экспорт</em></div>
           <div className="visual-history-record">
             <div><strong translate="no" lang={example.sourceLanguage} dir="ltr">{example.history.source}</strong><span translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.history.translation}</span></div><i translate="no" dir="ltr">{example.history.transcription}</i>
             <p translate="no" lang={example.sourceLanguage} dir="ltr">{example.history.sentence}</p>
@@ -1742,6 +1742,9 @@ function HistoryHelpExample() {
 }
 
 function ExportHelpExample() {
+  const example = helpExamples();
+  const sample = example.exportSample;
+  const word = sample.words[0];
   const [playing, setPlaying] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectionRevision, setSelectionRevision] = useState(0);
@@ -1773,11 +1776,11 @@ function ExportHelpExample() {
                 <div className="visual-export-preview-heading"><strong>{active.title}</strong><span translate="no">{active.formats[0]}</span></div>
                 <p>{active.description}</p>
               </div>
-              <div className={`visual-export-sample visual-export-sample-${active.kind}`} translate="no">
-                {active.kind === "anki" && <div className="visual-export-flashcards"><div><small>Лицевая сторона</small><strong>journey</strong><span>/ˈdʒɜːni/</span></div><div><small>Обратная сторона</small><strong>путешествие</strong><span>Every journey starts with a single step.</span></div></div>}
-                {active.kind === "table" && <table><thead><tr><th>Оригинал</th><th>Перевод</th></tr></thead><tbody><tr><td>journey</td><td>путешествие</td></tr><tr><td>discover</td><td>открывать</td></tr><tr><td>curiosity</td><td>любознательность</td></tr></tbody></table>}
-                {active.kind === "document" && <div className="visual-export-document"><small>МОЙ СЛОВАРЬ</small><strong>journey — путешествие</strong><span>/ˈdʒɜːni/</span><p>Every journey starts with a single step.</p><i /><i /></div>}
-                {active.kind === "json" && <pre>{'{\n  "text": "journey",\n  "translation": "путешествие",\n  "transcription": "/ˈdʒɜːni/",\n  "sentence": "Every journey starts…"\n}'}</pre>}
+              <div className={`visual-export-sample visual-export-sample-${active.kind}`}>
+                {active.kind === "anki" && <div className="visual-export-flashcards"><div><small>Лицевая сторона</small><strong translate="no" lang={example.sourceLanguage} dir="ltr">{word.source}</strong><span translate="no">{sample.transcription}</span></div><div><small>Обратная сторона</small><strong translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{word.translation}</strong><span translate="no" lang={example.sourceLanguage} dir="ltr">{sample.sentence}</span></div></div>}
+                {active.kind === "table" && <table><thead><tr><th>Оригинал</th><th>Перевод</th></tr></thead><tbody>{sample.words.map(entry => <tr key={entry.source}><td translate="no" lang={example.sourceLanguage} dir="ltr">{entry.source}</td><td translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{entry.translation}</td></tr>)}</tbody></table>}
+                {active.kind === "document" && <div className="visual-export-document"><small>Мой словарь</small><strong translate="no"><bdi lang={example.sourceLanguage}>{word.source}</bdi> — <bdi lang={example.targetLanguage}>{word.translation}</bdi></strong><span translate="no">{sample.transcription}</span><p translate="no" lang={example.sourceLanguage} dir="ltr">{sample.sentence}</p><i /><i /></div>}
+                {active.kind === "json" && <pre translate="no" dir="ltr">{JSON.stringify({text: word.source, translation: word.translation, transcription: sample.transcription, sentence: sample.sentence}, null, 2)}</pre>}
               </div>
             </div>
             <div className="visual-export-pagination">{variants.map((variant, index) => <i key={variant.kind} className={index === activeIndex ? "active" : ""} />)}</div>

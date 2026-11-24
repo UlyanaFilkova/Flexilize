@@ -21,6 +21,15 @@ export function helpExamples(language: InterfaceLanguage = getActiveLanguage()) 
     targetName: name(language),
     directionLabel: `${name(sourceLanguage)} → ${name(language)}`,
     directionCodes: `${sourceLanguage.toUpperCase()} → ${language.toUpperCase()}`,
+    banner: {
+      title: spanish ? "Por qué importa el contexto" : "Why context matters",
+      before: spanish ? "Incluso las palabras conocidas pueden " : "Even familiar words can ",
+      source: spanish ? "adquirir un significado diferente" : "take on a different meaning",
+      after: spanish ? " según el contexto." : " depending on the context.",
+      transcription: spanish ? "/adkiˈɾiɾ un siɡnifiˈkaðo difeˈɾente/" : "/teɪk ɒn ə ˈdɪfrənt ˈmiːnɪŋ/",
+      translation: translate("ui.help-banner-phrase-translation", language),
+      contextTranslation: translate("ui.help-banner-context-translation", language)
+    },
     context: {source: spanish ? "Contexto" : "Context", translation: translate("Контекст", language), after: spanish ? " puede cambiar el significado." : " can change meaning."},
     selection: {
       source: spanish ? "el contexto importa" : "context matters",
@@ -48,6 +57,18 @@ export function helpExamples(language: InterfaceLanguage = getActiveLanguage()) 
       source: spanish ? "Buenos días" : "Good morning",
       transcription: spanish ? "/ˈbwenos ˈdi.as/" : "/ɡʊd ˈmɔːnɪŋ/",
       translation: translate("ui.help-good-morning", language)
+    },
+    longSpeech: spanish
+      ? "Cada día trae una nueva oportunidad para aprender algo interesante. Tómate tu tiempo, escucha la frase completa y fíjate en cómo se conectan las palabras. Con un poco de práctica, comprender el español hablado resulta más fácil y natural."
+      : "Every day brings a new opportunity to learn something interesting. Take your time, listen to the whole sentence, and notice how the words connect. With a little practice, understanding spoken English becomes easier and more natural.",
+    exportSample: {
+      words: [
+        {source: spanish ? "viaje" : "journey", translation: translate("ui.help-example-journey", language)},
+        {source: spanish ? "descubrir" : "discover", translation: translate("ui.help-example-discover", language)},
+        {source: spanish ? "curiosidad" : "curiosity", translation: translate("ui.help-example-curiosity", language)}
+      ],
+      transcription: spanish ? "/ˈbjaxe/" : "/ˈdʒɜːni/",
+      sentence: spanish ? "Todo viaje comienza con un solo paso." : "Every journey starts with a single step."
     },
     history: {
       source: spanish ? "averiguar" : "to figure out",
