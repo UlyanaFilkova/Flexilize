@@ -1497,7 +1497,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
         </div>
       </section>
 
-      <footer className="help-footer"><div><span className="brand-mark" aria-hidden="true">A<span>а</span></span><p><strong>Готовы попробовать?</strong><br />Откройте любую статью и выделите незнакомую фразу.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Проверить горячие клавиши</button></footer>
+      <footer className="help-callout help-settings-callout"><SettingsIcon /><div><strong>Настройте Context Translator под себя</strong><p>Выберите языки перевода, удобный способ активации и режим сохранения слов.</p></div><button type="button" onClick={() => onOpenSettings("general")}>Открыть настройки</button></footer>
     </div>
   );
 }
@@ -1723,7 +1723,7 @@ function ExportHelpExample() {
     <AnimatedHelpExample className="help-export-example" onPlayingChange={setPlaying}>
       <div className="help-visual-canvas">
         <div className="visual-export-window" style={{"--export-accent": active.color, "--export-tint": active.tint} as CSSProperties}>
-          <div className="visual-export-toolbar"><i /><i /><i /><span>Flexilize · Форматы экспорта</span></div>
+          <div className="visual-export-toolbar"><i /><i /><i /><span>Context Translator · Форматы экспорта</span></div>
           <div className="visual-export-content">
             <div className="visual-export-formats">
               {variants.map((variant, index) => <button type="button" key={variant.kind} className={index === activeIndex ? "visual-export-selected" : ""} aria-pressed={index === activeIndex} onClick={() => { setActiveIndex(index); setSelectionRevision(revision => revision + 1); }}>
