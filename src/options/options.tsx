@@ -514,7 +514,6 @@ function ScreenshotPreview({file, onRemove}: {file: File; onRemove: () => void})
 }
 
 function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => void}) {
-  const example = helpExamples();
   return (
     <section className="settings-banner">
       <div className="settings-banner-copy">
@@ -523,14 +522,30 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
         <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
         <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
       </div>
-      <div className="settings-banner-visual" aria-hidden="true">
-        <div className="banner-control banner-control-main"><SlidersIcon /><span><strong>Перевод по выделению</strong><small>Включено</small></span><i /></div>
-        <div className="banner-control banner-control-language"><LanguagesIcon /><span translate="no"><strong>{example.sourceName}</strong><small>→ {example.targetName}</small></span></div>
-        <div className="banner-control banner-control-sound"><SoundIcon /><span><strong>Скорость речи</strong><small>1,0×</small></span><b>−</b><em>+</em></div>
-        <div className="banner-orbit banner-orbit-one" />
-        <div className="banner-orbit banner-orbit-two" />
-      </div>
+      <div className="settings-banner-visual" aria-hidden="true"><BannerExtensionExample /></div>
     </section>
+  );
+}
+
+function BannerExtensionExample() {
+  const example = helpExamples();
+  return (
+    <AnimatedHelpExample className="banner-extension-example">
+      <div className="banner-demo-browser">
+        <div className="visual-browser-toolbar"><i /><i /><i /><span>learn.example.com/article</span></div>
+        <div className="banner-demo-page" translate="no" lang={example.sourceLanguage} dir="ltr">
+          <strong>{example.selection.title}</strong>
+          <i /><i />
+          <p>{example.selection.before}<mark>{example.selection.source}<DemoCursor /></mark>{example.selection.after}</p>
+          <i /><i />
+        </div>
+        <div className="banner-demo-popup">
+          <div className="banner-demo-source"><span translate="no" lang={example.sourceLanguage} dir="ltr"><strong>{example.selection.source}</strong><small>{example.selection.transcription}</small></span><em className="banner-demo-audio"><SoundIcon /><DemoCursor /></em></div>
+          <strong className="banner-demo-translation" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.selection.translation}</strong>
+          <div className="banner-demo-popup-footer"><span translate="no" dir="ltr">{example.directionLabel}</span><span className="banner-demo-wave"><i /><i /><i /><i /><i /></span></div>
+        </div>
+      </div>
+    </AnimatedHelpExample>
   );
 }
 
