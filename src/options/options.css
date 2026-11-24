@@ -2127,7 +2127,8 @@ h1 {
 .visual-history-actions span:last-child { color: #d45757; }
 .visual-history-actions svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-.help-task-hero .help-long-speech-example { padding-top: 28px; border-top: 1px solid rgba(255, 255, 255, .18); border-radius: 0; }
+.help-long-speech-example { grid-template-columns: minmax(250px, .65fr) minmax(0, 1.35fr); }
+.help-task-hero .help-long-speech-example { margin-top: -12px; padding-top: 12px; border-radius: 0; }
 .help-long-speech-example .help-visual-canvas { padding: 14px; }
 .visual-long-speech-card { padding: 24px; border: 1px solid #dfe5ef; border-radius: 16px; background: #fff; box-shadow: 0 18px 38px rgba(39, 60, 105, .12); }
 .visual-long-speech-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #748097; font-size: 11px; }

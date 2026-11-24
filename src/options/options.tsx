@@ -1457,11 +1457,11 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
           <LongSpeechHelpExample />
         </div>
         <div className="help-card-grid help-card-grid-three">
-          <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка и фрагмента.</p></article>
-          <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку звука в окне перевода и повторите фразу вслух.</p></article>
-          <article className="help-mini-card"><span className="mini-card-number">03</span><h3>Подберите темп</h3><p>В разделе «Звук» установите скорость от 0,3× для разбора речи до 2× для тренировки.</p></article>
+          <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка.</p></article>
+          <article className="help-mini-card"><span className="mini-card-number">02</span><h3>Прослушайте оригинал</h3><p>Нажмите кнопку озвучки в окне перевода рядом с транскрипцией.</p></article>
+          <article className="help-mini-card"><span className="mini-card-number">03</span><h3>Подберите темп</h3><p>В разделе «Звук» в настройках установите скорость от 0,3× до 2×.</p></article>
         </div>
-        <button className="help-inline-link" type="button" onClick={() => onOpenSettings("sound")}><SoundIcon />Настроить звук и транскрипцию<ArrowIcon /></button>
+        <div className="help-callout"><InfoIcon /><div><strong>Не видите транскрипцию или кнопку озвучки?</strong><p>Проверьте, включены ли опции «Транскрипция» и «Озвучка» в разделе «Звук» в настройках.</p></div><button type="button" onClick={() => onOpenSettings("sound")}>Открыть настройки звука</button></div>
       </section>
 
       <section className="help-section" id="help-vocabulary">
@@ -1664,6 +1664,13 @@ function LongSpeechHelpExample() {
   const words = "Every day brings a new opportunity to learn something interesting. Take your time, listen to the whole sentence, and notice how the words connect. With a little practice, understanding spoken English becomes easier and more natural.".split(" ");
   return (
     <AnimatedHelpExample className="help-long-speech-example" onPlayingChange={setPlaying}>
+      <figcaption>
+        <strong>Слушайте фрагмент целиком</strong>
+        <ul className="check-list help-translator-features">
+          <li><CheckIcon /><span>Следите за подсветкой текста по мере озвучивания.</span></li>
+          <li><CheckIcon /><span>Выбирайте, откуда продолжить чтение: нажмите на нужное место в тексте или переместите ползунок.</span></li>
+        </ul>
+      </figcaption>
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-long-speech-card" ref={cardRef}>
           <div className="visual-long-speech-heading"><span>Исходный текст · Английский</span><span className="visual-long-speech-button"><span className="visual-speech-play">▶</span><span className="visual-speech-stop">■</span><DemoCursor /></span></div>
@@ -1671,10 +1678,6 @@ function LongSpeechHelpExample() {
           <div className="visual-long-speech-controls"><SoundIcon /><div className="visual-long-speech-track"><span /><i /></div><span>1×</span></div>
         </div>
       </div>
-      <figcaption>
-        <strong>Слушайте фрагмент целиком</strong>
-        <p>Следите за подсветкой текста по мере озвучивания.</p>
-      </figcaption>
     </AnimatedHelpExample>
   );
 }
