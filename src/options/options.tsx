@@ -517,9 +517,11 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
   return (
     <section className="settings-banner">
       <div className="settings-banner-copy">
-        <span className="settings-banner-kicker">Персональные настройки</span>
-        <h2>Context Translator</h2>
-        <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
+        <div className="settings-banner-intro">
+          <span className="settings-banner-kicker">Персональные настройки</span>
+          <h2>Context Translator</h2>
+          <p>Настройте языки, горячие клавиши, звук и сохранение один раз — изменения применяются сразу на всех открытых страницах.</p>
+        </div>
         <button type="button" onClick={() => onOpenSection("general")}>Настроить активацию<ArrowIcon /></button>
       </div>
       <div className="settings-banner-visual" aria-hidden="true"><BannerExtensionExample /></div>
