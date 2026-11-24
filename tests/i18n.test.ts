@@ -1,7 +1,7 @@
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
 import {readFileSync} from "node:fs";
 import russianCatalog from "../src/locales/ru.json";
-import {formatRecordCount, INTERFACE_LANGUAGES, loadInterfaceLanguage, localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
+import {formatRecordCount, getActiveLanguage, setActiveLanguage, subscribeInterfaceLanguage, INTERFACE_LANGUAGES, loadInterfaceLanguage, localizeDom, normalizeInterfaceLanguage, translate} from "../src/i18n";
 
 function messageNumbers(value: string) {
   const normalized = value.normalize("NFKC")
@@ -58,6 +58,34 @@ describe("interface localization", () => {
     ["fr", 0, "0 entrée"], ["en", 0, "0 records"]
   ] as const)("formats %s record counts correctly for %s", (language, count, expected) => {
     expect(formatRecordCount(count, language)).toBe(expected);
+  });
+
+  it("notifies language subscribers only on changes and respects unsubscription", () => {
+    const initial = getActiveLanguage();
+    const next = initial === "en" ? "de" : "en";
+    const first = vi.fn();
+    const second = vi.fn();
+    const stopFirst = subscribeInterfaceLanguage(first);
+    const stopSecond = subscribeInterfaceLanguage(second);
+    try {
+      setActiveLanguage(next);
+      expect(first).toHaveBeenCalledTimes(1);
+      expect(second).toHaveBeenCalledTimes(1);
+      setActiveLanguage(next);
+      expect(first).toHaveBeenCalledTimes(1);
+      expect(second).toHaveBeenCalledTimes(1);
+      stopFirst();
+      setActiveLanguage(initial);
+      expect(first).toHaveBeenCalledTimes(1);
+      expect(second).toHaveBeenCalledTimes(2);
+      stopSecond();
+      setActiveLanguage(next);
+      expect(second).toHaveBeenCalledTimes(2);
+    } finally {
+      stopFirst();
+      stopSecond();
+      setActiveLanguage(initial);
+    }
   });
 
   it("normalizes the supported interface languages", () => {

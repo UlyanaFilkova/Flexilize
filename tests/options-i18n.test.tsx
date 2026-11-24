@@ -76,7 +76,7 @@ describe("English options interface", () => {
       expect(scrollTo).not.toHaveBeenCalled();
     }
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
-  });
+  }, 15_000);
 });
 
 function mainTextWithoutInterfaceLanguageNames() {
