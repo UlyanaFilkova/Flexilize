@@ -679,7 +679,7 @@ h1 {
 .activation-preview-cursor { position: absolute; z-index: 4; top: 44px; left: 12px; width: 14px; height: 17px; opacity: 0; pointer-events: none; }
 .activation-preview-context-result { display: none; }
 .activation-preview-translator-keys { position: absolute; z-index: 2; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4px; opacity: 0; }
-.activation-preview-translator-keys span { padding: 5px; border: 1px solid #dce2ec; border-radius: 4px; background: #fff; color: #58657a; font-size: 8px; font-weight: 700; }
+.activation-preview-translator-keys span { padding: 5px; border: 1px solid #dce2ec; border-radius: 4px; background: #fff; color: #58657a; font-size: 10px; font-weight: 700; }
 .activation-preview-playing .activation-preview-page mark { background: linear-gradient(#dce6ff, #dce6ff) left center / 0% 100% no-repeat; animation: activation-select 7s linear infinite both; }
 .activation-preview-playing .activation-preview-cursor { animation: activation-select-cursor 7s ease infinite both; }
 .activation-preview-playing .activation-preview-result { animation: activation-result 7s ease infinite both; }
