@@ -885,6 +885,12 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
     <div ref={previewRef} className={`activation-illustration activation-illustration-${kind}${playing ? " activation-preview-playing" : ""}`} aria-hidden="true">
       <div className="activation-preview-scene" aria-hidden="true">
         {kind === "translator" ? (<>
+          <div className="activation-preview-toolbar"><i /><i /><i /><span /></div>
+          <div className="activation-preview-page">
+            <b />
+            <p translate="no" lang={example.sourceLanguage} dir="ltr">{example.context.source}{example.context.after}</p>
+            <i className="line-long" /><i className="line-medium" /><i className="line-short" />
+          </div>
           <div className="activation-preview-translator-keys">{shortcut.split(" + ").map(key => <span key={key}>{key}</span>)}</div>
           <div className="activation-preview-translator-backdrop">
             <div className="activation-preview-translator">
