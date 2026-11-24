@@ -1479,14 +1479,9 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
       <section className="help-section">
         <div className="help-hero help-task-hero">
           <div className="help-section-heading"><h2>Переносите переводы в другие приложения</h2><p>Экспортируйте всю историю в подходящем формате. Файл создаётся по вашему запросу и сохраняется через браузер.</p></div>
+          <ExportHelpExample />
         </div>
-        <div className="format-guide">
-          <div><span>ANKI</span><h3>Для интервального повторения</h3><p>Anki CSV или Anki TSV — готовая основа для импорта карточек.</p></div>
-          <div><span>XLSX · CSV · TSV</span><h3>Для таблиц и анализа</h3><p>Подойдут для Excel, Google Таблиц, сортировки и собственной обработки.</p></div>
-          <div><span>PDF · HTML · MD · TXT</span><h3>Для чтения и печати</h3><p>Удобны для архива, заметок, печати и повторения без расширения.</p></div>
-          <div><span>JSON</span><h3>Для резервной копии</h3><p>Сохраняет структурированные данные записей для технических сценариев.</p></div>
-        </div>
-        <button className="help-primary-action" type="button" onClick={onOpenExport}><DownloadIcon />Перейти к экспорту</button>
+        <div className="help-callout"><InfoIcon /><div><strong>Готовы скачать свой словарь?</strong><p>Откройте экспорт, выберите формат и скачайте файл со всей историей переводов.</p></div><button type="button" onClick={onOpenExport}>Перейти к экспорту</button></div>
       </section>
 
       <section className="help-section help-troubleshooting">
@@ -1705,6 +1700,53 @@ function HistoryHelpExample() {
         </ul>
       </figcaption>
     </figure>
+  );
+}
+
+function ExportHelpExample() {
+  const [playing, setPlaying] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [selectionRevision, setSelectionRevision] = useState(0);
+  const variants = [
+    {title: "Карточки для повторения", formats: ["Anki CSV", "Anki TSV"], description: "Импортируйте слова в Anki и повторяйте их по расписанию.", color: "#9b4b23", tint: "#fff2e8", kind: "anki"},
+    {title: "Таблицы и анализ", formats: ["XLSX", "CSV", "TSV"], description: "Открывайте переводы в Excel и Google Таблицах, сортируйте и фильтруйте записи.", color: "#237a56", tint: "#eaf7ef", kind: "table"},
+    {title: "Чтение и печать", formats: ["PDF", "HTML", "MD", "TXT"], description: "Сохраняйте словарь для чтения, заметок и печати.", color: "#315be8", tint: "#edf2ff", kind: "document"},
+    {title: "Структурированные данные", formats: ["JSON"], description: "Используйте данные записей в собственных инструментах и технических сценариях.", color: "#8050b8", tint: "#f4edfc", kind: "json"}
+  ];
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setTimeout(() => setActiveIndex(index => (index + 1) % variants.length), 3600);
+    return () => window.clearTimeout(timer);
+  }, [playing, activeIndex, selectionRevision, variants.length]);
+  const active = variants[activeIndex];
+  return (
+    <AnimatedHelpExample className="help-export-example" onPlayingChange={setPlaying}>
+      <div className="help-visual-canvas">
+        <div className="visual-export-window" style={{"--export-accent": active.color, "--export-tint": active.tint} as CSSProperties}>
+          <div className="visual-export-toolbar"><i /><i /><i /><span>Flexilize · Форматы экспорта</span></div>
+          <div className="visual-export-content">
+            <div className="visual-export-formats">
+              {variants.map((variant, index) => <button type="button" key={variant.kind} className={index === activeIndex ? "visual-export-selected" : ""} aria-pressed={index === activeIndex} onClick={() => { setActiveIndex(index); setSelectionRevision(revision => revision + 1); }}>
+                <b translate="no">{variant.formats.join(" · ")}</b><small>{variant.title}</small>
+              </button>)}
+            </div>
+            <div className="visual-export-preview" key={active.kind}>
+              <div className="visual-export-preview-copy">
+                <div className="visual-export-preview-heading"><strong>{active.title}</strong><span translate="no">{active.formats[0]}</span></div>
+                <p>{active.description}</p>
+              </div>
+              <div className={`visual-export-sample visual-export-sample-${active.kind}`} translate="no">
+                {active.kind === "anki" && <div className="visual-export-flashcards"><div><small>Лицевая сторона</small><strong>journey</strong><span>/ˈdʒɜːni/</span></div><div><small>Обратная сторона</small><strong>путешествие</strong><span>Every journey starts with a single step.</span></div></div>}
+                {active.kind === "table" && <table><thead><tr><th>Оригинал</th><th>Перевод</th></tr></thead><tbody><tr><td>journey</td><td>путешествие</td></tr><tr><td>discover</td><td>открывать</td></tr><tr><td>curiosity</td><td>любознательность</td></tr></tbody></table>}
+                {active.kind === "document" && <div className="visual-export-document"><small>МОЙ СЛОВАРЬ</small><strong>journey — путешествие</strong><span>/ˈdʒɜːni/</span><p>Every journey starts with a single step.</p><i /><i /></div>}
+                {active.kind === "json" && <pre>{'{\n  "text": "journey",\n  "translation": "путешествие",\n  "transcription": "/ˈdʒɜːni/",\n  "sentence": "Every journey starts…"\n}'}</pre>}
+              </div>
+            </div>
+            <div className="visual-export-pagination">{variants.map((variant, index) => <i key={variant.kind} className={index === activeIndex ? "active" : ""} />)}</div>
+          </div>
+        </div>
+      </div>
+    </AnimatedHelpExample>
   );
 }
 
