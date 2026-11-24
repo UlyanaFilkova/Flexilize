@@ -1452,8 +1452,9 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-listening">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><h2>Тренируете произношение и восприятие на слух</h2><p>Для поддерживаемых языков расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
+          <div className="help-section-heading"><h2>Тренируйте произношение и восприятие на слух</h2><p>Расширение показывает транскрипцию и озвучивает исходный фрагмент.</p></div>
           <SpeechHelpExample />
+          <LongSpeechHelpExample />
         </div>
         <div className="help-card-grid help-card-grid-three">
           <article className="help-mini-card"><span className="mini-card-number">01</span><h3>Посмотрите транскрипцию</h3><p>Она отображается рядом с исходным текстом, если доступна для выбранного языка и фрагмента.</p></article>
@@ -1505,7 +1506,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
   );
 }
 
-function AnimatedHelpExample({className, children}: {className: string; children: ReactNode}) {
+function AnimatedHelpExample({className, children, onPlayingChange}: {className: string; children: ReactNode; onPlayingChange?: (playing: boolean) => void}) {
   const figureRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
@@ -1525,6 +1526,9 @@ function AnimatedHelpExample({className, children}: {className: string; children
     observer.observe(figureRef.current);
     return () => observer.disconnect();
   }, [reducedMotion]);
+  useEffect(() => {
+    onPlayingChange?.(inView && !reducedMotion);
+  }, [inView, reducedMotion, onPlayingChange]);
   return (
     <figure ref={figureRef} className={`help-visual-example ${className}${inView && !reducedMotion ? " help-demo-playing" : ""}`}>
       {children}
@@ -1621,8 +1625,57 @@ function SpeechHelpExample() {
           <div className="visual-speed"><span>Медленнее</span><strong>0,8×</strong><span>Быстрее</span></div>
         </div>
       </div>
-      <figcaption><span>Пример тренировки</span><strong>Слушайте, следите за транскрипцией и меняйте темп</strong><p>Для сложной фразы начните с 0,8×, затем вернитесь к обычной скорости.</p></figcaption>
+      <figcaption>
+        <strong>Практикуйтесь в удобном темпе</strong>
+        <ul className="check-list help-translator-features">
+          <li><CheckIcon /><span>Слушайте, следите за транскрипцией и меняйте темп</span></li>
+          <li><CheckIcon /><span>Для сложной фразы начните с 0,8×, затем вернитесь к обычной скорости.</span></li>
+        </ul>
+      </figcaption>
     </figure>
+  );
+}
+
+function LongSpeechHelpExample() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!playing || !card) return;
+    const wordElements = Array.from(card.querySelectorAll(".visual-long-speech-text > span"));
+    const timing = {duration: 16000, iterations: Infinity};
+    const animations = wordElements.map((word, index) => word.animate([
+      {backgroundSize: "0% 100%", offset: 0},
+      {backgroundSize: "0% 100%", offset: 0.12 + index / wordElements.length * 0.76},
+      {backgroundSize: "100% 100%", offset: 0.12 + (index + 1) / wordElements.length * 0.76},
+      {backgroundSize: "100% 100%", offset: 1}
+    ], timing));
+    for (const [selector, property] of [[".visual-long-speech-track > span", "width"], [".visual-long-speech-track > i", "left"]]) {
+      const element = card.querySelector(selector);
+      if (element) animations.push(element.animate([
+        {[property]: "0%", offset: 0},
+        {[property]: "0%", offset: 0.12},
+        {[property]: "100%", offset: 0.88},
+        {[property]: "100%", offset: 1}
+      ], timing));
+    }
+    return () => animations.forEach(animation => animation.cancel());
+  }, [playing]);
+  const words = "Every day brings a new opportunity to learn something interesting. Take your time, listen to the whole sentence, and notice how the words connect. With a little practice, understanding spoken English becomes easier and more natural.".split(" ");
+  return (
+    <AnimatedHelpExample className="help-long-speech-example" onPlayingChange={setPlaying}>
+      <div className="help-visual-canvas" aria-hidden="true">
+        <div className="visual-long-speech-card" ref={cardRef}>
+          <div className="visual-long-speech-heading"><span>Исходный текст · Английский</span><span className="visual-long-speech-button"><span className="visual-speech-play">▶</span><span className="visual-speech-stop">■</span><DemoCursor /></span></div>
+          <p className="visual-long-speech-text" lang="en" dir="ltr" translate="no">{words.map((word, index) => <span key={index}>{word}{index < words.length - 1 ? " " : ""}</span>)}</p>
+          <div className="visual-long-speech-controls"><SoundIcon /><div className="visual-long-speech-track"><span /><i /></div><span>1×</span></div>
+        </div>
+      </div>
+      <figcaption>
+        <strong>Слушайте фрагмент целиком</strong>
+        <p>Следите за подсветкой текста по мере озвучивания.</p>
+      </figcaption>
+    </AnimatedHelpExample>
   );
 }
 

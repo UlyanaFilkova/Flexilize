@@ -2127,7 +2127,41 @@ h1 {
 .visual-history-actions span:last-child { color: #d45757; }
 .visual-history-actions svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Selection and typing demonstrations repeat automatically. */
+.help-task-hero .help-long-speech-example { padding-top: 28px; border-top: 1px solid rgba(255, 255, 255, .18); border-radius: 0; }
+.help-long-speech-example .help-visual-canvas { padding: 14px; }
+.visual-long-speech-card { padding: 24px; border: 1px solid #dfe5ef; border-radius: 16px; background: #fff; box-shadow: 0 18px 38px rgba(39, 60, 105, .12); }
+.visual-long-speech-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #748097; font-size: 11px; }
+.visual-long-speech-button { position: relative; display: grid; width: 36px; height: 36px; flex-shrink: 0; place-items: center; border-radius: 10px; background: #315be8; color: #fff; font-size: 12px; }
+.visual-long-speech-button > span { grid-area: 1 / 1; }
+.visual-speech-play { opacity: 0; }
+.visual-long-speech-text { margin: 20px 0 24px; color: #354258; font-size: 15px; line-height: 1.95; }
+.visual-long-speech-text > span { padding: 3px 0; background: linear-gradient(#bfe5ff, #bfe5ff) left center / 0% 100% no-repeat; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.visual-long-speech-controls { display: flex; align-items: center; gap: 14px; color: #748097; font-size: 11px; }
+.visual-long-speech-controls > svg { width: 18px; height: 18px; flex-shrink: 0; }
+.visual-long-speech-track { position: relative; flex: 1; height: 5px; border-radius: 999px; background: #e5e9f1; }
+.visual-long-speech-track > span { display: block; width: 50%; height: 100%; border-radius: inherit; background: #315be8; }
+.visual-long-speech-track > i { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; border: 2px solid #fff; border-radius: 50%; background: #315be8; box-shadow: 0 1px 4px #1e326440; transform: translate(-50%, -50%); }
+.visual-long-speech-text > span:nth-child(-n+18) { background-size: 100% 100%; }
+.help-demo-playing .visual-long-speech-button .help-demo-cursor { top: 18px; left: 20px; animation: help-speech-click 16s ease infinite both; }
+.help-demo-playing .visual-speech-play { animation: help-speech-play 16s steps(1, end) infinite both; }
+.help-demo-playing .visual-speech-stop { animation: help-speech-stop 16s steps(1, end) infinite both; }
+@keyframes help-speech-click {
+  0% { opacity: 0; transform: translate(20px, 16px); }
+  6%, 10% { opacity: 1; transform: translate(0, 0); }
+  12% { opacity: 1; transform: scale(.8); }
+  15% { opacity: 1; transform: scale(1); }
+  19%, 100% { opacity: 0; transform: scale(1); }
+}
+@keyframes help-speech-play {
+  0%, 88% { opacity: 1; }
+  12% { opacity: 0; }
+}
+@keyframes help-speech-stop {
+  0%, 88% { opacity: 0; }
+  12% { opacity: 1; }
+}
+
+/* Selection, typing and speech demonstrations repeat automatically. */
 .help-demo-cursor { position: absolute; width: 21px; height: 25px; z-index: 3; opacity: 0; pointer-events: none; }
 .help-selection-example .visual-article mark { position: relative; white-space: nowrap; }
 .help-selection-example .help-demo-cursor { top: 8px; left: 0; }
