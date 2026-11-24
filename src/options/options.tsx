@@ -1466,7 +1466,7 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
 
       <section className="help-section" id="help-vocabulary">
         <div className="help-hero help-task-hero">
-          <div className="help-section-heading"><h2>Собираете личный словарь</h2><p>Переводы сохраняются локально вместе с контекстом, источником и датой — их можно повторять, исправлять и выгружать.</p></div>
+          <div className="help-section-heading"><h2>Собирайте личный словарь</h2><p>Переводы сохраняются у вас локально вместе с контекстом, транскрипцией, источником и датой.</p></div>
           <HistoryHelpExample />
         </div>
         <div className="vocabulary-layout">
@@ -1686,7 +1686,6 @@ function HistoryHelpExample() {
   const example = helpExamples();
   return (
     <figure className="help-visual-example help-history-example">
-      <figcaption><span>Пример записи в словаре</span><strong>Всё нужное для повторения хранится вместе</strong><p>Оригинал, перевод, контекст, источник и дата доступны в одной карточке.</p></figcaption>
       <div className="help-visual-canvas" aria-hidden="true">
         <div className="visual-history-window">
           <div className="visual-history-heading"><span><strong>История переводов</strong><small>24 записи</small></span><em>Экспорт</em></div>
@@ -1697,6 +1696,13 @@ function HistoryHelpExample() {
           </div>
         </div>
       </div>
+      <figcaption>
+        <strong>Всё нужное для повторения хранится вместе</strong>
+        <ul className="check-list help-translator-features">
+          <li><CheckIcon /><span>Оригинал, перевод, контекст, источник и дата доступны в одной карточке.</span></li>
+          <li><CheckIcon /><span>Редактируйте любое поле карточки, чтобы уточнять и дополнять записи.</span></li>
+        </ul>
+      </figcaption>
     </figure>
   );
 }
