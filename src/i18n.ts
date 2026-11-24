@@ -5,6 +5,7 @@ export const INTERFACE_LANGUAGES = ["ru", "en", "de", "fr", "es", "ja", "nl", "i
 export type InterfaceLanguage = typeof INTERFACE_LANGUAGES[number];
 
 let activeLanguage: InterfaceLanguage = "ru";
+const languageListeners = new Set<() => void>();
 const loadedCatalogs: Partial<Record<InterfaceLanguage, Record<string, string>>> = {};
 const en: Record<string, string> = englishCatalog;
 const ru: Record<string, string> = russianCatalog;
@@ -52,7 +53,14 @@ export async function loadInterfaceLanguage(language: InterfaceLanguage) {
 }
 
 export function setActiveLanguage(language: InterfaceLanguage) {
+  if (activeLanguage === language) return;
   activeLanguage = language;
+  languageListeners.forEach(listener => listener());
+}
+
+export function subscribeInterfaceLanguage(listener: () => void) {
+  languageListeners.add(listener);
+  return () => { languageListeners.delete(listener); };
 }
 
 export function getActiveLanguage() {
@@ -80,8 +88,8 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
     [/^Достигнут лимит в (\d+) символов\.$/, (count) => formatMessage("Достигнут лимит в {count} символов.", {count}, language)],
     [/^Ошибка озвучки: (.+)$/, (error) => formatMessage("Ошибка озвучки: {error}", {error}, language)],
     [/^Достигнут лимит в (\d+) переводов\. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые\.$/, (count) => formatMessage("Достигнут лимит в {count} переводов. Скачайте сохранённые записи и очистите хранилище, чтобы сохранять новые.", {count}, language)],
-    [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}.", {count}, language)],
-    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удалены из истории\. Таким образом, общее количество записей в истории будет остается равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удалены из истории. Таким образом, общее количество записей в истории будет остается равным {count}.", {count}, language)]
+    [/^При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в (\d+)\. Старые будут оставаться в истории\.$/, (count) => formatMessage("При выключенной ротации новые записи не будут сохраняться в историю, пока достигнут лимит в {count}. Старые будут оставаться в истории.", {count}, language)],
+    [/^При добавлении новых переводов сверх лимита в (\d+) самые старые записи будут автоматически удаляться из истории\. Таким образом, общее количество записей в истории будет оставаться равным (\d+)\.$/, (count) => formatMessage("При добавлении новых переводов сверх лимита в {count} самые старые записи будут автоматически удаляться из истории. Таким образом, общее количество записей в истории будет оставаться равным {count}.", {count}, language)]
   ];
   for (const [pattern, replacement] of patterns) {
     const match = text.match(pattern);
@@ -90,7 +98,7 @@ export function translate(value: string, language: InterfaceLanguage = activeLan
   return value;
 }
 
-function formatMessage(template: string, values: Record<string, string>, language: InterfaceLanguage) {
+export function formatMessage(template: string, values: Record<string, string>, language: InterfaceLanguage = activeLanguage) {
   const translated = lookupMessage(template, language) || template;
   return translated.replace(/\{(\w+)}/g, (_, key) => values[key] ?? `{${key}}`);
 }
@@ -110,23 +118,28 @@ export function formatRecordCount(count: number, language: InterfaceLanguage = a
     sl: ["zapis", "zapisi"], sk: ["záznam", "záznamov"],
     sq: ["regjistrim", "regjistrime"], sr: ["запис", "записа"]
   };
-  if (language === "ar") {
-    if (count === 2) return `${count} سجلان`;
-    if (count >= 3 && count <= 10) return `${count} سجلات`;
-    if (count > 10) return `${count} سجلًا`;
-  }
-  if (["pl", "cs"].includes(language) && count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)) {
-    return `${count} ${language === "pl" ? "rekordy" : "záznamy"}`;
-  }
+  const forms: Partial<Record<InterfaceLanguage, Partial<Record<Intl.LDMLPluralRule, string>>>> = {
+    ru: {few: "записи", other: "записи"},
+    pl: {few: "rekordy", other: "rekordu"},
+    cs: {few: "záznamy", many: "záznamu"},
+    sk: {few: "záznamy", many: "záznamu"},
+    sl: {two: "zapisa", few: "zapisi", other: "zapisov"},
+    ar: {two: "سجلان", many: "سجلًا", other: "سجل"}
+  };
+  const category = new Intl.PluralRules(language).select(count);
   const [one, many] = labels[language];
-  return `${count} ${count === 1 ? one : many}`;
+  return `${count} ${forms[language]?.[category] || (category === "one" ? one : many)}`;
 }
 
 const excludedTextSelector = [
+  '[translate="no"]',
   ".record-original", ".record-translation", ".record-transcription", ".record-sentence", ".record-alternatives", ".record-meta a", ".original", ".translated",
   ".translation-alternatives", ".translation-option", ".sentence", ".original-text", ".translation", ".context-translation",
   ".translator-output", ".source", ".source-link", "time"
 ].join(",");
+
+const localizedTextSources = new WeakMap<Node, {source: string; localized: string}>();
+const localizedAttributeSources = new WeakMap<Element, Map<string, {source: string; localized: string}>>();
 
 export function localizeDom(root: Document | ShadowRoot, language: InterfaceLanguage) {
   const isDocument = root.nodeType === 9;
@@ -135,14 +148,32 @@ export function localizeDom(root: Document | ShadowRoot, language: InterfaceLang
   let node = walker.nextNode();
   while (node) {
     const parent = node.parentElement;
-    if (parent && !parent.closest(excludedTextSelector)) node.nodeValue = translate(node.nodeValue || "", language);
+    if (parent && !parent.closest(excludedTextSelector)) {
+      const current = node.nodeValue || "";
+      const previous = localizedTextSources.get(node);
+      const source = previous?.localized === current ? previous.source : current;
+      const localized = translate(source, language);
+      localizedTextSources.set(node, {source, localized});
+      if (current !== localized) node.nodeValue = localized;
+    }
     node = walker.nextNode();
   }
   const elements = root.querySelectorAll<HTMLElement>("[aria-label], [title], [placeholder], [data-placeholder]");
   elements.forEach((element) => {
     ["aria-label", "title", "placeholder", "data-placeholder"].forEach((attribute) => {
       const value = element.getAttribute(attribute);
-      if (value) element.setAttribute(attribute, translate(value, language));
+      if (value) {
+        let sources = localizedAttributeSources.get(element);
+        if (!sources) {
+          sources = new Map();
+          localizedAttributeSources.set(element, sources);
+        }
+        const previous = sources.get(attribute);
+        const source = previous?.localized === value ? previous.source : value;
+        const localized = translate(source, language);
+        sources.set(attribute, {source, localized});
+        if (value !== localized) element.setAttribute(attribute, localized);
+      }
     });
   });
   if (isDocument) {

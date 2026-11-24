@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Context Translator"
+  },
+  "extensionDescription": {
+    "message": "მყისიერად თარგმნეთ, მოუსმინეთ და შეინახეთ ტექსტი ნებისმიერ ენაზე."
+  },
+  "actionTitle": {
+    "message": "შენახული თარგმანები"
+  }
+}

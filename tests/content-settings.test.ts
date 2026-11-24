@@ -3,15 +3,22 @@ import {fireEvent, waitFor} from "@testing-library/dom";
 import {defaultSettings, SETTINGS_KEY} from "../src/settings";
 
 describe("selection translator settings", () => {
-  it("unlocks Web Audio on the first speech button click", async () => {
+  it("unlocks audio, follows reading progress, and seeks when a word is clicked", async () => {
     vi.resetModules();
     const {browserMock, storageData} = await import("./mocks/browser");
     storageData[SETTINGS_KEY] = structuredClone(defaultSettings);
 
+    const text = Array.from({length: 60}, (_, index) => `word${index}`).join(" ");
     const speechResponse = {
       ok: true as const,
-      chunks: [{audio: "", end: 5, mimeType: "audio/mpeg", start: 0}]
+      chunks: [{audio: "", end: text.length, mimeType: "audio/mpeg", start: 0}]
     };
+    let animationFrame: FrameRequestCallback | undefined;
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      animationFrame = callback;
+      return 1;
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => {});
     let finishSpeechRequest!: (value: typeof speechResponse) => void;
     const speechRequest = new Promise<typeof speechResponse>((resolve) => {
       finishSpeechRequest = resolve;
@@ -31,7 +38,9 @@ describe("selection translator settings", () => {
     const resume = vi.fn(async function (this: {state: AudioContextState}) {
       this.state = "running";
     });
+    let context: MockAudioContext;
     class MockAudioContext {
+      constructor() { context = this; }
       state: AudioContextState = "suspended";
       sampleRate = 48_000;
       currentTime = 0;
@@ -45,7 +54,8 @@ describe("selection translator settings", () => {
         disconnect: vi.fn(),
         onended: null,
         playbackRate: {value: 1},
-        start
+        start,
+        stop: vi.fn()
       }));
     }
     vi.stubGlobal("AudioContext", MockAudioContext);
@@ -54,10 +64,10 @@ describe("selection translator settings", () => {
       return originalAttachShadow.call(this, {...init, mode: "open"});
     });
     const input = document.createElement("textarea");
-    input.value = "Hello!";
+    input.value = text;
     document.body.append(input);
     input.focus();
-    input.setSelectionRange(0, 5);
+    input.setSelectionRange(0, text.length);
     vi.spyOn(input, "getBoundingClientRect").mockReturnValue({
       x: 10, y: 10, left: 10, top: 10, right: 110, bottom: 40, width: 100, height: 30, toJSON: () => ({})
     });
@@ -79,6 +89,40 @@ describe("selection translator settings", () => {
     expect(browserMock.runtime.sendMessage).toHaveBeenCalledWith(expect.objectContaining({type: "get-speech-audio"}));
     finishSpeechRequest(speechResponse);
     await waitFor(() => expect(start).toHaveBeenCalledTimes(2));
+    const root = document.querySelector("#context-translator-extension-host")!.shadowRoot!;
+    const source = root.querySelector<HTMLElement>(".source")!;
+    const words = [...source.querySelectorAll<HTMLElement>(".speech-word")];
+    expect(source.textContent).toBe(text);
+    expect(source.querySelectorAll(".speech-read")).toHaveLength(0);
+    expect(source.querySelector(".speech-current")).toBeNull();
+    Object.defineProperties(source, {
+      scrollHeight: {configurable: true, value: 500},
+      clientHeight: {configurable: true, value: 100}
+    });
+    vi.spyOn(source, "getBoundingClientRect").mockReturnValue({top: 0, bottom: 100} as DOMRect);
+    for (const word of words) vi.spyOn(word, "getBoundingClientRect").mockReturnValue({top: 200, bottom: 220, height: 20} as DOMRect);
+    context!.currentTime = 0.14;
+    animationFrame?.(140);
+    expect(source.querySelectorAll(".speech-read").length).toBeGreaterThan(0);
+    context!.currentTime = 0.54;
+    animationFrame?.(540);
+    expect(source.querySelectorAll(".speech-read").length).toBeGreaterThan(0);
+    expect(source.querySelector(".speech-current")).toBeNull();
+    expect(Number(root.querySelector<HTMLInputElement>(".speech-progress")!.value)).toBe(Math.floor(text.length / 2));
+    expect(Number(root.querySelector<HTMLInputElement>(".speech-progress")!.value)).toBeGreaterThan(0);
+    expect(source.scrollTop).toBeGreaterThan(0);
+
+    const target = words[10];
+    fireEvent.click(target);
+    expect(browserMock.runtime.sendMessage).toHaveBeenLastCalledWith({
+      type: "get-speech-audio",
+      payload: {language: "en", text: text.slice(Number(target.dataset.start))}
+    });
+    expect(target.classList.contains("speech-read")).toBe(false);
+    expect(words[9].classList.contains("speech-read")).toBe(true);
+    expect(root.querySelector<HTMLInputElement>(".speech-progress")!.value).toBe(target.dataset.start);
+    fireEvent.click(speakButton);
+    expect(speakButton.textContent).toBe("▶");
   });
 
   it("saves a selection in the background without showing the modal", async () => {

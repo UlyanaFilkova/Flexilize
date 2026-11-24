@@ -14,7 +14,7 @@ import {
 import {errorMessage, type TranslationRecord} from "../types";
 import {uniqueTranslationForms} from "../translation-variants";
 import {loadInterfaceLanguage, observeLocalizedDom, setActiveLanguage, translate, type InterfaceLanguage} from "../i18n";
-import {getExtensionSettings} from "../settings";
+import {getExtensionSettings, ONBOARDING_COMPLETED_KEY} from "../settings";
 
 const extensionApi = browser;
 const listElement = document.querySelector<HTMLOListElement>("#records")!;
@@ -46,6 +46,12 @@ formatSelect.addEventListener("change", updateExportButton);
 async function initialize() {
   let language: InterfaceLanguage = "ru";
   try {
+    const onboarding = await extensionApi.storage.local.get(ONBOARDING_COMPLETED_KEY);
+    if (onboarding[ONBOARDING_COMPLETED_KEY] === false) {
+      await extensionApi.tabs.create({url: extensionApi.runtime.getURL("options/index.html#welcome")});
+      window.close();
+      return;
+    }
     language = (await getExtensionSettings()).interfaceLanguage;
   } catch (_error) {
     // Keep Russian defaults when settings cannot be read.

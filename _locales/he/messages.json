@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Context Translator"
+  },
+  "extensionDescription": {
+    "message": "תרגמו, האזינו ושמרו טקסט בכל שפה באופן מיידי."
+  },
+  "actionTitle": {
+    "message": "תרגומים שמורים"
+  }
+}

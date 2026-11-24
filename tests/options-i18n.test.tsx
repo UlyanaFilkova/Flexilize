@@ -19,6 +19,7 @@ describe("English options interface", () => {
   it("localizes navigation, settings, language names, and help", async () => {
     expect(screen.getByRole("button", {name: /^Activation$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Advanced settings$/})).toBeTruthy();
+    expect(screen.getByRole("button", {name: /^Saving$/})).toBeTruthy();
     expect(mainTextWithoutInterfaceLanguageNames()).not.toMatch(/[А-Яа-яЁё]/u);
     await userEvent.click(screen.getByRole("button", {name: /^Languages$/}));
     expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
@@ -42,14 +43,40 @@ describe("English options interface", () => {
     }
     await userEvent.click(screen.getByRole("button", {name: /How to use/}));
     await waitFor(() => expect(screen.getByRole("heading", {name: "Frequently asked questions"})).toBeTruthy());
-    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
-    expect(screen.getByText("On-page example")).toBeTruthy();
-    expect(screen.getByText("Standalone translator example")).toBeTruthy();
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(4);
+    expect(screen.getByText("Open the translator with a keyboard shortcut")).toBeTruthy();
+    expect(document.querySelector(".visual-popup-source strong")?.textContent).toBe("el contexto importa");
+    expect(document.querySelector(".visual-translator-input")?.textContent).toBe("updated");
+    expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("en");
+    expect(document.querySelector(".visual-translator-panes > div:last-child p")?.textContent).toBe("actualizado");
+    expect(document.querySelector(".visual-page-draft")?.textContent?.replace(/\s+/g, " ").trim()).toBe("¿Podrías enviar el documento actualizado?");
+    expect(document.querySelector(".visual-history-record > div > strong")?.textContent).toBe("averiguar");
     const helpPage = document.querySelector(".help-page")!.cloneNode(true) as HTMLElement;
-    helpPage.querySelectorAll(".brand-mark").forEach((element) => element.remove());
+    helpPage.querySelectorAll('.brand-mark, [translate="no"]').forEach((element) => element.remove());
     expect(helpPage.textContent).toContain("Extensions cannot run on internal browser pages such as chrome://…");
     expect(helpPage.textContent).not.toMatch(/[А-Яа-яЁё]/u);
-  });
+
+    const scrollTo = vi.mocked(window.scrollTo);
+    scrollTo.mockClear();
+    await userEvent.click(screen.getByRole("button", {name: /^Languages$/}));
+    const languageSelect = screen.getAllByLabelText("Interface language").find((element) => element.tagName === "SELECT") as HTMLSelectElement;
+    const main = document.querySelector("main");
+    await waitFor(() => expect(scrollTo).toHaveBeenCalled());
+    scrollTo.mockClear();
+    for (const language of ["ru", "de", "en"]) {
+      await userEvent.selectOptions(languageSelect, language);
+      await waitFor(() => {
+        expect(document.documentElement.lang).toBe(language);
+        expect(languageSelect.disabled).toBe(false);
+      });
+      expect(document.querySelector("main")).toBe(main);
+      expect(languageSelect.isConnected).toBe(true);
+      expect(scrollTo).not.toHaveBeenCalled();
+    }
+    expect(screen.getByRole("heading", {name: "Interface language"})).toBeTruthy();
+  }, 15_000);
 });
 
 function mainTextWithoutInterfaceLanguageNames() {

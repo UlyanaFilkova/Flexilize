@@ -1,76 +1,79 @@
-# Context Translator — кроссбраузерное расширение
+# Context Translator
 
-### Мгновенный перевод, прослушивание и сохранение фрагментов текста на любом языке
+### Translate, listen to, and save text without leaving your browser tab
 
-Расширение автоматически определяет язык выделенного текста на веб-странице, показывает перевод, транскрипцию, контекстный перевод всего предложения или абзаца и озвучку на исходном языке. Каждый выделенный фрагмент автоматически сохраняется в локальном хранилище расширения, откуда все переводы вместе с контекстом можно скачать в JSON, PDF, TXT, CSV, TSV, Anki CSV/TSV, XLSX, Markdown или HTML.
+Context Translator is a cross-browser extension that detects the language of selected text and shows its translation, transcription where available, a translation of the surrounding sentence or paragraph, and a button to read the original aloud. Save translations locally with their context and export your vocabulary to other applications.
 
-<img src="src/assets/Frame%202.jpg" width="600" alt="" />
+<img src="src/assets/global%2022.jpg" width="600" alt="Translation window for text selected on a web page" />
 
-Вторая опция - мгновенный вызов переводчика горячими клавишами прямо на странице:
+You can also open a standalone translator with a keyboard shortcut, type or paste your own text, and copy the result directly on the current page.
 
-<img src="src/assets/Frame%205.jpg" width="600" alt="" />
+<img src="src/assets/global%203.jpg" width="600" alt="Standalone translator opened over the current web page" />
 
-## Для чего это нужно:
-1) Когда вы читаете текст на иностранном языке, у вас нет времени заносить все слова в словарь, тем более записывая не только слово, но и контекст, в котором оно было использовано. Вы хотите быстро узнать перевод незнакомого слова и двигаться дальше.
+## Why use it?
 
-2) Расширение позволяет автоматически сохранять все необходимые данные в файл, из которого вы сможете сделать словарь.
+- Look up unfamiliar words while reading an article, documentation, or an email, then continue where you left off.
+- Build a vocabulary with the original text, translation, transcription, and context, without copying each field manually.
+- Translate your own text while writing, without switching tabs.
+- Download saved entries for review in Anki, work in spreadsheets, or reading and printing.
 
-3) Мгновенный вызов переводчика позволяет быстро напечатать и перевести текст, не покидая текущую вкладку браузера.
+## Features
 
-## Возможности расширения
+- Automatic language detection for selected text.
+- Translation of words, phrases, sentences, and paragraphs.
+- A standalone translator for typed or pasted text.
+- Context translation for the sentence or paragraph containing the selection.
+- Transcription where available and alternative translations.
+- Text-to-speech playback of the original text.
+- Automatic or manual saving of translations with context, transcription, the source URL, and the page title.
+- Local history with a configurable limit of 1–5000 entries.
+- Editing, deletion, undoing deletion, and clearing the entire history.
+- Export to JSON, PDF, TXT, CSV, TSV, Anki CSV/TSV, XLSX, Markdown, or HTML.
+- History, settings, and translation cache stored locally on your device.
 
-### Функции
+## Settings
 
-- автоматическое определение языка выделенного текста;
-- перевод выделенного слова, фразы, предложения или абзаца на выбранный язык;
-- модальное окно с переводчиком для ввода текста;
-- контекстный перевод предложения или абзаца, из которого взят выделенный фрагмент;
-- транскрипция;
-- дополнительные варианты перевода;
-- озвучивание исходного текста;
-- автоматическое / ручное сохранение перевода вместе с контекстом, транскрипцией, ссылкой и названием страницы;
-- просмотр истории до 5000 переводов;
-- редактирование, удаление и восстановление удалённых записей, а также полная очистка истории;
-- экспорт всей истории в JSON, PDF, TXT, CSV, TSV, Anki CSV/TSV, XLSX, Markdown или HTML;
-- локальное хранение истории и настроек на устройстве пользователя.
+- Choose automatic translation on selection, a keyboard shortcut, a button next to the selection, or the browser context menu.
+- Customize shortcuts for selection translation, the standalone translator, and switching translation direction.
+- Configure the standalone translator's source and target languages separately from the target language for selection translation.
+- Keep the previous text and translation when reopening the standalone translator.
+- Enable or disable transcription and text-to-speech controls.
+- Adjust playback speed from 0.3× to 2×.
+- Choose automatic saving or save individual translations manually.
+- Set the history limit and enable or disable rotation. With rotation enabled, new entries replace the oldest ones when the limit is reached. With rotation disabled, saving pauses until space is freed.
 
-### Настройки
+## Browser support
 
-- ручной выбор исходного языка и языка перевода;
-- включение перевода только по горячей клавише;
-- настройка горячих клавиш;
-- включение и отключение транскрипции;
-- включение и отключение озвучивания;
-- регулировка скорости озвучивания от 0,3× до 2×;
-- включение автоматического сохранения либо переход на сохранение по кнопке;
-- ротация истории: после достижения лимита старые записи автоматически заменяются новыми; если ротация выключена, новые записи не сохраняются до освобождения места.
+- Google Chrome
+- Yandex Browser
+- Mozilla Firefox
+- Microsoft Edge
+- Chromium
+- Opera
 
-## Поддерживаемые браузеры
+The project produces Chromium Manifest V3 and Firefox Manifest V2 builds.
 
-- Google Chrome;
-- Яндекс Браузер;
-- Mozilla Firefox;
-- Microsoft Edge;
-- Chromium;
-- Opera.
+## Interface and translation languages
 
-## Языки интерфейса и перевода
+The interface supports **36 languages**: Russian, English, German, French, Spanish, Japanese, Dutch, Italian, Portuguese, Indonesian, Hindi, Polish, Chinese (Simplified and Traditional), Korean, Turkish, Vietnamese, Czech, Romanian, Swedish, Danish, Norwegian, Finnish, Hungarian, Greek, Malay, Filipino, Arabic, Persian, Hebrew, Georgian, Croatian, Slovenian, Slovak, Albanian, and Serbian.
 
-Интерфейс доступен на 29 языках: русском, английском, немецком, французском, испанском, японском, нидерландском, итальянском, португальском, индонезийском, хинди, польском, китайском (упрощённом и традиционном), корейском, турецком, вьетнамском, чешском, румынском, шведском, датском, норвежском, финском, венгерском, греческом, малайском, филиппинском, арабском и персидском. Язык интерфейса определяется по языку браузера при первом запуске; его также можно изменить в настройках. Для арабского и персидского включается направление текста справа налево.
+The initial interface language follows your browser's language and can be changed in settings. Arabic, Persian, and Hebrew use a right-to-left layout.
 
-В списке языков перевода доступно 58 вариантов. Язык интерфейса и язык перевода настраиваются независимо.
+There are **58 translation languages**. The interface language and translation languages are configured independently. Illustrations use English as the foreign language, except in the English interface, where they use Spanish.
 
-Тексты интерфейса хранятся в отдельных файлах `src/locales/*.json` под стабильными английскими ключами. При добавлении или изменении текста локали можно сгенерировать командой:
+Interface strings live in `src/locales/*.json` under stable English keys. Keep the Russian and English source catalogs up to date. To generate missing entries in the other locale catalogs, run:
 
 ```bash
 node scripts/generate-interface-locales.mjs
 ```
 
-Описания для магазинов приложений находятся в `store-listings/`.
+The generator fills missing entries; it does not refresh existing translations automatically. Store listing descriptions are in [`store-listings/`](store-listings/).
 
-## Сборка
+## Build from source
 
-Требуется Node.js 22.12+ (рекомендуемая версия указана в `.nvmrc`). Клонируйте репозиторий, установите зависимости и соберите расширение:
+Node.js 22.12 or newer is required. The recommended version is specified in [`.nvmrc`](.nvmrc).
+
+Clone the repository, install dependencies, and build both browser versions:
 
 ```bash
 git clone https://github.com/UlyanaFilkova/Flexilize.git
@@ -81,29 +84,31 @@ npm run build:chrome
 npm run build:firefox
 ```
 
-Если репозиторий уже клонирован, получите последние изменения командой `git pull`, затем повторите `npm ci` и сборку. Готовые распакованные версии появятся в `dist/chrome/` и `dist/firefox/`. Архивы для публикации можно создать командами:
+For an existing checkout, run `git pull`, then repeat `npm ci` and the build commands.
+
+Unpacked builds are written to `dist/chrome/` and `dist/firefox/`. To create release archives:
 
 ```bash
 npm run zip:chrome
 npm run zip:firefox
 ```
 
-## Continuous Integration
+## Continuous integration
 
-Workflow `.github/workflows/ci.yml` запускается для каждого pull request, каждого push в `main` и вручную на вкладке Actions. Он устанавливает зависимости через `npm ci`, проверяет TypeScript, запускает тесты с покрытием, собирает версии для Chromium и Firefox и сохраняет обе сборки как артефакт на 14 дней.
+The [CI workflow](.github/workflows/ci.yml) runs on every pull request, every push to `main`, and manual runs from the Actions tab. It installs dependencies with `npm ci`, checks TypeScript, runs tests with coverage, builds both browser versions, and retains the builds as artifacts for 14 days.
 
-Тот же набор проверок можно запустить локально:
+Run the same checks locally with:
 
 ```bash
 npm ci
 npm run ci
 ```
 
-## Continuous Delivery
+## Releases
 
-Workflow `.github/workflows/cd.yml` запускается при отправке тега формата `v1.2.3`. Он проверяет совпадение версии тега с `package.json` и `src/manifest.json`, проверяет TypeScript, собирает ZIP для Chrome и Firefox, архив исходного кода для проверки Mozilla и публикует их в GitHub Release с автоматически сформированным описанием изменений.
+The [CD workflow](.github/workflows/cd.yml) runs when a version tag such as `v1.2.3` is pushed. It verifies that the tag matches the versions in `package.json` and `src/manifest.json`, checks TypeScript, builds Chrome and Firefox ZIP archives, creates a source archive for Mozilla review, and publishes the archives in a GitHub Release with automatically generated release notes.
 
-Для выпуска новой версии обновите одинаковое значение `version` в `package.json` и `src/manifest.json`, влейте изменение в `main`, затем создайте и отправьте тег:
+To release a version, update `version` to the same value in `package.json` and `src/manifest.json`, merge the change into `main`, then create and push the tag:
 
 ```bash
 npm run release:check -- v1.2.3
@@ -111,9 +116,9 @@ git tag v1.2.3
 git push origin v1.2.3
 ```
 
-Публикация в Chrome Web Store и Firefox Add-ons в этот workflow не входит: для неё потребуются ключи разработчика соответствующих магазинов.
+The workflow does not publish to the Chrome Web Store or Firefox Add-ons. Store submission requires the respective developer credentials.
 
-## Тесты
+## Tests
 
 ```bash
 npm test
@@ -121,32 +126,36 @@ npm run test:watch
 npm run test:coverage
 ```
 
-Покрытие сохраняется в `coverage/`. Команда с покрытием проверяет минимальный порог 65% для строк, ветвей, функций и выражений. В CI автоматически выполняются проверка типов, тесты с покрытием и сборки для Chrome и Firefox.
+Coverage reports are written to `coverage/`. The coverage command enforces a minimum of 65% for lines, branches, functions, and statements. CI runs the type check, coverage tests, and both browser builds.
 
-## Сохранение и экспорт
+## Saving and exporting
 
-По умолчанию записи сохраняются сразу после перевода через `storage.local` и остаются после перезапуска браузера. Автоматическое сохранение можно отключить и сохранять нужные переводы вручную. Нажмите значок расширения, чтобы просмотреть список, выбрать формат и скачать историю. Это надёжнее автоматического скачивания нового файла при каждом выделении: браузеры не разрешают веб-расширению без постоянного пользовательского разрешения произвольно дописывать данные в файл на диске.
+By default, translations are saved immediately in `storage.local` and remain available after a browser restart. You can turn off automatic saving and save selected translations with the Save button instead.
 
-Хранится не более 5000 последних записей. По умолчанию история ротируется автоматически; это можно отключить в разделе настроек «Сохранение». Список можно очистить из popup-окна.
+Click the extension icon to open your history, then use the export section to choose a format and download all entries. Export is initiated by you; the extension does not continuously append data to a file on disk.
 
-## Используемые возможности
+The default history limit is 5000 entries. You can change it and control automatic rotation in the Saving settings. Individual entries can be deleted, or the entire history can be cleared through the extension interface.
 
-- Google Translate и API определения языка браузера с резервным определением по письменности — автоматическое распознавание исходного языка;
-- сервис машинного перевода Google и резервный MyMemory API — перевод текста и контекста на выбранный язык; для английских слов при переводе на русский изменённые формы дополнительно ищутся по базовой форме;
-- Datamuse API — основная IPA-транскрипция английских слов и фраз (до 30 слов); ответы ARPAbet автоматически преобразуются в IPA;
-- Free Dictionary API — резервный источник IPA-транскрипции;
-- English Wiktionary — словарные варианты перевода английских слов на русский по частям речи; порядок вариантов уточняется по контексту;
-- Google Translate TTS и Web Speech API — озвучивание исходного текста с резервным переходом на голос браузера;
-- стандартные API `runtime` и `storage` с `async/await`, совместимые с браузерами на Chromium (MV3) и Firefox (MV2).
+## Services and browser APIs
 
-Для перевода и словарной транскрипции требуется интернет. На системных страницах вида `chrome://…` content script не запускается — это ограничение браузера.
+- **Google Translate and the browser's language detection API**, with a writing-system fallback, detect the source language.
+- **Google's translation service and the MyMemory fallback API** translate text and context. For English-to-Russian translations, inflected English words can also be looked up by their base form.
+- **Datamuse API** supplies IPA transcription for English words and phrases of up to 30 words. ARPAbet responses are converted to IPA.
+- **Free Dictionary API** provides fallback IPA transcription.
+- **English Wiktionary** supplies English-to-Russian translation alternatives grouped by part of speech. Context helps determine their order.
+- **Google Translate TTS and Web Speech API** read the source text aloud, with a fallback to a browser voice.
+- Standard **`runtime` and `storage` APIs**, used with `async`/`await`, support Chromium and Firefox builds.
 
-Словарные данные English Wiktionary доступны по лицензиям проекта Wikimedia; источник: https://en.wiktionary.org/.
+Translation and dictionary transcription require an internet connection. Content scripts cannot run on internal browser pages such as `chrome://…` because of browser restrictions.
 
-## Конфиденциальность
+English Wiktionary data is available under the Wikimedia project's licenses. Source: [English Wiktionary](https://en.wiktionary.org/).
 
-Context Translator обрабатывает только данные, необходимые для перевода: выделенный или введённый текст, окружающий контекст, выбранные языки, результаты перевода и транскрипцию. Для записей истории расширение также сохраняет URL и заголовок исходной страницы. История, настройки и кэш переводов хранятся локально на устройстве пользователя; разработчик не получает их и не хранит на собственном сервере.
+## Privacy
 
-Для перевода, определения языка, транскрипции и озвучивания текст передаётся по HTTPS сервисам MyMemory, Google Translate, Datamuse, Free Dictionary и English Wiktionary. URL и заголовок исходной страницы этим сервисам не передаются. При сетевых запросах поставщики сервисов могут автоматически получать IP-адрес пользователя и обрабатывать его согласно собственным политикам конфиденциальности.
+Context Translator processes the selected or entered text, surrounding context, selected languages, translation results, and transcription needed for its features. History entries also contain the source page's URL and title. History, settings, and translation cache remain on your device; this locally stored data is not automatically uploaded to the developer's server.
 
-Расширение не продаёт пользовательские данные, не использует их для рекламы, кредитования или других целей, не связанных с основными функциями. Пользователь может удалить отдельные записи или очистить историю через интерфейс расширения. Для полного удаления истории, настроек и локального кэша необходимо удалить расширение либо очистить его данные средствами браузера.
+For translation, language detection, transcription, and speech, text is sent over HTTPS to the relevant services: MyMemory, Google Translate, Datamuse, Free Dictionary, and English Wiktionary. The source page's URL and title are not included in these requests. Service providers may receive your IP address and process it according to their own privacy policies.
+
+If you submit feedback through the extension, the message, optional contact information, and any screenshots you attach are sent to the feedback service.
+
+The extension does not sell user data or use it for advertising, credit decisions, or purposes unrelated to its core features. You can delete individual entries or clear your history in the extension. To remove all history, settings, and local cache, uninstall the extension or clear its data through your browser.

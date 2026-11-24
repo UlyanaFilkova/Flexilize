@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {fireEvent, screen, waitFor, within} from "@testing-library/react";
+import {act, fireEvent, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {defaultSettings, SETTINGS_KEY} from "../src/settings";
 
@@ -26,7 +26,8 @@ describe("options page", () => {
     expect(screen.getByRole("button", {name: /^Активация$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Языки$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /^Звук$/})).toBeTruthy();
-    expect(screen.queryByRole("button", {name: /^Сохранение$/})).toBeNull();
+    const saving = screen.getByRole("button", {name: /^Сохранение$/});
+    expect(screen.getByRole("button", {name: /^Звук$/}).nextElementSibling).toBe(saving);
     expect(screen.getByRole("button", {name: /^Расширенные настройки$/})).toBeTruthy();
     expect(screen.getByRole("button", {name: /Как пользоваться/})).toBeTruthy();
     await userEvent.click(screen.getByRole("button", {name: /^Звук$/}));
@@ -43,10 +44,14 @@ describe("options page", () => {
     await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith(expect.objectContaining({behavior: "smooth"})));
   });
 
-  it("scrolls to advanced settings from the navigation and saves its options", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
-    expect(screen.getByRole("heading", {name: "Расширенные настройки"})).toBeTruthy();
-    expect(location.hash).toBe("#settings/advanced");
+  it("opens saving settings from navigation and saves its options", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Сохранение$/}));
+    expect(screen.getByRole("heading", {name: "Сохранение"})).toBeTruthy();
+    expect(location.hash).toBe("#settings/saving");
+    const section = document.getElementById("settings-saving")!;
+    expect(within(section).getByRole("spinbutton", {name: "Лимит записей в истории"})).toBeTruthy();
+    expect(section.previousElementSibling?.id).toBe("settings-sound");
+    expect(within(section).queryByRole("checkbox", {name: "Показывать окно перевода"})).toBeNull();
 
     await userEvent.click(screen.getByRole("checkbox", {name: "Включить автоматическое сохранение"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].autoSaveTranslations).toBe(false));
@@ -73,18 +78,121 @@ describe("options page", () => {
     }
   });
 
+  it("automatically saves a custom history limit and rejects values outside the allowed range", async () => {
+    const input = await waitFor(() => {
+      const field = screen.getByRole("spinbutton", {name: "Лимит записей в истории"}) as HTMLInputElement;
+      expect(field.disabled).toBe(false);
+      return field;
+    });
+    for (const value of ["", "0", "5001", "1.5"]) {
+      fireEvent.change(input, {target: {value}});
+      expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(5000);
+      expect(input.checkValidity()).toBe(false);
+    }
+    await userEvent.clear(input);
+    await userEvent.type(input, "250");
+    expect(document.activeElement).toBe(input);
+    expect(input.value).toBe("250");
+    expect(within(input.closest(".history-limit-row")!).queryByRole("button")).toBeNull();
+    await waitFor(() => expect(storageData[SETTINGS_KEY].historyRecordLimit).toBe(250));
+    expect(screen.getByText(/При выключенной ротации.*250/)).toBeTruthy();
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(await screen.findByText(/Если ротация выключена и достигнут лимит в указанное число записей/)).toBeTruthy();
+  });
+
   it("shows a detailed help section and links it to settings", async () => {
     await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
     expect(screen.getByRole("heading", {name: "Как пользоваться"})).toBeTruthy();
-    expect(screen.getByRole("heading", {name: "Первый перевод — за несколько секунд"})).toBeTruthy();
-    expect(screen.getByRole("heading", {name: "Читаете текст на иностранном языке"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Выделите фразу — и сразу увидите перевод"})).toBeTruthy();
+    expect(screen.getByRole("heading", {name: "Читайте текст на иностранном языке"})).toBeTruthy();
+    const reading = document.getElementById("help-reading")!;
+    expect(reading.classList.contains("help-reading-hero")).toBe(true);
+    expect(within(reading).getByRole("heading", {name: "Выделите фразу — и сразу увидите перевод"})).toBeTruthy();
+    expect(reading.querySelectorAll(".help-selection-example")).toHaveLength(1);
+    expect(reading.querySelectorAll(".help-card, .help-callout")).toHaveLength(0);
+    expect(reading.nextElementSibling?.querySelectorAll(".help-card")).toHaveLength(2);
+    expect(reading.nextElementSibling?.nextElementSibling?.classList.contains("help-callout")).toBe(true);
     expect(screen.getByRole("heading", {name: "Частые вопросы"})).toBeTruthy();
-    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(4);
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-task-hero")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-task-hero .help-visual-example")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-task-hero .help-card-grid, .help-task-hero .workflow-card, .help-task-hero .vocabulary-layout, .help-task-hero .format-guide")).toHaveLength(0);
     expect(location.hash).toBe("#help");
 
-    await userEvent.click(screen.getByRole("button", {name: "Настроить клавиши"}));
+    await userEvent.click(screen.getByRole("button", {name: "Настроить активацию перевода"}));
     expect(screen.getByRole("heading", {name: "Активация"})).toBeTruthy();
     expect(location.hash).toBe("#settings/general");
+  });
+
+  it.each([
+    ["настройках", "translator-shortcuts", "Переводчик"],
+    ["языки по умолчанию", "translator-languages", "Языки"],
+    ["Настроить сохранение текста", "translator-text", "Переводчик"],
+    ["скорости", "speech-rate", "Звук"]
+  ])("centers the exact settings group from the %s help link", async (name, detail, section) => {
+    const anchorId = `settings-${detail}`;
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+      return {top: this.id === anchorId ? 500 : 0, height: this.id === anchorId ? 200 : this.classList.contains("topbar") ? 80 : 0} as DOMRect;
+    });
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    const link = screen.getByRole(detail === "translator-text" ? "button" : "link", {name});
+    if (detail !== "translator-text") expect(link.getAttribute("href")).toBe(`#settings/${detail}`);
+    vi.mocked(window.scrollTo).mockClear();
+    await userEvent.click(link);
+    expect(location.hash).toBe(`#settings/${detail}`);
+    expect(screen.getByRole("button", {name: section}).classList.contains("active")).toBe(true);
+    expect(document.getElementById(anchorId)).toBeTruthy();
+    const centeredTop = 500 + 100 - (window.innerHeight + 80) / 2;
+    await waitFor(() => expect(window.scrollTo).toHaveBeenCalledWith({top: centeredTop, behavior: "smooth"}));
+  });
+
+  it("starts help demonstrations only when scrolled into view and stops them outside the viewport", async () => {
+    const observers: Array<{callback: IntersectionObserverCallback; target?: Element; disconnect: ReturnType<typeof vi.fn>}> = [];
+    vi.stubGlobal("IntersectionObserver", class {
+      target?: Element;
+      disconnect = vi.fn();
+      constructor(public callback: IntersectionObserverCallback) { observers.push(this); }
+      observe(target: Element) { this.target = target; }
+    });
+    const before = structuredClone(storageData);
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    expect(observers).toHaveLength(4);
+    const helpObservers = [...observers];
+    expect(document.querySelector(".visual-translator-input")?.textContent).toBe("обновленный");
+    expect(document.querySelector(".visual-translator-input")?.getAttribute("lang")).toBe("ru");
+    expect(document.querySelector(".visual-translator-panes > div:last-child p")?.textContent).toBe("updated");
+    expect(document.querySelector(".visual-page-draft")?.textContent?.replace(/\s+/g, " ").trim()).toBe("Could you send the updated document?");
+    const visibility = (index: number, ratio: number) => act(() => observers[index].callback([
+      {target: observers[index].target, isIntersecting: ratio > 0, intersectionRatio: ratio} as IntersectionObserverEntry
+    ], {} as IntersectionObserver));
+    visibility(0, 0.1);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    visibility(0, 0.5);
+    expect(observers[0].target!.classList.contains("help-demo-playing")).toBe(true);
+    expect(observers[1].target!.classList.contains("help-demo-playing")).toBe(false);
+    visibility(0, 0);
+    visibility(1, 0.5);
+    expect(observers[0].target!.classList.contains("help-demo-playing")).toBe(false);
+    expect(observers[1].target!.classList.contains("help-demo-playing")).toBe(true);
+    visibility(0, 0.5);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(2);
+    for (const selector of [".help-speech-example", ".help-history-example"]) {
+      expect(document.querySelector(selector)!.classList.contains("help-demo-playing")).toBe(false);
+    }
+    expect(document.querySelectorAll(".help-visual-example button")).toHaveLength(4);
+    expect(storageData).toEqual(before);
+    await userEvent.click(screen.getByRole("button", {name: /^Все настройки$/}));
+    expect(helpObservers.every((observer) => observer.disconnect.mock.calls.length === 1)).toBe(true);
+  });
+
+  it("keeps help demonstrations static when reduced motion is requested", async () => {
+    vi.stubGlobal("matchMedia", vi.fn(() => ({matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn()})));
+    await userEvent.click(screen.getByRole("button", {name: /Как пользоваться/}));
+    expect(document.querySelectorAll(".help-visual-example")).toHaveLength(6);
+    expect(document.querySelectorAll(".help-demo-playing")).toHaveLength(0);
+    expect(screen.queryByRole("button", {name: "Посмотреть демонстрацию"})).toBeNull();
   });
 
   it("keeps dependent shortcut visible and disabled until activation", async () => {
@@ -96,8 +204,13 @@ describe("options page", () => {
     expect(storageData[SETTINGS_KEY].hotkeyActivationEnabled).toBe(true);
   });
 
-  it("records a new translator shortcut", async () => {
-    await userEvent.click(screen.getByRole("button", {name: /^Активация$/}));
+  it("records a new translator shortcut in its own settings section", async () => {
+    await userEvent.click(screen.getByRole("button", {name: /^Переводчик$/}));
+    expect(location.hash).toBe("#settings/translator");
+    const translator = document.getElementById("settings-translator")!;
+    expect(translator.previousElementSibling?.id).toBe("settings-general");
+    expect(document.getElementById("settings-general")!.querySelector("#settings-translator-shortcuts")).toBeNull();
+    expect(within(translator).getByRole("checkbox", {name: "Сохранять предыдущий текст при повторном открытии переводчика"})).toBeTruthy();
     const button = screen.getByRole("button", {name: "Ctrl + Shift + '"});
     await userEvent.click(button);
     fireEvent.keyDown(button, {key: "T", code: "KeyT", ctrlKey: true, altKey: true});
@@ -122,8 +235,11 @@ describe("options page", () => {
 
   it("can hide the selection translation window", async () => {
     await userEvent.click(screen.getByRole("button", {name: /^Расширенные настройки$/}));
-    expect(screen.getByRole("region", {name: "Перевод"}).querySelectorAll(".setting-row").length).toBe(1);
-    expect(screen.getByRole("region", {name: "Настройки сохранения"}).querySelectorAll(".setting-row").length).toBe(2);
+    expect(location.hash).toBe("#settings/advanced");
+    const advanced = document.getElementById("settings-advanced")!;
+    expect(within(advanced).getAllByRole("checkbox")).toHaveLength(1);
+    expect(within(advanced).queryByRole("region", {name: "Настройки сохранения"})).toBeNull();
+    expect(within(advanced).queryByRole("spinbutton")).toBeNull();
     await userEvent.click(screen.getByRole("checkbox", {name: "Показывать окно перевода"}));
     await waitFor(() => expect(storageData[SETTINGS_KEY].showSelectionTranslationModal).toBe(false));
   });

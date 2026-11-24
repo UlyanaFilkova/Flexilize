@@ -41,6 +41,38 @@ describe("background message handling", () => {
     expect((await handle({type: "get-records"})).records).toEqual([]);
   });
 
+  it("keeps the newest records within the configured history limit", async () => {
+    storageData.extensionSettings = {historyRecordLimit: 2, historyRotationEnabled: true};
+    for (const text of ["first", "second", "third"]) {
+      expect(await handle({type: "save-record", payload: {record: {...record, text}}}))
+        .toMatchObject({ok: true, saved: true});
+    }
+    expect((await handle({type: "get-records"})).records.map((item) => item.text))
+      .toEqual(["third", "second"]);
+
+    storageData.extensionSettings.historyRecordLimit = 1;
+    expect((await handle({type: "get-records"})).records).toHaveLength(2);
+    await handle({type: "save-record", payload: {record: {...record, text: "fourth"}}});
+    expect((await handle({type: "get-records"})).records.map((item) => item.text)).toEqual(["fourth"]);
+  });
+
+  it("blocks new records at the configured limit without rotation and allows duplicates", async () => {
+    storageData.extensionSettings = {historyRecordLimit: 2, historyRotationEnabled: false};
+    await handle({type: "save-record", payload: {record}});
+    expect(await handle({type: "save-record", payload: {record: {...record, text: "second"}}}))
+      .toMatchObject({saved: true, storageLimitReached: true});
+    expect(await handle({type: "save-record", payload: {record}}))
+      .toMatchObject({saved: true, storageLimitReached: true});
+    storageData.extensionSettings.historyRecordLimit = 1;
+    expect(await handle({type: "save-record", payload: {record: {...record, text: "third"}}}))
+      .toMatchObject({saved: false, storageLimitReached: true});
+    expect((await handle({type: "get-records"})).records).toHaveLength(2);
+    storageData.extensionSettings.historyRecordLimit = 3;
+    expect(await handle({type: "save-record", payload: {record: {...record, text: "third"}}}))
+      .toMatchObject({saved: true});
+    expect((await handle({type: "get-records"})).records).toHaveLength(3);
+  });
+
   it("translates arbitrary language pairs and caches the result", async () => {
     const fetchMock = vi.fn<FetchHandler>(async () => new Response(JSON.stringify(["Hallo"]), {
       status: 200, headers: {"content-type": "application/json"}
