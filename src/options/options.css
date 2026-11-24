@@ -2525,6 +2525,9 @@ h1 {
 .help-primary-action { background: #315be8; color: #fff; }
 .help-primary-action:hover { background: #274ecb; }
 
+.help-troubleshooting .help-hero { border: 1px solid #cbd8ff; background: linear-gradient(135deg, #e0e9ff 0%, #cbd9ff 62%, #b9cdff 100%); color: #354258; box-shadow: 0 10px 28px rgba(49, 91, 232, .06); }
+.help-troubleshooting .help-section-heading > span { color: #748095; }
+.help-troubleshooting .help-section-heading h2 { color: #2b3647; }
 .help-task-hero .faq-list { margin-top: 0; }
 
 .faq-list {
