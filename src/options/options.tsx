@@ -1470,9 +1470,10 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
           <HistoryHelpExample />
         </div>
         <div className="vocabulary-layout">
-          <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Ротация</strong>{" "}{formatMessage("ui.at-the-5-000-record-limit-older-translations-can-be-replaced-automatically", {count: String(historyRecordLimit)})}</span></li></ul></article>
+          <article className="help-card vocabulary-main"><h3>Организуйте рабочий процесс</h3><ul className="check-list"><li><CheckIcon /><span><strong>Автосохранение</strong> — каждый перевод сразу попадает в историю.</span></li><li><CheckIcon /><span><strong>Ручное сохранение</strong> — в словарь попадают только выбранные вами записи.</span></li><li><CheckIcon /><span><strong>Редактирование</strong> — уточняйте перевод, контекст, транскрипцию и источник.</span></li><li><CheckIcon /><span><strong>Повторение</strong> — возвращайтесь к сохранённым словам в любой момент.</span></li></ul></article>
           <div className="vocabulary-actions"><button type="button" onClick={onOpenHistory}><HistoryIcon /><span><strong>Открыть историю</strong><small>Просмотреть и отредактировать записи</small></span><ArrowIcon /></button><button type="button" onClick={() => onOpenSettings("saving")}><BookmarkIcon /><span><strong>Настроить сохранение</strong><small>Автосохранение и ротация истории</small></span><ArrowIcon /></button></div>
         </div>
+        <div className="help-callout"><InfoIcon /><div><strong>Хотите сохранять только нужные переводы?</strong><p>Отключите автосохранение в настройках. Появится кнопка «Сохранить» для ручного добавления в словарь в окне перевода.</p></div><button type="button" onClick={() => onOpenSettings("saving")}>Настроить сохранение</button></div>
       </section>
 
       <section className="help-section">

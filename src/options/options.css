@@ -2430,6 +2430,7 @@ h1 {
 .check-list li { display: flex; align-items: flex-start; gap: 11px; color: #6f7b8e; font-size: 12px; line-height: 1.5; }
 .check-list svg { width: 18px; color: #32a86a; }
 .check-list strong { color: #3e4a5d; }
+.vocabulary-main .check-list li { font-size: 13px; }
 .help-translator-features { gap: 21px; margin: 30px 0 0; }
 .help-task-hero .help-translator-features li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 13px; color: rgba(255, 255, 255, .9); font-size: 14px; line-height: 1.5; }
 .help-task-hero .help-translator-features svg { color: #b9c9ff; margin-top: 2px; }
@@ -2453,8 +2454,8 @@ h1 {
 
 .vocabulary-actions button:hover { border-color: #bdcaf7; }
 .vocabulary-actions button > span { display: grid; gap: 4px; }
-.vocabulary-actions strong { color: #344054; font-size: 12px; }
-.vocabulary-actions small { color: #929baa; font-size: 10px; line-height: 1.4; }
+.vocabulary-actions button > span > strong { color: #344054; font-size: 15px; }
+.vocabulary-actions button > span > small { color: #929baa; font-size: 13px; line-height: 1.5; }
 .vocabulary-actions svg:last-child { width: 15px; }
 
 .format-guide {
