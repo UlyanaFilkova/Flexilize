@@ -498,8 +498,8 @@ h1 {
 .activation-preview-page > .line-long { width: 91%; }
 .activation-preview-page > .line-medium { width: 68%; }
 .activation-preview-page > .line-short { width: 47%; }
-.activation-preview-page p { margin: 0; color: #8791a1; font-size: 8px; white-space: nowrap; }
-.activation-preview-page mark { padding: 1px 2px; border-radius: 2px; background: #dce6ff; color: #315be8; }
+.activation-preview-page p { margin: 0; color: #8791a1; font-size: 9px; white-space: nowrap; }
+.activation-preview-page mark { position: relative; padding: 1px 2px; border-radius: 2px; background: #dce6ff; color: #315be8; }
 
 .activation-preview-result {
   position: absolute;
@@ -515,9 +515,9 @@ h1 {
   box-shadow: 0 6px 15px rgba(39, 60, 105, .14);
 }
 
-.activation-preview-result strong { color: #45536b; font-size: 8px; }
+.activation-preview-result strong { color: #45536b; font-size: 10px; }
 .activation-preview-result > span { width: 68%; height: 2px; border-radius: 3px; background: #e7eaf0; }
-.activation-preview-result b { color: #315be8; font-size: 9px; }
+.activation-preview-result b { color: #315be8; font-size: 11px; }
 .activation-preview-result-source { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
 .activation-preview-result-source em { display: grid; width: 12px; height: 12px; flex-shrink: 0; place-items: center; border-radius: 3px; background: #edf2ff; color: #315be8; }
 .activation-preview-result-source svg { width: 9px; height: 9px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -660,30 +660,32 @@ h1 {
   box-shadow: 0 5px 12px rgba(15, 23, 42, .2);
 }
 
-.activation-preview-translator-title { height: 11px; border-bottom: 1px solid #edf0f4; }
-.activation-preview-translator-title strong { overflow: hidden; color: #334057; font-size: 5px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.activation-preview-translator-title b { max-width: 68px; overflow: hidden; margin-left: auto; padding: 2px 3px; font-size: 5px; text-overflow: ellipsis; white-space: nowrap; }
+.activation-preview-translator-title { height: 15px; border-bottom: 1px solid #edf0f4; }
+.activation-preview-translator-title strong { overflow: hidden; color: #334057; font-size: 7px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.activation-preview-translator-title b { max-width: 68px; overflow: hidden; margin-left: auto; padding: 2px 3px; font-size: 6px; text-overflow: ellipsis; white-space: nowrap; }
 .activation-preview-translator-title i { color: #9aa3b1; font-size: 8px; font-style: normal; }
 .activation-preview-languages { grid-template-columns: 1fr 12px 1fr; gap: 3px; margin-top: 4px; }
-.activation-preview-languages i { overflow: hidden; padding: 3px; font-size: 5px; text-overflow: ellipsis; white-space: nowrap; }
-.activation-preview-languages b { font-size: 7px; }
+.activation-preview-languages i { overflow: hidden; padding: 3px; font-size: 7px; text-overflow: ellipsis; white-space: nowrap; }
+.activation-preview-languages b { font-size: 9px; }
 .activation-preview-panes { gap: 3px; height: 30px; margin-top: 4px; }
 
 .activation-illustration-reverse { justify-self: end; }
 .activation-illustration-reverse .activation-preview-scene { height: 80px; }
 .activation-preview-reverse { display: grid; height: 100%; align-content: center; gap: 4px; padding: 5px; }
-.activation-preview-reverse p { display: grid; grid-template-columns: 1fr 14px 1fr; align-items: center; gap: 4px; margin: 0; color: #59667a; font-size: 11px; text-align: center; }
-.activation-preview-reverse b { color: #315be8; font-size: 13px; }
-.activation-preview-reverse i { justify-self: center; margin-top: 2px; padding: 3px 5px; border-radius: 4px; background: #edf2ff; color: #315be8; font-size: 9px; font-style: normal; white-space: nowrap; }
+.activation-preview-reverse p { display: grid; grid-template-columns: 1fr 14px 1fr; align-items: center; gap: 4px; margin: 0; color: #59667a; font-size: 12px; text-align: center; }
+.activation-preview-reverse b { color: #315be8; font-size: 14px; }
+.activation-preview-reverse i { justify-self: center; margin-top: 2px; padding: 3px 5px; border-radius: 4px; background: #edf2ff; color: #315be8; font-size: 10px; font-style: normal; white-space: nowrap; }
 
 /* Activation previews show the gesture before its result. */
 .activation-illustration { --activation-button-x: calc(28% + 16px); --activation-button-y: 64px; }
+.activation-preview-page mark .help-demo-cursor { top: 7px; left: -2px; width: 14px; height: 17px; }
 .activation-preview-cursor { position: absolute; z-index: 4; top: 44px; left: 12px; width: 14px; height: 17px; opacity: 0; pointer-events: none; }
 .activation-preview-context-result { display: none; }
 .activation-preview-translator-keys { position: absolute; z-index: 2; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4px; opacity: 0; }
 .activation-preview-translator-keys span { padding: 5px; border: 1px solid #dce2ec; border-radius: 4px; background: #fff; color: #58657a; font-size: 10px; font-weight: 700; }
 .activation-preview-playing .activation-preview-page mark { background: linear-gradient(#dce6ff, #dce6ff) left center / 0% 100% no-repeat; animation: activation-select 7s linear infinite both; }
-.activation-preview-playing .activation-preview-cursor { animation: activation-select-cursor 7s ease infinite both; }
+.activation-preview-playing .activation-preview-page .help-demo-cursor { animation: activation-select-cursor 7s linear infinite both; }
+.activation-preview-playing .activation-preview-cursor { animation: activation-button-cursor 7s ease infinite both; }
 .activation-preview-playing .activation-preview-result { animation: activation-result 7s ease infinite both; }
 .activation-illustration-button.activation-preview-playing .activation-preview-cursor { animation-name: activation-button-cursor; }
 .activation-preview-playing .activation-preview-selection-button { animation: activation-button 7s ease infinite both; }
@@ -708,10 +710,10 @@ h1 {
   24%, 100% { background-size: 100% 100%; }
 }
 @keyframes activation-select-cursor {
-  0% { opacity: 0; left: 8px; }
-  8% { opacity: 1; left: 12px; }
-  24%, 28% { opacity: 1; left: 32%; }
-  36%, 100% { opacity: 0; left: 32%; }
+  0% { opacity: 0; left: -2px; }
+  8% { opacity: 1; left: -2px; }
+  24%, 28% { opacity: 1; left: calc(100% - 2px); }
+  36%, 100% { opacity: 0; left: calc(100% - 2px); }
 }
 @keyframes activation-result {
   0%, 30% { opacity: 0; transform: translateY(5px) scale(.96); }
@@ -728,10 +730,8 @@ h1 {
   48% { opacity: 1; transform: scale(.88); }
 }
 @keyframes activation-button-cursor {
-  0% { opacity: 0; top: 44px; left: 8px; transform: scale(1); }
-  8% { opacity: 1; top: 44px; left: 12px; }
-  24%, 29% { opacity: 1; top: 44px; left: 32%; }
-  42% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(1); }
+  0%, 35% { opacity: 0; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(1); }
+  42%, 45% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(1); }
   48% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(.8); }
   53% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(1); }
   62%, 100% { opacity: 0; top: var(--activation-button-y); left: var(--activation-button-x); }
@@ -746,9 +746,7 @@ h1 {
   46%, 100% { background: #dce6ff; }
 }
 @keyframes activation-context-cursor {
-  0% { opacity: 0; top: 44px; left: 8px; transform: scale(1); }
-  8% { opacity: 1; top: 44px; left: 12px; }
-  24%, 30% { opacity: 1; top: 44px; left: 32%; }
+  0%, 37% { opacity: 0; top: 62px; left: 65%; transform: scale(1); }
   45% { opacity: 1; top: 62px; left: 65%; transform: scale(1); }
   51% { opacity: 1; top: 62px; left: 65%; transform: scale(.8); }
   56% { opacity: 1; top: 62px; left: 65%; transform: scale(1); }
@@ -2277,10 +2275,10 @@ h1 {
   30%, 100% { background-size: 100% 100%; color: #284fbf; }
 }
 @keyframes help-select-cursor {
-  0% { opacity: 0; left: -14px; }
-  10% { opacity: 1; left: 0; }
-  30%, 38% { opacity: 1; left: 95%; }
-  45%, 100% { opacity: 0; left: 95%; }
+  0% { opacity: 0; left: -3px; }
+  10% { opacity: 1; left: -3px; }
+  30%, 38% { opacity: 1; left: calc(100% - 3px); }
+  45%, 100% { opacity: 0; left: calc(100% - 3px); }
 }
 @keyframes help-show-translation {
   0%, 34% { opacity: 0; transform: translateY(10px) scale(.97); }
@@ -2689,7 +2687,7 @@ h1 {
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto 1fr auto;
   align-items: start;
-  gap: 12px;
+  gap: 16px;
   padding: 20px;
   border: 1px solid #e4e8ef;
   border-radius: 16px;
@@ -2700,6 +2698,9 @@ h1 {
 .activation-options-grid .setting-row:has(.activation-illustration) .setting-copy p { grid-column: 1 / -1; grid-row: 2; margin: 0; }
 .activation-options-grid .setting-row > .switch { grid-column: 2; grid-row: 1; justify-self: end; }
 .activation-options-grid .setting-row > .activation-illustration { grid-column: 1 / -1; grid-row: 3; justify-self: center; }
+.activation-options-grid .activation-preview-scene { min-height: 112px; }
+.activation-options-grid .activation-preview-context-menu { font-size: 8px; }
+.activation-options-grid .activation-preview-shortcut span { font-size: 11px; }
 .activation-options-grid > .setting-row:not(:has(.activation-illustration)) {
   grid-column: 1 / -1;
   border: 1px solid #e4e8ef;
@@ -2849,9 +2850,9 @@ h1 {
   .setting-row:has(> .switch) .setting-copy p { grid-column: 1 / -1; }
   .setting-row:has(> .switch) > .switch { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; width: 46px; min-width: 46px; }
   .setting-row > .activation-illustration { grid-column: 1 / -1; align-self: start; justify-self: center; width: clamp(176px, 19vw, 220px); min-width: 176px; margin-right: 0; }
-  .activation-preview-reverse p { font-size: 9px; }
-  .activation-preview-reverse b { font-size: 11px; }
-  .activation-preview-reverse i { font-size: 8px; }
+  .activation-preview-reverse p { font-size: 10px; }
+  .activation-preview-reverse b { font-size: 12px; }
+  .activation-preview-reverse i { font-size: 9px; }
   .activation-illustration { --activation-button-x: calc(35% + 12px); }
   .activation-preview-selection-button { top: 52px; left: 35%; width: 24px; height: 24px; border-radius: 8px; font-size: 11px; }
   .activation-preview-context-menu { right: 6px; width: calc(100% - 12px); }
@@ -2915,6 +2916,7 @@ h1 {
 
   .setting-row.activation-setting-row > .activation-illustration { width: 100%; max-width: 280px; min-width: 0; justify-self: center; }
   .setting-row.activation-setting-row .activation-preview-scene { min-height: 128px; }
+  .activation-options-grid .setting-row.activation-setting-row .activation-preview-scene { min-height: 144px; }
 }
 
 @media (min-width: 681px) and (max-width: 1100px) {

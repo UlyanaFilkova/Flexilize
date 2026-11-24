@@ -935,7 +935,7 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
             <div className="activation-preview-toolbar"><i /><i /><i /><span /></div>
             <div className="activation-preview-page">
               <b />
-              <p translate="no" lang={example.sourceLanguage} dir="ltr"><mark>{example.context.source}</mark>{example.context.after}</p>
+              <p translate="no" lang={example.sourceLanguage} dir="ltr"><mark>{example.context.source}<DemoCursor /></mark>{example.context.after}</p>
               <i className="line-long" /><i className="line-medium" />
               <i className="line-short" />
             </div>
@@ -947,7 +947,7 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
             {kind === "context" && <div className="activation-preview-result activation-preview-context-result"><div className="activation-preview-result-source"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><em><SoundIcon /></em></div><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>}
             {kind === "context" && <div className="activation-preview-context-menu"><span>Копировать</span><b><img className="activation-preview-brand-icon" src="../icons/icon-32.png" alt="" />Context Translator</b><span>Искать в интернете</span></div>}
             {kind === "shortcut" && <div className="activation-preview-shortcut">{shortcut.split(" + ").map((key) => <span key={key}>{key}</span>)}<i>↵</i></div>}
-            <svg className="activation-preview-cursor" viewBox="0 0 24 28"><path d="M3 2v21l5-5 4 8 4-2-4-8h8Z" fill="#fff" stroke="#315be8" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+            {(kind === "button" || kind === "context") && <svg className="activation-preview-cursor" viewBox="0 0 24 28"><path d="M3 2v21l5-5 4 8 4-2-4-8h8Z" fill="#fff" stroke="#315be8" strokeWidth="1.8" strokeLinejoin="round" /></svg>}
           </>
         )}
       </div>
