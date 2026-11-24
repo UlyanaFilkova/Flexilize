@@ -529,20 +529,28 @@ function SettingsBanner({onOpenSection}: {onOpenSection: (section: string) => vo
 
 function BannerExtensionExample() {
   const example = helpExamples();
+  const selection = getActiveLanguage() === "ru" ? {
+    ...example.selection,
+    before: "Even familiar words can ",
+    source: "take on a different meaning",
+    after: " depending on the context.",
+    transcription: "/teɪk ɒn ə ˈdɪfrənt ˈmiːnɪŋ/",
+    translation: "приобретать другое значение"
+  } : example.selection;
   return (
     <AnimatedHelpExample className="banner-extension-example">
       <div className="banner-demo-browser">
         <div className="visual-browser-toolbar"><i /><i /><i /><span>learn.example.com/article</span></div>
         <div className="banner-demo-page" translate="no" lang={example.sourceLanguage} dir="ltr">
-          <strong>{example.selection.title}</strong>
+          <strong>{selection.title}</strong>
           <i /><i />
-          <p>{example.selection.before}<mark>{example.selection.source}<DemoCursor /></mark>{example.selection.after}</p>
+          <p>{selection.before}<mark>{selection.source}<DemoCursor /></mark>{selection.after}</p>
           <i /><i />
         </div>
         <div className="banner-demo-popup">
-          <div className="banner-demo-source"><span translate="no" lang={example.sourceLanguage} dir="ltr"><strong>{example.selection.source}</strong><small>{example.selection.transcription}</small></span><em className="banner-demo-audio"><SoundIcon /><DemoCursor /></em></div>
-          <strong className="banner-demo-translation" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{example.selection.translation}</strong>
-          <div className="banner-demo-popup-footer"><span translate="no" dir="ltr">{example.directionLabel}</span><span className="banner-demo-wave"><i /><i /><i /><i /><i /></span></div>
+          <div className="banner-demo-source"><strong translate="no" lang={example.sourceLanguage} dir="ltr">{selection.source}</strong><small translate="no" dir="ltr">{selection.transcription}</small><em className="banner-demo-audio"><SoundIcon /><svg className="banner-demo-audio-stop" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none" /></svg><DemoCursor /></em></div>
+          <div className="banner-demo-translation" translate="no" lang={example.targetLanguage} dir={example.targetDirection}>{selection.translation}</div>
+          <p className="banner-demo-context">Даже знакомые слова могут приобретать другое значение в зависимости от контекста.</p>
         </div>
       </div>
     </AnimatedHelpExample>
