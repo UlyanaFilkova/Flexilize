@@ -501,12 +501,12 @@ h1 {
 
 .activation-preview-result {
   position: absolute;
-  right: 8px;
-  bottom: 7px;
+  top: 50px;
+  left: 28px;
   display: grid;
-  width: 38%;
-  gap: 5px;
-  padding: 8px;
+  width: 54%;
+  gap: 3px;
+  padding: 4px 7px;
   border: 1px solid #e2e8f5;
   border-radius: 8px;
   background: #fff;
@@ -514,8 +514,12 @@ h1 {
 }
 
 .activation-preview-result strong { color: #45536b; font-size: 8px; }
-.activation-preview-result span { width: 68%; height: 3px; border-radius: 3px; background: #e7eaf0; }
+.activation-preview-result > span { width: 68%; height: 2px; border-radius: 3px; background: #e7eaf0; }
 .activation-preview-result b { color: #315be8; font-size: 9px; }
+.activation-preview-result-source { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+.activation-preview-result-source em { display: grid; width: 12px; height: 12px; flex-shrink: 0; place-items: center; border-radius: 3px; background: #edf2ff; color: #315be8; }
+.activation-preview-result-source svg { width: 9px; height: 9px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
 
 .activation-preview-selection-button {
   position: absolute;
@@ -625,29 +629,14 @@ h1 {
 .activation-preview-selection-button strong { position: relative; }
 .activation-preview-selection-button strong span { position: absolute; right: -5px; bottom: -4px; font-size: 7px; opacity: .82; }
 
-.activation-preview-selection-arrow {
-  position: absolute;
-  top: 59px;
-  left: calc(43% + 16px);
-  width: clamp(14px, 1.4vw, 20px);
-  height: 10px;
-  color: #315be8;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transform: translateX(-50%);
-}
-
-.activation-preview-button-result {
-  left: 58%;
-  right: auto;
-}
-
 .activation-preview-shortcut { right: 5px; bottom: 5px; gap: 2px; }
 .activation-preview-shortcut span,
 .activation-preview-shortcut i { padding: 3px 4px; font-size: 6px; }
+
+.activation-illustration-shortcut .activation-preview-shortcut { z-index: 3; inset: 0; justify-content: center; gap: 4px; }
+.activation-illustration-shortcut .activation-preview-shortcut span { padding: 6px; border-radius: 6px; box-shadow: 0 2px 0 #dce2ec; font-size: 10px; }
+.activation-illustration-shortcut .activation-preview-shortcut i { display: none; }
+
 
 .activation-preview-translator-backdrop {
   display: grid;
@@ -682,6 +671,130 @@ h1 {
 .activation-preview-reverse p { display: grid; grid-template-columns: 1fr 14px 1fr; align-items: center; gap: 4px; margin: 0; color: #59667a; font-size: 11px; text-align: center; }
 .activation-preview-reverse b { color: #315be8; font-size: 13px; }
 .activation-preview-reverse i { justify-self: center; margin-top: 2px; padding: 3px 5px; border-radius: 4px; background: #edf2ff; color: #315be8; font-size: 9px; font-style: normal; white-space: nowrap; }
+
+/* Activation previews show the gesture before its result. */
+.activation-illustration { --activation-button-x: calc(28% + 16px); --activation-button-y: 64px; }
+.activation-preview-cursor { position: absolute; z-index: 4; top: 44px; left: 12px; width: 14px; height: 17px; opacity: 0; pointer-events: none; }
+.activation-preview-context-result { display: none; }
+.activation-preview-translator-keys { position: absolute; z-index: 2; inset: 0; display: flex; align-items: center; justify-content: center; gap: 4px; background: #f8faff; opacity: 0; }
+.activation-preview-translator-keys span { padding: 5px; border: 1px solid #dce2ec; border-radius: 4px; background: #fff; color: #58657a; font-size: 8px; font-weight: 700; }
+.activation-preview-playing .activation-preview-page mark { background: linear-gradient(#dce6ff, #dce6ff) left center / 0% 100% no-repeat; animation: activation-select 7s linear infinite both; }
+.activation-preview-playing .activation-preview-cursor { animation: activation-select-cursor 7s ease infinite both; }
+.activation-preview-playing .activation-preview-result { animation: activation-result 7s ease infinite both; }
+.activation-illustration-button.activation-preview-playing .activation-preview-cursor { animation-name: activation-button-cursor; }
+.activation-preview-playing .activation-preview-selection-button { animation: activation-button 7s ease infinite both; }
+.activation-illustration-button.activation-preview-playing .activation-preview-result { animation-name: activation-late-result; }
+.activation-preview-playing .activation-preview-context-menu { animation: activation-context-menu 7s ease infinite both; }
+.activation-preview-playing .activation-preview-context-menu b { animation: activation-context-item 7s linear infinite both; }
+.activation-illustration-context.activation-preview-playing .activation-preview-cursor { animation-name: activation-context-cursor; }
+.activation-preview-playing .activation-preview-context-result { display: grid; animation-name: activation-context-result; }
+.activation-preview-playing .activation-preview-shortcut { animation: activation-shortcut 7s ease infinite both; }
+.activation-preview-playing .activation-preview-shortcut span { animation: activation-keypress 7s ease infinite both; }
+.activation-illustration-shortcut.activation-preview-playing .activation-preview-result { animation-name: activation-late-result; }
+.activation-preview-playing .activation-preview-translator-keys { animation: activation-translator-keys 7s ease infinite both; }
+.activation-preview-playing .activation-preview-translator-keys span { animation: activation-translator-press 7s ease infinite both; }
+.activation-preview-playing .activation-preview-translator-backdrop { animation: activation-translator-open 7s ease infinite both; }
+.activation-preview-playing .activation-preview-panes > div:first-child { animation: activation-translator-input 7s linear infinite both; }
+.activation-preview-playing .activation-preview-panes > div:last-child { animation: activation-translator-result 7s ease infinite both; }
+.activation-preview-playing .activation-preview-reverse p:first-child { animation: activation-direction-first 7s ease infinite both; }
+.activation-preview-playing .activation-preview-reverse p:nth-child(2) { animation: activation-direction-second 7s ease infinite both; }
+.activation-preview-playing .activation-preview-reverse i { animation: activation-direction-key 7s ease infinite both; }
+@keyframes activation-select {
+  0%, 8% { background-size: 0% 100%; }
+  24%, 100% { background-size: 100% 100%; }
+}
+@keyframes activation-select-cursor {
+  0% { opacity: 0; left: 8px; }
+  8% { opacity: 1; left: 12px; }
+  24%, 28% { opacity: 1; left: 32%; }
+  36%, 100% { opacity: 0; left: 32%; }
+}
+@keyframes activation-result {
+  0%, 30% { opacity: 0; transform: translateY(5px) scale(.96); }
+  40%, 100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes activation-late-result {
+  0%, 57% { opacity: 0; transform: translateY(5px) scale(.96); }
+  67%, 100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes activation-button {
+  0%, 25% { opacity: 0; transform: scale(.85); }
+  33%, 43%, 53%, 59% { opacity: 1; transform: scale(1); }
+  66%, 100% { opacity: 0; transform: scale(1); }
+  48% { opacity: 1; transform: scale(.88); }
+}
+@keyframes activation-button-cursor {
+  0% { opacity: 0; top: 44px; left: 8px; transform: scale(1); }
+  8% { opacity: 1; top: 44px; left: 12px; }
+  24%, 29% { opacity: 1; top: 44px; left: 32%; }
+  42% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(1); }
+  48% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(.8); }
+  53% { opacity: 1; top: var(--activation-button-y); left: var(--activation-button-x); transform: scale(1); }
+  62%, 100% { opacity: 0; top: var(--activation-button-y); left: var(--activation-button-x); }
+}
+@keyframes activation-context-menu {
+  0%, 28% { opacity: 0; transform: translateY(4px); }
+  36%, 55% { opacity: 1; transform: translateY(0); }
+  63%, 100% { opacity: 0; transform: translateY(0); }
+}
+@keyframes activation-context-item {
+  0%, 40% { background: #fff; }
+  46%, 100% { background: #dce6ff; }
+}
+@keyframes activation-context-cursor {
+  0% { opacity: 0; top: 44px; left: 8px; transform: scale(1); }
+  8% { opacity: 1; top: 44px; left: 12px; }
+  24%, 30% { opacity: 1; top: 44px; left: 32%; }
+  45% { opacity: 1; top: 62px; left: 65%; transform: scale(1); }
+  51% { opacity: 1; top: 62px; left: 65%; transform: scale(.8); }
+  56% { opacity: 1; top: 62px; left: 65%; transform: scale(1); }
+  64%, 100% { opacity: 0; top: 62px; left: 65%; }
+}
+@keyframes activation-context-result {
+  0%, 63% { opacity: 0; transform: translateY(5px); }
+  73%, 100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes activation-shortcut {
+  0%, 25% { opacity: 0; }
+  33%, 50% { opacity: 1; }
+  58%, 100% { opacity: 0; }
+}
+@keyframes activation-keypress {
+  0%, 35%, 49%, 100% { background: #fafbfe; color: #58657a; transform: translateY(0); }
+  39%, 45% { background: #315be8; color: #fff; transform: translateY(1px); }
+}
+@keyframes activation-translator-keys {
+  0%, 26% { opacity: 1; }
+  34%, 100% { opacity: 0; }
+}
+@keyframes activation-translator-press {
+  0%, 12%, 28%, 100% { background: #fff; color: #58657a; transform: translateY(0); }
+  17%, 23% { background: #315be8; color: #fff; transform: translateY(1px); }
+}
+@keyframes activation-translator-open {
+  0%, 28% { opacity: 0; transform: scale(.94); }
+  39%, 100% { opacity: 1; transform: scale(1); }
+}
+@keyframes activation-translator-input {
+  0%, 43% { clip-path: inset(0 100% 0 0); }
+  63%, 100% { clip-path: inset(0); }
+}
+@keyframes activation-translator-result {
+  0%, 65% { opacity: 0; }
+  76%, 100% { opacity: 1; }
+}
+@keyframes activation-direction-first {
+  0%, 33% { background: #edf2ff; opacity: 1; }
+  47%, 100% { background: transparent; opacity: .45; }
+}
+@keyframes activation-direction-second {
+  0%, 33% { background: transparent; opacity: .45; }
+  47%, 100% { background: #edf2ff; opacity: 1; }
+}
+@keyframes activation-direction-key {
+  0%, 32%, 47%, 100% { background: #edf2ff; color: #315be8; transform: translateY(0); }
+  37%, 42% { background: #315be8; color: #fff; transform: translateY(1px); }
+}
 
 .setting-row {
   display: flex;
@@ -2293,7 +2406,8 @@ h1 {
   71%, 100% { opacity: 0; transform: translate(0, 0); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .help-demo-playing *, .help-demo-playing *::before, .help-demo-playing *::after {
+  .help-demo-playing *, .help-demo-playing *::before, .help-demo-playing *::after,
+  .activation-preview-playing *, .activation-preview-playing *::before, .activation-preview-playing *::after {
     animation-duration: .01ms !important;
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
@@ -2805,9 +2919,8 @@ h1 {
   .activation-preview-reverse p { font-size: 9px; }
   .activation-preview-reverse b { font-size: 11px; }
   .activation-preview-reverse i { font-size: 8px; }
+  .activation-illustration { --activation-button-x: calc(35% + 12px); }
   .activation-preview-selection-button { top: 52px; left: 35%; width: 24px; height: 24px; border-radius: 8px; font-size: 11px; }
-  .activation-preview-selection-arrow { top: 60px; left: calc(47.5% + 12px); width: 10px; height: 8px; }
-  .activation-preview-button-result { left: 60%; }
   .activation-preview-context-menu { right: 6px; width: calc(100% - 12px); }
   .activation-setting-row > .hotkey-button { grid-column: 2; grid-row: 1; justify-self: end; }
   .setting-select,

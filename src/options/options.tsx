@@ -811,41 +811,6 @@ function SelectionActivationSettings({settings, persist, isMobile, shortCopy = f
         </label>
       </div>
 
-      <div className="setting-row setting-row-secondary activation-setting-row">
-        <div className="setting-copy">
-          <h2>{shortCopy ? "Кнопкой рядом с выделением" : "Кнопка рядом с выделением"}</h2>
-          <p>{shortCopy ? "Нажмите кнопку, которая появляется возле выделенного текста." : "Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию."}</p>
-        </div>
-        <ActivationIllustration kind="button" />
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.selectionButtonEnabled || false}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, selectionButtonEnabled: event.target.checked, ...(event.target.checked ? {autoActivationEnabled: false} : {})})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить кнопку рядом с выделением</span>
-        </label>
-      </div>
-      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
-        <div className="setting-copy">
-          <h2>{shortCopy ? "Через контекстное меню" : "Активация через контекстное меню"}</h2>
-          <p>{shortCopy ? "Щёлкните правой кнопкой по выделенному тексту и выберите перевод." : "Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту)."}</p>
-        </div>
-        <ActivationIllustration kind="context" />
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={settings?.contextMenuEnabled || false}
-            disabled={!settings}
-            onChange={(event) => settings && void persist({...settings, contextMenuEnabled: event.target.checked})}
-          />
-          <span aria-hidden="true" />
-          <span className="sr-only">Включить перевод через контекстное меню</span>
-        </label>
-      </div>}
-
       {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row hotkey-activation-setting-row">
         <div className="setting-copy">
           <h2>{shortCopy ? "Горячими клавишами" : "Активация горячими клавишами"}</h2>
@@ -873,16 +838,54 @@ function SelectionActivationSettings({settings, persist, isMobile, shortCopy = f
         </label>
       </div>}
 
+      <div className="setting-row setting-row-secondary activation-setting-row">
+        <div className="setting-copy">
+          <h2>{shortCopy ? "Кнопкой рядом с выделением" : "Кнопка рядом с выделением"}</h2>
+          <p>{shortCopy ? "Нажмите кнопку, которая появляется возле выделенного текста." : "Показывать кнопку запуска перевода рядом с выделенным текстом. Включение отключит автоматическую активацию."}</p>
+        </div>
+        <ActivationIllustration kind="button" />
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.selectionButtonEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, selectionButtonEnabled: event.target.checked, ...(event.target.checked ? {autoActivationEnabled: false} : {})})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить кнопку рядом с выделением</span>
+        </label>
+      </div>
+
+      {!isMobile && <div className="setting-row setting-row-secondary activation-setting-row">
+        <div className="setting-copy">
+          <h2>{shortCopy ? "Через контекстное меню" : "Активация через контекстное меню"}</h2>
+          <p>{shortCopy ? "Щёлкните правой кнопкой по выделенному тексту и выберите перевод." : "Добавляет пункт «Context Translator» в контекстное меню браузера (открывается кликом правой кнопкой мыши по выделенному тексту)."}</p>
+        </div>
+        <ActivationIllustration kind="context" />
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={settings?.contextMenuEnabled || false}
+            disabled={!settings}
+            onChange={(event) => settings && void persist({...settings, contextMenuEnabled: event.target.checked})}
+          />
+          <span aria-hidden="true" />
+          <span className="sr-only">Включить перевод через контекстное меню</span>
+        </label>
+      </div>}
+
     </>
   );
 }
 
 function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "window" | "automatic" | "button" | "context" | "shortcut" | "translator" | "reverse"; shortcut?: string}) {
   const example = helpExamples();
+  const {previewRef, playing} = usePreviewPlayback<HTMLDivElement>();
   return (
-    <div className={`activation-illustration activation-illustration-${kind}`} aria-hidden="true">
+    <div ref={previewRef} className={`activation-illustration activation-illustration-${kind}${playing ? " activation-preview-playing" : ""}`} aria-hidden="true">
       <div className="activation-preview-scene" aria-hidden="true">
-        {kind === "translator" ? (
+        {kind === "translator" ? (<>
+          <div className="activation-preview-translator-keys">{shortcut.split(" + ").map(key => <span key={key}>{key}</span>)}</div>
           <div className="activation-preview-translator-backdrop">
             <div className="activation-preview-translator">
               <div className="activation-preview-translator-title"><strong>Context Translator</strong><b>{shortcut}</b><i>×</i></div>
@@ -890,7 +893,7 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
               <div className="activation-preview-panes"><div /><div /></div>
             </div>
           </div>
-        ) : kind === "reverse" ? (
+        </>) : kind === "reverse" ? (
           <div className="activation-preview-reverse">
             <p translate="no" dir="ltr"><span>{example.sourceName}</span><b>→</b><span>{example.targetName}</span></p>
             <p translate="no" dir="ltr"><span>{example.targetName}</span><b>→</b><span>{example.sourceName}</span></p>
@@ -901,20 +904,19 @@ function ActivationIllustration({kind, shortcut = "Ctrl + Shift + ]"}: {kind: "w
             <div className="activation-preview-toolbar"><i /><i /><i /><span /></div>
             <div className="activation-preview-page">
               <b />
-              <p translate="no" lang={example.sourceLanguage} dir="ltr"><mark>{example.context.source}</mark>{kind !== "button" && example.context.after}</p>
+              <p translate="no" lang={example.sourceLanguage} dir="ltr"><mark>{example.context.source}</mark>{example.context.after}</p>
               <i className="line-long" /><i className="line-medium" />
               <i className="line-short" />
             </div>
-            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>}
+            {(kind === "window" || kind === "automatic" || kind === "shortcut") && <div className="activation-preview-result"><div className="activation-preview-result-source"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><em><SoundIcon /></em></div><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>}
             {kind === "button" && <>
               <div className="activation-preview-selection-button"><strong>A<span>a</span></strong></div>
-              <svg className="activation-preview-selection-arrow" viewBox="0 0 24 12" aria-hidden="true">
-                <path d="M1 6h21M17 1l5 5-5 5" />
-              </svg>
-              <div className="activation-preview-result activation-preview-button-result"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>
+              <div className="activation-preview-result activation-preview-button-result"><div className="activation-preview-result-source"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><em><SoundIcon /></em></div><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>
             </>}
+            {kind === "context" && <div className="activation-preview-result activation-preview-context-result"><div className="activation-preview-result-source"><strong translate="no" lang={example.sourceLanguage}>{example.context.source}</strong><em><SoundIcon /></em></div><span /><b translate="no" lang={example.targetLanguage}>{example.context.translation}</b></div>}
             {kind === "context" && <div className="activation-preview-context-menu"><span>Копировать</span><b><img className="activation-preview-brand-icon" src="../icons/icon-32.png" alt="" />Context Translator</b><span>Искать в интернете</span></div>}
             {kind === "shortcut" && <div className="activation-preview-shortcut">{shortcut.split(" + ").map((key) => <span key={key}>{key}</span>)}<i>↵</i></div>}
+            <svg className="activation-preview-cursor" viewBox="0 0 24 28"><path d="M3 2v21l5-5 4 8 4-2-4-8h8Z" fill="#fff" stroke="#315be8" strokeWidth="1.8" strokeLinejoin="round" /></svg>
           </>
         )}
       </div>
@@ -1502,8 +1504,8 @@ function HelpView({onOpenSettings, onOpenHistory, onOpenExport}: {onOpenSettings
   );
 }
 
-function AnimatedHelpExample({className, children, onPlayingChange}: {className: string; children: ReactNode; onPlayingChange?: (playing: boolean) => void}) {
-  const figureRef = useRef<HTMLElement>(null);
+function usePreviewPlayback<T extends HTMLElement>() {
+  const figureRef = useRef<T>(null);
   const [inView, setInView] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
   useEffect(() => {
@@ -1522,11 +1524,16 @@ function AnimatedHelpExample({className, children, onPlayingChange}: {className:
     observer.observe(figureRef.current);
     return () => observer.disconnect();
   }, [reducedMotion]);
+  return {previewRef: figureRef, playing: inView && !reducedMotion};
+}
+
+function AnimatedHelpExample({className, children, onPlayingChange}: {className: string; children: ReactNode; onPlayingChange?: (playing: boolean) => void}) {
+  const {previewRef, playing} = usePreviewPlayback<HTMLElement>();
   useEffect(() => {
-    onPlayingChange?.(inView && !reducedMotion);
-  }, [inView, reducedMotion, onPlayingChange]);
+    onPlayingChange?.(playing);
+  }, [playing, onPlayingChange]);
   return (
-    <figure ref={figureRef} className={`help-visual-example ${className}${inView && !reducedMotion ? " help-demo-playing" : ""}`}>
+    <figure ref={previewRef} className={`help-visual-example ${className}${playing ? " help-demo-playing" : ""}`}>
       {children}
     </figure>
   );
